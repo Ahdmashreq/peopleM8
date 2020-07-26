@@ -1,0 +1,173 @@
+{% extends "master.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+
+{% block body %}
+
+{% include 'messages.html' %}
+<div class="row gap-20 masonry pos-r" style="position: relative; height: 1120.2px;">
+  <div class="masonry-sizer col-md-6"></div>
+  <div class="masonry-item col-md-12" style="position: absolute; left: 0%; top: 375.4px;">
+    <div class="bgc-white p-20 bd">
+      <h1 class="c-grey-900" style="text-align:center;">
+        <strong>Business Travel Form</strong>
+      </h1>
+      <div class="mT-30">
+        <form method="POST">
+          {% csrf_token %}
+          <h6 class="c-grey-900"><strong>Business Trip Informations</strong></h6>
+          <hr>
+          <br>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label>{{service_form.destination.label}}</label>
+              {{service_form.destination}}
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-3">
+              <label>{{service_form.estimated_date_of_travel_from.label}}</label>
+              {{service_form.estimated_date_of_travel_from}}
+            </div>
+            <div class="form-group col-md-3">
+              <label>{{service_form.estimated_date_of_travel_to.label}}</label>
+              {{service_form.estimated_date_of_travel_to}}
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-12">
+              <label>{{service_form.prupose_of_trip.label}}</label>
+              {{service_form.prupose_of_trip}}
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-12">
+              <label>Project Name / Customer Name:</label>
+              {{service_form.project_name}}
+            </div>
+          </div>
+
+          <h5 class="c-grey-900"><strong>Trip expenses:</strong></h5>
+          <hr>
+
+          <div class="form-row">
+            <div class="form-group col-md-3">
+              <label>{{service_form.transportation_type_to_des.label}}</label>
+              {{service_form.transportation_type_to_des}}
+            </div>
+          </div>
+          <div class="form-group col-md-3">
+            <label>{{service_form.ticket_cost.label}}</label>
+            {{service_form.ticket_cost}}
+          </div>
+          <div class="form-group col-md-3">
+            <label>{{service_form.fuel_cost.label}}</label>
+            {{service_form.fuel_cost}}
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-3">
+              <label>{{service_form.transportation_type_in_city.label}}</label>
+              {{service_form.transportation_type_in_city}}
+            </div>
+          </div>
+          <div class="form-group col-md-3">
+            <label>{{service_form.cost.label}}</label>
+            {{service_form.cost}}
+          </div>
+
+          <h5 class="c-grey-900"><strong>Accomodation:</strong></h5>
+          <hr>
+          <fieldset class="form-group">
+            <div class="row">
+              <legend class="col-form-legend col-sm-2">{{service_form.accomodation.label}}</legend>
+              <div class="col-sm-10">
+                {% for radio in service_form.accomodation %}
+                <div class="form-check">
+                  {% if radio.for == "id_accomodation_0" %}
+                  <label for="{{ radio.id_accomodation_0 }}">
+                      No Accomodation
+                  </label>
+                  {% endif %}
+                  {{ radio }}
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          </fieldset>
+          <div class="form-row">
+            <div class="form-group col-md-3">
+              <label>{{service_form.duration_of_hotel_from.label}}</label>
+              {{service_form.duration_of_hotel_from}}
+            </div>
+            <div class="form-group col-md-3">
+              <label>{{service_form.duration_of_hotel_to.label}}</label>
+              {{service_form.duration_of_hotel_to}}
+            </div>
+            <div class="form-group col-md-3">
+              <label>{{service_form.hotel_name.label}}</label>
+              {{service_form.hotel_name}}
+            </div>
+            <div class="form-group col-md-3">
+              <label>{{service_form.cost_per_night.label}}</label>
+              {{service_form.cost_per_night}}
+            </div>
+          </div>
+          <div class="form-group">
+            <strong><h3>Total Cost: EGP <output id="result"></output></h3></strong>
+          </div>
+
+          <div class="form-group row">
+            <div class="col-sm-10">
+              <button type="submit" class="btn btn-primary">Submit</button>
+              <button type="button" class="btn btn-default"><a href="{% url 'service:services_list' %}">Cancel</a></button>
+
+            </div>
+
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock body %}
+
+{% block js %}
+<script>
+  $(document).ready(function (){
+    $('.form-group').on('input','.prc',function(){
+      var totalSum = 0;
+      $('.form-group .prc').each(function(){
+        var inputVal = parseInt($(this).val());
+        totalSum += inputVal;
+      });
+      $('#result').text(totalSum);
+    })
+  });
+
+</script>
+<script>
+    $(document).ready(function () { //function will wait for the page to fully load before executing
+      $('#id_duration_of_hotel_from').attr('disabled', true);
+      $('#id_duration_of_hotel_to').attr('disabled', true);
+      $('#id_hotel_name').attr('disabled', true);
+      $('#id_cost_per_night').attr('disabled', true);
+        $("input[type=radio][name=accomodation]").change(function () { //specifying onchange function for input of type radio and name visibility
+            if (this.value != "H") { //if the new value is private
+                $('#id_duration_of_hotel_from').attr('disabled', true);
+                $('#id_duration_of_hotel_to').attr('disabled', true);
+                $('#id_hotel_name').attr('disabled', true);
+                $('#id_cost_per_night').attr('disabled', true);
+            }else{ //if the new value is anything else
+                    $('#id_duration_of_hotel_from').attr('disabled', false);
+                    $('#id_duration_of_hotel_to').attr('disabled', false);
+                    $('#id_hotel_name').attr('disabled', false);
+                    $('#id_cost_per_night').attr('disabled', false);
+                }
+        });
+
+    });
+</script>
+
+{% endblock js %}

@@ -1,0 +1,89 @@
+{% extends "master.html" %}
+{% load crispy_forms_tags %}
+{% block body %}
+<!--message flashing-->
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li
+    {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<section class="wrapper">
+    <div class="row">
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    Create a New Leave Type
+                </header>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <body>
+                        <div class='container'>
+                            <form method="POST">
+                                <div class="form-group">
+                                    {{leave_form|crispy}}
+                                    {% csrf_token %}
+                                    <input type="submit" class="btn btn-primary" value="Submit">
+                                </div>
+                            </form>
+                            <br>
+                            <table class="table">
+                                <thead>
+                                <th scope="col">Leave Type</th>
+                                </thead>
+                                {% for i in leaves %}
+                                <tr>
+                                    <td scope="row">{{i.type}}</td>
+
+                                    <td scope="row">&nbsp &nbsp<a href="#" class="btn btn-danger" data-toggle="modal"
+                                                                  data-target="#delete-modal{{i.id}}">delete</a></td>
+                                    <td scope="row">&nbsp &nbsp
+                                        <button class="btn btn-success"><i class="fa fa-pencil"></i><a
+                                                href="{% url 'leave:edit_leave_master' i.id %}">edit</a></button>
+                                    </td>
+
+
+                                    <div class="modal fade in" id="delete-modal{{i.id}}" tabindex="-1" role="dialog"
+                                         aria-labelledby="delete-modal" aria-hidden="true">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal">×</button>
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-body">
+                                                        <p>You are about to delete a record {{i.type}}. Do you want to
+                                                            continue?</p>
+                                                        <button type="button" class="btn btn-secondary"
+                                                                data-dismiss="modal">No
+                                                        </button>
+                                                        <a href="{% url 'leave:del_leave_master' i.id %}"
+                                                           class="btn btn-danger" type="button">Yes</a>
+                                                    </div>
+                                                </div>
+                                                <!-- /.modal-content -->
+                                            </div>
+                                            <!-- /.modal-dialog -->
+                                        </div>
+                                    </div>
+                                </tr>
+
+                                {% endfor %}
+                            </table>
+
+                        </div>
+                        </body>
+
+                    </div>
+                </div>
+        </div>
+</section>
+</div>
+</div>
+<!-- page end-->
+</section>
+
+{% endblock body %}

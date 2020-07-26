@@ -1,0 +1,83 @@
+{% extends 'master.html'%}
+{% load staticfiles%}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+{% block body%}
+
+<div class="container-fluid">
+  <form method="post">
+    {% csrf_token %}
+    {% include 'messages.html' %}
+    <div class="row">
+      <div class="col-md-8">
+        <h4 class="c-grey-900">{{page_title|title}}</h4>
+      </div>
+      <div class="col-md-4">
+        <div class="gap-10 peers push-right">
+          <div class="peer">
+            <button type="submit" class="btn cur-p btn-primary">Save</button>
+          </div>
+          <div class="peer">
+            <a href="{% url 'company:list-department' %}" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-1">
+      <div class="bgc-white p-20 bd">
+        <div class="mT-30">
+          <div id="items-form-container">
+            <table class="table table-striped m-b-none text-sm">
+              {{ dept_formset.management_form }}
+              {% for form in dept_formset %}
+              {{ form.id }}
+              {% if forloop.first %}
+              <thead>
+                <tr>
+                  {% for field in form.visible_fields %}
+                  <th>{{ field.label|capfirst }}</th>
+                  {% endfor %}
+                </tr>
+              </thead>
+              {% endif %}
+              <tr>
+                {% for field in form.visible_fields %}
+                <td>
+                  {# exclude the hidden fields in the form #}
+                  {% if forloop.first %}
+                  {% for hidden in form.hidden_fields %}
+                  {{ hidden }}
+                  {% endfor %}
+                  {% endif %}
+                  {{ field.errors.as_ul }}
+                  {{ field }}
+                </td>
+                {% endfor %}
+              </tr>
+              {% endfor %}
+            </table>
+          </div>
+          <input type="button" value="Add More" id="add_more">
+          <div id="empty_form" style="display:none">
+              <table class='no_error'>
+                  {{ myformset.empty_form }}
+              </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+
+{% endblock body%}
+{% block js %}
+<script>
+  $('#add_more').click(function() {
+    var form_idx = $('#id_form-TOTAL_FORMS').val();
+    $('#form_set').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
+    $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+  });
+</script>
+{% endblock js %}

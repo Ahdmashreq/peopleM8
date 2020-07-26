@@ -1,0 +1,1878 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-05-07 14:55+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#: .\MashreqPayroll\settings.py:184
+#: .\MashreqPayroll\templates\login-backup.html:50
+#: .\MashreqPayroll\templates\login.html:70
+#: .\MashreqPayroll\templates\login.html:72
+msgid "English"
+msgstr "الانجليزية"
+
+#: .\MashreqPayroll\settings.py:185
+msgid "Arabic"
+msgstr "العربية"
+
+#: .\MashreqPayroll\templates\add-user.html:14
+#: .\balanc_definition\templates\create-cost-accounts.html:19
+#: .\element_definition\templates\create-element-link.html:19
+#: .\employee\templates\create-employee.html:19
+#: .\employee\templates\create-parameter-values.html:70
+#: .\manage_payroll\templates\create-bank-accounts.html:19
+#: .\payroll_run\templates\select-elements.html:104
+msgid "Save"
+msgstr "حفظ"
+
+#: .\MashreqPayroll\templates\add-user.html:15
+#: .\balanc_definition\templates\create-cost-accounts.html:22
+#: .\company\templates\company-create.html:22
+#: .\company\templates\department-create-back.html:22
+#: .\company\templates\department-create.html:22
+#: .\company\templates\department-list.html:16
+#: .\company\templates\department-update.html:22
+#: .\company\templates\grade-create.html:22
+#: .\company\templates\grade-list.html:17
+#: .\company\templates\grade-update.html:22
+#: .\company\templates\job-create.html:22 .\company\templates\job-list.html:17
+#: .\company\templates\job-update.html:22
+#: .\company\templates\position-create.html:22
+#: .\company\templates\position-list.html:16
+#: .\company\templates\position-update.html:23
+#: .\defenition\templates\insurance_rules_create.html:22
+#: .\defenition\templates\lookup-create.html:22
+#: .\defenition\templates\tax_rules_create.html:22
+#: .\element_definition\templates\create-batch.html:22
+#: .\element_definition\templates\create-element-link.html:25
+#: .\element_definition\templates\create-elements.html:23
+#: .\employee\templates\create-employee.html:20
+#: .\employee\templates\view-employee.html:17
+#: .\manage_payroll\templates\create-assignment-batch.html:22
+#: .\manage_payroll\templates\create-bank-accounts.html:22
+#: .\manage_payroll\templates\create-payroll.html:22
+#: .\manage_payroll\templates\payment-create.html:22
+#: .\payroll_run\templates\create-salary.html:22
+#: .\payroll_run\templates\emp-payslip.html:38
+#: .\payroll_run\templates\list-other-allowance.html:100
+#: .\payroll_run\templates\list-other-deductions.html:100
+#: .\payroll_run\templates\list-salary-month.html:16
+#: .\payroll_run\templates\select-elements.html:102
+msgid "Back to List"
+msgstr "الرجوع"
+
+#: .\MashreqPayroll\templates\login-backup.html:16
+#: .\MashreqPayroll\templates\login-backup.html:29
+#: .\MashreqPayroll\templates\login-backup.html:79
+#: .\MashreqPayroll\templates\login.html:12
+#: .\MashreqPayroll\templates\login.html:49
+#: .\MashreqPayroll\templates\register.html:11
+msgid "Login"
+msgstr "تسجيل الدخول"
+
+#: .\MashreqPayroll\templates\login-backup.html:38
+#: .\MashreqPayroll\templates\login-backup.html:82
+#: .\MashreqPayroll\templates\login-backup.html:83
+#: .\MashreqPayroll\templates\login.html:54
+#: .\MashreqPayroll\templates\login.html:55
+msgid "User Name"
+msgstr "أسم المستخدم"
+
+#: .\MashreqPayroll\templates\login-backup.html:41
+#: .\MashreqPayroll\templates\login-backup.html:86
+#: .\MashreqPayroll\templates\login-backup.html:87
+#: .\MashreqPayroll\templates\login.html:58
+#: .\MashreqPayroll\templates\login.html:59
+msgid "Password"
+msgstr "كلمةالسر"
+
+#: .\MashreqPayroll\templates\login-backup.html:44
+#: .\MashreqPayroll\templates\login.html:64
+msgid "Log In"
+msgstr "تسجيل الدخول"
+
+#: .\MashreqPayroll\templates\login-backup.html:52
+msgid "العربية"
+msgstr ""
+
+#: .\MashreqPayroll\templates\messages.html:13
+#: .\payroll_run\templates\emp-payslip.html:15
+#: .\payroll_run\templates\list-other-allowance.html:28
+#: .\payroll_run\templates\list-other-deductions.html:28
+#: .\payroll_run\templates\list-salary-elements.html:28
+#: .\payroll_run\templates\select-elements.html:17
+msgid "Please fix the following errors"
+msgstr "يرجى تصحيح الأخطاء التالية"
+
+#: .\MashreqPayroll\templates\register.html:25
+#: .\MashreqPayroll\templates\register.html:49
+msgid "Sgin Up"
+msgstr "إنشاء حساب جديد"
+
+#: .\MashreqPayroll\templates\register.html:46
+msgid "Agree the"
+msgstr "موافق علي"
+
+#: .\MashreqPayroll\templates\register.html:46
+msgid "terms and policy"
+msgstr "الشروط و الأحكام"
+
+#: .\MashreqPayroll\templates\register.html:53
+msgid "Sgin In"
+msgstr "تسجيل دخول"
+
+#: .\MashreqPayroll\templates\side_nav.html:28
+msgid "Dashboard"
+msgstr "اللوحة الرئيسية"
+
+#: .\MashreqPayroll\templates\side_nav.html:31
+msgid "Company Setup"
+msgstr "أعدادات الشركة"
+
+#: .\MashreqPayroll\templates\side_nav.html:33
+msgid "Enterprise"
+msgstr "بيانات الشركة"
+
+#: .\MashreqPayroll\templates\side_nav.html:34
+msgid "Assignment Structure"
+msgstr "هيكل الشركة"
+
+#: .\MashreqPayroll\templates\side_nav.html:35
+msgid "Lookup Details"
+msgstr "تعريفات النظام"
+
+#: .\MashreqPayroll\templates\side_nav.html:41
+msgid "Elements Definition"
+msgstr "تعريف البنود"
+
+#: .\MashreqPayroll\templates\side_nav.html:44
+msgid "Element Details"
+msgstr "البنود"
+
+#: .\MashreqPayroll\templates\side_nav.html:45
+#: .\element_definition\models.py:62 .\payroll_run\models.py:36
+msgid "Element Batch"
+msgstr "تجميع البنود"
+
+#: .\MashreqPayroll\templates\side_nav.html:46
+msgid "Link Elements"
+msgstr "ربط البنود"
+
+#: .\MashreqPayroll\templates\side_nav.html:50
+msgid "Manage Payroll"
+msgstr "ادارة الرواتب"
+
+#: .\MashreqPayroll\templates\side_nav.html:52
+msgid "Bank and branchs"
+msgstr "البنوك و الأفرع"
+
+#: .\MashreqPayroll\templates\side_nav.html:53
+#: .\employee\templates\create-employee.html:73
+msgid "Payments"
+msgstr "وسائل السداد"
+
+#: .\MashreqPayroll\templates\side_nav.html:54 .\defenition\views.py:257
+msgid "Insurance Rules"
+msgstr "قوانين التأمينات الاجتماعية"
+
+#: .\MashreqPayroll\templates\side_nav.html:55 .\defenition\views.py:386
+msgid "Tax Rules"
+msgstr "قوانين الضرائب"
+
+#: .\MashreqPayroll\templates\side_nav.html:56
+msgid "Payroll Definition"
+msgstr "تعريفات الرواتب"
+
+#: .\MashreqPayroll\templates\side_nav.html:57 .\payroll_run\models.py:38
+msgid "Assignment Batch"
+msgstr "تجميع البنود"
+
+#: .\MashreqPayroll\templates\side_nav.html:61
+#: .\MashreqPayroll\templates\side_nav.html:63
+msgid "Employees"
+msgstr "الموظفين"
+
+#: .\MashreqPayroll\templates\side_nav.html:67
+#: .\MashreqPayroll\templates\side_nav.html:69
+msgid "Costing"
+msgstr "التكاليف"
+
+#: .\MashreqPayroll\templates\side_nav.html:73
+msgid "Payroll Run"
+msgstr "تشغيل الرواتب"
+
+#: .\MashreqPayroll\templates\side_nav.html:75
+msgid "Salary lists"
+msgstr "قائمة الرواتب"
+
+#: .\MashreqPayroll\templates\top_nav.html:36
+#: .\MashreqPayroll\templates\top_nav.html:60
+msgid "Log out"
+msgstr "تسجيل الخروج"
+
+#: .\MashreqPayroll\templates\top_nav.html:42
+msgid "Log in"
+msgstr "سجيل الدخول"
+
+#: .\MashreqPayroll\templates\top_nav.html:52
+msgid "Ready to Leave?"
+msgstr "هل انت واثق من مغادرة البرنامج ؟"
+
+#: .\MashreqPayroll\templates\top_nav.html:56
+msgid "Select Logout below if you are ready to end your current session?"
+msgstr "اختر خروج أدناه إذا كنت على استعداد لإنهاء العمل علي البرنامج؟"
+
+#: .\MashreqPayroll\templates\top_nav.html:59
+msgid "Cancel"
+msgstr "الغاء"
+
+#: .\balanc_definition\models.py:8 .\balanc_definition\models.py:24
+#: .\company\models.py:51 .\company\models.py:148
+#: .\element_definition\models.py:76
+#: .\element_definition\templates\list-links.html:29 .\employee\models.py:25
+#: .\employee\templates\view-employee.html:149 .\manage_payroll\models.py:112
+#: .\manage_payroll\models.py:125
+msgid "Department"
+msgstr "الادارة"
+
+#: .\balanc_definition\models.py:8 .\company\templates\assinment-list.html:39
+msgid "Jobs"
+msgstr "الوظائف"
+
+#: .\balanc_definition\models.py:8 .\balanc_definition\models.py:26
+#: .\company\models.py:149 .\element_definition\models.py:78
+#: .\element_definition\templates\list-links.html:31
+#: .\employee\templates\view-employee.html:151
+msgid "Grade"
+msgstr "الدرجة الوظيفية"
+
+#: .\balanc_definition\models.py:8 .\balanc_definition\models.py:27
+#: .\element_definition\models.py:79
+#: .\element_definition\templates\list-links.html:32 .\employee\models.py:95
+#: .\employee\templates\view-employee.html:150 .\manage_payroll\models.py:113
+#: .\manage_payroll\models.py:126
+msgid "Position"
+msgstr "المنصب الوظيفي"
+
+#: .\balanc_definition\models.py:11
+#: .\balanc_definition\templates\list-cost-accounts.html:28
+msgid "Level Name"
+msgstr "اسم المستوي"
+
+#: .\balanc_definition\models.py:12 .\balanc_definition\models.py:31
+#: .\balanc_definition\templates\list-cost-accounts.html:29
+#: .\company\models.py:22 .\company\models.py:87 .\company\models.py:119
+#: .\company\models.py:153 .\defenition\models.py:12 .\defenition\models.py:27
+#: .\defenition\models.py:44 .\defenition\models.py:59
+#: .\defenition\models.py:77 .\element_definition\forms.py:38
+#: .\element_definition\models.py:12 .\element_definition\models.py:33
+#: .\element_definition\models.py:49 .\element_definition\models.py:63
+#: .\element_definition\models.py:83
+#: .\element_definition\templates\list-batchs.html:27 .\employee\models.py:53
+#: .\employee\models.py:77 .\employee\models.py:99 .\employee\models.py:127
+#: .\employee\models.py:149 .\employee\models.py:195
+#: .\employee\templates\view-employee.html:155
+#: .\employee\templates\view-employee.html:191
+#: .\employee\templates\view-employee.html:222 .\manage_payroll\models.py:22
+#: .\manage_payroll\models.py:37 .\manage_payroll\models.py:53
+#: .\manage_payroll\models.py:67 .\manage_payroll\models.py:86
+#: .\manage_payroll\models.py:100 .\manage_payroll\models.py:116
+#: .\manage_payroll\models.py:129 .\payroll_run\models.py:57
+msgid "Start Date"
+msgstr "تاريخ البداية"
+
+#: .\balanc_definition\models.py:13 .\balanc_definition\models.py:32
+#: .\company\models.py:23 .\company\models.py:56 .\company\models.py:88
+#: .\company\models.py:120 .\company\models.py:154 .\defenition\models.py:13
+#: .\defenition\models.py:28 .\defenition\models.py:45
+#: .\defenition\models.py:60 .\defenition\models.py:78
+#: .\element_definition\forms.py:39 .\element_definition\models.py:13
+#: .\element_definition\models.py:34 .\element_definition\models.py:50
+#: .\element_definition\models.py:64 .\element_definition\models.py:84
+#: .\employee\models.py:54 .\employee\models.py:79 .\employee\models.py:101
+#: .\employee\models.py:129 .\employee\models.py:151 .\employee\models.py:197
+#: .\employee\templates\view-employee.html:156
+#: .\employee\templates\view-employee.html:192
+#: .\employee\templates\view-employee.html:223 .\manage_payroll\models.py:23
+#: .\manage_payroll\models.py:38 .\manage_payroll\models.py:54
+#: .\manage_payroll\models.py:68 .\manage_payroll\models.py:87
+#: .\manage_payroll\models.py:101 .\manage_payroll\models.py:117
+#: .\manage_payroll\models.py:130 .\payroll_run\models.py:58
+msgid "End Date"
+msgstr "تاريخ النهاية"
+
+#: .\balanc_definition\models.py:25 .\company\models.py:147
+#: .\element_definition\models.py:77
+#: .\element_definition\templates\list-links.html:30
+#: .\employee\templates\view-employee.html:152 .\manage_payroll\models.py:114
+#: .\manage_payroll\models.py:127
+msgid "Job"
+msgstr "الوظيفة"
+
+#: .\balanc_definition\models.py:28 .\custom_user\models.py:7
+#: .\defenition\models.py:24 .\defenition\models.py:70
+#: .\element_definition\forms.py:29 .\element_definition\models.py:24
+#: .\element_definition\models.py:113 .\home\forms.py:8
+msgid "Name"
+msgstr "الأسم"
+
+#: .\balanc_definition\models.py:29
+msgid "Debit Account"
+msgstr "حساب مدين"
+
+#: .\balanc_definition\models.py:30
+msgid "Credit Account"
+msgstr "حساب دائن"
+
+#: .\balanc_definition\templates\list-cost-accounts.html:16
+#: .\company\templates\department-list.html:15
+#: .\company\templates\grade-list.html:16 .\company\templates\job-list.html:16
+#: .\company\templates\position-list.html:15
+#: .\defenition\templates\insurance_rules_list.html:16
+#: .\defenition\templates\insurance_rules_list.html:18
+#: .\defenition\templates\lookups-list.html:15
+#: .\defenition\templates\tax_rules_list.html:16
+#: .\defenition\templates\tax_rules_list.html:18
+#: .\element_definition\templates\list-batchs.html:15
+#: .\element_definition\templates\list-elements.html:16
+#: .\element_definition\templates\list-links.html:15
+#: .\employee\templates\list-employees-card.html:16
+#: .\employee\templates\list-employees.html:15
+#: .\manage_payroll\templates\list-assignment-batch.html:15
+#: .\manage_payroll\templates\list-bank-branchs.html:15
+#: .\manage_payroll\templates\list-payrolls.html:15
+#: .\manage_payroll\templates\payment-list.html:15
+#: .\payroll_run\templates\list-other-allowance.html:13
+#: .\payroll_run\templates\list-other-deductions.html:13
+#: .\payroll_run\templates\list-salary-elements.html:13
+#: .\payroll_run\templates\list-salary-elements.html:48
+#: .\payroll_run\templates\list-salary.html:15
+msgid "Add"
+msgstr "اضافة جديدة"
+
+#: .\balanc_definition\templates\list-cost-accounts.html:30
+#: .\company\templates\company-list.html:26
+#: .\company\templates\department-list.html:28
+#: .\company\templates\grade-list.html:29 .\company\templates\job-list.html:29
+#: .\company\templates\position-list.html:28
+#: .\defenition\templates\insurance_rules_list.html:32
+#: .\defenition\templates\lookups-list.html:28
+#: .\defenition\templates\tax_rules_list.html:32
+#: .\element_definition\templates\list-batchs.html:28
+#: .\element_definition\templates\list-elements.html:32
+#: .\element_definition\templates\list-links.html:34
+#: .\employee\templates\list-employees.html:28
+#: .\manage_payroll\templates\list-assignment-batch.html:29
+#: .\manage_payroll\templates\list-bank-branchs.html:29
+#: .\manage_payroll\templates\list-payrolls.html:28
+#: .\manage_payroll\templates\payment-list.html:28
+#: .\payroll_run\templates\list-salary-month.html:33
+#: .\payroll_run\templates\list-salary.html:30
+msgid "Actions"
+msgstr "إجراءات"
+
+#: .\balanc_definition\templates\list-cost-accounts.html:53
+#: .\company\templates\department-list.html:45
+#: .\company\templates\grade-list.html:46 .\company\templates\job-list.html:46
+#: .\company\templates\position-list.html:45
+#: .\manage_payroll\templates\payment-list.html:46
+msgid "Correction"
+msgstr "تصحيح"
+
+#: .\balanc_definition\templates\list-cost-accounts.html:58
+#: .\company\templates\company-list.html:38
+#: .\company\templates\department-list.html:40
+#: .\company\templates\grade-list.html:41 .\company\templates\job-list.html:41
+#: .\company\templates\position-list.html:40
+#: .\defenition\templates\insurance_rules_list.html:44
+#: .\defenition\templates\lookups-list.html:41
+#: .\defenition\templates\tax_rules_list.html:44
+#: .\element_definition\templates\list-batchs.html:41
+#: .\element_definition\templates\list-elements.html:47
+#: .\element_definition\templates\list-links.html:53
+#: .\employee\templates\list-employees-card.html:44
+#: .\employee\templates\list-employees.html:45
+#: .\employee\templates\view-employee.html:16
+#: .\manage_payroll\templates\list-assignment-batch.html:43
+#: .\manage_payroll\templates\list-bank-branchs.html:43
+#: .\manage_payroll\templates\list-payrolls.html:41
+#: .\manage_payroll\templates\payment-list.html:41
+msgid "Update"
+msgstr "تعديل"
+
+#: .\balanc_definition\templates\list-cost-accounts.html:63
+#: .\company\templates\company-list.html:43
+#: .\company\templates\company-list.html:62
+#: .\company\templates\department-list.html:50
+#: .\company\templates\department-list.html:63
+#: .\company\templates\grade-list.html:51
+#: .\company\templates\grade-list.html:64 .\company\templates\job-list.html:51
+#: .\company\templates\job-list.html:64
+#: .\company\templates\position-list.html:50
+#: .\company\templates\position-list.html:63
+#: .\defenition\templates\insurance_rules_list.html:49
+#: .\defenition\templates\insurance_rules_list.html:62
+#: .\defenition\templates\lookups-list.html:46
+#: .\defenition\templates\lookups-list.html:59
+#: .\defenition\templates\tax_rules_list.html:49
+#: .\defenition\templates\tax_rules_list.html:62
+#: .\element_definition\templates\list-batchs.html:46
+#: .\element_definition\templates\list-batchs.html:59
+#: .\element_definition\templates\list-elements.html:52
+#: .\element_definition\templates\list-elements.html:65
+#: .\element_definition\templates\list-links.html:58
+#: .\element_definition\templates\list-links.html:71
+#: .\employee\templates\list-employees-card.html:49
+#: .\employee\templates\list-employees-card.html:60
+#: .\employee\templates\list-employees.html:50
+#: .\employee\templates\list-employees.html:63
+#: .\manage_payroll\templates\list-assignment-batch.html:48
+#: .\manage_payroll\templates\list-assignment-batch.html:65
+#: .\manage_payroll\templates\list-bank-branchs.html:48
+#: .\manage_payroll\templates\list-bank-branchs.html:65
+#: .\manage_payroll\templates\list-payrolls.html:46
+#: .\manage_payroll\templates\list-payrolls.html:63
+#: .\manage_payroll\templates\payment-list.html:51
+#: .\manage_payroll\templates\payment-list.html:68
+#: .\payroll_run\templates\list-salary-month.html:55
+#: .\payroll_run\templates\list-salary-month.html:62
+#: .\payroll_run\templates\list-salary-month.html:69
+#: .\payroll_run\templates\list-salary.html:83
+#: .\payroll_run\templates\list-salary.html:86
+#: .\payroll_run\templates\list-salary.html:100
+msgid "Delete"
+msgstr "حذف"
+
+#: .\balanc_definition\views.py:14
+msgid "cost accounts"
+msgstr "حسابات تكاليف"
+
+#: .\balanc_definition\views.py:37
+msgid "Create Costing Accounts"
+msgstr "انشاء حسابات تكاليف"
+
+#: .\balanc_definition\views.py:55
+msgid "Update Costing Accounts"
+msgstr "تعديل حسابات التكاليف"
+
+#: .\company\models.py:10
+msgid "Company Name"
+msgstr "أسم الشركة"
+
+#: .\company\models.py:11 .\custom_user\models.py:9 .\home\forms.py:11
+msgid "Reg Tax Num"
+msgstr "رقم البطاقة الضريبية"
+
+#: .\company\models.py:12
+msgid "Commercial Record"
+msgstr "رقم السجل التجاري"
+
+#: .\company\models.py:13 .\employee\templates\create-employee.html:83
+#: .\employee\templates\view-employee.html:59
+msgid "Address1"
+msgstr "عنوان 1"
+
+#: .\company\models.py:15 .\employee\templates\create-employee.html:91
+msgid "Phone"
+msgstr "الهاتف"
+
+#: .\company\models.py:16 .\employee\templates\create-employee.html:97
+#: .\employee\templates\view-employee.html:56
+msgid "Mobile"
+msgstr "المحمول"
+
+#: .\company\models.py:17
+msgid "Fax"
+msgstr "الفاكس"
+
+#: .\company\models.py:18 .\employee\templates\create-employee.html:60
+#: .\employee\templates\view-employee.html:55
+msgid "Email"
+msgstr "بريد اليكتروني"
+
+#: .\company\models.py:19 .\manage_payroll\models.py:19
+msgid "Country"
+msgstr "البلد"
+
+#: .\company\models.py:49 .\company\models.py:82 .\company\models.py:114
+#: .\company\templates\company-list.html:25 .\defenition\models.py:9
+#: .\defenition\models.py:38 .\defenition\models.py:55
+#: .\element_definition\models.py:23 .\manage_payroll\models.py:16
+#: .\manage_payroll\models.py:34 .\manage_payroll\models.py:78
+msgid "Enterprise Name"
+msgstr "أسم الشركة"
+
+#: .\company\models.py:52 .\company\templates\department-create.html:37
+msgid "Parent Department"
+msgstr "الإدارة الأم"
+
+#: .\company\models.py:55
+msgid "Start  Date"
+msgstr "تاريخ البداية"
+
+#: .\company\models.py:84 .\company\templates\job-create.html:34
+#: .\company\templates\job-list.html:28
+#: .\company\templates\position-create.html:37
+msgid "Job Name"
+msgstr "المسمي الوظيفي"
+
+#: .\company\models.py:85 .\company\templates\job-create.html:37
+msgid "Job Description"
+msgstr "وصف المسمي الوظيفي"
+
+#: .\company\models.py:116 .\company\templates\grade-create.html:34
+#: .\company\templates\grade-list.html:28
+#: .\company\templates\position-create.html:40
+msgid "Grade Name"
+msgstr "الدرجة الوظيفية"
+
+#: .\company\models.py:117 .\company\templates\grade-create.html:37
+msgid "Grade Description"
+msgstr "وصف الدرجة الوظيفية"
+
+#: .\company\models.py:150 .\company\templates\assinment-list.html:27
+#: .\company\templates\position-create.html:43
+#: .\company\templates\position-list.html:27
+msgid "Position Name"
+msgstr "المنصب الوظيفي"
+
+#: .\company\models.py:151 .\company\templates\position-create.html:46
+msgid "Position Description"
+msgstr "وصف المنصب الوظيفي"
+
+#: .\company\templates\assinment-list.html:16
+msgid "View Hierachy"
+msgstr "عرض تسلسل الشركة"
+
+#: .\company\templates\assinment-list.html:28
+msgid "Number of Assignments"
+msgstr "العدد"
+
+#: .\company\templates\assinment-list.html:33
+msgid "1"
+msgstr ""
+
+#: .\company\templates\assinment-list.html:34
+msgid "Departments"
+msgstr "الادارات"
+
+#: .\company\templates\assinment-list.html:38
+msgid "2"
+msgstr ""
+
+#: .\company\templates\assinment-list.html:43
+msgid "3"
+msgstr ""
+
+#: .\company\templates\assinment-list.html:44
+msgid "Grades"
+msgstr "الدرجات الوظيفية"
+
+#: .\company\templates\assinment-list.html:48
+msgid "4"
+msgstr ""
+
+#: .\company\templates\assinment-list.html:49
+msgid "Positions"
+msgstr "المناصب الوظيفية"
+
+#: .\company\templates\company-hierachy.html:17
+msgid "Back"
+msgstr "رجوع"
+
+#: .\company\templates\company-list.html:14
+msgid "Add Enterprise"
+msgstr "إضافة شركة جديدة"
+
+#: .\company\templates\company-list.html:54
+#: .\manage_payroll\templates\list-assignment-batch.html:58
+#: .\manage_payroll\templates\list-bank-branchs.html:58
+#: .\manage_payroll\templates\list-payrolls.html:56
+#: .\manage_payroll\templates\payment-list.html:61
+msgid "Delete "
+msgstr "حذف"
+
+#: .\company\templates\company-list.html:57
+#: .\company\templates\department-list.html:61
+#: .\company\templates\grade-list.html:62 .\company\templates\job-list.html:62
+#: .\company\templates\position-list.html:61
+#: .\defenition\templates\insurance_rules_list.html:60
+#: .\defenition\templates\lookups-list.html:57
+#: .\defenition\templates\tax_rules_list.html:60
+#: .\element_definition\templates\list-batchs.html:57
+#: .\element_definition\templates\list-elements.html:63
+#: .\element_definition\templates\list-links.html:69
+#: .\employee\templates\list-employees-card.html:58
+#: .\employee\templates\list-employees.html:61
+#: .\manage_payroll\templates\list-assignment-batch.html:61
+#: .\manage_payroll\templates\list-bank-branchs.html:61
+#: .\manage_payroll\templates\list-payrolls.html:59
+#: .\manage_payroll\templates\payment-list.html:64
+#: .\payroll_run\templates\list-salary-month.html:67
+#: .\payroll_run\templates\list-salary.html:98
+msgid "Are you sure you want to delete this record?"
+msgstr "هل أنت متأكد أنك تريد حذف هذا السجل؟"
+
+#: .\company\templates\company-list.html:61
+#: .\company\templates\department-list.html:62
+#: .\company\templates\grade-list.html:63 .\company\templates\job-list.html:63
+#: .\company\templates\position-list.html:62
+#: .\defenition\templates\insurance_rules_list.html:61
+#: .\defenition\templates\insurance_rules_list.html:89
+#: .\defenition\templates\lookups-list.html:58
+#: .\defenition\templates\tax_rules_list.html:61
+#: .\defenition\templates\tax_rules_list.html:90
+#: .\element_definition\templates\list-batchs.html:58
+#: .\element_definition\templates\list-elements.html:64
+#: .\element_definition\templates\list-links.html:70
+#: .\employee\templates\list-employees-card.html:59
+#: .\employee\templates\list-employees.html:62
+#: .\manage_payroll\templates\list-assignment-batch.html:64
+#: .\manage_payroll\templates\list-bank-branchs.html:64
+#: .\manage_payroll\templates\list-payrolls.html:62
+#: .\manage_payroll\templates\payment-list.html:67
+#: .\payroll_run\templates\list-salary-month.html:68
+#: .\payroll_run\templates\list-salary.html:99
+msgid "No"
+msgstr "لا"
+
+#: .\company\templates\department-create.html:34
+#: .\company\templates\department-list.html:27
+msgid "Department Name"
+msgstr "أسم الإدارة"
+
+#: .\company\templates\department-create.html:40
+msgid "Department Start Date"
+msgstr "تاريخ البداية"
+
+#: .\company\templates\department-create.html:43
+msgid "Department End Date"
+msgstr "تاريخ النهاية"
+
+#: .\company\templates\department-create.html:65
+#: .\company\templates\grade-create.html:65
+#: .\company\templates\job-create.html:65
+#: .\company\templates\position-create.html:83
+msgid "Add New Line"
+msgstr "إضافة سطر جديد"
+
+#: .\company\templates\grade-create.html:40
+msgid "Grade Start Date"
+msgstr "تاريخ البداية"
+
+#: .\company\templates\grade-create.html:43
+msgid "Grade End Date"
+msgstr "تاريخ النهاية"
+
+#: .\company\templates\job-create.html:40
+msgid "Job Start Date"
+msgstr "تاريخ البداية"
+
+#: .\company\templates\job-create.html:43
+msgid "Job End Date"
+msgstr "تاريخ النهاية"
+
+#: .\company\templates\position-create.html:34
+msgid "department Name"
+msgstr "أسم الإدارة"
+
+#: .\company\templates\position-create.html:49
+msgid "Position Start Date"
+msgstr "تاريخ البداية"
+
+#: .\company\templates\position-create.html:52
+msgid "Position End Date"
+msgstr "تاريخ النهاية"
+
+#: .\company\views.py:52
+msgid "Create Enterprise"
+msgstr "انشاء شركة جديدة"
+
+#: .\company\views.py:63
+msgid "Enterprises"
+msgstr "الشركات"
+
+#: .\company\views.py:94
+msgid "update Business unit"
+msgstr ""
+
+#: .\company\views.py:135
+msgid "Company Structure Definition"
+msgstr "تعريف هيكل الشركة"
+
+#: .\company\views.py:165
+msgid "list departments"
+msgstr "قائمة الادارات"
+
+#: .\company\views.py:312
+msgid "List jobs"
+msgstr "قائمة الوظائف"
+
+#: .\company\views.py:452
+msgid "List grades"
+msgstr "قائمة الدرجات الوظيفية"
+
+#: .\company\views.py:487
+msgid "create new grade"
+msgstr "انشاء درجة و ظيفية جديدة"
+
+#: .\company\views.py:597
+msgid "List positions"
+msgstr "قائمة المناصب الوظيفية"
+
+#: .\company\views.py:638
+msgid "create new position"
+msgstr "انشاء منصب جديد"
+
+#: .\company\views.py:682
+msgid "update position"
+msgstr "تعديل المنصب"
+
+#: .\company\views.py:712
+msgid "correct position"
+msgstr "تصحيح المنصب"
+
+#: .\custom_user\models.py:8 .\home\forms.py:10
+msgid "Business Unit Name"
+msgstr ""
+
+#: .\custom_user\models.py:10 .\home\forms.py:12
+msgid "Commercail Record "
+msgstr ""
+
+#: .\defenition\models.py:10 .\defenition\models.py:23
+msgid "Lookup Type"
+msgstr ""
+
+#: .\defenition\models.py:11 .\defenition\models.py:26
+#: .\defenition\templates\lookups-list.html:27 .\manage_payroll\models.py:66
+msgid "Description"
+msgstr "التوصيف"
+
+#: .\defenition\models.py:25
+#: .\manage_payroll\templates\list-assignment-batch.html:27
+msgid "Code"
+msgstr "رمز"
+
+#: .\defenition\models.py:39
+msgid "Insurance Rule Name"
+msgstr "اسم قاعدة التأمينات الأجتماعية"
+
+#: .\defenition\models.py:40
+msgid "Basic Deduction Percentage"
+msgstr "نسبة الخصم علي المرتب الثابت"
+
+#: .\defenition\models.py:41
+msgid "Variable Deduction Percentage"
+msgstr "سبة الخصم علي المرتب المتغير"
+
+#: .\defenition\models.py:42
+msgid "Maximum Insurable Basic Salary"
+msgstr "الحد الأقصي للثابت التأميني"
+
+#: .\defenition\models.py:43
+msgid "Maximum Insurable Variable Salary"
+msgstr "الحد الاقصي للمتغير التأميني"
+
+#: .\defenition\models.py:56
+msgid "Tax Rule Name"
+msgstr "أسم القاعدة الضريبية"
+
+#: .\defenition\models.py:57
+msgid "Personal Exemption"
+msgstr "حد الأعفاء الشخصي"
+
+#: .\defenition\models.py:58
+msgid "Round To Nearest Zero"
+msgstr "التقريب لأقرب صفر"
+
+#: .\defenition\models.py:71
+msgid "Tax Rule Id"
+msgstr ""
+
+#: .\defenition\models.py:72
+msgid "Salary From"
+msgstr "بداية المرتب"
+
+#: .\defenition\models.py:73
+msgid "Salary To"
+msgstr "نهاية المرتب"
+
+#: .\defenition\models.py:74
+msgid "Tax Percentage"
+msgstr "نسبة الضريبة"
+
+#: .\defenition\models.py:75
+msgid "Tax Discount Percentage"
+msgstr "نسبة الخصم الضريبي"
+
+#: .\defenition\models.py:76
+msgid "Section Execution Sequence"
+msgstr "ترتيب تنفيذ الشرائح"
+
+#: .\defenition\templates\insurance_rules_list.html:31
+msgid "Insurance Name"
+msgstr "اسم قاعدة التأمينات الأجتماعية"
+
+#: .\defenition\templates\insurance_rules_list.html:86
+msgid "Do you want to create the Egyptian insurance rule?"
+msgstr "هل تريد إنشاء قاعدة التأمين المصرية؟"
+
+#: .\defenition\templates\insurance_rules_list.html:91
+#: .\defenition\templates\tax_rules_list.html:92
+#: .\element_definition\templates\list-elements.html:86
+msgid "Yes"
+msgstr "نعم"
+
+#: .\defenition\templates\lookups-list.html:26
+msgid "Lookup Name"
+msgstr ""
+
+#: .\defenition\templates\tax_rules_list.html:31
+msgid "Tax Name"
+msgstr "أسم القاعدة الضريبية"
+
+#: .\defenition\templates\tax_rules_list.html:87
+msgid "Do you want to create the Egyptian tax rule?"
+msgstr "هل تريد إنشاء قاعدة الضريبة المصرية؟"
+
+#: .\defenition\views.py:119
+msgid "Lookup list"
+msgstr "قائمة تعريفات النظام"
+
+#: .\defenition\views.py:149
+msgid "Create new lookup"
+msgstr "إنشاء تعريف جديد"
+
+#: .\defenition\views.py:177 .\element_definition\views.py:114
+msgid "Update lookup"
+msgstr "تعديل تعريف"
+
+#: .\defenition\views.py:240
+msgid "Create Insurance Rule"
+msgstr "أنشاء قاعدة تأمينات اجتماعية جديدة"
+
+#: .\defenition\views.py:291
+msgid "Update Rule"
+msgstr "تعديل القاعدة"
+
+#: .\defenition\views.py:371 .\defenition\views.py:464
+msgid "New Tax Rule"
+msgstr "أنشاء قاعدة ضريبية جديدة"
+
+#: .\defenition\views.py:465
+msgid "Tax sections"
+msgstr "الشرائح الضريبية"
+
+#: .\element_definition\forms.py:30 .\element_definition\models.py:25
+msgid "db Name"
+msgstr "أسم العنصر في قاعدة البيانات"
+
+#: .\element_definition\forms.py:31
+#: .\manage_payroll\templates\list-payrolls.html:27
+#: .\manage_payroll\templates\payment-list.html:26
+msgid "Type"
+msgstr "نوع العنصر"
+
+#: .\element_definition\forms.py:32 .\element_definition\models.py:27
+msgid "classification"
+msgstr "طبيعة العنصر"
+
+#: .\element_definition\forms.py:33 .\element_definition\models.py:28
+msgid "Effective Date"
+msgstr "تاريخ النفاذ"
+
+#: .\element_definition\forms.py:34 .\element_definition\models.py:29
+msgid "Retro Flag"
+msgstr "الدفع بأثر رجعي"
+
+#: .\element_definition\forms.py:35 .\element_definition\models.py:30
+msgid "Tax Flag"
+msgstr "خاضع للضريبة"
+
+#: .\element_definition\forms.py:36 .\element_definition\models.py:31
+msgid "Fixed Amount"
+msgstr "قيمة ثابتة"
+
+#: .\element_definition\forms.py:37 .\element_definition\models.py:32
+msgid "Formula"
+msgstr "معادلة"
+
+#: .\element_definition\models.py:10 .\element_definition\models.py:75
+#: .\element_definition\templates\list-links.html:27 .\employee\models.py:97
+#: .\employee\templates\view-employee.html:154 .\manage_payroll\models.py:97
+msgid "Payroll"
+msgstr "الرواتب"
+
+#: .\element_definition\models.py:11
+#: .\element_definition\templates\list-batchs.html:26
+msgid "Batch Name"
+msgstr ""
+
+#: .\element_definition\models.py:26
+#: .\element_definition\templates\list-elements.html:30
+msgid "Element Type"
+msgstr "نوع العنصر"
+
+#: .\element_definition\models.py:44 .\element_definition\models.py:61
+#: .\employee\models.py:145 .\employee\templates\view-employee.html:220
+msgid "Element"
+msgstr "العنصر"
+
+#: .\element_definition\models.py:45
+msgid "Parameter Name"
+msgstr ""
+
+#: .\element_definition\models.py:46
+msgid "Parameter Type"
+msgstr ""
+
+#: .\element_definition\models.py:47
+msgid "User Enterable"
+msgstr ""
+
+#: .\element_definition\models.py:48
+msgid "Required"
+msgstr "ضروري"
+
+#: .\element_definition\models.py:74
+#: .\element_definition\templates\list-elements.html:28
+#: .\element_definition\templates\list-links.html:26
+msgid "Element Name"
+msgstr "أسم العنصر"
+
+#: .\element_definition\models.py:80 .\manage_payroll\models.py:36
+msgid "Category"
+msgstr "التوصيف"
+
+#: .\element_definition\models.py:81
+msgid "Standard Flag"
+msgstr "قياسي"
+
+#: .\element_definition\models.py:82
+msgid "Link All"
+msgstr "ربط بالكل"
+
+#: .\element_definition\models.py:114
+msgid "Element Master"
+msgstr ""
+
+#: .\element_definition\models.py:115
+msgid "Help Text"
+msgstr ""
+
+#: .\element_definition\models.py:116
+msgid "Rule Definition"
+msgstr "تعريف القاعدة"
+
+#: .\element_definition\models.py:117
+msgid "Taxable"
+msgstr "خاضع للضريبة"
+
+#: .\element_definition\templates\create-element-link.html:22
+msgid "Save And Add"
+msgstr "حفظ و اضافة اخر"
+
+#: .\element_definition\templates\create-elements.html:71
+msgid "Hint"
+msgstr "شرح طريقة كتابة المعادلة"
+
+#: .\element_definition\templates\list-elements.html:29
+msgid "Database Name"
+msgstr "الاسم في قاعدة البيانات"
+
+#: .\element_definition\templates\list-elements.html:31
+msgid "Element Classification"
+msgstr "طبيعة العنصر"
+
+#: .\element_definition\templates\list-elements.html:82
+msgid "Do you want Basic Salary Element?"
+msgstr "هل تريد اضافة بند الأساسي؟"
+
+#: .\element_definition\templates\list-elements.html:88
+msgid "Close"
+msgstr "غلق"
+
+#: .\element_definition\templates\list-links.html:28
+msgid "Location"
+msgstr "الموقع"
+
+#: .\element_definition\templates\list-links.html:33
+msgid "All Employees"
+msgstr "كافة الموظفين"
+
+#: .\element_definition\views.py:81
+msgid "Create new Element"
+msgstr "إنشاء عنصر جديد"
+
+#: .\element_definition\views.py:95
+msgid "elements"
+msgstr "العناصر"
+
+#: .\element_definition\views.py:142
+msgid "batch list"
+msgstr "قائمة "
+
+#: .\element_definition\views.py:179
+msgid "Create Element Batch"
+msgstr "انشاء تجميع البنود"
+
+#: .\element_definition\views.py:210
+msgid "Update Batch"
+msgstr "تعديل"
+
+#: .\element_definition\views.py:269
+msgid "link elements"
+msgstr "ربط العناصر"
+
+#: .\element_definition\views.py:332
+msgid "Create Element Link"
+msgstr "ربط عنصر جديد"
+
+#: .\element_definition\views.py:355
+msgid "Update Element Link"
+msgstr "تعديل ربط العنصر"
+
+#: .\employee\models.py:13
+msgid "Cash"
+msgstr "سداد نقدي"
+
+#: .\employee\models.py:13
+msgid "Check"
+msgstr "شيك"
+
+#: .\employee\models.py:14
+msgid "Bank transfer"
+msgstr "تحويل بنكي"
+
+#: .\employee\models.py:15 .\manage_payroll\models.py:13
+msgid "Company account"
+msgstr "رقم حساب الشركة"
+
+#: .\employee\models.py:15 .\manage_payroll\models.py:13
+msgid "Employee account"
+msgstr "رقم حساب الموظف"
+
+#: .\employee\models.py:19
+msgid "National Id"
+msgstr "الرقم القومي"
+
+#: .\employee\models.py:19
+msgid "Passport"
+msgstr "باسبورت"
+
+#: .\employee\models.py:20
+msgid "Male"
+msgstr "ذكر"
+
+#: .\employee\models.py:20
+msgid "Female"
+msgstr "انثي"
+
+#: .\employee\models.py:21
+msgid "Married"
+msgstr "متزوج"
+
+#: .\employee\models.py:21
+msgid "Single"
+msgstr "أعزب"
+
+#: .\employee\models.py:22
+msgid "Exemption"
+msgstr "اعفاء من الخدمة"
+
+#: .\employee\models.py:22
+msgid "Complete the service"
+msgstr "ادي الخدمة"
+
+#: .\employee\models.py:22
+msgid "Postponed"
+msgstr "تأجيل الخدمة"
+
+#: .\employee\models.py:23
+msgid "Muslim"
+msgstr "مسـلم"
+
+#: .\employee\models.py:23
+msgid "Chrestin"
+msgstr "مسيحي"
+
+#: .\employee\models.py:26 .\employee\templates\create-employee.html:34
+#: .\employee\templates\list-employees-card.html:33
+msgid "Employee Number"
+msgstr "رقم الموظف"
+
+#: .\employee\models.py:27 .\employee\templates\create-employee.html:30
+#: .\employee\templates\list-employees.html:27
+#: .\payroll_run\templates\all-payslip.html:29
+#: .\payroll_run\templates\emp-payslip.html:52
+#: .\payroll_run\templates\list-other-deductions.html:62
+#: .\payroll_run\templates\list-salary-month.html:28
+#: .\payroll_run\templates\payslip.html:25
+msgid "Employee Name"
+msgstr "اسم الموظف"
+
+#: .\employee\models.py:28
+msgid "address1"
+msgstr "عنوان 1"
+
+#: .\employee\models.py:29
+msgid "address2"
+msgstr "عنوان 2"
+
+#: .\employee\models.py:30
+msgid "phone"
+msgstr "الهاتف"
+
+#: .\employee\models.py:31
+msgid "mobile"
+msgstr "المحمول"
+
+#: .\employee\models.py:32 .\employee\templates\create-employee.html:38
+msgid "Birthdate"
+msgstr "تاريخ الميلاد"
+
+#: .\employee\models.py:33 .\employee\templates\create-employee.html:50
+#: .\employee\templates\list-employees-card.html:34
+#: .\employee\templates\view-employee.html:74
+msgid "Hire Date"
+msgstr "تاريخ التعيين"
+
+#: .\employee\models.py:34
+msgid "email"
+msgstr "بريد اليكتروني"
+
+#: .\employee\models.py:35
+msgid "picture"
+msgstr "الصورة"
+
+#: .\employee\models.py:36 .\employee\templates\create-employee.html:149
+msgid "Is Active"
+msgstr "نشط"
+
+#: .\employee\models.py:37 .\employee\templates\create-employee.html:111
+msgid "ID Type"
+msgstr "نوعية التعريف"
+
+#: .\employee\models.py:38 .\employee\templates\create-employee.html:115
+#: .\employee\templates\view-employee.html:82
+#: .\payroll_run\templates\all-payslip.html:25
+#: .\payroll_run\templates\emp-payslip.html:61
+#: .\payroll_run\templates\list-other-allowance.html:66
+#: .\payroll_run\templates\list-other-deductions.html:66
+#: .\payroll_run\templates\payslip.html:21
+msgid "ID Number"
+msgstr "رقم الهوية"
+
+#: .\employee\models.py:39 .\employee\templates\create-employee.html:101
+#: .\employee\templates\view-employee.html:86
+msgid "Place of Birth"
+msgstr "محل الميلاد"
+
+#: .\employee\models.py:40 .\employee\templates\create-employee.html:105
+#: .\employee\templates\view-employee.html:90
+msgid "Nationality"
+msgstr "الجنسية"
+
+#: .\employee\models.py:41 .\employee\templates\create-employee.html:139
+#: .\employee\templates\view-employee.html:94
+msgid "Field of Study"
+msgstr "التخصص الدراسي"
+
+#: .\employee\models.py:42 .\employee\templates\create-employee.html:143
+msgid "Eductaion Degree"
+msgstr "المؤهل الدراسي"
+
+#: .\employee\models.py:43 .\employee\templates\create-employee.html:64
+#: .\employee\templates\view-employee.html:58
+msgid "Gender"
+msgstr "الجنس"
+
+#: .\employee\models.py:44 .\employee\templates\create-employee.html:125
+#: .\employee\templates\view-employee.html:102
+msgid "Social Status"
+msgstr "الحالة الاجتماعية"
+
+#: .\employee\models.py:45 .\employee\templates\create-employee.html:129
+msgid "Milatery Status"
+msgstr "موقف التجنيد"
+
+#: .\employee\models.py:46 .\employee\templates\create-employee.html:133
+#: .\employee\templates\view-employee.html:110
+msgid "Religion"
+msgstr "الديانة"
+
+#: .\employee\models.py:47
+msgid "Insured"
+msgstr "تأمين اجتماعي"
+
+#: .\employee\models.py:48 .\employee\templates\create-employee.html:161
+#: .\employee\templates\view-employee.html:118
+msgid "Insurance Number"
+msgstr "رقم التأمين الاجتماعي"
+
+#: .\employee\models.py:49 .\employee\templates\create-employee.html:165
+#: .\employee\templates\view-employee.html:122
+msgid "Insurance Date"
+msgstr "تاريخ التأمين الاجتماعي"
+
+#: .\employee\models.py:50
+msgid "Has Medical"
+msgstr "تأمين طبي"
+
+#: .\employee\models.py:51 .\employee\templates\create-employee.html:177
+#: .\employee\templates\view-employee.html:130
+msgid "Medical Number"
+msgstr "رقم التأمين الطبي"
+
+#: .\employee\models.py:52 .\employee\templates\create-employee.html:181
+#: .\employee\templates\view-employee.html:134
+msgid "Medical Date"
+msgstr "تاريخ التأمين الطبي"
+
+#: .\employee\models.py:69 .\employee\models.py:91 .\employee\models.py:115
+#: .\employee\models.py:143 .\manage_payroll\models.py:115
+#: .\manage_payroll\models.py:128 .\payroll_run\models.py:27
+msgid "Employee"
+msgstr ""
+
+#: .\employee\models.py:71
+msgid "Medical Code"
+msgstr ""
+
+#: .\employee\models.py:73
+msgid "Medical Name"
+msgstr ""
+
+#: .\employee\models.py:75
+msgid "Medical Company"
+msgstr "شركة التأمين الطبي"
+
+#: .\employee\models.py:93 .\employee\templates\view-employee.html:148
+msgid "Manager"
+msgstr "لمدير المباشر"
+
+#: .\employee\models.py:96
+msgid "Employee Type"
+msgstr "طبيعة تعاقد الموظف"
+
+#: .\employee\models.py:117 .\employee\templates\view-employee.html:186
+#: .\manage_payroll\models.py:81
+#: .\manage_payroll\templates\payment-list.html:27
+msgid "Payment Method"
+msgstr "وسيلة السداد"
+
+#: .\employee\models.py:119 .\employee\templates\view-employee.html:187
+#: .\manage_payroll\models.py:51
+msgid "Account Number"
+msgstr "رقم الحساب"
+
+#: .\employee\models.py:121 .\employee\templates\view-employee.html:188
+msgid "Percentage"
+msgstr "النسبة"
+
+#: .\employee\models.py:123 .\employee\templates\view-employee.html:189
+#: .\manage_payroll\models.py:17 .\manage_payroll\models.py:50
+#: .\manage_payroll\templates\list-bank-branchs.html:26
+msgid "Bank Name"
+msgstr "أسم البنك"
+
+#: .\employee\models.py:125 .\employee\templates\view-employee.html:190
+#: .\manage_payroll\models.py:52
+msgid "Swift Code"
+msgstr "رقم كود سويفت"
+
+#: .\employee\models.py:147
+#: .\employee\templates\create-parameter-values.html:26
+msgid "Element Value"
+msgstr ""
+
+#: .\employee\models.py:189
+msgid "Employee Element"
+msgstr ""
+
+#: .\employee\models.py:191
+msgid "Parameter"
+msgstr ""
+
+#: .\employee\models.py:193
+msgid "Parameter Value"
+msgstr ""
+
+#: .\employee\templates\create-employee.html:26
+msgid "Here you can create Employee data"
+msgstr "هنا يمكنك إنشاء بيانات الموظف"
+
+#: .\employee\templates\create-employee.html:71
+msgid "Personal"
+msgstr "بيانات شخصية"
+
+#: .\employee\templates\create-employee.html:72
+msgid "Official"
+msgstr "بيانات وظيفية"
+
+#: .\employee\templates\create-employee.html:74
+#: .\payroll_run\templates\list-salary-elements.html:56
+msgid "Elements"
+msgstr "عناصر المرتب"
+
+#: .\employee\templates\create-employee.html:87
+#: .\employee\templates\view-employee.html:60
+msgid "Address2"
+msgstr "عنوان 2"
+
+#: .\employee\templates\create-employee.html:119
+msgid "Picture"
+msgstr "الصورة"
+
+#: .\employee\templates\create-parameter-values.html:24
+msgid "Select Element"
+msgstr "اختار عنصر المرتب"
+
+#: .\employee\templates\create-parameter-values.html:34
+msgid "Input Parameters"
+msgstr ""
+
+#: .\employee\templates\create-parameter-values.html:68
+msgid "Back Employee"
+msgstr "الرجوع للموظف"
+
+#: .\employee\templates\list-employees-card.html:17
+msgid "Table View"
+msgstr "شكل الجدول"
+
+#: .\employee\templates\list-employees-card.html:39
+#: .\employee\templates\list-employees.html:40
+#: .\payroll_run\templates\list-salary-month.html:50
+msgid "View"
+msgstr "فحص"
+
+#: .\employee\templates\list-employees.html:16
+#: .\payroll_run\templates\list-other-allowance.html:14
+#: .\payroll_run\templates\list-other-deductions.html:14
+#: .\payroll_run\templates\list-salary-elements.html:14
+msgid "Card View"
+msgstr "شكل الكروت"
+
+#: .\employee\templates\view-employee.html:52
+msgid "Contact details"
+msgstr "بيانات الموظف"
+
+#: .\employee\templates\view-employee.html:57
+msgid "Home Phone"
+msgstr "تليفون المنزل"
+
+#: .\employee\templates\view-employee.html:67
+msgid "Employee Profile"
+msgstr "بيانات الموظف"
+
+#: .\employee\templates\view-employee.html:70
+msgid "Date Of Birth"
+msgstr "تاريخ الميلاد"
+
+#: .\employee\templates\view-employee.html:78
+msgid "Identification Type"
+msgstr "نوع الهوية"
+
+#: .\employee\templates\view-employee.html:98
+msgid "Education Degree"
+msgstr "الدرجة التعليمية"
+
+#: .\employee\templates\view-employee.html:106
+msgid "Military Status"
+msgstr "موقف التجنيد"
+
+#: .\employee\templates\view-employee.html:114
+msgid "Employee is insured?"
+msgstr "تأمين اجتماعي؟"
+
+#: .\employee\templates\view-employee.html:126
+msgid "Employee has medical?"
+msgstr "تأمين طبي؟"
+
+#: .\employee\templates\view-employee.html:142
+msgid "Job-Roll Profile"
+msgstr "البيانات الوظيفية"
+
+#: .\employee\templates\view-employee.html:153
+msgid "Contract"
+msgstr "عقد سنوي"
+
+#: .\employee\templates\view-employee.html:180
+msgid "Employee Payments"
+msgstr "طرق الدفع"
+
+#: .\employee\templates\view-employee.html:214
+msgid "Employee Elements"
+msgstr "بنود الراتب"
+
+#: .\employee\templates\view-employee.html:221
+msgid "Value"
+msgstr "القيمة"
+
+#: .\employee\views.py:90
+msgid "create employee"
+msgstr "إنشاء موظف جديد"
+
+#: .\employee\views.py:114 .\employee\views.py:124
+msgid "List employees"
+msgstr "قائمة الموظفين"
+
+#: .\employee\views.py:138
+msgid "view employee"
+msgstr "عرض بيانات الموظف"
+
+#: .\employee\views.py:216
+msgid "update employee"
+msgstr "تعديل بيانات الموظف"
+
+#: .\home\templates\index.html:14
+msgid "Total Purchase Orders"
+msgstr "إجمالي أوامر الشراء"
+
+#: .\home\templates\index.html:31
+msgid "Monthly Sales"
+msgstr "المبيعات الشهرية"
+
+#: .\home\templates\index.html:48
+msgid "New Hire"
+msgstr "تعيينات جديدة"
+
+#: .\home\templates\index.html:65
+msgid "Available Budget"
+msgstr "الميزانية المتاحة"
+
+#: .\home\templates\index.html:83
+msgid "Salary Statistics Reports"
+msgstr "تقارير إحصاءات الرواتب"
+
+#: .\home\templates\index.html:100
+msgid "Departments Head Count"
+msgstr "عدد رؤساء الأقسام"
+
+#: .\home\views.py:55
+msgid "Login Failed, Please Check the Username or Password"
+msgstr "فشل تسجيل الدخول ، يرجى التحقق من اسم المستخدم أو كلمة المرور"
+
+#: .\home\views.py:130
+msgid "Create New User"
+msgstr "إنشاء مستخدم جديد"
+
+#: .\manage_payroll\models.py:12
+msgid "Monthly"
+msgstr "شهري"
+
+#: .\manage_payroll\models.py:12
+msgid "Weekly"
+msgstr "أسبوعي"
+
+#: .\manage_payroll\models.py:12
+msgid "Yearly"
+msgstr "سنوي"
+
+#: .\manage_payroll\models.py:18
+#: .\manage_payroll\templates\list-bank-branchs.html:27
+msgid "Branch Name"
+msgstr "أسم الفرع"
+
+#: .\manage_payroll\models.py:20
+msgid "Address"
+msgstr "العنوان"
+
+#: .\manage_payroll\models.py:21
+#: .\manage_payroll\templates\list-bank-branchs.html:28
+msgid "Currency"
+msgstr "العملة"
+
+#: .\manage_payroll\models.py:35
+msgid "Payment Type Name"
+msgstr "اسم نوع الدفع"
+
+#: .\manage_payroll\models.py:48
+msgid "Payment Type"
+msgstr "نوع الدفع"
+
+#: .\manage_payroll\models.py:49
+msgid "Payment Method Name"
+msgstr "اسم طريقة الدفع"
+
+#: .\manage_payroll\models.py:64
+msgid "Period Name"
+msgstr "اسم الفترة"
+
+#: .\manage_payroll\models.py:65
+msgid "Period Code"
+msgstr "كود الفترة"
+
+#: .\manage_payroll\models.py:79
+msgid "First Pay Period"
+msgstr "فترة الدفع الأولى"
+
+#: .\manage_payroll\models.py:80
+#: .\manage_payroll\templates\list-payrolls.html:26
+msgid "Payroll Name"
+msgstr "اسم كشوف المرتبات"
+
+#: .\manage_payroll\models.py:82
+msgid "Period Type"
+msgstr "نوع الفترة"
+
+#: .\manage_payroll\models.py:83 .\payroll_run\templates\emp-payslip.html:149
+#: .\payroll_run\templates\emp-payslip.html:239
+msgid "Social Insurance"
+msgstr "التأمينات الاجتماعية"
+
+#: .\manage_payroll\models.py:84
+msgid "Tax Rule"
+msgstr "القاعدة الضريبية"
+
+#: .\manage_payroll\models.py:98
+#: .\manage_payroll\templates\list-assignment-batch.html:26
+msgid "Assignment Name"
+msgstr "الأسم"
+
+#: .\manage_payroll\models.py:99
+msgid "Assignment Code"
+msgstr "الوصف"
+
+#: .\manage_payroll\models.py:111
+msgid "Exclude Batch Id"
+msgstr ""
+
+#: .\manage_payroll\models.py:124 .\payroll_run\models.py:49
+msgid "Deduction"
+msgstr "المستقطع"
+
+#: .\manage_payroll\templates\create-assignment-batch.html:72
+msgid "Include"
+msgstr "يتضمن"
+
+#: .\manage_payroll\templates\create-assignment-batch.html:108
+msgid "Exclude"
+msgstr "استبعاد"
+
+#: .\manage_payroll\templates\list-assignment-batch.html:28
+msgid "Payroll name"
+msgstr "اسم كشوف المرتبات"
+
+#: .\manage_payroll\views.py:20
+msgid "Assignment Batchs"
+msgstr "قائمة تجميع البنود"
+
+#: .\manage_payroll\views.py:71
+msgid "Create new Assignment Batch"
+msgstr "شاشة انشاء تجميع البنود"
+
+#: .\manage_payroll\views.py:126
+msgid "update Assignment Batch"
+msgstr "تعديل تجميع البنوج"
+
+#: .\manage_payroll\views.py:204
+msgid "Payment form hase invalid data"
+msgstr "استمارة الدفع تحتوي على بيانات غير صالحة"
+
+#: .\manage_payroll\views.py:208
+msgid "create payment"
+msgstr "انشاء وسيلة دفع جديدة"
+
+#: .\manage_payroll\views.py:219
+msgid "Payment Types"
+msgstr "وسائل الدفع"
+
+#: .\manage_payroll\views.py:277 .\manage_payroll\views.py:310
+msgid "Payment Updated Successfully"
+msgstr "تم تعديل وسيلة الدفع بنجاح"
+
+#: .\manage_payroll\views.py:280 .\manage_payroll\views.py:313
+msgid "payment_type_form hase invalid data"
+msgstr ""
+
+#: .\manage_payroll\views.py:282
+msgid "update payment"
+msgstr "تعديل وسيلة الدفع"
+
+#: .\manage_payroll\views.py:315
+msgid "correct payment"
+msgstr "تصحيح وسيلة الدفع"
+
+#: .\manage_payroll\views.py:369
+msgid "Bank Created Successfully"
+msgstr "تم انشاء البنك بنجاح"
+
+#: .\manage_payroll\views.py:374
+msgid "Create bank branch"
+msgstr "إنشاء بنك جديد"
+
+#: .\manage_payroll\views.py:383
+msgid "Bank List"
+msgstr "قائمة البنوك"
+
+#: .\manage_payroll\views.py:395
+msgid "Bank Updated Successfully"
+msgstr "تم تعديل البنك بنجاح"
+
+#: .\manage_payroll\views.py:403
+msgid "update bank details"
+msgstr "تعديل بيانات البنك"
+
+#: .\manage_payroll\views.py:437
+msgid "payroll list"
+msgstr "قائمة الرواتب"
+
+#: .\manage_payroll\views.py:454 .\manage_payroll\views.py:472
+msgid "Payroll Created Successfully"
+msgstr "تم تشغيل الراتب بنجاح"
+
+#: .\manage_payroll\views.py:457
+msgid "Create Payroll"
+msgstr "تشغيل راتب جديد"
+
+#: .\manage_payroll\views.py:475
+msgid "Update Payroll"
+msgstr "تعديل سجل الراتب"
+
+#: .\payroll_run\models.py:16 .\payroll_run\templates\all-payslip.html:35
+#: .\payroll_run\templates\emp-payslip.html:73
+#: .\payroll_run\templates\list-salary.html:40
+#: .\payroll_run\templates\payslip.html:31
+msgid "January"
+msgstr "يناير"
+
+#: .\payroll_run\models.py:16 .\payroll_run\templates\all-payslip.html:37
+#: .\payroll_run\templates\emp-payslip.html:75
+#: .\payroll_run\templates\list-salary.html:42
+#: .\payroll_run\templates\payslip.html:33
+msgid "February"
+msgstr "فبراير"
+
+#: .\payroll_run\models.py:16 .\payroll_run\templates\all-payslip.html:39
+#: .\payroll_run\templates\emp-payslip.html:77
+#: .\payroll_run\templates\list-salary.html:44
+#: .\payroll_run\templates\payslip.html:35
+msgid "March"
+msgstr "مارس"
+
+#: .\payroll_run\models.py:16 .\payroll_run\templates\all-payslip.html:41
+#: .\payroll_run\templates\emp-payslip.html:79
+#: .\payroll_run\templates\list-salary.html:46
+#: .\payroll_run\templates\payslip.html:37
+msgid "April"
+msgstr "أبريل"
+
+#: .\payroll_run\models.py:17 .\payroll_run\templates\all-payslip.html:43
+#: .\payroll_run\templates\emp-payslip.html:81
+#: .\payroll_run\templates\list-salary.html:48
+#: .\payroll_run\templates\payslip.html:39
+msgid "May"
+msgstr "مايو"
+
+#: .\payroll_run\models.py:17 .\payroll_run\templates\all-payslip.html:45
+#: .\payroll_run\templates\emp-payslip.html:83
+#: .\payroll_run\templates\list-salary.html:50
+#: .\payroll_run\templates\payslip.html:41
+msgid "June"
+msgstr "يونيو"
+
+#: .\payroll_run\models.py:17 .\payroll_run\templates\all-payslip.html:47
+#: .\payroll_run\templates\emp-payslip.html:85
+#: .\payroll_run\templates\list-salary.html:52
+#: .\payroll_run\templates\payslip.html:43
+msgid "July"
+msgstr "يوليو"
+
+#: .\payroll_run\models.py:17 .\payroll_run\templates\all-payslip.html:49
+#: .\payroll_run\templates\emp-payslip.html:87
+#: .\payroll_run\templates\list-salary.html:54
+#: .\payroll_run\templates\payslip.html:45
+msgid "August"
+msgstr "أغسطس"
+
+#: .\payroll_run\models.py:18 .\payroll_run\templates\all-payslip.html:51
+#: .\payroll_run\templates\emp-payslip.html:89
+#: .\payroll_run\templates\list-salary.html:56
+#: .\payroll_run\templates\payslip.html:47
+msgid "September"
+msgstr "سبتمبر"
+
+#: .\payroll_run\models.py:18 .\payroll_run\templates\all-payslip.html:53
+#: .\payroll_run\templates\emp-payslip.html:91
+#: .\payroll_run\templates\list-salary.html:58
+#: .\payroll_run\templates\payslip.html:49
+msgid "October"
+msgstr "أكتوبر"
+
+#: .\payroll_run\models.py:19 .\payroll_run\templates\all-payslip.html:55
+#: .\payroll_run\templates\emp-payslip.html:93
+#: .\payroll_run\templates\list-salary.html:60
+#: .\payroll_run\templates\payslip.html:51
+msgid "November"
+msgstr "نوفمبر"
+
+#: .\payroll_run\models.py:19 .\payroll_run\templates\all-payslip.html:57
+#: .\payroll_run\templates\emp-payslip.html:95
+#: .\payroll_run\templates\list-salary.html:62
+#: .\payroll_run\templates\payslip.html:53
+msgid "December"
+msgstr "ديسمبر"
+
+#: .\payroll_run\models.py:29 .\payroll_run\templates\list-salary.html:26
+msgid "Salary Month"
+msgstr "شهر التشغيل"
+
+#: .\payroll_run\models.py:30 .\payroll_run\templates\list-salary.html:27
+msgid "Salary Year"
+msgstr "سنة التشغيل"
+
+#: .\payroll_run\models.py:32
+msgid "Run Date"
+msgstr "تاريخ التشغيل"
+
+#: .\payroll_run\models.py:34
+msgid "Number of Days"
+msgstr "عدد الايام"
+
+#: .\payroll_run\models.py:41
+msgid "Income"
+msgstr "الدخل"
+
+#: .\payroll_run\models.py:44 .\payroll_run\templates\all-payslip.html:90
+#: .\payroll_run\templates\payslip.html:86
+msgid "Insurance Amount"
+msgstr "قيمة التأمينات الاجتماعية"
+
+#: .\payroll_run\models.py:46 .\payroll_run\templates\all-payslip.html:99
+#: .\payroll_run\templates\emp-payslip.html:166
+#: .\payroll_run\templates\emp-payslip.html:253
+#: .\payroll_run\templates\payslip.html:95
+msgid "Tax Amount"
+msgstr "قيمة ضريبة الدخل"
+
+#: .\payroll_run\models.py:52 .\payroll_run\templates\all-payslip.html:95
+#: .\payroll_run\templates\emp-payslip.html:162
+#: .\payroll_run\templates\emp-payslip.html:249
+#: .\payroll_run\templates\list-salary-month.html:31
+#: .\payroll_run\templates\payslip.html:91
+msgid "Gross Salary"
+msgstr "اجمالي الدخل"
+
+#: .\payroll_run\models.py:54 .\payroll_run\templates\all-payslip.html:103
+#: .\payroll_run\templates\emp-payslip.html:170
+#: .\payroll_run\templates\emp-payslip.html:257
+#: .\payroll_run\templates\list-salary-month.html:32
+#: .\payroll_run\templates\payslip.html:99
+msgid "Net Salary"
+msgstr "صافي الدخل"
+
+#: .\payroll_run\models.py:56
+msgid "Salary is final"
+msgstr "راتب نهائي"
+
+#: .\payroll_run\models.py:170
+msgid "There is another Salary record that is later than this one"
+msgstr "يوجد سجل راتب آخر بعد هذا التاريخ"
+
+#: .\payroll_run\templates\all-payslip.html:33
+#: .\payroll_run\templates\emp-payslip.html:70
+#: .\payroll_run\templates\payslip.html:29
+msgid "Pay Period"
+msgstr "فترة سداد الراتب"
+
+#: .\payroll_run\templates\all-payslip.html:61
+#: .\payroll_run\templates\emp-payslip.html:103
+#: .\payroll_run\templates\payslip.html:57
+msgid "Payroll Run Date"
+msgstr "تاريخ تشغيل الراتب"
+
+#: .\payroll_run\templates\create-salary.html:19
+msgid "Run Payroll"
+msgstr "تشغيل الراتب"
+
+#: .\payroll_run\templates\emp-payslip.html:37
+msgid "Print"
+msgstr "طباعة"
+
+#: .\payroll_run\templates\emp-payslip.html:117
+#: .\payroll_run\templates\emp-payslip.html:210
+#: .\payroll_run\templates\list-other-allowance.html:76
+#: .\payroll_run\templates\list-other-deductions.html:76
+msgid "Earning"
+msgstr "استحقاقات"
+
+#: .\payroll_run\templates\emp-payslip.html:118
+#: .\payroll_run\templates\emp-payslip.html:138
+#: .\payroll_run\templates\emp-payslip.html:211
+#: .\payroll_run\templates\emp-payslip.html:229
+#: .\payroll_run\templates\list-other-allowance.html:77
+#: .\payroll_run\templates\list-other-deductions.html:77
+msgid "Amount EGP"
+msgstr "الاجمالي بالجنية"
+
+#: .\payroll_run\templates\emp-payslip.html:137
+#: .\payroll_run\templates\emp-payslip.html:228
+msgid "Deductions"
+msgstr "استقطاعات"
+
+#: .\payroll_run\templates\list-other-allowance.html:62
+msgid "Name "
+msgstr "الأسم"
+
+#: .\payroll_run\templates\list-salary-month.html:15
+msgid "Print All"
+msgstr "طباعة الكل"
+
+#: .\payroll_run\templates\list-salary-month.html:29
+msgid "Running Date"
+msgstr "تاريخ تشغيل الراتب"
+
+#: .\payroll_run\templates\list-salary-month.html:30
+msgid "Working Days"
+msgstr "ايام العمل"
+
+#: .\payroll_run\templates\list-salary.html:28
+msgid "number of employees"
+msgstr "عدد الموظفين"
+
+#: .\payroll_run\templates\list-salary.html:29
+msgid "Final"
+msgstr "نهائي"
+
+#: .\payroll_run\templates\list-salary.html:112
+#, fuzzy
+#| msgid "Are you sure you want to finalize this payroll?!"
+msgid "Are you sure you want to finalize this payroll?! "
+msgstr "هل أنت متأكد أنك تريد إنهاء هذه الرواتب ؟!"
+
+#: .\payroll_run\templates\list-salary.html:113
+msgid "Warning ...You cannot roll back"
+msgstr "تحذير ... لا يمكنك التراجع"
+
+#: .\payroll_run\views.py:33
+msgid "salary list"
+msgstr "قائمة الرواتب"
+
+#: .\payroll_run\views.py:238
+msgid "create salary"
+msgstr "إنشاء راتب"
+
+#: .\payroll_run\views.py:253
+msgid "salaries for month {}"
+msgstr "رواتب شهر {}"
+
+#: .\payroll_run\views.py:280
+msgid "salary information for {}"
+msgstr "معلومات راتب {}"

@@ -1,0 +1,43 @@
+{% extends 'master.html' %}
+{% load staticfiles%}
+{% load i18n %}
+{% load l10n %}
+
+{% block body %}
+<form method="post" id="my_form">
+  {% csrf_token %}
+  {% include 'messages.html' %}
+  <section class="panel panel-default">
+    <div class="panel-body">
+      <header class="panel-heading font-bold pull-right">{{page_title|title}}</header>
+      <div class="doc-buttons pull-left">
+        <a href="javascript:{}" onclick="document.getElementById('my_form').submit(); return false;" class="btn btn-s-md btn-primary ">{% trans "Save" %}</a>
+        <a href="{% url 'employee:list-employee' %}" class="btn btn-s-md btn-default">{% trans "Back to List" %}</a>
+      </div>
+    </div>
+  </section>
+  <section class="panel panel-default">
+    <div class="panel-body">
+      <div class="form-group pull-in clearfix">
+        <div class="pull-right">
+
+        </div>
+        <div class={% if LANGUAGE_CODE == 'ar' %} "col-sm-6 pull-right" {% else %} "col-sm-6 pull-left" {% endif %}>
+          {% for field in add_user %}
+          <p>
+            {{ field.label_tag }}<br>
+            {{ field }}
+            {% if field.help_text %}
+            <small style="color: grey">{{ field.help_text }}</small>
+            {% endif %}
+            {% for error in field.errors %}
+            <p style="color: red">{{ error }}</p>
+            {% endfor %}
+          </p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </section>
+</form>
+{% endblock body %}

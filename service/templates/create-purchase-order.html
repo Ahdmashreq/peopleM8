@@ -1,0 +1,204 @@
+{% extends "master.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+
+{% block body %}
+{% include 'messages.html' %}
+<div class="row gap-20 masonry pos-r" style="position: relative; height: 1120.2px;">
+  <div class="masonry-sizer col-md-6"></div>
+  <div class="masonry-item col-md-12" style="position: absolute; left: 0%; top: 375.4px;">
+    <div class="bgc-white p-20 bd">
+      <h1 class="c-grey-900" style="text-align:center;">
+        <strong>Purchase Request Form</strong>
+      </h1>
+      <div class="mT-30">
+        <form method="POST">
+          {% csrf_token %}
+          <!-- <div class="form-group row">
+            <label class="col-sm-2 col-form-label">{{purchase_form.order_number.label}}</label>
+            <div class="col-sm-4">
+              {{purchase_form.order_number}}
+            </div>
+          </div> -->
+          <!-- <div class="form-group row"">
+            <label class=" col-sm-2 col-form-label">{{purchase_form.ordered_by.label}}</label>
+            <div class="col-sm-4">
+              {{purchase_form.ordered_by}}
+            </div>
+          </div> -->
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">{{purchase_form.department.label}}</label>
+            <div class="col-sm-4">
+              {{purchase_form.department}}
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">{{purchase_form.date_of_purchase.label}}</label>
+            <div class="col-sm-4">
+              {{purchase_form.date_of_purchase}}
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">{{purchase_form.office.label}}</label>
+            <div class="col-sm-8">
+              {{purchase_form.office}}
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">{{purchase_form.payment_method.label}}</label>
+            <div class="col-sm-4">
+              {{purchase_form.payment_method}}
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">{{purchase_form.purpose.label}}</label>
+            <div class="col-sm-8">
+              {{purchase_form.purpose}}
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">{{purchase_form.vendor_details.label}}</label>
+            <div class="col-sm-8">
+              {{purchase_form.vendor_details}}
+            </div>
+          </div>
+          <div class="row" style="margin-left:0px;">
+            <div class="col-md-12">
+              <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                {{ purchase_items_form.management_form }}
+                <div id="purchase_set">
+                  <div class="form-row">
+                    <div class="form-group col-md-4 text-center">
+                      <label>{% trans "Item Description" %}</label>
+                    </div>
+                    <div class="form-group col-md-2 text-center">
+                      <label>{% trans "Vendor Name" %}</label>
+                    </div>
+                    <div class="form-group col-md-2 text-center">
+                      <label>{% trans "Unit Price" %}</label>
+                    </div>
+                    <div class="form-group col-md-2 text-center">
+                      <label>{% trans "Qnt" %}</label>
+                    </div>
+                    <div class="form-group col-md-2 text-center">
+                      <label>{% trans "Delete" %}</label>
+                    </div>
+                  </div>
+                  {% for form in purchase_items_form.forms %}
+                  {{form.non_field_errors}}
+                  {{form.errors}}
+                  {% for hidden in form.hidden_fields %}
+                  {{ hidden }}
+                  {% endfor %}
+                  <div class="form-row">
+                    <div class="form-group col-md-4">
+                      {{ form.item_description }}
+                    </div>
+                    <div class="form-group col-md-2">
+                      {{ form.vendor_name }}
+                    </div>
+                    <div class="form-group col-md-2">
+                      {{ form.unit_price }}
+                    </div>
+                    <div class="form-group col-md-2">
+                      {{ form.qnt }}
+                    </div>
+                    <div class="form-group col-md-2 text-center">
+                      {{ form.DELETE }}
+                    </div>
+                  </div>
+                  {% endfor %}
+                </div>
+                <button type="button" id="add_more" class="btn cur-p btn-success">{% trans "Add New Line"%}</button>
+                <div id="empty_form" style="display:none">
+                  <table class='no_error'>
+                    <div class="form-row">
+                      <div class="form-group col-md-4">
+                        {{ purchase_items_form.empty_form.item_description }}
+                      </div>
+                      <div class="form-group col-md-2">
+                        {{ purchase_items_form.empty_form.vendor_name }}
+                      </div>
+                      <div class="form-group col-md-2">
+                        {{ purchase_items_form.empty_form.unit_price }}
+                      </div>
+                      <div class="form-group col-md-2">
+                        {{ purchase_items_form.empty_form.qnt }}
+                      </div>
+                      <div class="form-group col-md-2 text-center">
+                        {{ purchase_items_form.empty_form.DELETE }}
+                      </div>
+                    </div>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <strong>
+              <h3>Total Cost: EGP <output id="result"></output></h3>
+            </strong>
+          </div>
+
+          <div class="form-group row">
+            <div class="col-sm-10">
+              <button type="submit" class="btn btn-primary">Submit</button>
+              <button type="button" class="btn btn-default">
+                <a href="{% url 'service:purchase-request-list' %}">Cancel</a>
+              </button>
+            </div>
+
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock body %}
+
+{% block js %}
+<script>
+  $(document).ready(function() {
+    $('.form-group').on('input', '.prc', function() {
+      var totalSum = 0;
+      $('.form-group .prc').each(function() {
+        var inputVal = parseInt($(this).val());
+        totalSum += inputVal;
+      });
+      $('#result').text(totalSum);
+    })
+  });
+</script>
+<script>
+  $(document).ready(function() { //function will wait for the page to fully load before executing
+    $('#id_duration_of_hotel_from').attr('disabled', true);
+    $('#id_duration_of_hotel_to').attr('disabled', true);
+    $('#id_hotel_name').attr('disabled', true);
+    $('#id_cost_per_night').attr('disabled', true);
+    $("input[type=radio][name=accomodation]").change(function() { //specifying onchange function for input of type radio and name visibility
+      if (this.value != "H") { //if the new value is private
+        $('#id_duration_of_hotel_from').attr('disabled', true);
+        $('#id_duration_of_hotel_to').attr('disabled', true);
+        $('#id_hotel_name').attr('disabled', true);
+        $('#id_cost_per_night').attr('disabled', true);
+      } else { //if the new value is anything else
+        $('#id_duration_of_hotel_from').attr('disabled', false);
+        $('#id_duration_of_hotel_to').attr('disabled', false);
+        $('#id_hotel_name').attr('disabled', false);
+        $('#id_cost_per_night').attr('disabled', false);
+      }
+    });
+
+  });
+</script>
+<script>
+  $('#add_more').click(function() {
+    var form_idx = $('#id_purchase_items_form-TOTAL_FORMS').val();
+    $('#purchase_set').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
+    $('#id_purchase_items_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+  });
+</script>
+{% endblock js %}

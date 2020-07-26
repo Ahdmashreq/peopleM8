@@ -1,0 +1,253 @@
+{% extends 'master.html'%}
+{% load staticfiles%}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+{% block body%}
+
+
+<div class="container-fluid">
+  <div class="row" style="margin-left:0px;">
+    <div class="col-md-8">
+      <h4 class="c-grey-900">{{page_title|title}} - CV View</h4>
+    </div>
+    <div class="col-md-4">
+      <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %} ">
+        <div class="peer"><a href="{% url 'employee:update-employee' pk=required_employee.id %}" class="btn cur-p btn-primary">{% trans "Update" %}</a></div>
+        <div class="peer"><a href="{% url 'employee:list-employee' %}" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a></div>
+      </div>
+    </div>
+  </div>
+
+<!-- ******************************** -->
+
+<!-- MAIN CONTAINER -->
+<div class="mt-1">
+  <div class="bgc-white p-20 bd">
+    <div class="mT-30">
+		<div id="main_container">
+      <!-- HEADER -->
+
+        <!-- MAIN MENU -->
+
+          <div class="row">
+            <div class="col-md-12">
+                <div class="header_logotype_container">
+                  <h1 class="logotype_name">{{ required_employee.emp_name }}</h1>
+                  <h2 class="logotype_occupation">{{ required_jobRoll.position }}</h2>
+                </div>
+            </div>
+            <!-- <div class="col-md-6">
+            <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %} ">
+              <div class="peer"><a href="{% url 'employee:update-employee' pk=required_employee.id %}" class="btn cur-p btn-dark">Download CV</a></div>
+              <div class="peer"><a href="{% url 'employee:list-employee' %}" class="btn cur-p btn-dark">Print CV</a></div>
+            </div>
+            </div> -->
+            </div>
+
+
+      <div class="container-fluid">
+
+      <div class="row">
+        <h2 class="TOrange">{% trans "Contact details" %}</h2>
+
+        <div class="col-md-12 mT-10 {% if LANGUAGE_BIDI %} text-sm-right {% else %} text-sm-left {% endif %}">
+        <p><i class="fa fa-envelope {% if LANGUAGE_BIDI %} pR-10 {% else %} pL-10 {% endif %}"></i><strong>{% trans "Email" %}: </strong>{{required_employee.email}}</p>
+        <p><i class="fa fa-mobile {% if LANGUAGE_BIDI %} pR-10 {% else %} pL-10 {% endif %}"></i><strong>{% trans "Mobile" %}: </strong>{{required_employee.mobile}}</p>
+        <p><i class="fa fa-phone {% if LANGUAGE_BIDI %} pR-10 {% else %} pL-10 {% endif %}"></i><strong>{% trans "Home Phone" %}: </strong>{{required_employee.phone}}</p>
+        <p><i class="fa fa-user {% if LANGUAGE_BIDI %} pR-10 {% else %} pL-10 {% endif %}"></i><strong>{% trans "Gender" %}: </strong>{{required_employee.gender}}</p>
+        <p><i class="fa fa-map-marker {% if LANGUAGE_BIDI %} pR-10 {% else %} pL-10 {% endif %}"></i><strong>{% trans "Address1" %}: </strong>{{required_employee.address1}}</p>
+        <p><i class="fa fa-map-marker {% if LANGUAGE_BIDI %} pR-10 {% else %} pL-10 {% endif %}"></i><strong>{% trans "Address2" %}: </strong>{{required_employee.address2}}</p>
+
+      </div>
+      </div>
+    <hr>
+      <!-- PROFILE CONTENT -->
+      <div class="row">
+        <h2 class="TOrange">{% trans "Employee Profile" %}</h2>
+      <div class="form-row gap-10 col-md-12 mT-10">
+        <div class="col-md-6">
+          <strong>{% trans "Date Of Birth" %}:</strong>
+          {{required_employee.date_of_birth}}
+        </div>
+        <div class="col-sm-6">
+          <strong>{% trans "Hire Date" %}:</strong>
+          {{required_employee.hiredate}}
+        </div>
+        <div class="col-sm-6">
+          <strong>{% trans "Identification Type" %}:</strong>
+          {{required_employee.identification_type}}
+        </div>
+        <div class="col-sm-6">
+          <strong>{% trans "ID Number" %}:</strong>
+          {{required_employee.id_number}}
+        </div>
+        <div class="col-sm-6">
+          <strong>{% trans "Place of Birth" %}:</strong>
+          {{required_employee.place_of_birth}}
+        </div>
+        <div class="col-sm-6">
+          <strong>{% trans "Nationality" %}:</strong>
+          {{required_employee.nationality}}
+        </div>
+        <div class="col-sm-6">
+          <strong>{% trans "Field of Study" %}:</strong>
+          {{required_employee.field_of_study}}
+        </div>
+        <div class="col-sm-6">
+          <strong>{% trans "Education Degree" %}:</strong>
+          {{required_employee.education_degree}}
+        </div>
+        <div class="col-sm-6">
+          <strong>{% trans "Social Status" %}:</strong>
+          {{required_employee.social_status}}
+        </div>
+        <div class="col-sm-6">
+          <strong>{% trans "Military Status" %}:</strong>
+          {{required_employee.military_status}}
+        </div>
+        <div class="col-sm-6">
+          <strong>{% trans "Religion" %}:</strong>
+          {{required_employee.religion}}
+        </div>
+        <div class="col-sm-6">
+          <strong>{% trans "Employee is insured?" %}:</strong>
+          {{required_employee.insured}}
+        </div>
+        <div class="col-sm-6">
+          <strong>{% trans "Insurance Number" %}:</strong>
+          {{required_employee.insurance_number}}
+        </div>
+        <div class="col-sm-6">
+          <strong>{% trans "Insurance Date" %}:</strong>
+          {{required_employee.insurance_date}}
+        </div>
+        <div class="col-sm-6">
+          <strong>{% trans "Employee has medical?" %}:</strong>
+          {{required_employee.has_medical}}
+        </div>
+        <div class="col-sm-6">
+          <strong>{% trans "Medical Number" %}:</strong>
+          {{required_employee.medical_number}}
+        </div>
+        <div class="col-sm-6">
+          <strong>{% trans "Medical Date" %}:</strong>
+          {{required_employee.medical_date}}
+        </div>
+      </div>
+        <div class="clear"></div>
+      </div>
+      <hr>
+      <div class="row">
+      <h2 class="TOrange">{% trans "Job-Roll Profile" %}</h2>
+      <div class="col-md-12">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th width="20" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1">#</th>
+              <th tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1">{% trans "Manager" %}</th>
+              <th tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1">{% trans "Department" %}</th>
+              <th tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1">{% trans "Position" %}</th>
+              <th tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1">{% trans "Grade" %}</th>
+              <th tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1">{% trans "Job" %}</th>
+              <th tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1">{% trans "Contract" %}</th>
+              <th tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1">{% trans "Payroll" %}</th>
+              <th tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1">{% trans "Start Date" %}</th>
+              <th tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1">{% trans "End Date" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for job in all_jobRoll %}
+            <tr>
+              <th scope="row">{{ forloop.counter }}</th>
+              <td>{{ job.manager }}</td>
+              <td>{{ job.department }}</td>
+              <td>{{ job.position }}</td>
+              <td>{{ job.grade }}</td>
+              <td>{{ job.job_name }}</td>
+              <td>{{ job.contract_type }}</td>
+              <td>{{ job.payroll }}</td>
+              <td>{{ job.start_date }}</td>
+              <td>{{ job.end_date }}</td>
+            </tr>
+          </tbody>
+          {% endfor %}
+        </table>
+      </div>
+        <div class="clear"></div>
+      </div>
+      <div class="row">
+      <h2 class="TOrange">{% trans "Employee Payments" %}</h2>
+      <div class="col-md-12">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th width="20" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1">#</th>
+              <th tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1">{% trans "Payment Method" %}</th>
+              <th tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1">{% trans "Account Number" %}</th>
+              <th tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1">{% trans "Percentage" %}</th>
+              <th tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1">{% trans "Bank Name" %}</th>
+              <th tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1">{% trans "Swift Code" %}</th>
+              <th tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1">{% trans "Start Date" %}</th>
+              <th tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1">{% trans "End Date" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for payment in all_payment %}
+            <tr>
+              <th scope="row">{{ forloop.counter }}</th>
+              <td>{{ payment.payment_method }}</td>
+              <td>{{ payment.account_number }}</td>
+              <td>{{ payment.percentage }}</td>
+              <td>{{ payment.bank_name }}</td>
+              <td>{{ payment.swift_code }}</td>
+              <td>{{ payment.start_date }}</td>
+              <td>{{ payment.end_date }}</td>
+            </tr>
+          </tbody>
+          {% endfor %}
+        </table>
+      </div>
+        <div class="clear"></div>
+      </div>
+      <div class="row">
+      <h2 class="TOrange">{% trans "Employee Elements" %}</h2>
+      <div class="col-md-12">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th width="20" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1">#</th>
+              <th tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1">{% trans "Element" %}</th>
+              <th tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1">{% trans "Value" %}</th>
+              <th tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1">{% trans "Start Date" %}</th>
+              <th tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1">{% trans "End Date" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for element in all_elements %}
+            <tr>
+              <th scope="row">{{ forloop.counter }}</th>
+              <td>{{ element.element_id }}</td>
+              <td>{{ element.element_value }}</td>
+              <td>{{ element.start_date }}</td>
+              <td>{{ element.end_date }}</td>
+            </tr>
+          </tbody>
+          {% endfor %}
+        </table>
+      </div>
+        <div class="clear"></div>
+      </div>
+    </div>
+
+      </div>
+      </div>
+
+      <!-- FOOTER -->
+      <!-- <div id="footer">
+        <p class="footer_name">Javier Latorre CV 2015</p>
+      </div> -->
+		</div>
+    </div></div>
+
+{% endblock body%}

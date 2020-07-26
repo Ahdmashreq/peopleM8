@@ -1,0 +1,340 @@
+[{
+    "model": "defenition.LookupType",
+    "pk": 3,
+    "fields": {
+      "enterprise": 1,
+      "lookup_type_name": "PAYMENT_TYPE_CATEGORY",
+      "lookup_type_description": "طرق السداد",
+      "start_date": "2000-01-01",
+      "created_by": 1,
+      "creation_date": "2000-01-01",
+      "last_update_by": 1,
+      "last_update_date": "2000-01-01"
+    }
+  },
+  {
+    "model": "defenition.LookupType",
+    "pk": 4,
+    "fields": {
+      "enterprise": 1,
+      "lookup_type_name": "ELEMENT_TYPE",
+      "lookup_type_description": "نوع البند",
+      "start_date": "2000-01-01",
+      "created_by": 1,
+      "creation_date": "2000-01-01",
+      "last_update_by": 1,
+      "last_update_date": "2000-01-01"
+    }
+  },
+  {
+    "model": "defenition.LookupType",
+    "pk": 5,
+    "fields": {
+      "enterprise": 1,
+      "lookup_type_name": "ELEMENT_CLASSIFICATION",
+      "lookup_type_description": "طبيعة البند",
+      "start_date": "2000-01-01",
+      "created_by": 1,
+      "creation_date": "2000-01-01",
+      "last_update_by": 1,
+      "last_update_date": "2000-01-01"
+    }
+  },
+  {
+    "model": "defenition.LookupType",
+    "pk": 10,
+    "fields": {
+      "enterprise": 1,
+      "lookup_type_name": "EMPLOYEE_TYPE",
+      "lookup_type_description": "نوعية العقد",
+      "start_date": "2000-01-01",
+      "created_by": 1,
+      "creation_date": "2000-01-01",
+      "last_update_by": 1,
+      "last_update_date": "2000-01-01"
+    }
+  },
+  {
+    "model": "defenition.LookupType",
+    "pk": 11,
+    "fields": {
+      "enterprise": 1,
+      "lookup_type_name": "PAYMENT_TYPE",
+      "lookup_type_description": "PAYMENT_TYPE",
+      "start_date": "2000-01-01",
+      "created_by": 1,
+      "creation_date": "2000-01-01",
+      "last_update_by": 1,
+      "last_update_date": "2000-01-01"
+    }
+  },
+  {
+    "model": "defenition.LookupType",
+    "pk": 12,
+    "fields": {
+      "enterprise": 1,
+      "lookup_type_name": "ACCOUNT_TYPE",
+      "lookup_type_description": "ACCOUNT_TYPE",
+      "start_date": "2000-01-01",
+      "created_by": 1,
+      "creation_date": "2000-01-01",
+      "last_update_by": 1,
+      "last_update_date": "2000-01-01"
+    }
+  },
+  {
+    "model": "defenition.LookupType",
+    "pk": 13,
+    "fields": {
+      "enterprise": 1,
+      "lookup_type_name": "PERIOD_TYPE",
+      "lookup_type_description": "PERIOD_TYPE",
+      "start_date": "2000-01-01",
+      "created_by": 1,
+      "creation_date": "2000-01-01",
+      "last_update_by": 1,
+      "last_update_date": "2000-01-01"
+    }
+  },
+  {
+    "model": "defenition.LookupDet",
+    "pk": 5,
+    "fields": {
+      "lookup_type_fk": 3,
+      "name": "تحويل",
+      "code": "Transfer",
+      "description": "Transfer",
+      "start_date": "2000-01-01",
+      "created_by": 1,
+      "creation_date": "2000-01-01",
+      "last_update_by": 1,
+      "last_update_date": "2000-01-01"
+    }
+  },
+  {
+    "model": "defenition.LookupDet",
+    "pk": 6,
+    "fields": {
+      "lookup_type_fk": 3,
+      "name": "دفع نقدي",
+      "code": "Cash",
+      "description": "Cash",
+      "start_date": "2000-01-01",
+      "created_by": 1,
+      "creation_date": "2000-01-01",
+      "last_update_by": 1,
+      "last_update_date": "2000-01-01"
+    }
+  },
+  {
+    "model": "defenition.LookupDet",
+    "pk": 7,
+    "fields": {
+      "lookup_type_fk": 4,
+      "name": "دوريا",
+      "code": "Recurring",
+      "description": "Recurring",
+      "start_date": "2000-01-01",
+      "created_by": 1,
+      "creation_date": "2000-01-01",
+      "last_update_by": 1,
+      "last_update_date": "2000-01-01"
+    }
+  },
+  {
+    "model": "defenition.LookupDet",
+    "pk": 8,
+    "fields": {
+      "lookup_type_fk": 4,
+      "name": "مرة واحدة",
+      "code": "Non-Recurring",
+      "description": "Non-Recurring",
+      "start_date": "2000-01-01",
+      "created_by": 1,
+      "creation_date": "2000-01-01",
+      "last_update_by": 1,
+      "last_update_date": "2000-01-01"
+    }
+  },
+  {
+    "model": "defenition.LookupDet",
+    "pk": 9,
+    "fields": {
+      "lookup_type_fk": 5,
+      "name": "أستحقاقات",
+      "code": "earn",
+      "description": "Earning",
+      "start_date": "2000-01-01",
+      "created_by": 1,
+      "creation_date": "2000-01-01",
+      "last_update_by": 1,
+      "last_update_date": "2000-01-01"
+    }
+  },
+  {
+    "model": "defenition.LookupDet",
+    "pk": 10,
+    "fields": {
+      "lookup_type_fk": 5,
+      "name": "استقطاعات",
+      "code": "deduct",
+      "description": "Deduction",
+      "start_date": "2000-01-01",
+      "created_by": 1,
+      "creation_date": "2000-01-01",
+      "last_update_by": 1,
+      "last_update_date": "2000-01-01"
+    }
+  },
+  {
+
+    "model": "defenition.LookupDet",
+    "pk": 11,
+    "fields": {
+      "lookup_type_fk": 5,
+      "name": "معلومة",
+      "code": "info",
+      "description": "Information",
+      "start_date": "2000-01-01",
+      "created_by": 1,
+      "creation_date": "2000-01-01",
+      "last_update_by": 1,
+      "last_update_date": "2000-01-01"
+    }
+  },
+  {
+    "model": "defenition.LookupDet",
+    "pk": 22,
+    "fields": {
+      "lookup_type_fk": 10,
+      "name": "عقد سنوي",
+      "code": "CONTRACT",
+      "description": "Contract",
+      "start_date": "2000-01-01",
+      "created_by": 1,
+      "creation_date": "2000-01-01",
+      "last_update_by": 1,
+      "last_update_date": "2000-01-01"
+    }
+  },
+  {
+    "model": "defenition.LookupDet",
+    "pk": 23,
+    "fields": {
+      "lookup_type_fk": 10,
+      "name": "عقد دائم",
+      "code": "PERMENANT",
+      "description": "Permenant",
+      "start_date": "2000-01-01",
+      "created_by": 1,
+      "creation_date": "2000-01-01",
+      "last_update_by": 1,
+      "last_update_date": "2000-01-01"
+    }
+  },
+  {
+    "model": "defenition.LookupDet",
+    "pk": 24,
+    "fields": {
+      "lookup_type_fk": 11,
+      "name": "نقدي",
+      "code": "CASH",
+      "description": "Cash",
+      "start_date": "2000-01-01",
+      "created_by": 1,
+      "creation_date": "2000-01-01",
+      "last_update_by": 1,
+      "last_update_date": "2000-01-01"
+    }
+  },
+  {
+    "model": "defenition.LookupDet",
+    "pk": 25,
+    "fields": {
+      "lookup_type_fk": 11,
+      "name": "شيك",
+      "code": "CHECK",
+      "description": "Check",
+      "start_date": "2000-01-01",
+      "created_by": 1,
+      "creation_date": "2000-01-01",
+      "last_update_by": 1,
+      "last_update_date": "2000-01-01"
+    }
+  },
+  {
+    "model": "defenition.LookupDet",
+    "pk": 26,
+    "fields": {
+      "lookup_type_fk": 11,
+      "name": "تحويل بنكي",
+      "code": "TRANSFER",
+      "description": "Bank transfer",
+      "start_date": "2000-01-01",
+      "created_by": 1,
+      "creation_date": "2000-01-01",
+      "last_update_by": 1,
+      "last_update_date": "2000-01-01"
+    }
+  },
+  {
+    "model": "defenition.LookupDet",
+    "pk": 27,
+    "fields": {
+      "lookup_type_fk": 12,
+      "name": "حساب شركة",
+      "code": "COMPANY",
+      "description": "Company account",
+      "start_date": "2000-01-01",
+      "created_by": 1,
+      "creation_date": "2000-01-01",
+      "last_update_by": 1,
+      "last_update_date": "2000-01-01"
+    }
+  },
+  {
+    "model": "defenition.LookupDet",
+    "pk": 28,
+    "fields": {
+      "lookup_type_fk": 12,
+      "name": "حساب موظف",
+      "code": "EMPLOYEE",
+      "description": "Employee account",
+      "start_date": "2000-01-01",
+      "created_by": 1,
+      "creation_date": "2000-01-01",
+      "last_update_by": 1,
+      "last_update_date": "2000-01-01"
+    }
+  },
+  {
+    "model": "defenition.LookupDet",
+    "pk": 29,
+    "fields": {
+      "lookup_type_fk": 13,
+      "name": "شهري",
+      "code": "month",
+      "description": "Monthly",
+      "start_date": "2000-01-01",
+      "created_by": 1,
+      "creation_date": "2000-01-01",
+      "last_update_by": 1,
+      "last_update_date": "2000-01-01"
+    }
+  },
+  {
+    "model": "defenition.LookupDet",
+    "pk": 30,
+    "fields": {
+      "lookup_type_fk": 13,
+      "name": "اسبوعي",
+      "code": "week",
+      "description": "Weekly",
+      "start_date": "2000-01-01",
+      "created_by": 1,
+      "creation_date": "2000-01-01",
+      "last_update_by": 1,
+      "last_update_date": "2000-01-01"
+    }
+  }
+]

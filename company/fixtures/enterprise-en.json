@@ -1,0 +1,25 @@
+[
+  {
+    "model": "company.Enterprise",
+    "pk": 1,
+    "fields": {
+      "enterprise_user": 1,
+      "name": "Main Enterprise",
+      "business_unit_name": "Main 1",
+      "reg_tax_num":"Ma0123",
+      "commercail_record": "Ma0123",
+      "address1": "Main street",
+      "phone": "0001",
+      "mobile":"0001",
+      "fax": "0001",
+      "email": "main@mashreq.com",
+      "country": 1,
+
+      "start_date": "2000-01-01",
+      "created_by": 1,
+      "creation_date": "2000-01-01",
+      "last_update_by": 1,
+      "last_update_date": "2000-01-01"
+    }
+  }
+]

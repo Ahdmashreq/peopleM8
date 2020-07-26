@@ -1,0 +1,130 @@
+{% extends 'master.html'%}
+{% load staticfiles%}
+{% load i18n %}
+{% load l10n %}
+{% load crispy_forms_tags %}
+{% block body%}
+
+<div class="container-fluid">
+  <div class="row" style="margin-left:0px;">
+    <div class="col-md-8">
+      <h4 class="c-grey-900">{{page_title|title}}</h4>
+    </div>
+    <div class="col-md-4">
+      <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %} ">
+        <div class="peer"><a href="{% url 'payroll_run:create-salary' %}" class="btn cur-p btn-primary">{% trans "Add" %}</a></div>
+      </div>
+    </div>
+  </div>
+  <div class="row" style="margin-left:0px;">
+    <div class="col-md-12">
+      <div class="bgc-white bd bdrs-3 p-20 mB-20">
+        <table id="dataTable" class="table table-striped table-bordered">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>{% trans "Salary Month" %}</th>
+              <th>{% trans "Salary Year" %}</th>
+              <th>{% trans "number of employees" %}</th>
+              <th>{% trans "Final" %}</th>
+              <th>{% trans "Actions" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for salary in salary_list %}
+            <tr>
+              <td scope="row">{{ forloop.counter }}</td>
+              <td>
+                <a href="{% url 'payroll_run:list-month-salary' month=salary.salary_month year=salary.salary_year %}">
+                  {% if salary.salary_month == 1%}
+                  {% trans "January" %}
+                  {% elif salary.salary_month == 2%}
+                  {% trans "February" %}
+                  {% elif salary.salary_month == 3%}
+                  {% trans "March" %}
+                  {% elif salary.salary_month == 4%}
+                  {% trans "April" %}
+                  {% elif salary.salary_month == 5%}
+                  {% trans "May" %}
+                  {% elif salary.salary_month == 6 %}
+                  {% trans "June" %}
+                  {% elif salary.salary_month == 7 %}
+                  {% trans "July" %}
+                  {% elif salary.salary_month == 8%}
+                  {% trans "August" %}
+                  {% elif salary.salary_month == 9%}
+                  {% trans "September" %}
+                  {% elif salary.salary_month == 10%}
+                  {% trans "October" %}
+                  {% elif salary.salary_month == 11%}
+                  {% trans "November" %}
+                  {% elif salary.salary_month == 12%}
+                  {% trans "December" %}
+                  {% endif %}
+                </a>
+              </td>
+              <td>{{ salary.salary_year }}</td>
+              <td>{{ salary.num_salaries }}</td>
+              <td align="center">
+                {% if salary.is_final == 1 %}
+                <img src="{% static 'img/final-icon.png' %}" alt="final" hight="30" width="30">
+                {% else %}
+                <a href="" data-toggle="modal" data-target="#final-modal-{{salary.salary_month}}{{salary.salary_year}}">
+                  <img src="{% static 'img/refresh-icon.png' %}" alt="refresh" hight="30" width="30">
+                </a>
+                {% endif %}
+              </td>
+              <td class="Actions">
+                <div class="w-100 gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
+                  <div class="peer">
+                    <a href="#">
+                      {% if salary.is_final == 1 %}
+                      <a hidden href="" data-toggle="modal" data-target="#delete-modal{{salary.pk}}">
+                        {% trans "Delete" %}</a>
+                      {% else %}
+                      <a href="" data-toggle="modal" data-target="#delete-modal{{salary.pk}}">
+                        {% trans "Delete" %}</a>
+                      {% endif %}
+                    </a>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <!-- Delete Modal -->
+            <div class="modal fade" id="delete-modal{{salary.pk}}" tabindex="-1" role="dialog" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-body">
+                    <p>{% trans "Are you sure you want to delete this record?" %}</p>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
+                    <a href="" class="btn btn-danger" type="button">{% trans "Delete" %}</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Final Modal -->
+            <div class="modal fade" id="final-modal-{{salary.salary_month}}{{salary.salary_year}}" tabindex="-1" role="dialog" aria-hidden="true">
+              <div class=" modal-dialog" role="document">
+                <div class="modal-content alert">
+                  <div class="modal-header">
+                  </div>
+                  <div class="modal-body">
+                    <p>{% trans "Are you sure you want to finalize this payroll?! "%}</p>
+                    <h3>{% trans "Warning ...You cannot roll back"%}</h3>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <a type="button" class="btn btn-success" href="{% url 'payroll_run:finalize-salary' month=salary.salary_month year=salary.salary_year %}">Final</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </tbody>
+
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock body%}

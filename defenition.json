@@ -1,0 +1,997 @@
+[
+{
+  "model": "defenition.lookuptype",
+  "pk": 1,
+  "fields": {
+    "enterprise": 1,
+    "lookup_type_name": "GENDER",
+    "lookup_type_description": "Gender Description",
+    "start_date": "2000-01-01",
+    "end_date": "2020-05-03",
+    "created_by": 1,
+    "creation_date": "2020-04-23",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookuptype",
+  "pk": 2,
+  "fields": {
+    "enterprise": 1,
+    "lookup_type_name": "DEPARTMENT_TYPE",
+    "lookup_type_description": "DEPARTMENT_TYPE",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookuptype",
+  "pk": 3,
+  "fields": {
+    "enterprise": 1,
+    "lookup_type_name": "PAYMENT_TYPE_CATEGORY",
+    "lookup_type_description": "PAYMENT_TYPE_CATEGORY",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookuptype",
+  "pk": 4,
+  "fields": {
+    "enterprise": 1,
+    "lookup_type_name": "ELEMENT_TYPE",
+    "lookup_type_description": "ELEMENT_TYPE",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookuptype",
+  "pk": 5,
+  "fields": {
+    "enterprise": 1,
+    "lookup_type_name": "ELEMENT_CLASSIFICATION",
+    "lookup_type_description": "ELEMENT_CLASSIFICATION",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2020-04-09",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookuptype",
+  "pk": 6,
+  "fields": {
+    "enterprise": 1,
+    "lookup_type_name": "IDENTITY_TYPE",
+    "lookup_type_description": "IDENTITY_TYPE",
+    "start_date": "2000-01-01",
+    "end_date": "2020-05-03",
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookuptype",
+  "pk": 7,
+  "fields": {
+    "enterprise": 1,
+    "lookup_type_name": "SOCIAL_STATUS",
+    "lookup_type_description": "SOCIAL_STATUS",
+    "start_date": "2000-01-01",
+    "end_date": "2020-05-03",
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookuptype",
+  "pk": 8,
+  "fields": {
+    "enterprise": 1,
+    "lookup_type_name": "RELIGION",
+    "lookup_type_description": "RELIGION",
+    "start_date": "2000-01-01",
+    "end_date": "2020-05-03",
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookuptype",
+  "pk": 9,
+  "fields": {
+    "enterprise": 1,
+    "lookup_type_name": "MILITARY_STATUS",
+    "lookup_type_description": "MILITARY_STATUS",
+    "start_date": "2000-01-01",
+    "end_date": "2020-05-03",
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookuptype",
+  "pk": 10,
+  "fields": {
+    "enterprise": 1,
+    "lookup_type_name": "EMPLOYEE_TYPE",
+    "lookup_type_description": "EMPLOYEE_TYPE",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookuptype",
+  "pk": 11,
+  "fields": {
+    "enterprise": 1,
+    "lookup_type_name": "PAYMENT_TYPE",
+    "lookup_type_description": "PAYMENT_TYPE",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookuptype",
+  "pk": 12,
+  "fields": {
+    "enterprise": 1,
+    "lookup_type_name": "ACCOUNT_TYPE",
+    "lookup_type_description": "ACCOUNT_TYPE",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookuptype",
+  "pk": 13,
+  "fields": {
+    "enterprise": 1,
+    "lookup_type_name": "PERIOD_TYPE",
+    "lookup_type_description": "PERIOD_TYPE",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookuptype",
+  "pk": 14,
+  "fields": {
+    "enterprise": 1,
+    "lookup_type_name": "SALARY_MONTH",
+    "lookup_type_description": "SALARY_MONTH",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 1,
+  "fields": {
+    "lookup_type_fk": 1,
+    "name": "Male",
+    "code": "male",
+    "description": "male",
+    "start_date": "2000-01-01",
+    "end_date": "2020-05-03",
+    "created_by": 1,
+    "creation_date": "2020-04-23",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 2,
+  "fields": {
+    "lookup_type_fk": 1,
+    "name": "Female",
+    "code": "female",
+    "description": "female",
+    "start_date": "2000-01-01",
+    "end_date": "2020-05-03",
+    "created_by": 1,
+    "creation_date": "2020-04-23",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 3,
+  "fields": {
+    "lookup_type_fk": 2,
+    "name": "\u0642\u0637\u0627\u0639",
+    "code": "Section",
+    "description": "Section",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 4,
+  "fields": {
+    "lookup_type_fk": 2,
+    "name": "\u0627\u062f\u0627\u0631\u0629",
+    "code": "Division",
+    "description": "Division",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 5,
+  "fields": {
+    "lookup_type_fk": 3,
+    "name": "\u062a\u062d\u0648\u064a\u0644",
+    "code": "Transfer",
+    "description": "Transfer",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 6,
+  "fields": {
+    "lookup_type_fk": 3,
+    "name": "\u062f\u0641\u0639 \u0646\u0642\u062f\u064a",
+    "code": "Cash",
+    "description": "Cash",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 7,
+  "fields": {
+    "lookup_type_fk": 4,
+    "name": "\u062f\u0648\u0631\u064a\u0627",
+    "code": "Recurring",
+    "description": "Recurring",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 8,
+  "fields": {
+    "lookup_type_fk": 4,
+    "name": "\u0645\u0631\u0629 \u0648\u0627\u062d\u062f\u0629",
+    "code": "Non-Recurring",
+    "description": "Non-Recurring",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 9,
+  "fields": {
+    "lookup_type_fk": 5,
+    "name": "\u0623\u0633\u062a\u062d\u0642\u0627\u0642\u0627\u062a",
+    "code": "earn",
+    "description": "Earning",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2020-04-09",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 10,
+  "fields": {
+    "lookup_type_fk": 5,
+    "name": "\u0627\u0633\u062a\u0642\u0637\u0627\u0639\u0627\u062a",
+    "code": "deduct",
+    "description": "Deduction",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 11,
+  "fields": {
+    "lookup_type_fk": 5,
+    "name": "\u0645\u0639\u0644\u0648\u0645\u0629",
+    "code": "info",
+    "description": "Information",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 12,
+  "fields": {
+    "lookup_type_fk": 6,
+    "name": "\u0628\u0637\u0627\u0642\u0629 \u0631\u0642\u0645 \u0642\u0648\u0645\u064a",
+    "code": "NA",
+    "description": "National Id",
+    "start_date": "2000-01-01",
+    "end_date": "2020-05-03",
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 13,
+  "fields": {
+    "lookup_type_fk": 6,
+    "name": "\u0628\u0627\u0633\u0628\u0648\u0631\u062a",
+    "code": "PA",
+    "description": "Passport",
+    "start_date": "2000-01-01",
+    "end_date": "2020-05-03",
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 14,
+  "fields": {
+    "lookup_type_fk": 7,
+    "name": "\u0645\u062a\u0632\u0648\u062c",
+    "code": "MARRIED",
+    "description": "Married",
+    "start_date": "2000-01-01",
+    "end_date": "2020-05-03",
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 15,
+  "fields": {
+    "lookup_type_fk": 7,
+    "name": "\u0627\u0639\u0632\u0628",
+    "code": "SINGLE",
+    "description": "Single",
+    "start_date": "2000-01-01",
+    "end_date": "2020-05-03",
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 16,
+  "fields": {
+    "lookup_type_fk": 8,
+    "name": "\u0645\u0633\u0644\u0645",
+    "code": "MUSLIM",
+    "description": "Muslim",
+    "start_date": "2000-01-01",
+    "end_date": "2020-05-03",
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 17,
+  "fields": {
+    "lookup_type_fk": 8,
+    "name": "\u0645\u0633\u064a\u062d\u064a",
+    "code": "CHRESTIN",
+    "description": "Chrestin",
+    "start_date": "2000-01-01",
+    "end_date": "2020-05-03",
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 19,
+  "fields": {
+    "lookup_type_fk": 9,
+    "name": "\u0645\u0639\u0641\u064a",
+    "code": "EXEMPTION",
+    "description": "Exemption",
+    "start_date": "2000-01-01",
+    "end_date": "2020-05-03",
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 20,
+  "fields": {
+    "lookup_type_fk": 9,
+    "name": "\u0627\u062f\u064a \u0627\u0644\u062e\u062f\u0645\u0629 \u0627\u0644\u0639\u0633\u0643\u0631\u064a\u0629",
+    "code": "COMPLETE",
+    "description": "Complete the service",
+    "start_date": "2000-01-01",
+    "end_date": "2020-05-03",
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 21,
+  "fields": {
+    "lookup_type_fk": 9,
+    "name": "\u062a\u0623\u062c\u064a\u0644",
+    "code": "POSTPON",
+    "description": "Postponed",
+    "start_date": "2000-01-01",
+    "end_date": "2020-05-03",
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 22,
+  "fields": {
+    "lookup_type_fk": 10,
+    "name": "\u0639\u0642\u062f \u0633\u0646\u0648\u064a",
+    "code": "CONTRACT",
+    "description": "Contract",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 23,
+  "fields": {
+    "lookup_type_fk": 10,
+    "name": "\u0639\u0642\u062f \u062f\u0627\u0626\u0645",
+    "code": "PERMENANT",
+    "description": "Permenant",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 24,
+  "fields": {
+    "lookup_type_fk": 11,
+    "name": "\u0646\u0642\u062f\u064a",
+    "code": "CASH",
+    "description": "Cash",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 25,
+  "fields": {
+    "lookup_type_fk": 11,
+    "name": "\u0634\u064a\u0643",
+    "code": "CHECK",
+    "description": "Check",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 26,
+  "fields": {
+    "lookup_type_fk": 11,
+    "name": "\u062a\u062d\u0648\u064a\u0644 \u0628\u0646\u0643\u064a",
+    "code": "TRANSFER",
+    "description": "Bank transfer",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 27,
+  "fields": {
+    "lookup_type_fk": 12,
+    "name": "\u062d\u0633\u0627\u0628 \u0634\u0631\u0643\u0629",
+    "code": "COMPANY",
+    "description": "Company account",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 28,
+  "fields": {
+    "lookup_type_fk": 12,
+    "name": "\u062d\u0633\u0627\u0628 \u0645\u0648\u0638\u0641",
+    "code": "EMPLOYEE",
+    "description": "Employee account",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 29,
+  "fields": {
+    "lookup_type_fk": 13,
+    "name": "\u0634\u0647\u0631\u064a",
+    "code": "month",
+    "description": "Monthly",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 30,
+  "fields": {
+    "lookup_type_fk": 13,
+    "name": "\u0627\u0633\u0628\u0648\u0639\u064a",
+    "code": "week",
+    "description": "Weekly",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 31,
+  "fields": {
+    "lookup_type_fk": 14,
+    "name": "\u064a\u0646\u0627\u064a\u0631",
+    "code": "JAN",
+    "description": "January",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 32,
+  "fields": {
+    "lookup_type_fk": 14,
+    "name": "\u0641\u0628\u0631\u0627\u064a\u0631",
+    "code": "FEB",
+    "description": "February",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 33,
+  "fields": {
+    "lookup_type_fk": 14,
+    "name": "\u0645\u0627\u0631\u0633",
+    "code": "MAR",
+    "description": "March",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 34,
+  "fields": {
+    "lookup_type_fk": 14,
+    "name": "\u0623\u0628\u0631\u064a\u0644",
+    "code": "APR",
+    "description": "April",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 35,
+  "fields": {
+    "lookup_type_fk": 14,
+    "name": "\u0645\u0627\u064a\u0648",
+    "code": "MAY",
+    "description": "May",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 36,
+  "fields": {
+    "lookup_type_fk": 14,
+    "name": "\u064a\u0648\u0646\u064a\u0648",
+    "code": "JUN",
+    "description": "June",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 37,
+  "fields": {
+    "lookup_type_fk": 14,
+    "name": "\u064a\u0648\u0644\u064a\u0648",
+    "code": "JUL",
+    "description": "July",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 38,
+  "fields": {
+    "lookup_type_fk": 14,
+    "name": "\u0623\u063a\u0633\u0637\u0633",
+    "code": "AUG",
+    "description": "August",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 39,
+  "fields": {
+    "lookup_type_fk": 14,
+    "name": "\u0633\u0628\u062a\u0645\u0628\u0631",
+    "code": "SEP",
+    "description": "September",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 40,
+  "fields": {
+    "lookup_type_fk": 14,
+    "name": "\u0627\u0643\u062a\u0648\u0628\u0631",
+    "code": "OCT",
+    "description": "October",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 41,
+  "fields": {
+    "lookup_type_fk": 14,
+    "name": "\u0646\u0648\u0641\u0645\u0628\u0631",
+    "code": "NOV",
+    "description": "November",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.lookupdet",
+  "pk": 42,
+  "fields": {
+    "lookup_type_fk": 14,
+    "name": "\u062f\u064a\u0633\u0645\u0628\u0631",
+    "code": "DEC",
+    "description": "December",
+    "start_date": "2000-01-01",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2000-01-01",
+    "last_update_by": 1,
+    "last_update_date": "2000-01-01"
+  }
+},
+{
+  "model": "defenition.insurancerule",
+  "pk": 3,
+  "fields": {
+    "enterprise_name": 1,
+    "name": "\u0642\u0627\u0646\u0648\u0646 \u0627\u0644\u062a\u0623\u0645\u064a\u0646\u0627\u062a \u0627\u0644\u0645\u0635\u0631\u064a",
+    "basic_deduction_percentage": 14.0,
+    "variable_deduction_percentage": 11.0,
+    "maximum_insurable_basic_salary": 1250.0,
+    "maximum_insurable_variable_salary": 1650.0,
+    "start_date": "2020-04-26",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2020-04-26",
+    "last_update_by": null,
+    "last_update_date": "2020-04-26"
+  }
+},
+{
+  "model": "defenition.taxrule",
+  "pk": 5,
+  "fields": {
+    "enterprise": 1,
+    "name": "\u0642\u0627\u0646\u0648\u0646 \u0627\u0644\u0636\u0631\u0627\u0626\u0628 \u0627\u0644\u0645\u0635\u0631\u064a",
+    "personal_exemption": 7200.0,
+    "round_down_to_nearest_10": true,
+    "start_date": "2020-04-26",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2020-04-26",
+    "last_update_by": null,
+    "last_update_date": "2020-04-26"
+  }
+},
+{
+  "model": "defenition.taxsection",
+  "pk": 1,
+  "fields": {
+    "name": "\u0627\u0644\u0634\u0631\u064a\u062d\u0629 \u0627\u0644\u0627\u0648\u0644\u064a",
+    "tax_rule_id": 5,
+    "salary_from": 0.0,
+    "salary_to": 7200.0,
+    "tax_percentage": 0.0,
+    "tax_discount_percentage": 0.0,
+    "section_execution_sequence": 1,
+    "start_date": "2020-04-26",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2020-04-26",
+    "last_update_by": null,
+    "last_update_date": "2020-04-26"
+  }
+},
+{
+  "model": "defenition.taxsection",
+  "pk": 2,
+  "fields": {
+    "name": "\u0627\u0644\u0634\u0631\u064a\u062d\u0629 \u0627\u0644\u062b\u0627\u0646\u064a\u0629",
+    "tax_rule_id": 5,
+    "salary_from": 7201.0,
+    "salary_to": 30000.0,
+    "tax_percentage": 10.0,
+    "tax_discount_percentage": 80.0,
+    "section_execution_sequence": 2,
+    "start_date": "2020-04-26",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2020-04-26",
+    "last_update_by": null,
+    "last_update_date": "2020-04-26"
+  }
+},
+{
+  "model": "defenition.taxsection",
+  "pk": 3,
+  "fields": {
+    "name": "\u0627\u0644\u0634\u0631\u064a\u062d\u0629 \u0627\u0644\u062b\u0627\u0644\u062b\u0629",
+    "tax_rule_id": 5,
+    "salary_from": 30001.0,
+    "salary_to": 45000.0,
+    "tax_percentage": 15.0,
+    "tax_discount_percentage": 40.0,
+    "section_execution_sequence": 3,
+    "start_date": "2020-04-26",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2020-04-26",
+    "last_update_by": null,
+    "last_update_date": "2020-04-26"
+  }
+},
+{
+  "model": "defenition.taxsection",
+  "pk": 4,
+  "fields": {
+    "name": "\u0627\u0644\u0634\u0631\u064a\u062d\u0629 \u0627\u0644\u0631\u0627\u0628\u0639\u0629",
+    "tax_rule_id": 5,
+    "salary_from": 45001.0,
+    "salary_to": 200000.0,
+    "tax_percentage": 20.0,
+    "tax_discount_percentage": 5.0,
+    "section_execution_sequence": 4,
+    "start_date": "2020-04-26",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2020-04-26",
+    "last_update_by": null,
+    "last_update_date": "2020-04-26"
+  }
+},
+{
+  "model": "defenition.taxsection",
+  "pk": 5,
+  "fields": {
+    "name": "\u0627\u0644\u0634\u0631\u064a\u062d\u0629 \u0627\u0644\u062e\u0627\u0645\u0633\u0629",
+    "tax_rule_id": 5,
+    "salary_from": 200001.0,
+    "salary_to": 10000000.0,
+    "tax_percentage": 22.5,
+    "tax_discount_percentage": 0.0,
+    "section_execution_sequence": 5,
+    "start_date": "2020-04-26",
+    "end_date": null,
+    "created_by": 1,
+    "creation_date": "2020-04-26",
+    "last_update_by": null,
+    "last_update_date": "2020-04-26"
+  }
+}
+]

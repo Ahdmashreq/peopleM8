@@ -1,0 +1,84 @@
+{% extends 'master.html'%}
+{% load staticfiles%}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+{% block body%}
+
+<div class="container-fluid">
+  <div class="row" style="margin-left:0px;">
+    <div class="col-md-8">
+      <h4 class="c-grey-900">{{page_title|title}}</h4>
+    </div>
+    <div class="col-md-4">
+      <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %} ">
+        <div class="peer"><a href="{% url 'element_definition:link-create' %}" class="btn cur-p btn-primary">{% trans "Add" %}</a></div>
+      </div>
+    </div>
+  </div>
+  <div class="row" style="margin-left:0px;">
+    <div class="col-md-12">
+      <div class="bgc-white bd bdrs-3 p-20 mB-20">
+        <table class="table table-striped table-bordered" id="dataTable" width="100%">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>{% trans "Batch Name" %}</th>
+              <th>{% trans "Element Name" %}</th>
+              <th>{% trans "Payroll" %}</th>
+              <th>{% trans "Department" %}</th>
+              <th>{% trans "Job" %}</th>
+              <th>{% trans "Grade" %}</th>
+              <th>{% trans "Position" %}</th>
+              <th>{% trans "All Employees" %}</th>
+              <th width="16%">{% trans "Actions" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for x in list_links %}
+            <tr>
+              <td scope="row">{{ forloop.counter }}</td>
+              <td>{{ x.batch }}</td>
+              <td>{{ x.element_master_fk }}</td>
+              <td>{{ x.payroll_fk }}</td>
+              <td>{{ x.element_dept_id_fk }}</td>
+              <td>{{ x.element_job_id_fk }}</td>
+              <td>{{ x.element_grade_fk }}</td>
+              <td>{{ x.element_position_id_fk }}</td>
+              <td>{% if x.link_to_all_payroll_flag %}<i class="fa fa-check-square-o"></i>{% else %}<i class="fa fa-times"></i>{% endif%}</td>
+              <td class="Actions">
+                <div class="w-100 gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
+                  <div class="peer">
+                    <a href="{% url 'element_definition:update-link' pk=x.id %}">
+                      <button type="button" class="btn cur-p btn-outline-primary">{% trans "Update" %}</button>
+                    </a>
+                  </div>
+                  <div class="peer">
+                    <a href="#">
+                      <button type="button" class="btn cur-p btn-outline-danger" data-toggle="modal" data-target="#delete-modal{{x.pk}}">{% trans "Delete" %}</button>
+                    </a>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <!-- Delete Modal -->
+            <div class="modal fade" id="delete-modal{{x.pk}}" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-body">
+                    <p>{% trans "Are you sure you want to delete this record?" %}</p>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
+                    <a href="{% url 'element_definition:delete-link' pk=x.id %}" class="btn btn-danger" type="button">{% trans "Delete" %}</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock body%}

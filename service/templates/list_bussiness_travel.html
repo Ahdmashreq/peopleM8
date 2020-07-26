@@ -1,0 +1,66 @@
+{% extends "master.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+
+{% block body %}
+<div class="row" style="margin-left:0px;">
+  <div class="col-md-8">
+    <h4 class="c-grey-900">{{page_title|title}}</h4>
+  </div>
+  <div class="col-md-4">
+    <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
+      <div class="peer">
+        <a href="{% url 'service:services_create' %}" class="btn btn-primary" type="button">{% trans "Bussiness Travel Form" %}</a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row" style="margin-left:0px;">
+  <div class="col-md-12">
+    <div class="bgc-white bd bdrs-3 p-20 mB-20">
+      <table class="table table-striped table-bordered" id="dataTable" width="100%">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>{% trans "User" %}</th>
+            <th>{% trans "Department" %}</th>
+            <th>{% trans "Destination" %}</th>
+            <th>{% trans "Project Name/Client Name" %}</th>
+            <th>{% trans "Status" %}</th>
+            <th>{% trans "Actions" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in services %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td><a href="{% url 'service:services-update' id=i.id %}">{{i.emp}}</a></td>
+            <td>{{i.department}}</td>
+            <td>{{i.destination}}</td>
+            <td>{{i.project_name}}</td>
+            <td>{{i.status}}</td>
+            <td class="Actions">
+              {% if i.status == "pending"%}
+              <div class="w-100 gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
+                {% if i.emp.user != request.user %}
+                <div class="peer">
+                  <a href="{% url 'service:services_edit' i.id %}">
+                    <button type="button" class="btn cur-p btn-outline-primary">{% trans "Respond" %}</button>
+                  </a>
+                </div>
+                {% endif %}
+              </div>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+{% endblock body %}

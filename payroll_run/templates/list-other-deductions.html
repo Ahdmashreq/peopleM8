@@ -1,0 +1,103 @@
+{% extends 'master.html'%}
+{% load staticfiles%}
+{% load l10n %}
+{% load i18n %}
+{% block body%}
+
+<!-- first nada -->
+<!-- Header -->
+<section class="panel panel-default">
+  <div class="panel-body">
+    <header class="panel-heading font-bold pull-left">{{page_title|title}}</header>
+    <div class="doc-buttons pull-right">
+      <a href="{% url 'employee:employee-create' %}" class="btn btn-s-md btn-primary ">{% trans "Add" %}</a>
+      <a href="{% url 'employee:list-employee-card' %}" class="btn btn-s-md btn-default">{% trans "Card View" %}</a>
+    </div>
+  </div>
+</section>
+<!-- end Header -->
+
+{% if messages %}
+{% for message in messages %}
+<div class="alert {% if message.tags %} alert-{{ message.tags }}{% endif %}">{{ message|safe }}</div>
+{% endfor %}
+{% endif %}
+
+{% if form.errors %}
+<div class="alert alert-error">
+  <h4>{% trans "Please fix the following errors" %}</h4>
+  <ul>
+    {% for field in form %}
+    {% if field.errors %}
+    {% for error in field.errors %}
+    <li><a href="#id_{{ field.name }}" class="error">{{ error|escape }}</a></li>
+    {% endfor %}
+    {% endif %}
+    {% endfor %}
+  </ul>
+  {% if form.non_field_errors %}
+  {{ form.non_field_errors }}
+  {% endif %}
+</div>
+{% endif %}
+<div>
+  <h1 id="page_title">{{page_title|title}}</h1>
+</div>
+
+<div class="container">
+  <section class='fhsco-body'>
+    <div class='col-md-12'>
+      <div class='card'>
+        <div class='card-content'>
+          <div>
+            <div class='card'>
+              <div class='card-header'>
+                <h4 class='card-title'></h4>
+              </div>
+              <div class='card-body'>
+                <div class='row'>
+                  <div></div>
+                  <div class='col-md-7'>
+                    <div class='fhsco-label-text'>
+                      <a> {% trans "Employee Name" %}:</a>
+                      <a>{{ employee_name.emp_name }}</a>
+                    </div>
+                    <div class='fhsco-label-text'>
+                      <a>{% trans "ID Number" %} : </a>
+                      <a>{{ employee_name.emp_number }}</a>
+                    </div>
+                    <br><br>
+                    <hr>
+                  </div>
+                  <div class="col-md-12" align='center'>
+                    <div class="fhsco-table">
+                      <table class='table table-bordered'>
+                        <thead bgcolor="#777f90">
+                          <td>{% trans "Earning" %} </td>
+                          <td>{% trans "Amount EGP" %} </td>
+                        </thead>
+                        <tbody>
+                          {% for od in other_deduction_elements %}
+                          <tr>
+                            <td>{{ od.element_id}}</td>
+                            <td>{{ od.element_value}}</td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <section>
+</div>
+<a href="{% url 'payroll_run:emp-salary' month_number=get_month salary_id=salary_id %}">
+  <button type="button" class="btn-sm btn-secondary">{% trans "Back to List" %}</button>
+</a>
+
+{% endblock body%}

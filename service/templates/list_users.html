@@ -1,0 +1,51 @@
+{% extends "master.html" %}
+{% load crispy_forms_tags %}
+{% block body %}
+<!--message flashing-->
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li
+    {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<section class="wrapper">
+    <div class="row">
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    Users
+                </header>
+                <div class="panel-body">
+                    <div class="form-group" style=padding-top:40px>
+                        <div class="records">
+                            <table class="table">
+                                <thead>
+                                <th scope="col">User</th>
+                                <th scope="col"> &nbsp Employee</th>
+                                <th scope="col"> &nbsp Department</th>
+                                <th scope="col"> &nbsp Status</th>
+                                </thead>
+                                {% for i in users %}{% for j in departments %}
+                                <tr>
+                                    <td scope="row"> &nbsp {{i.user}}</td>
+                                    <td scope="row"> &nbsp {{i.emp_name}}</td>
+                                    <td scope="row"> &nbsp {{j.dept_name}}</td>
+                                </tr>
+
+                                {% endfor %}{% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    <!-- page end-->
+</section>
+
+{% endblock body %}

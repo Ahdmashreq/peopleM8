@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style type="text/css">
+    span.preheader {
+      display: none !important
+    }
+
+    #outlook a {
+      padding: 0
+    }
+
+    .ReadMsgBody {
+      width: 100%
+    }
+
+    .ExternalClass {
+      width: 100%
+    }
+
+    .ExternalClass,
+    .ExternalClass p,
+    .ExternalClass span,
+    .ExternalClass font,
+    .ExternalClass td,
+    .ExternalClass div {
+      line-height: 100%
+    }
+
+    body,
+    table,
+    td,
+    p,
+    a,
+    li,
+    blockquote {
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%
+    }
+
+    table,
+    td {
+      mso-table-lspace: 0;
+      mso-table-rspace: 0
+    }
+
+    img {
+      max-width: 100%;
+      border: 0;
+      line-height: 100%;
+      outline: none;
+      text-decoration: none
+    }
+
+    table {
+      border-collapse: collapse !important
+    }
+
+    .content {
+      width: 100%;
+      max-width: 600px
+    }
+
+    .content img {
+      height: auto;
+      min-height: 1px
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      min-width: 100% !important
+    }
+
+    #templateContainerHeader {
+      font-size: 12px;
+      padding-top: 1em;
+      padding-bottom: 1em
+    }
+
+    #templateContainer {
+      border-top: 1px solid #e2e2e2;
+      border-left: 1px solid #e2e2e2;
+      border-right: 1px solid #e2e2e2;
+      border-bottom: 1px solid #e2e2e2;
+      border-radius: 4px 4px 0 0;
+      background-clip: padding-box;
+      border-spacing: 0
+    }
+
+    h2 {
+      color: #2e2e2e;
+      display: block;
+      font-family: Helvetica;
+      font-size: 20px;
+      line-height: 1.4em;
+      font-style: normal;
+      font-weight: 400;
+      letter-spacing: normal;
+      margin-top: 0;
+      margin-right: 0;
+      margin-bottom: 16px;
+      margin-left: 0;
+      text-align: left
+    }
+
+    h4 {
+      color: #545454;
+      display: block;
+      font-family: Helvetica;
+      font-size: 14px;
+      line-height: 1.5em;
+      font-style: normal;
+      font-weight: 400;
+      letter-spacing: normal;
+      margin-top: 0;
+      margin-right: 0;
+      margin-bottom: 5px;
+      margin-left: 0;
+      text-align: left
+    }
+
+    p {
+      color: #545454;
+      display: block;
+      font-family: Helvetica;
+      font-size: 16px;
+      line-height: 1.5em;
+      font-style: normal;
+      font-weight: 400;
+      letter-spacing: normal;
+      margin-top: 0;
+      margin-right: 0;
+      margin-bottom: 10px;
+      margin-left: 0;
+      text-align: left
+    }
+
+    .bodyContent {
+      color: #505050;
+      font-family: Helvetica;
+      font-size: 16px;
+      line-height: 150%;
+      padding-top: 2em;
+      padding-right: 3.5em;
+      padding-left: 3.5em;
+      padding-bottom: 2em;
+      text-align: left
+    }
+  </style>
+</head>
+
+<body bgcolor="#FFFFFF">
+  <table border="0" cellpadding="10" cellspacing="0" style="background-color: #FFFFFF" width="100%">
+    <tr>
+      <td>
+        <table align="center" border="0" cellpadding="0" cellspacing="0" class="content" style="background-color: #FFFFFF">
+          <tr>
+            <td id="templateContainerHeader" valign="top" mc:edit="welcomeEdit-01">
+              <p style="text-align:center;margin:0;padding:0;">
+                <img src="{{image}}" alt="">
+                {{image}}
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" valign="top">
+              <table border="0" cellpadding="0" cellspacing="0" class="brdBottomPadd-two" id="templateContainer" width="100%">
+                <tr>
+                  <td class="bodyContent" valign="top" mc:edit="welcomeEdit-02">
+                    <p>Dear {{ team_leader }}</p>
+                    <h2><strong>Employee {{requestor}} asks for a leave</strong></h2>
+                    <h4>Please find details below: <br><br></h4>
+                    <table border="1px" cellpadding="7">
+                      <tbody>
+                        <tr>
+                          <th>Date From</th>
+                          <th>Date To</th>
+                          <th>Number Days</th>
+                          <th>Resume Duty on</th>
+                          <th>Comment</th>
+                        </tr>
+                        <tr>
+                          <td>{{ date_from }}</td>
+                          <td>{{ date_to }}</td>
+                          <td>{{ no_of_days }}</td>
+                          <td>{{ date_back }}</td>
+                          <td>{{ comments }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="bodyContent">
+                    <h4>Once your leave period has ended, please do not forget to fill out a Leave Report upon returning.<br>
+                      Regards,<br>
+                      <br>
+                      {{team_leader}}</h4>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+  </tbody>
+</body>
+
+</html>

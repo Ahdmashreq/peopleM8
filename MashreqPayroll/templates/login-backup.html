@@ -1,0 +1,114 @@
+{% load i18n %}
+<!DOCTYPE html>
+{% load staticfiles %}
+{% load l10n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% get_current_language_bidi as LANGUAGE_BIDI %}
+<html lang="{{ LANGUAGE_CODE }}" dir={% if LANGUAGE_BIDI%}"rtl" {%else%}"ltr"{%endif%} class="bg-dark">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" >
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>PeopleM8 {% trans "Login" %}</title>
+  <meta name="description" content="app, web app, responsive, admin dashboard, admin, flat, flat ui, ui kit, off screen nav" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <link rel="stylesheet" href="{% static 'css/font.css' %}" type="text/css" />
+  <link rel="stylesheet" href="{% static 'js/calendar/bootstrap_calendar.css' %}" type="text/css" />
+  <link rel="stylesheet" href="{% static 'css/app.v2.css' %}" type="text/css" />
+</head>
+
+<body class="bg-dark" style={% if LANGUAGE_CODE == 'ar' %} "text-align:right;" {% else %} "text-align:left;" {% endif %}>
+  <section id="content" class="m-t-lg wrapper-md animated fadeInUp">
+    <div class="container aside-xxl">
+      <section class="panel panel-default bg-white m-t-lg">
+        <header class="panel-heading text-center">
+          <strong>{% trans "Login" %}</strong>
+        </header>
+        <form method="post" class="panel-body wrapper-lg">
+          {% csrf_token %}
+          {% include 'messages.html' %}
+          <div class="form-group">
+            <div class="illustration" align="center">
+              <img style="max-height:120%;max-width: 100%;" src="{% static 'img/Peoplem83.png' %}">
+            </div>
+            <input class="form-control" type="text" name="username" placeholder="{% trans "User Name" %}" required="required">
+          </div>
+          <div class="form-group">
+            <input class="form-control" type="password" name="password" placeholder="{% trans "Password" %}" required="required">
+          </div>
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-block">{% trans "Log In" %}</button>
+          </div>
+          <div class="line line-dashed"></div>
+
+          <div class="form-group">
+            {% if LANGUAGE_BIDI%}
+            <a class="forgot pull-left" href="{% url 'home:en' %}">{% trans "English" %} </a>
+            {%else%}
+            <a class="forgot pull-right" href="{% url 'home:ar' %}">{% trans "العربية" %} </a>
+            {%endif%}
+          </div>
+
+        </form>
+      </section>
+    </div>
+  </section>
+  <footer id="footer">
+     {% include 'footer.html' %}
+   </footer>
+  <script src="{% static  'js/app.v2.js'%}"></script>
+  <!-- App -->
+</body>
+
+</html>
+
+
+
+
+<div class="peers ai-s fxw-nw h-100vh">
+  <div class="d-n@sm- peer peer-greed h-100 pos-r bgr-n bgpX-c bgpY-c bgsz-cv" style="background-image:url(assets/static/images/bg4.jpg)">
+    <div class="pos-a centerXY">
+      <div class="bgc-white bdrs-50p pos-r" style="width:120px;height:120px"><img class="pos-a centerXY" src="assets/static/images/logo.png" alt=""></div>
+    </div>
+  </div>
+  <div class="col-12 col-md-4 peer pX-40 pY-80 h-100 bgc-white scrollable pos-r text-right" style="min-width:320px">
+    <h4 class="fw-300 c-grey-900 mB-40">{% trans "Login" %}</h4>
+    <form>
+      <div class="form-group">
+        <label class="text-normal text-dark">{% trans "User Name" %}</label>
+        <input type="email" class="form-control" placeholder="{% trans "User Name" %}">
+      </div>
+      <div class="form-group">
+        <label class="text-normal text-dark">{% trans "Password" %}</label>
+        <input type="password" class="form-control" placeholder="{% trans "Password" %}">
+      </div>
+      <div class="form-group">
+        <div class="peers ai-c jc-sb fxw-nw">
+          <div class="peer">
+            <div class="checkbox checkbox-circle checkbox-info peers ai-c">
+              <input type="checkbox" id="inputCall1" name="inputCheckboxesCall" class="peer">
+              <label for="inputCall1" class="peers peer-greed js-sb ai-c text-right">
+                <span class="peer peer-greed">حفظ البيانات</span>
+              </label>
+            </div>
+          </div>
+          <div class="peer">
+            <a href="RTL.html" class="btn btn-primary">تسجيل الدخول</a>
+          </div>
+        </div>
+        <div class="row mT-40 text-center">
+          <div class="col-md-12">
+            <label class="peer peer-greed">ليس لديك حساب ، سجل هنا</label>
+          </div>
+          <div class="col-md-12">
+            <a href="signup.html" class="btn btn-secondary">سجل</a>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

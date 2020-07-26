@@ -1,0 +1,80 @@
+{% extends 'master.html'%}
+{% load staticfiles%}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+{% block body%}
+
+<div class="container-fluid">
+  <form method="post">
+    {% csrf_token %}
+    {% include 'messages.html' %}
+    <div class="row">
+      <div class="col-md-8">
+        <h4 class="c-grey-900">{{page_title|title}}</h4>
+      </div>
+      <div class="col-md-4">
+        <div class="gap-10 peers push-right">
+          <div class="peer">
+            <button type="submit" class="btn cur-p btn-primary">{% trans "Save" %}</button>
+          </div>
+          <div class="peer">
+            <a href="{% url 'manage_payroll:list-banks' %}" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-1">
+      <div class="bgc-white p-20 bd">
+        <div class="mT-30">
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <label>{{ bank_form.bank_name.label}}</label>
+              {{ bank_form.bank_name }}
+            </div>
+            <div class="form-group col-md-4">
+              <label>{{ bank_form.branch_name.label}}</label>
+              {{ bank_form.branch_name  }}
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <label>{{ bank_form.currency.label}}</label>
+              {{ bank_form.currency }}
+            </div>
+            <div class="form-group col-md-4">
+              <label>{{ bank_form.country.label}}</label>
+              {{ bank_form.country }}
+            </div>
+            <div class="form-group col-md-4">
+              <label>{{ bank_form.address.label}}</label>
+              {{ bank_form.address }}
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-3">
+              <label class="fw-500">{{ bank_form.start_date.label }}</label>
+              <div class="timepicker-input input-icon form-group">
+                <div class="input-group">
+                  <div class="input-group-addon bgc-white bd bdwR-0"><i class="ti-calendar"></i></div>
+                  {{ bank_form.start_date }}
+                </div>
+              </div>
+            </div>
+            <div class="form-group col-md-3">
+              <label class="fw-500">{{ bank_form.end_date.label }}</label>
+              <div class="timepicker-input input-icon form-group">
+                <div class="input-group">
+                  <div class="input-group-addon bgc-white bd bdwR-0"><i class="ti-calendar"></i></div>
+                  {{ bank_form.end_date }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+{% endblock body%}

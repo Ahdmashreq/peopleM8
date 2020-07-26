@@ -1,0 +1,38 @@
+{% extends 'master.html'%}
+{% load staticfiles%}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+{% block body%}
+
+
+<div class="container-fluid">
+  <form method="post">
+    {% csrf_token %}
+    {% include 'messages.html' %}
+    <div class="row">
+      <div class="col-md-8">
+        <h4 class="c-grey-900">{{page_title|title}}</h4>
+      </div>
+      <div class="col-md-4">
+        <div class="gap-10 peers push-right">
+          <div class="peer">
+            <button type="submit" class="btn cur-p btn-primary">Save</button>
+          </div>
+          <div class="peer">
+            <a href="{% url 'company:list-positions' %}" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-1">
+      <div class="bgc-white p-20 bd">
+        <div class="mT-30">
+          {{position_form|crispy}}
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+{% endblock body%}

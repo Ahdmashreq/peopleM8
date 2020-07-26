@@ -1,0 +1,51 @@
+{% extends "master.html" %}
+{% load crispy_forms_tags %}
+{% block body %}
+<!--message flashing-->
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li
+    {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<section class="wrapper">
+    <div class="row">
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    Edit the Leave Type
+                </header>
+                <div class="panel-body">
+                    <div class="form-group">
+
+                        <body>
+                        <div class='container'>
+                            <h1>Fill out the form</h1>
+                            <form method="POST">
+                                <div class="form-group">
+                                    {% csrf_token %}
+                                    {{leave_form|crispy}}
+
+                                    <input type="submit" class="btn btn-primary" value="Submit">
+                                    <a href="{% url 'leave:add_leave_master' %}" id="cancel" name="cancel"
+                                       class="btn btn-default">Cancel</a>
+                                </div>
+                            </form>
+                        </div>
+                        </body>
+
+                    </div>
+                </div>
+        </div>
+</section>
+</div>
+</div>
+<!-- page end-->
+</section>
+
+{% endblock body %}

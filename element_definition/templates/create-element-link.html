@@ -1,0 +1,128 @@
+{% extends 'master.html'%}
+{% load staticfiles%}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+{% block body%}
+
+<div class="container-fluid">
+  <form method="post">
+    {% csrf_token %}
+    {% include 'messages.html' %}
+    <div class="row">
+      <div class="col-md-8">
+        <h4 class="c-grey-900">{{page_title|title}}</h4>
+      </div>
+      <div class="col-md-4">
+        <div class="gap-10 peers push-right">
+          <div class="peer">
+            <button type="submit" class="btn cur-p btn-primary">{% trans "Save" %}</button>
+          </div>
+          <div class="peer">
+            <button type="submit" name="add_next" value="Save and add text" class="btn btn-s-md btn-primary">{% trans "Save And Add" %}</button>
+          </div>
+          <div class="peer">
+            <a href="{% url 'element_definition:list-links' %}" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-1">
+      <div class="bgc-white p-20 bd">
+        <div class="mT-30">
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <label>{{ link_form.element_master_fk.label}}</label>
+              {{ link_form.element_master_fk }}
+            </div>
+            <div class="form-group col-md-4">
+              <label>{{ link_form.batch.label}}</label>
+              {{ link_form.batch }}
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <label>{{ link_form.payroll_fk.label}}</label>
+              {{ link_form.payroll_fk }}
+            </div>
+            <div class="form-group col-md-4">
+              <label>{{ link_form.element_dept_id_fk.label}}</label>
+              {{ link_form.element_dept_id_fk }}
+            </div>
+            <div class="form-group col-md-4">
+              <label>{{ link_form.element_job_id_fk.label}}</label>
+              {{ link_form.element_job_id_fk }}
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <label>{{ link_form.element_grade_fk.label}}</label>
+              {{ link_form.element_grade_fk }}
+            </div>
+            <div class="form-group col-md-4">
+              <label>{{ link_form.element_position_id_fk.label}}</label>
+              {{ link_form.element_position_id_fk }}
+            </div>
+            <div class="form-group col-md-4">
+              <label>{{ link_form.employee.label}}</label>
+              {{ link_form.employee }}
+            </div>
+          </div>
+          <div class="form-row">
+
+            <div class="form-group col-md-4">
+              <div class="form-group col-md-6 checkbox checkbox-circle checkbox-info peers ai-c">
+                {{ link_form.link_to_all_payroll_flag }}
+                <label for="id_link_to_all_payroll_flag" class="peers peer-greed js-sb ai-c">
+                  {{ link_form.link_to_all_payroll_flag.label }}
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <label class="fw-500">{{ link_form.start_date.label }}</label>
+              <div class="timepicker-input input-icon form-group">
+                <div class="input-group">
+                  <div class="input-group-addon bgc-white bd bdwR-0"><i class="ti-calendar"></i></div>
+                  {{ link_form.start_date }}
+                </div>
+              </div>
+            </div>
+            <div class="form-group col-md-4">
+              <label class="fw-500">{{ link_form.end_date.label }}</label>
+              <div class="timepicker-input input-icon form-group">
+                <div class="input-group">
+                  <div class="input-group-addon bgc-white bd bdwR-0"><i class="ti-calendar"></i></div>
+                  {{ link_form.end_date }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+{% endblock body%}
+{% block js %}
+<script>
+  $('#id_element_master_fk').on('change', function() {
+    if (this.value){
+      $('#id_batch').attr('disabled', true);
+    } else {
+      $('#id_batch').attr('disabled', false);
+    }
+  });
+  $('#id_batch').on('change', function() {
+    if (this.value){
+      $('#id_element_master_fk').attr('disabled', true);
+    } else {
+      $('#id_element_master_fk').attr('disabled', false);
+    }
+  });
+</script>
+{% endblock js %}

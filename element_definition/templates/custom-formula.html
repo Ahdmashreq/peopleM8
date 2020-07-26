@@ -1,0 +1,92 @@
+{% extends 'master.html'%}
+{% load staticfiles%}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+{% block body%}
+
+<div>
+  <h1 id="page_title">{{page_title}}</h1>
+</div>
+<form method="post">
+  {% csrf_token %}
+  <table id="form_table">
+    <tr>
+      <td class="table_lable"><label>Rule Name</label></td>
+      <td>{{ custom_rule_form.name }}</td>
+      <td class="table_lable"><label>Element</label></td>
+      <td>{{ custom_rule_form.element_master }}</td>
+    </tr>
+    <tr>
+      <td class="table_lable"><label>Rule Definition</label></td>
+      <td colspan="3">{{ custom_rule_form.rule_definition }}</td>
+    </tr>
+    <tr>
+      <td class="table_lable"><label>Taxable</label></td>
+      <td>{{ custom_rule_form.taxable }}</td>
+    </tr>
+  </table>
+
+  <a href="{% url 'element_definition:element-create' %}">
+    <button type="button" class="btn-sm btn-secondary">Cancel</button>
+  </a>
+  <button type="submit" class="btn-sm btn-secondary">Save</button>
+</form>
+<hr>
+<div class="col p-5" style="text-align: right; direction: rtl;">
+  <h3>كيفية تعريف قاعدة مخصصة باستخدام لغة بايثون:</h3>
+  <p>
+    يمكنك تعريف قاعدة خصم / إضافة مخصصة هنا باستخدام لغة بايثون
+
+  </p>
+  <p>
+    لديك المتغيرات التالية متاحة للاستخدام:
+
+  </p>
+  <ul>
+    <li>
+      <b><code>basic:</code></b> هذا هو الراتب الأساسي للموظف.
+    </li>
+    <li>
+      <b><code>variable:</code></b> هذا هو الراتب المتغير للموظف.
+    </li>
+    <li>
+      <b><code>d_days:</code></b>هذه هي عدد الأيام التي يجب خصمها للموظف في هذا الشهر
+      بسبب غيابه أو بسبب قواعد أخرى للحضور تنطوي على أيام خصم.
+
+    </li>
+    <li>
+      <b><code> grs:</code></b>(بدون "o")
+      الراتب الإجمالي و الذى يساوي الراتب الأساسي + الراتب المتغير + أي بدلات / مكافآت / حوافز إضافية مضافة.
+
+    </li>
+  </ul>
+  <p>
+
+  </p>
+  بعد حساب المعادلة الخاصة بك ، يجب عليك تخزين المبلغ المطلوب ليتم إضافته / خصمه في متغير يسمى <b><code>amount</code></b>.
+  إذا كانت قيمة <b><code>amount</code></b> موجبة ، فسيتم إضافة المبلغ إلى المرتب الصافي للموظف.
+  وإذا كان سالبة ، سيتم خصمها.
+
+
+  <h4>مثال:</h4>
+
+  <div class="container">
+    <div class="col" style="background: #fdf6e3;float: left;direction: ltr; font-size: 0.75em; text-align: left; padding-top: 1em; border-radius: 0.1em;">
+      <pre>
+            <code style="color: #b52a00;">
+            if basic <= 5000:
+                extra_deduction = -250
+            else:
+                extra_deduction = -500
+            amount = extra_deduction
+            </code>
+            </pre>
+    </div>
+    <br>
+    <p> تأكد ان الكود المكتوب يطابق قواعد لغة البايثون </p>
+  </div>
+</div>
+
+
+{% endblock body%}

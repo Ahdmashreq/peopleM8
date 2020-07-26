@@ -1,0 +1,76 @@
+{% extends 'master.html'%}
+{% load staticfiles%}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+{% block body%}
+
+<div class="container-fluid">
+  <div class="row" style="margin-left:0px;">
+    <div class="col-md-8">
+      <h4 class="c-grey-900">{{page_title|title}}</h4>
+    </div>
+    <div class="col-md-4">
+      <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %} ">
+        <div class="peer">
+          <a href="{% url 'balanc_definition:create-costing' %}" class="btn cur-p btn-primary">{% trans "Add" %}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row" style="margin-left:0px;">
+    <div class="col-md-12">
+      <div class="bgc-white bd bdrs-3 p-20 mB-20">
+        <table id="dataTable" class="table table-striped table-bordered">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>{% trans "Level Name" %}</th>
+              <th>{% trans "Start Date" %}</th>
+              <th>{% trans "Actions" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for salary in salaries_list %}
+            <tr>
+              <th>{{ forloop.counter }}</th>
+              <td>
+                {% if x.name.level_name == 'D' %}
+                  Department
+                {% elif x.name.level_name == 'J' %}
+                  Job
+                {% elif x.name.level_name == 'P' %}
+                  Position
+                {% elif x.name.level_name == 'G'%}
+                  Grade
+                {% endif %}
+              </td>
+              <td>{{ x.start_date }}</td>
+              <td class="Actions">
+                <div class="w-100 gap-10 peers">
+                  <div class="peer">
+                    <a href="{% url 'balanc_definition:update-costing' pk=x.name.id %}">
+                      <button type="button" class="btn cur-p btn-outline-primary">{% trans "Correction" %}</button>
+                    </a>
+                  </div>
+                  <div class="peer">
+                    <a href="{% url 'balanc_definition:update-costing' pk=x.name.id %}">
+                      <button type="button" class="btn cur-p btn-outline-primary">{% trans "Update" %}</button>
+                    </a>
+                  </div>
+                  <div class="peer">
+                    <a href="#">
+                      <button type="button" class="btn cur-p btn-outline-danger" data-toggle="modal" data-target="#delete-modal{{x.pk}}">{% trans "Delete" %}</button>
+                    </a>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock body %}

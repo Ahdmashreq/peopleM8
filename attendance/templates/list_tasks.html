@@ -1,0 +1,77 @@
+{% extends "master.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+
+{% block body %}
+
+<div class="container-fluid">
+  <div class="row" style="margin-left:0px;">
+    <div class="col-md-8">
+      <h4 class="c-grey-900">Your Tasks for the Day {{attendance.check_in|date}}</h4>
+    </div>
+    <div class="col-md-4">
+      <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
+        <div class="peer">
+          <a href="{% url 'attendance:list-attendance'%}" class="btn cur-p btn-primary">{% trans "Go Back" %}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row" style="margin-left:0px;">
+    <div class="col-md-12">
+      <div class="bgc-white bd bdrs-3 p-20 mB-20">
+        <table class="table table-striped table-bordered" id="dataTable" width="100%">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>{% trans "Task" %}</th>
+              <th>{% trans "Start Time" %}</th>
+              <th>{% trans "End Time" %}</th>
+              <th>أجراءات</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for i in list_tasks %}
+            <tr>
+              <td>{{ forloop.counter }}</td>
+              <td>{{i.task}}</td>
+              <td>{{i.start_time}}</td>
+              <td>{{i.end_time}}</td>
+              <td class="Actions">
+                <div class="w-100 gap-10 peers">
+                  <div class="peer">
+                    <a href="{% url 'attendance:edit_task' i.slug %}">
+                      <button type="button" class="btn cur-p btn-outline-primary">{% trans "Update" %}</button>
+                    </a>
+                  </div>
+                  <div class="peer">
+                    <a href="#">
+                      <button type="button" class="btn cur-p btn-outline-danger" data-toggle="modal" data-target="#delete-modal{{i.id}}">{% trans "Delete" %}</button>
+                    </a>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <!-- Delete Modal -->
+            <div class="modal fade" id="delete-modal{{i.id}}" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-body">
+                    <p>{% trans "Are you sure you want to delete this task?" %}</p>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
+                    <a href="{% url 'attendance:delete_task' i.id %}" class="btn btn-danger" type="button">{% trans "Delete" %}</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock body %}

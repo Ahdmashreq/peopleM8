@@ -1,0 +1,75 @@
+{% extends 'master.html'%}
+{% load staticfiles%}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+{% block body%}
+
+{% for message in messages %}
+<div class="alert {{ message.tags }} alert-dismissible" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+  {{ message }}
+</div>
+{% endfor %}
+<div>
+  <h1 id="page_title">{{page_title}}</h1>
+</div>
+<div>
+  <form method="POST">
+    {% csrf_token %}
+    <table id="form_table">
+      <tr>
+        <td class="table_lable"><label>{% trans "Select Element" %}</label></td>
+        <td>{{ elementForm.element_id }}</td>
+        <td class="table_lable"><label>{% trans "Element Value" %}</label></td>
+        <td>{{ elementForm.element_value }}</td>
+      </tr>
+    </table>
+
+    <br>
+    <br>
+    <hr>
+    <h5><u>{% trans "Input Parameters" %}</u></h5>
+    <br>
+    <br>
+    <table id="noHeadTable">
+      {{ paramFormSet.management_form }}
+      {% for form in paramFormSet %}
+      {{ form.id }}
+      {% if forloop.first %}
+      <thead>
+        <tr>
+          {% for field in form.visible_fields %}
+          <th>{{ field.label|capfirst }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      {% endif %}
+      <tr>
+        {% for field in form.visible_fields %}
+        <td>
+          {# exclude the hidden fields in the form #}
+          {% if forloop.first %}
+          {% for hidden in form.hidden_fields %}
+          {{ hidden }}
+          {% endfor %}
+          {% endif %}
+          {{ field.errors.as_ul }}
+          {{ field }}
+        </td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </table>
+
+    <a href="{% url 'employee:employee-create' %}">
+      <button type="button" class="btn-sm btn-secondary">{% trans "Back Employee" %}</button>
+    </a>
+    <button type="submit" class="btn-sm btn-secondary">{% trans "Save" %}</button>
+  </form>
+</div>
+
+
+{% endblock body%}

@@ -1,0 +1,42 @@
+{% extends "master.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+
+{% block body %}
+
+<div class="container-fluid">
+  <div class="row" style="margin-left:0px;">
+    <div class="col-md-8">
+      <h4 class="c-grey-900">{{page_title|title}}</h4>
+    </div>
+    <div class="col-md-4">
+      <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
+        <div class="peer">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row" style="margin-left:0px;">
+    <div class="col-md-12">
+      <div class="bgc-white bd bdrs-3 p-20 mB-20">
+        <table class="table table-striped table-bordered" id="dataTable" width="100%">
+          <thead>
+            <tr>
+              <th>Reports</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="{% url 'report:late_report' %}"><button type="button" class="btn btn-danger"><i class="fa fa-bell-o"></i> Late Report</button></a></td>
+              <td><a href="{% url 'report:all_people_report' %}"><button type="button" class="btn btn-info"><i class="fa fa-check"></i> Checked in today</button></a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock body %}

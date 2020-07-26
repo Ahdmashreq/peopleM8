@@ -1,0 +1,43 @@
+{% load i18n %}
+{% load l10n %}
+{% load staticfiles %}
+
+<div class="sidebar-inner">
+  <div class="sidebar-logo">
+    <div class="peers ai-c fxw-nw">
+      <div class="peer peer-greed">
+        <a class="sidebar-link td-n" href="{% url 'home:homepage' %}">
+          <div class="peers ai-c fxw-nw">
+            <div class="peer">
+              <div class="logo"><img src="{% static 'assets/static/images/logo.png' %}" alt=""></div>
+            </div>
+            <div class="peer peer-greed">
+              <h5 class="lh-1 mB-0 logo-text">PeopleM8</h5>
+            </div>
+          </div>
+        </a>
+      </div>
+      <div class="peer">
+        <div class="mobile-toggle sidebar-toggle"><a href="#" class="td-n"><i class="ti-arrow-circle-left"></i></a></div>
+      </div>
+    </div>
+  </div>
+  <ul class="sidebar-menu scrollable pos-r">
+    <li class="nav-item dropdown">
+      <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder">
+        <i class="c-pink-500 ti-agenda"></i>
+      </span><span class="title">{% trans "Services" %}</span> <span class="arrow"><i class="ti-angle-right"></i></span></a>
+      <ul class="dropdown-menu">
+        <li><a class="sidebar-link" href="{% url 'service:services_list' %}">{% trans 'Bussiness Travel Form'%}</a></li>
+        <li><a class="sidebar-link" href="{% url 'service:purchase-request-list' %}">{% trans 'Purchase Request Form'%}</a></li>
+      </ul>
+    </li>
+    <li class="nav-item dropdown">
+      <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-blue-500 ti-alarm-clock"></i> </span><span class="title">{% trans "Attendance" %}</span> <span class="arrow"><i class="ti-angle-right"></i></span></a>
+      <ul class="dropdown-menu">
+        <li><a class="sidebar-link" href="{% url 'attendance:list-attendance' %}">{% trans 'Attendance'%}</a></li>
+        <li><a class="sidebar-link" href="{% url 'leave:list_leave' %}">{% trans 'Leave Form'%}</a></li>
+      </ul>
+    </li>
+  </ul>
+</div>

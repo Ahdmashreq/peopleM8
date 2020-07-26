@@ -1,0 +1,104 @@
+{% extends 'pay-slip-master.html'%}
+{% load staticfiles%}
+{% load i18n %}
+{% load l10n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% get_current_language_bidi as LANGUAGE_BIDI %}
+
+{% block payslip_body %}
+<div style="margin: 5 auto;padding-block: 20px;padding-inline: 20px;width: 210mm;">
+  <table style="width:100%; page-break-inside:auto;">
+    <tr>
+      <td>
+        <h2 style="font-size:30px;"><b>{{company_name}}</b></h2>
+      </td>
+    </tr>
+  </table>
+  <br><br>
+  <table id="emp_info_t" style={% if LANGUAGE_CODE == 'ar' %} "text-align:right;" {% else %} "text-align:left;" {% endif %}>
+    <thead>
+      <tr>
+        <td>{% trans "ID Number" %}</td>
+        <td colspan="3">{{ salary_obj.emp.emp_number }}</td>
+      </tr>
+      <tr>
+        <td>{% trans "Employee Name" %}</td>
+        <td colspan="3">{{ salary_obj.emp }}</td>
+      </tr>
+      <tr>
+        <td>{% trans "Pay Period" %}</td>
+        <td colspan="3">{% if salary_obj.salary_month == 1%}
+          {% trans "January" %}
+          {% elif salary_obj.salary_month == 2%}
+          {% trans "February" %}
+          {% elif salary_obj.salary_month == 3%}
+          {% trans "March" %}
+          {% elif salary_obj.salary_month == 4%}
+          {% trans "April" %}
+          {% elif salary_obj.salary_month == 5%}
+          {% trans "May" %}
+          {% elif salary_obj.salary_month == 6 %}
+          {% trans "June" %}
+          {% elif salary_obj.salary_month == 7 %}
+          {% trans "July" %}
+          {% elif salary_obj.salary_month == 8%}
+          {% trans "August" %}
+          {% elif salary_obj.salary_month == 9%}
+          {% trans "September" %}
+          {% elif salary_obj.salary_month == 10%}
+          {% trans "October" %}
+          {% elif salary_obj.salary_month == 11%}
+          {% trans "November" %}
+          {% elif salary_obj.salary_month == 12%}
+          {% trans "December" %}
+          {% endif %}</td>
+      </tr>
+      <tr>
+        <td>{% trans "Payroll Run Date" %}</td>
+        <td colspan="3">{{ salary_obj.run_date }}</td>
+      </tr>
+    </thead>
+  </table>
+
+  <table class="tg" style={% if LANGUAGE_CODE == 'ar' %} "text-align:right;" {% else %} "text-align:left;" {% endif %}>
+    <tr>
+      <th class="tg-73oq" colspan="3">Description</th>
+      <th class="tg-73oq">Earning Amount</th>
+      <th class="tg-73oq">Deduction Amount</th>
+    </tr>
+    {% for emp in emp_elements %}
+    <tr>
+      {% if emp.element_id.classification.code == 'earn' %}
+      <td class="tg-73oq" colspan="3">{{ emp.element_id }}</td>
+      <td class="tg-73oq">{{ emp.element_value}}</td>
+      <td class="tg-73oq">-</td>
+      {% endif %}
+    </tr>
+    <tr>
+      {% if emp.element_id.classification.code == 'deduct' %}
+      <td class="tg-73oq" colspan="3">{{ emp.element_id }}</td>
+      <td class="tg-73oq">-</td>
+      <td class="tg-73oq">{{ emp.element_value}}</td>
+      {% endif %}
+    </tr>
+    {% endfor %}
+    <tr>
+      <td class="tg-73oq" colspan="3">{% trans "Insurance Amount" %}</td>
+      <td class="tg-73oq">-</td>
+      <td class="tg-73oq">{{ salary_obj.insurance_amount|floatformat }}</td>
+    </tr>
+    <tr>
+      <td class="tg-73oq" colspan="3">{% trans "Gross Salary" %}</td>
+      <td class="tg-73oq" colspan="2" style="text-align:center;">{{ salary_obj.gross_salary|floatformat }}</td>
+    </tr>
+    <tr>
+      <td class="tg-73oq" colspan="3">{% trans "Tax Amount" %}</td>
+      <td class="tg-73oq" colspan="2" style="text-align:center;">{{salary_obj.tax_amount|floatformat}}</td>
+    </tr>
+    <tr>
+      <td class="tg-73oq" colspan="3">{% trans "Net Salary" %}</td>
+      <td class="tg-73oq" colspan="2" style="text-align:center;">{{ salary_obj.net_salary|floatformat }}</td>
+    </tr>
+  </table>
+</div>
+{% endblock payslip_body %}

@@ -1,0 +1,269 @@
+{% extends 'master.html'%}
+{% load staticfiles%}
+{% load l10n %}
+{% load i18n %}
+{% block body%}
+
+{% if messages %}
+{% for message in messages %}
+<div class="alert {% if message.tags %} alert-{{ message.tags }}{% endif %}">{{ message|safe }}</div>
+{% endfor %}
+{% endif %}
+
+{% if form.errors %}
+<div class="alert alert-error">
+  <h4>{% trans "Please fix the following errors" %}</h4>
+  <ul>
+    {% for field in form %}
+    {% if field.errors %}
+    {% for error in field.errors %}
+    <li><a href="#id_{{ field.name }}" class="error">{{ error|escape }}</a></li>
+    {% endfor %}
+    {% endif %}
+    {% endfor %}
+  </ul>
+  {% if form.non_field_errors %}
+  {{ form.non_field_errors }}
+  {% endif %}
+</div>
+{% endif %}
+
+<div class="row" style="margin-left:0px;">
+  <div class="col-md-8">
+    <h4 class="c-grey-900">{{page_title|title}}</h4>
+  </div>
+  <div class="col-md-4">
+    <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
+      <div class="peer"><a href="{% url 'payroll_run:genereate-salary' month=salary_obj.salary_month year=salary_obj.salary_year salary_id=salary_obj.id emp_id=salary_obj.emp.id %}"target="_blank" class="btn cur-p btn-primary">{% trans "Print" %}</a></div>
+      <div class="peer"><a href="{% url 'payroll_run:list-month-salary' month=salary_obj.salary_month year=salary_obj.salary_year %}"  class="btn cur-p btn-secondary">{% trans "Back to List" %}</a></div>
+    </div>
+  </div>
+</div>
+
+<div class="row" style="margin-left:0px;">
+  <div class="col-md-12">
+    <div class="bgc-white bd bdrs-3 p-20 mB-20">
+      <ul class="m-0 p-0">
+        <li class="peers">
+          <a class="td-n p-20 peers fxw-nw mR-20 peer-greed c-grey-900">
+            <div class="peer mR-15">
+            <i class="fa fa-fw fa-user-o c-red-500"></i></div>
+            <div class="peer">
+              <span class="fw-600">{% trans "Employee Name" %}</span>
+              <div class="c-grey-600">
+                <span class="c-grey-700">{{ salary_obj.emp }} </span></div>
+            </div>
+          </a>
+          <a class="td-n p-20 peers fxw-nw mR-20 peer-greed c-grey-900">
+          <div class="peer mR-15">
+          <i class="fa fa-fw fa-id-card-o c-purple-500"></i></div>
+          <div class="peer">
+            <span class="fw-600">{% trans "ID Number" %}</span>
+            <div class="c-grey-600">
+              <span class="c-grey-700">{{ salary_obj.emp.emp_number }}</span></div>
+          </div>
+          </a>
+          <a class="td-n p-20 peers fxw-nw mR-20 peer-greed c-grey-900">
+          <div class="peer mR-15">
+          <i class="fa fa-fw fa-calendar-o c-blue-500"></i></div>
+          <div class="peer">
+            <span class="fw-600">{% trans "Pay Period" %}</span>
+            <div class="c-grey-600">
+              <span class="c-grey-700">{% if salary_obj.salary_month == 1%}
+                  {% trans "January" %}
+                  {% elif salary_obj.salary_month == 2%}
+                  {% trans "February" %}
+                  {% elif salary_obj.salary_month == 3%}
+                  {% trans "March" %}
+                  {% elif salary_obj.salary_month == 4%}
+                  {% trans "April" %}
+                  {% elif salary_obj.salary_month == 5%}
+                  {% trans "May" %}
+                  {% elif salary_obj.salary_month == 6 %}
+                  {% trans "June" %}
+                  {% elif salary_obj.salary_month == 7 %}
+                  {% trans "July" %}
+                  {% elif salary_obj.salary_month == 8%}
+                  {% trans "August" %}
+                  {% elif salary_obj.salary_month == 9%}
+                  {% trans "September" %}
+                  {% elif salary_obj.salary_month == 10%}
+                  {% trans "October" %}
+                  {% elif salary_obj.salary_month == 11%}
+                  {% trans "November" %}
+                  {% elif salary_obj.salary_month == 12%}
+                  {% trans "December" %}
+                  {% endif %}</span></div>
+          </div>
+          </a>
+          <a class="td-n p-20 peers fxw-nw mR-20 peer-greed c-grey-900">
+            <div class="peer mR-15">
+            <i class="fa fa-fw fa-calendar-minus-o c-green-500"></i></div>
+            <div class="peer">
+              <span class="fw-600">{% trans "Payroll Run Date" %}</span>
+              <div class="c-grey-600">
+                <span class="c-grey-700">{{ salary_obj.run_date }}</span></div>
+            </div>
+          </a>
+          </li>
+      </ul>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="bgc-white bd bdrs-3 p-20 mB-20">
+            <!-- <h4 class="c-grey-900 mB-20">Table head options</h4> -->
+            <table class="table">
+              <thead class="thead-light ta-c">
+                <tr>
+                  <th scope="col">{% trans "Earning" %}</th>
+                  <th scope="col">{% trans "Amount EGP" %}</th>
+                </tr>
+              </thead>
+              <tbody class="ta-c">
+                {% for emp in emp_elements_incomes %}
+                <tr>
+                  <td>{{ emp.element_id }}</td>
+                  <td>{{ emp.element_value}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table></div></div>
+
+            <div class="col-md-6">
+              <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                <!-- <h4 class="c-grey-900 mB-20">Table head options</h4> -->
+                <table class="table">
+                  <thead class="thead-light ta-c">
+                    <tr>
+                      <th>{% trans "Deductions" %} </th>
+                      <th>{% trans "Amount EGP" %} </th>
+                    </tr>
+                  </thead>
+                <tbody class="ta-c">
+                  {% for emp_d in emp_elements_deductions %}
+                  <tr>
+                    <td>{{ emp_d.element_id }}</td>
+                    <td>{{ emp_d.element_value}}</td>
+                  </tr>
+                  {% endfor %}
+                  <tr>
+                    <td> {% trans "Social Insurance" %}</td>
+                    <td>{{salary_obj.insurance_amount}}</td>
+                  </tr>
+                  </tbody>
+            </table></div>
+
+          </div>
+          <div class="col-md-12">
+          <div class="bgc-white bd bdrs-3 p-20 mB-20">
+            <!-- <h4 class="c-grey-900 mB-20">Table head options</h4> -->
+            <table class="table table-striped">
+            <tbody>
+              <tr>
+                <td>{% trans "Gross Salary" %}</td>
+                <td>{{ salary_obj.gross_salary|floatformat }}</td>
+              </tr>
+              <tr>
+                <td >{% trans "Tax Amount" %}</td>
+                <td >{{salary_obj.tax_amount|floatformat}}</td>
+              </tr>
+              <tr>
+                <td>{% trans "Net Salary" %}</td>
+                <td>{{ salary_obj.net_salary|floatformat }}</td>
+              </tr>
+              </tbody>
+        </table></div>
+        </div>
+        </div>
+
+      <!-- <section class="d-flex align-items-right">
+        <div class="w-100">
+          <div class="col-md-12">
+            <h3 style={% if LANGUAGE_CODE == 'ar' %} "text-align:right; font-size:30px; font-weight: bold;" {% else %} "text-align:left; font-size:30px; font-weight: bold;" {% endif %}>
+              <table class='table'>
+                <tbody>
+                  <tr>
+                    <td>{{ emp_payment.payment_method.label }}</td>
+                    <td>{{ emp_payment.payment_method }}</td>
+                    <td>{{emp_payment.bank_name.label}}</td>
+                    <td>{{emp_payment.bank_name}}</td>
+                  </tr>
+                  <tr>
+                    <td>{{emp_payment.swift_code.label}}</td>
+                    <td>{{emp_payment.swift_code}}</td>
+                    <td>{{emp_payment.account_number.label}}</td>
+                    <td>{{emp_payment.account_number}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </h3>
+          </div>
+        </div>
+      </section> -->
+
+      <!-- <section class="d-flex align-items-right">
+        <div class="row">
+          <div class="col-md-6" align='right'>
+            <div class="fhsco-table">
+
+              <table class='table'>
+                <thead bgcolor="#c3c4c8">
+                  <td align='center'>{% trans "Earning" %} </td>
+                  <td align='center'>{% trans "Amount EGP" %}</td>
+                </thead>
+                <tbody>
+                  {% for emp in emp_elements_incomes %}
+                  <tr>
+                    <td>{{ emp.element_id }}</td>
+                    <td>{{ emp.element_value}}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div> -->
+          <!-- <div class="col-md-6" align='left'>
+
+            <table class='table'>
+              <thead bgcolor="#c3c4c8">
+                <td align='center'>{% trans "Deductions" %} </td>
+                <td align='center'>{% trans "Amount EGP" %} </td>
+              </thead>
+              <tbody>
+                {% for emp_d in emp_elements_deductions %}
+                <tr>
+                  <td>{{ emp_d.element_id }}</td>
+                  <td>{{ emp_d.element_value}}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                  <td> {% trans "Social Insurance" %}</td>
+                  <td>{{salary_obj.insurance_amount}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div> -->
+          <!-- <div class="col-md-12" align='left'>
+            <table class='table' align='center'>
+              <tfoot>
+                <tr bgcolor="#c3c4c8">
+                  <td class="border" align='start'>{% trans "Gross Salary" %}</td>
+                  <td class="border" align='start'>{{ salary_obj.gross_salary|floatformat }}</td>
+                </tr>
+                <tr>
+                  <td class="border" align='start'>{% trans "Tax Amount" %}</td>
+                  <td class="border" align='start'>{{salary_obj.tax_amount|floatformat}}</td>
+                </tr>
+                <tr bgcolor="#c3c4c8">
+                  <td class="border" align='start'>{% trans "Net Salary" %}</td>
+                  <td class="border" align='start'>{{ salary_obj.net_salary|floatformat }}</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div> -->
+        <!-- </div>
+      </section> -->
+    </div>
+  </div>
+  </div>
+
+{% endblock body%}

@@ -1,0 +1,77 @@
+{% extends 'master.html'%}
+{% load staticfiles%}
+{% load l10n %}
+{% load i18n %}
+{% block body%}
+
+<!-- first nada -->
+<!-- Header -->
+<section class="panel panel-default">
+  <div class="panel-body">
+    <header class="panel-heading font-bold pull-left">{{page_title|title}}</header>
+    <div class="doc-buttons pull-right">
+      <a href="{% url 'employee:employee-create' %}" class="btn btn-s-md btn-primary ">{% trans "Add" %}</a>
+      <a href="{% url 'employee:list-employee-card' %}" class="btn btn-s-md btn-default">{% trans "Card View" %}</a>
+    </div>
+  </div>
+</section>
+<!-- end Header -->
+
+{% if messages %}
+{% for message in messages %}
+<div class="alert {% if message.tags %} alert-{{ message.tags }}{% endif %}">{{ message|safe }}</div>
+{% endfor %}
+{% endif %}
+
+{% if form.errors %}
+<div class="alert alert-error">
+  <h4>{% trans "Please fix the following errors" %}</h4>
+  <ul>
+    {% for field in form %}
+    {% if field.errors %}
+    {% for error in field.errors %}
+    <li><a href="#id_{{ field.name }}" class="error">{{ error|escape }}</a></li>
+    {% endfor %}
+    {% endif %}
+    {% endfor %}
+  </ul>
+  {% if form.non_field_errors %}
+  {{ form.non_field_errors }}
+  {% endif %}
+</div>
+{% endif %}
+<div>
+  <h1 id="page_title">{{page_title|title}}</h1>
+</div>
+
+<div class="btn-group" role="group" aria-label="Third group">
+  <a href="{% url 'payroll_run:create-sal-elements' %}"><button type="button" name="button" class="btn-sm btn-secondary">{% trans "Add" %}</button></a>
+</div>
+<br>
+
+<table id="list_table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">{% trans "Elements" %}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for x in allowance_list %}
+    <tr>
+      <th scope="row">{{ forloop.counter }}</th>
+      <td>{{ x.element_allowance_name }}</td>
+    </tr>
+  </tbody>
+  <tbody>
+    {% endfor %}
+    {% for y in deductions_list %}
+    <tr>
+      <th scope="row">{{ forloop.counter }}</th>
+      <td>{{ y.element_deductions_name }}</td>
+    </tr>
+  </tbody>
+  {% endfor %}
+</table>
+
+{% endblock body%}

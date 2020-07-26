@@ -1,0 +1,85 @@
+
+<!DOCTYPE html>
+{% load staticfiles %}
+{% load i18n %}
+{% load l10n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% get_current_language_bidi as LANGUAGE_BIDI %}
+
+<html  {% if LANGUAGE_BIDI %} dir="rtl" {% else %} dir="ltr" {% endif %}>
+<meta content="text/html;charset=UTF-8" />
+
+<head>
+  <title>PeopleM8</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.2.3/flatpickr.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.2.3/themes/dark.css">
+  <link href="//cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/build/css/bootstrap-datetimepicker.css" rel="stylesheet">
+  <link rel = "icon" type = "image/png" href = "{% static 'img/PeopleIcon.ico'%}">
+  <!-- For apple devices -->
+  <link rel = "apple-touch-icon" type = "image/png" href = "{% static 'img/PeopleIcon.ico'%}"/>
+
+  {% if LANGUAGE_BIDI %}
+  <link href="{% static 'css/style-main-ar.css'%}" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
+  {% else %}
+  <link href="{% static 'css/style-main-en.css'%}" rel="stylesheet">
+  {% endif %}
+  <link href="{% static 'css/style.css'%}" rel="stylesheet">
+  <!-- datatable -->
+
+
+</head>
+
+<body class="app">
+  <div id="loader">
+    <div class="spinner"></div>
+  </div>
+  <script type="text/javascript">
+    window.addEventListener('load', () => {
+      const loader = document.getElementById('loader');
+      setTimeout(() => {
+        loader.classList.add('fadeOut');
+      }, 300);
+    });
+  </script>
+  <div>
+    <div class="sidebar">
+      {% if request.user.employee_type == 'A'%}
+        {% include 'side_nav.html' %}
+      {% else %}
+        {% include 'side_nav_user.html' %}
+      {% endif %}
+    </div>
+    <div class="page-container">
+      <div class="header navbar">
+        {% include 'top_nav.html' %}
+      </div>
+      <main class="main-content bgc-grey-100">
+        <div id="mainContent">
+            {% block body %}
+            {% endblock body %}
+        </div>
+      </main>
+      {% include 'footer.html' %}
+    </div>
+  </div>
+
+  <script src="//cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/src/js/bootstrap-datetimepicker.js"></script>
+  <!-- jQuery -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="{% static 'jquery/jquery.min.js'%}"></script>
+  <script type="text/javascript" src="{% static 'js/vendor.js'%}"></script>
+  {% if LANGUAGE_BIDI %}
+  <script type="text/javascript" src="{% static 'js/bundleAr.js'%}"></script>
+  {% else %}
+  <script type="text/javascript" src="{% static 'js/bundle.js'%}"></script>
+  {% endif %}
+  <script src="{% static 'js/rocket-loader.min.js' %}" data-cf-settings="b7f1894beadbd64bfa501e09-|49" defer=""></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.20/datatables.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+  <!--  Flatpickr  -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.2.3/flatpickr.js"></script>
+  {% block js %} {% endblock js %}
+</body>
+
+</html>

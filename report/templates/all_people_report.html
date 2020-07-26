@@ -1,0 +1,100 @@
+{% extends "master.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+
+{% block body %}
+
+<div class="container-fluid">
+  <div class="row" style="margin-left:0px;">
+    <div class="col-md-8">
+      <h4 class="c-grey-900">{{page_title|title}}</h4>
+    </div>
+    <div class="col-md-4">
+      <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
+        <div class="peer">
+        </div>
+      </div>
+    </div>
+  </div>
+  <h3>Employees that attended today {% now "jS \o\f F" %}</h3>
+  <div class="row" style="margin-left:0px;">
+    <div class="col-md-12">
+      <div class="bgc-white bd bdrs-3 p-20 mB-20">
+        <table class="table table-striped table-bordered" id="dataTable" width="100%">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Employee</th>
+              <th>Date</th>
+              <th>Check In</th>
+              <th>Late?</th>
+              <th>How Late</th>
+              <th>Check Out</th>
+              <th>Overtime?</th>
+              <th>How Much Overtime</th>
+              <th>Notes</th>
+
+            </tr>
+          </thead>
+          <tbody>
+            {% for i in all_people %}
+
+            <tr>
+              <td>{{ forloop.counter }}</td>
+              <td>{{i.employee}}</td>
+              <td>{{i.date}}</td>
+              <td>{{i.check_in}}</td>
+              {% if i.is_late %}
+              <td>Yes</td>
+              {% else %}
+              <td>No</td>
+              {% endif %}
+
+              {% if i.is_late %}
+              <td>{{i.how_late}}</td>
+              {% else %}
+              <td>Not Applicable</td>
+              {% endif %}
+
+              {% if i.check_out is None %}
+              <td>Still hasn't checked out</td>
+              {% else %}
+              <td>{{i.check_out}}</td>
+              {% endif %}
+
+              {% if i.overtime and i.check_out %}
+              <td>Yes</td>
+              {% elif i.check_out is None %}
+              <td>Waiting for check out</td>
+              {% else %}
+              <td>No</td>
+              {% endif %}
+
+              {% if i.overtime and i.check_out %}
+              <td>{{i.how_much_overtime}}</td>
+              {% elif i.check_out is None %}
+              <td>Waiting for check out</td>
+              {% else %}
+              <td>No Overtime</td>
+              {% endif %}
+
+              <td> </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <br>
+        <form>
+          <div class="form-group">
+            <label for="exampleFormControlTextarea1"><strong>Notes</strong></label>
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="6"></textarea>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock body %}

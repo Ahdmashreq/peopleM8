@@ -1,0 +1,65 @@
+{% load i18n %}
+<!DOCTYPE html>
+{% load staticfiles %}
+{% load l10n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% get_current_language_bidi as LANGUAGE_BIDI %}
+<html lang="{{ LANGUAGE_CODE }}" dir={% if LANGUAGE_BIDI%}"rtl" {%else%}"ltr"{%endif%}  class="bg-dark">
+
+<head>
+  <meta charset="utf-8" />
+  <title>PeopleM8 {% trans "Login" %}</title>
+  <meta name="description" content="app, web app, responsive, admin dashboard, admin, flat, flat ui, ui kit, off screen nav" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <link rel="stylesheet" href="{% static 'css/font.css' %}" type="text/css" />
+  <link rel="stylesheet" href="{% static 'js/calendar/bootstrap_calendar.css' %}" type="text/css" />
+  <link rel="stylesheet" href="{% static 'css/app.v2.css' %}" type="text/css" />
+</head>
+
+<body class="bg-dark" style={% if LANGUAGE_CODE == 'ar' %} "text-align:right;" {% else %} "text-align:left;" {% endif %}>
+
+  <section id="content" class="m-t-lg wrapper-md animated fadeInDown">
+    <div class="container aside-xxl">
+      <section class="panel panel-default bg-white m-t-lg">
+        <header class="panel-heading text-center">
+          <strong>{% trans "Sgin Up" %}</strong>
+        </header>
+        <form method="post" class="panel-body wrapper-lg">
+          {% csrf_token %}
+          <div class="illustration" align="center">
+            <img style="max-height:120%;max-width: 100%;" src="{% static 'img/Peoplem83.png' %}">
+          </div>
+          {% for field in register_form %}
+          <p>
+            {{ field.label_tag }}<br>
+            {{ field }}
+            {% if field.help_text %}
+            <small style="color: grey">{{ field.help_text }}</small>
+            {% endif %}
+            {% for error in field.errors %}
+            <p style="color: red">{{ error }}</p>
+            {% endfor %}
+          </p>
+          {% endfor %}
+          <div class="checkbox">
+            <label>
+              <input type="checkbox">{% trans "Agree the" %}<a href="#">{% trans "terms and policy" %}</a>
+            </label>
+          </div>
+          <button type="submit" class="btn btn-primary">{% trans "Sgin Up" %}</button>
+          <div class="line line-dashed"></div>
+          <p class="text-muted text-center">
+            <small>Already have an account?</small></p>
+          <a href="{% url 'home:user-login'%}" class="btn btn-default btn-block">{% trans "Sgin In" %}</a>
+        </form>
+      </section>
+    </div>
+  </section>
+  <!-- footer -->
+  <footer id="footer">
+     {% include 'footer.html' %}
+   </footer>
+  <script src="{% static  'js/app.v2.js'%}"></script>
+</body>
+
+</html>

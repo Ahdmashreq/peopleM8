@@ -1,0 +1,60 @@
+{% extends "master.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+
+{% block body %}
+
+<div class="container-fluid">
+  <div class="row" style="margin-left:0px;">
+    <div class="col-md-8">
+      <h4 class="c-grey-900">Attendance</h4>
+    </div>
+    <div class="col-md-4">
+      <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
+      </div>
+    </div>
+  </div>
+  <div class="row" style="margin-left:0px;">
+    <div class="col-md-12">
+      <div class="bgc-white bd bdrs-3 p-20 mB-20">
+        <h3>Thank You.<br> We will miss you.</h3>
+        <form method="POST">
+          <div class="form-group">
+            {% csrf_token %}
+            <div class="form-group col-md-6">
+              <label class="fw-500">Start time</label>
+              <div class="timepicker-input input-icon form-group">
+                <div class="input-group">
+                  <div class="input-group-addon bgc-white bd bdwR-0">
+                    <i class="ti-alarm-clock"></i>
+                  </div>
+                  You Checked In : {{att_form.check_in}}
+                </div>
+              </div>
+            </div>
+            <br>
+            <div class="form-group row">
+              <div class="form-row gap-10 peers">
+                <div class="peer">
+                    <button type="submit" name="button" class="btn btn-primary">
+                      <i class="fa fa-car"></i>
+                      Check out
+                    </button>
+                </div>
+                <div class="peer">
+                  <a href="{% url 'attendance:list-attendance' %}">
+                  <button type="button" class="btn cur-p btn-danger">Cancel</button>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock body %}

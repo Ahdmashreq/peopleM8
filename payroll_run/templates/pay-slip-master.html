@@ -1,0 +1,66 @@
+{% load staticfiles%}
+<html>
+{% load i18n %}
+{% load l10n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% get_current_language_bidi as LANGUAGE_BIDI %}
+
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <style type="text/css">
+    @page {
+      size: A4;
+      margin: 1.0cm;
+    }
+
+    .tg {
+      border-collapse: collapse;
+      border-spacing: 0;
+      border-color: #ccc;
+      width: 80%;
+      float: left !important;
+      margin-top: 10px;
+    }
+
+    .tg td {
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      padding: 10px 5px;
+      border-style: solid;
+      border-width: 1px;
+      overflow: hidden;
+      word-break: normal;
+      border-color: #ccc;
+      color: #333;
+      background-color: #fff;
+    }
+
+    .tg th {
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      font-weight: normal;
+      padding: 10px 5px;
+      border-style: solid;
+      border-width: 1px;
+      overflow: hidden;
+      word-break: normal;
+      border-color: #ccc;
+      color: #333;
+      background-color: #f0f0f0;
+    }
+
+    .tg .tg-73oq {
+      border-color: #000000;
+      text-align: left;
+      vertical-align: top
+    }
+  </style>
+</head>
+
+<body>
+  {%block payslip_body%}
+  {%endblock payslip_body%}
+</body>
+
+</html>

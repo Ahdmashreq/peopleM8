@@ -1,0 +1,99 @@
+{% extends 'master.html'%}
+{% load staticfiles%}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+{% block body%}
+<div class="container-fluid">
+  <div class="row" style="margin-left:0px;">
+    <div class="col-md-8">
+      <h4 class="c-grey-900">{{page_title|title}}</h4>
+    </div>
+    <div class="col-md-4">
+      <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %} ">
+        <div class="peer">
+          {% if egy_rule_flag is False %}
+          <button type="button" class="btn cur-p btn-primary" data-toggle="modal" data-target="#insuracne_modal">{% trans "Add" %}</button>
+          {% else %}
+          <a href="{% url 'defenition:insurance-create' %}" class="btn cur-p btn-primary">{% trans "Add" %}</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row" style="margin-left:0px;">
+    <div class="col-md-12">
+      <div class="bgc-white bd bdrs-3 p-20 mB-20">
+        <table class="table table-striped table-bordered" id="dataTable" width="100%">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>{% trans "Insurance Name" %}</th>
+              <th>{% trans "Actions" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for x in insurance_form %}
+            <tr>
+              <td scope="row">{{ forloop.counter }}</td>
+              <td>{{ x.name }}</td>
+              <td class="Actions">
+                <div class="w-100 gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
+                  <div class="peer">
+                    <a href="{% url 'defenition:insurance-update' pk=x.id %}">
+                      <button type="button" class="btn cur-p btn-outline-primary">{% trans "Update" %}</button>
+                    </a>
+                  </div>
+                  <div class="peer">
+                    <a href="#">
+                      <button type="button" class="btn cur-p btn-outline-danger" data-toggle="modal" data-target="#delete-modal{{x.pk}}">{% trans "Delete" %}</button>
+                    </a>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <!-- Delete Modal -->
+            <div class="modal fade" id="delete-modal{{x.pk}}" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-body">
+                    <p>{% trans "Are you sure you want to delete this record?" %}</p>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
+                    <a href="{% url 'defenition:insurance-delete' pk=x.id %}" class="btn btn-danger" type="button">{% trans "Delete" %}</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Egyptian Insurance Rule  -->
+<div class="modal fade" id="insuracne_modal" tabindex="-1" role="dialog" style="display: none;">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>{% trans "Do you want to create the Egyptian insurance rule?" %}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
+        <a href="{% url 'defenition:egypt-insuracne-rule' %}" type="button" class="btn btn-primary">
+          <span class="text">{% trans "Yes" %}</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock body %}

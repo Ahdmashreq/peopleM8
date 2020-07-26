@@ -1,0 +1,91 @@
+{% extends 'master.html'%}
+{% load staticfiles%}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+{% block body%}
+
+<div class="container-fluid">
+  <form method="post">
+    {% csrf_token %}
+    {% include 'messages.html' %}
+
+    <div class="row">
+      <div class="col-md-8">
+        <h4 class="c-grey-900">{{page_title|title}}</h4>
+      </div>
+      <div class="col-md-4">
+        <div class="gap-10 peers push-right">
+          <div class="peer">
+            <button type="submit" class="btn cur-p btn-primary">Save</button>
+          </div>
+          <div class="peer">
+            <a href="{% url 'element_definition:list-element' %}" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-1">
+      <div class="bgc-white p-20 bd">
+        <div class="mT-30">
+          <div class="form-row">
+            <div class="form-group col-md-3">
+              <label>{{ element_master_form.element_name.label }}</label>
+              {{ element_master_form.element_name }}
+            </div>
+            <div class="form-group col-md-3">
+              <label>{{ element_master_form.db_name.label }}</label>
+              {{ element_master_form.db_name }}
+            </div>
+            <div class="form-group col-md-3">
+              <label>{{ element_master_form.element_type.label }}</label>
+              {{ element_master_form.element_type }}
+            </div>
+            <div class="form-group col-md-3">
+              <label>{{ element_master_form.classification.label }}</label>
+              {{ element_master_form.classification }}
+            </div>
+            <div class="form-group col-md-3">
+              <label>{{ element_master_form.effective_date.label }}</label>
+              {{ element_master_form.effective_date }}
+            </div>
+            <div class="form-group col-md-3">
+              <label>{{ element_master_form.retro_flag }}{{ element_master_form.retro_flag.label }}</label>
+            </div>
+            <div class="form-group col-md-3">
+              <label>{{ element_master_form.tax_flag }}{{ element_master_form.tax_flag.label }}</label>
+            </div>
+            <div class="form-group col-md-3">
+              <label>{{ element_master_form.fixed_amount.label }}</label>
+              {{ element_master_form.fixed_amount }}
+            </div>
+
+            <div class="form-group col-md-4">
+              <label>{{ element_master_form.element_formula.label }}</label>
+              {{ element_master_form.element_formula }}
+              <hr>
+              <button type="button" class="btn btn-primary push-right" data-toggle="tooltip" data-placement="top" title="" data-original-title="To write the formula correctly, it must be as following:
+          1-Use the name of the item in the database (db Name) with a value or other item in the database in addition to the mathematical operators (+, -, *, / or %).
+          ** Example of calculating a specific allowance equal to 40% of the basic salary:
+          001 * 40%">{% trans "Hint" %}</button>
+            </div>
+
+
+
+            <div class="form-group col-md-3">
+              <label>{{ element_master_form.start_date.label }}</label>
+              {{ element_master_form.start_date }}
+            </div>
+            <div class="form-group col-md-3">
+              <label>{{ element_master_form.end_date.label }}</label>
+              {{ element_master_form.end_date }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+{% endblock body%}

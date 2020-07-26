@@ -1,0 +1,68 @@
+{% extends "master.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+
+{% block body %}
+
+
+<div class="container-fluid">
+  <form method="post">
+    {% csrf_token %}
+    {% include 'messages.html' %}
+    <div class="row">
+      <div class="col-md-8">
+        <h4 class="c-grey-900">Task Form</h4>
+      </div>
+    </div>
+    <div class="mt-1">
+      <div class="bgc-white p-20 bd">
+        <h5 class="c-grey-900"></h5>
+        <div class="mT-30">
+          <div class="form-row">
+            <div class="form-group col-md-3">
+              <label for="inputPassword4"><i class="ti-star"></i>Task</label>
+              <br>
+              {{task_form.task}}
+            </div>
+            <div class="form-group col-md-3">
+              <label class="fw-500">Start time</label>
+              <div class="timepicker-input input-icon form-group">
+                <div class="input-group">
+                  <div class="input-group-addon bgc-white bd bdwR-0">
+                    <i class="ti-alarm-clock"></i>
+                  </div>
+                  {{task_form.start_time}}
+                </div>
+              </div>
+            </div>
+            <div class="form-group col-md-3">
+              <label class="fw-500">End time</label>
+              <div class="timepicker-input input-icon form-group">
+                <div class="input-group">
+                  <div class="input-group-addon bgc-white bd bdwR-0">
+                    <i class="ti-alarm-clock"></i>
+                  </div>
+                  {{task_form.end_time}}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="form-row gap-10 peers">
+              <div class="peer">
+                  <button type="submit" class="btn cur-p btn-success">Save changes</button>
+              </div>
+              <div class="peer">
+                <a href="{% url 'attendance:list-tasks' all_tasks_id %}">
+                <button type="button" class="btn cur-p btn-danger">Cancel</button>
+                </a>
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock body %}

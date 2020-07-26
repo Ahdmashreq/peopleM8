@@ -1,0 +1,157 @@
+{% extends 'master.html'%}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+
+{% block body %}
+
+<div class="container-fluid">
+  <div class="row gap-20 masonry pos-r">
+    <div class="masonry-sizer col-md-6"></div>
+    <div class="masonry-item w-100">
+      <div class="row gap-20">
+        <div class="col-md-3">
+          <div class="layers bd bgc-white p-20">
+            <div class="layer w-100 mB-10">
+              <a href="{% url 'leave:list_leave' %}" class="card-link">
+                <h6 class="lh-1">Leaves</h6>
+              </a>
+            </div>
+            <div class="layer w-100">
+              <div class="peers ai-sb fxw-nw">
+                <div class="peer peer-greed">
+                  <span id="sparklinedash2"><canvas width="45" height="20" style="display: inline-block; width: 45px; height: 20px; vertical-align: top;"></canvas></span></div>
+                <div class="peer">
+                  <span class="d-ib lh-0 va-m fw-600 bdrs-10em pX-15 pY-15 bgc-red-50 c-red-500">{{count_leaves}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="layers bd bgc-white p-20">
+            <div class="layer w-100 mB-10">
+              <h6 class="lh-1">Birthdays in the month of {% now "F" %}</h6>
+            </div>
+            <div class="layer w-100">
+              <div class="peers ai-sb fxw-nw">
+                <div class="peer peer-greed">
+                  <span id="sparklinedash3">
+                    <canvas width="45" height="20" style="display: inline-block; width: 45px; height: 20px; vertical-align: top;"></canvas></span></div>
+                <div class="peer">
+                  <span class="d-ib lh-0 va-m fw-600 bdrs-10em pX-15 pY-15 bgc-purple-50 c-purple-500">{{count_birthdays}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="layers bd bgc-white p-20">
+            <div class="layer w-100 mB-10">
+              <a href="{% url 'notification:list_notification' %}" class="card-link">
+                <h6 class="lh-1">Notifications</h6>
+              </a>
+            </div>
+            <div class="layer w-100">
+              <div class="peers ai-sb fxw-nw">
+                <div class="peer peer-greed">
+                  <span id="sparklinedash3">
+                    <canvas width="45" height="20" style="display: inline-block; width: 45px; height: 20px; vertical-align: top;"></canvas></span></div>
+                <div class="peer">
+                  <span class="d-ib lh-0 va-m fw-600 bdrs-10em pX-15 pY-15 bgc-purple-50 c-purple-500">{{count_notifications}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="row gap-20 masonry pos-r">
+    <div class="masonry-item col-md-6">
+      <div class="bgc-white bd bdrs-3 p-20 mB-20">
+        <table class="table table-striped table-bordered" id="dataTable" width="100%">
+          <h5>Birthday Table</h5>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>{% trans "Staff" %}</th>
+              <th>{% trans "Birth Date" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for employee in birthdays %}
+            <tr>
+              <td scope="row">{{ forloop.counter }}</td>
+              <td>{{ employee.emp_name}}</td>
+              <td>{{ employee.date_of_birth}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="masonry-item col-md-6">
+      <div class="bgc-white bd bdrs-3 p-20 mB-20">
+        <table class="table table-striped table-bordered" id="dataTable" width="100%">
+          <h5>New Notifications</h5>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>From</th>
+              <th>Message</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for i in notifications %}
+            <tr>
+              <td>{{ forloop.counter }}</td>
+              <td>{{i.from_emp}}</td>
+              <td>{{i.message}}</td>
+              <td>{{i.timestamp}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="bgc-white bd bdrs-3 p-20 mB-20">
+    <table class="table table-striped table-bordered" id="dataTable" width="100%">
+      <h5>Pending Service Requests</h5>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Employee</th>
+          <th> &nbsp Department </th>
+          <th> &nbsp Destination</th>
+          <th> &nbsp Project Name/Client Name</th>
+          <th> &nbsp Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in services %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{i.emp}}</td>
+          <td>&nbsp {{i.department}}</td>
+          <td>&nbsp {{i.destination}}</td>
+          <td>&nbsp {{i.project_name}}</td>
+          <td>&nbsp {{i.status}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <i class="fa fa-star"></i>
+    <a href="{% url 'service:services_create' %}">Request a Service</a>
+  </div>
+
+
+</div>
+
+
+{% endblock body %}
