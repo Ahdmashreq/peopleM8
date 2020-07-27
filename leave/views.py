@@ -18,6 +18,7 @@ from django.template import loader
 import datetime
 from custom_user.models import User
 
+
 @login_required(login_url='/login')
 def add_leave(request):
     employee = Employee.objects.get(user=request.user)
@@ -25,16 +26,18 @@ def add_leave(request):
     if request.method == "POST":
         leave_form = FormLeave(data=request.POST)
         if leave_form.is_valid():
+
             leave = leave_form.save(commit=False)
             leave.user = request.user
             leave.save()
+
             if employee_job.manager:
-                NotificationHelper(employee,employee_job.manager,leave).send_notification()
+                NotificationHelper(employee, employee_job.manager, leave).send_notification()
             requestor = employee
             requestor_email = employee.email
             # leave_type = leave.leavetype
             from_date = leave.startdate
-            to_date =	leave.enddate
+            to_date = leave.enddate
             resume = leave.resume_date
             reason =	leave.reason
             team_leader =	employee_job.manager
@@ -74,18 +77,20 @@ def add_leave(request):
         leave_form = FormLeave()
     return render(request, 'add_leave.html', {'leave_form': leave_form})
 
+
 @login_required(login_url='/login')
 def list_leave(request):
     employee = Employee.objects.get(user=request.user)
     employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
     is_manager = False
-    if employee_job.manager == None:       #check if the loged in user is a manager
+    if employee_job.manager == None:  # check if the loged in user is a manager
         list_leaves = Leave.objects.all_pending_leaves()
         is_manager = True
     else:
         list_leaves = Leave.objects.filter(user=request.user)
         is_manager = False
-    return render(request, 'list_leave.html', {'leaves': list_leaves, 'is_manager':is_manager})
+    return render(request, 'list_leave.html', {'leaves': list_leaves, 'is_manager': is_manager})
+
 
 @login_required(login_url='/login')
 def del_leave(request, id):
@@ -95,8 +100,9 @@ def del_leave(request, id):
                          'Leave was deleted successfully')
     return redirect('leave:list_leave')
 
+
 @login_required(login_url='/login')
-def edit_leave(request,id):
+def edit_leave(request, id):
     instance = get_object_or_404(Leave, id=id)
     leave_form = FormLeave(instance=instance)
     employee = Employee.objects.get(user=instance.user)
@@ -112,23 +118,27 @@ def edit_leave(request,id):
             print(leave_form.errors)
     else:  # http request
         leave_form = FormLeave(instance=instance)
-    return render(request, 'edit-leave.html', {'leave_form': leave_form, 'leave_id':id, 'employee':employee})
+    return render(request, 'edit-leave.html', {'leave_form': leave_form, 'leave_id': id, 'employee': employee})
+
 
 @login_required(login_url='/login')
-def leave_approve(request,leave_id):
+def leave_approve(request, leave_id):
     instance = get_object_or_404(Leave, id=leave_id)
     instance.status = 'Approved'
     instance.is_approved = True
-    instance.save(update_fields=['status','is_approved'])
+    instance.save(update_fields=['status', 'is_approved'])
     return redirect('leave:list_leave')
 
+
 @login_required(login_url='/login')
-def leave_unapprove(request,leave_id):
+def leave_unapprove(request, leave_id):
     instance = get_object_or_404(Leave, id=leave_id)
     instance.status = 'Rejected'
     instance.is_approved = False
-    instance.save(update_fields=['status','is_approved'])
+    instance.save(update_fields=['status', 'is_approved'])
     return redirect('leave:list_leave')
+
+
 # #############################################################################
 @login_required(login_url='/login')
 def add_leave_master(request):
@@ -147,6 +157,7 @@ def add_leave_master(request):
         leave_form = FormLeaveMaster()
     return render(request, 'add_leave_master.html', {'leave_form': leave_form, 'leaves': leaves})
 
+
 @login_required(login_url='/login')
 def edit_leave_master(request, id):
     instance = get_object_or_404(LeaveMaster, id=id)
@@ -155,7 +166,7 @@ def edit_leave_master(request, id):
         if leave_form.is_valid():
             leave = leave_form.save(commit=False)
             leave.save()
-            #sendmail(leave)
+            # sendmail(leave)
             messages.add_message(request, messages.SUCCESS,
                                  'Leave Type was edited successfully')
             return redirect('leave:add_leave_master')
@@ -164,6 +175,7 @@ def edit_leave_master(request, id):
     else:  # http request
         leave_form = FormLeaveMaster(instance=instance)
     return render(request, 'edit_leave_master.html', {'leave_form': leave_form})
+
 
 @login_required(login_url='/login')
 def del_leave_master(request, id):

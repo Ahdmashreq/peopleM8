@@ -34,6 +34,15 @@ class FormLeave(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_show_labels = True
 
+    def clean(self):
+        cleaned_data = super(FormLeave, self).clean()
+        if cleaned_data['enddate'] < cleaned_data['startdate']:
+            self.add_error('enddate','End date must be after start date')
+        elif cleaned_data['resume_date'] < cleaned_data['enddate'] or cleaned_data['resume_date'] < cleaned_data['startdate']:
+            self.add_error('resume_date','Resume date must be equal or after the end date')
+        return cleaned_data
+
+
 
 class FormLeaveMaster(forms.ModelForm):
     class Meta():

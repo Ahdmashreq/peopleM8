@@ -36,12 +36,14 @@
             <label class="col-sm-2 col-form-label">{{leave_form.enddate.label}}</label>
             <div class="col-sm-4">
               {{leave_form.enddate}}
+              {{leave_form.enddate.errors }}
             </div>
           </div>
           <div class="form-group row">
             <label class="col-sm-2 col-form-label">{{leave_form.resume_date.label}}</label>
             <div class="col-sm-4">
               {{leave_form.resume_date}}
+              {{leave_form.resume_date.errors }}
             </div>
           </div>
 
