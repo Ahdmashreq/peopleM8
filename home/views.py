@@ -1,5 +1,6 @@
 from django.shortcuts import render, reverse, redirect
 from django.contrib import messages
+from django.db.models import Q
 from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
 from django.contrib.auth.forms import (
     AuthenticationForm, PasswordChangeForm, PasswordResetForm, SetPasswordForm,
@@ -77,12 +78,48 @@ def user_login(request):
     else:
         return render(request, 'login.html')
 
+
+@login_required(login_url='/login')
+def user_home_page(request):
+    time_since=0
+    not_header=None
+    employee = Employee.objects.get(user=request.user)
+    employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
+
+    leave_count = Leave.objects.filter(user=request.user, status='pending').count()
+    unread_notifications = Notification.objects.filter(status = 'delivered', to_emp=employee).order_by('-creation_date')
+    notification_count = Notification.objects.filter(status='delivered', to_emp=employee).count()
+
+    birthdays_count = Employee.objects.filter(date_of_birth__month = date.today().month).count()
+    employee_count = Employee.objects.all().count()
+
+    emps_birthdays = Employee.objects.filter(date_of_birth__month = date.today().month)
+
+    # List MY Bussiness_Travel/services
+    bussiness_travel_service = Bussiness_Travel.objects.filter(Q(emp=employee) | Q(manager=employee), status='pending')
+
+
+    context = {
+            'birthdays': emps_birthdays,
+            'count_birthdays': birthdays_count,
+            'count_employees': employee_count,
+            'count_leaves': leave_count,
+            'count_notifications': notification_count,
+            'bussiness_travel_service': bussiness_travel_service,
+            'notifications': unread_notifications,
+    }
+    return render(request, 'index_user.html', context=context)
+
+@login_required(login_url='/login')
+def admin_home_page(request):
+    return render(request, 'index.html', context=None)
+
 @login_required(login_url='/login')
 def homepage(request):
     if request.user.employee_type =="A":
-        return render(request, 'index.html', context=None)
+        return admin_home_page(request)
     else:
-        return render(request, 'index_user.html', context=None)
+        return user_home_page(request)
 
 @login_required(login_url='/login')
 def user_logout(request):

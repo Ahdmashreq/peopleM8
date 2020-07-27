@@ -23,7 +23,7 @@ class NotificationHelper:
                 from_emp=self.from_emp,
                 to_emp=self.to_emp,
                 message="Employee {} requested a bussiness travel. and need your approve".format(self.from_emp),
-                leave=self.obj
+                bussiness_travel = self.obj
             )
             notification_obj.save()
             return True
@@ -32,7 +32,7 @@ class NotificationHelper:
                 from_emp=self.from_emp,
                 to_emp=self.to_emp,
                 message="Employee {} requested a purchase order. and need your approve".format(self.from_emp),
-                bussiness_travel = self.obj
+                Purchase_Request = self.obj
             )
             notification_obj.save()
             return True

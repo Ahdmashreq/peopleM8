@@ -39,10 +39,11 @@ def add_leave(request):
             reason =	leave.reason
             team_leader =	employee_job.manager
             team_leader_email =	employee_job.manager.email
-            
+
             html_message = loader.render_to_string(
                         'leave_mail.html',
                         {
+                            'leave_id':leave.id,
                             'requestor':requestor,
                             'user_name': request.user,
                             'team_leader': employee_job.manager,
@@ -55,8 +56,8 @@ def add_leave(request):
                         }
                     )
             try:
-                send_mail(subject = 'Mashreq Arabia Subject',
-                          message = 'Mashreq Arabia Message',
+                send_mail(subject = 'Applying for a leave',
+                          message = 'Applying for a leave',
                           from_email = requestor_email,
                           recipient_list = [team_leader_email],
                           fail_silently = False,

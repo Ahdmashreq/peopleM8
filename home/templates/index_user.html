@@ -11,7 +11,7 @@
     <div class="masonry-sizer col-md-6"></div>
     <div class="masonry-item w-100">
       <div class="row gap-20">
-        <div class="col-md-3">
+        <div class="col-md-4">
           <div class="layers bd bgc-white p-20">
             <div class="layer w-100 mB-10">
               <a href="{% url 'leave:list_leave' %}" class="card-link">
@@ -29,7 +29,7 @@
             </div>
           </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           <div class="layers bd bgc-white p-20">
             <div class="layer w-100 mB-10">
               <h6 class="lh-1">Birthdays in the month of {% now "F" %}</h6>
@@ -46,7 +46,7 @@
             </div>
           </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           <div class="layers bd bgc-white p-20">
             <div class="layer w-100 mB-10">
               <a href="{% url 'notification:list_notification' %}" class="card-link">
@@ -70,10 +70,10 @@
   </div>
 
 <div class="row gap-20 masonry pos-r">
-    <div class="masonry-item col-md-6">
+    <div class="masonry-item col-md-12">
       <div class="bgc-white bd bdrs-3 p-20 mB-20">
         <table class="table table-striped table-bordered" id="dataTable" width="100%">
-          <h5>Birthday Table</h5>
+          <h5>Birthday in this month</h5>
           <thead>
             <tr>
               <th>#</th>
@@ -93,10 +93,10 @@
         </table>
       </div>
     </div>
-    <div class="masonry-item col-md-6">
+    <div class="masonry-item col-md-12">
       <div class="bgc-white bd bdrs-3 p-20 mB-20">
         <table class="table table-striped table-bordered" id="dataTable" width="100%">
-          <h5>New Notifications</h5>
+          <h5>Notifications Table</h5>
           <thead>
             <tr>
               <th>#</th>
@@ -108,8 +108,8 @@
           <tbody>
             {% for i in notifications %}
             <tr>
-              <td>{{ forloop.counter }}</td>
-              <td>{{i.from_emp}}</td>
+              <td>{{forloop.counter}}</td>
+              <td><a href="#">{{i.from_emp}}</a></td>
               <td>{{i.message}}</td>
               <td>{{i.timestamp}}</td>
             </tr>
@@ -134,7 +134,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for i in services %}
+        {% for i in bussiness_travel_service %}
         <tr>
           <td>{{ forloop.counter }}</td>
           <td>{{i.emp}}</td>

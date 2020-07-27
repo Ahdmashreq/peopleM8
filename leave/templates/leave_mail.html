@@ -158,14 +158,8 @@
   <table border="0" cellpadding="10" cellspacing="0" style="background-color: #FFFFFF" width="100%">
     <tr>
       <td>
-        <table align="center" border="0" cellpadding="0" cellspacing="0" class="content" style="background-color: #FFFFFF">
+        <table align="center" border="0" cellpadding="0" cellspacing="0" style="background-color: #FFFFFF">
           <tr>
-            <td id="templateContainerHeader" valign="top" mc:edit="welcomeEdit-01">
-              <p style="text-align:center;margin:0;padding:0;">
-                <img src="{{image}}" alt="">
-                {{image}}
-              </p>
-            </td>
           </tr>
           <tr>
             <td align="center" valign="top">
@@ -173,7 +167,7 @@
                 <tr>
                   <td class="bodyContent" valign="top" mc:edit="welcomeEdit-02">
                     <p>Dear {{ team_leader }}</p>
-                    <h2><strong>Employee {{requestor}} asks for a leave</strong></h2>
+                    <h3><strong>{{requestor|capfirst}} want to apply for a leave </strong></h3>
                     <h4>Please find details below: <br><br></h4>
                     <table border="1px" cellpadding="7">
                       <tbody>
@@ -197,13 +191,14 @@
                 </tr>
                 <tr>
                   <td class="bodyContent">
-                    <h4>Once your leave period has ended, please do not forget to fill out a Leave Report upon returning.<br>
-                      Regards,<br>
+                    <h4>Once the employee leave period has ended, the employee must fill out a Leave Report upon returning.<br>
+                      Regards.<br>
                       <br>
-                      {{team_leader}}</h4>
+                    </h4>
                   </td>
                 </tr>
               </table>
+              <h3><a href="http://127.0.0.1:8000{% url 'leave:edit_leave' id=leave_id %}" target="_blank">Respond to this leave</a></h3>
             </td>
           </tr>
         </table>
