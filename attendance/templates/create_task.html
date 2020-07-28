@@ -19,7 +19,7 @@
             <button type="submit" class="btn cur-p btn-primary">{% trans "Save" %}</button>
           </div>
           <div class="peer">
-            <a href="{% url 'attendance:list-attendance' %}" class="btn cur-p btn-secondary">Cancel</a>
+            <a href="{% url 'attendance:list-attendance' %}" class="btn cur-p btn-secondary">Back to attendance list</a>
           </div>
         </div>
       </div>
@@ -57,9 +57,6 @@
                 <div class="timepicker-input input-icon form-group">
                   <div class="input-group">
                     {{ form.start_time }}
-                    <div class="input-group-addon bgc-white bd bdwR-0">
-                      <i class="ti-alarm-clock"></i>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -67,9 +64,6 @@
                 <div class="timepicker-input input-icon form-group">
                   <div class="input-group">
                     {{ form.end_time }}
-                    <div class="input-group-addon bgc-white bd bdwR-0">
-                      <i class="ti-alarm-clock"></i>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -106,20 +100,3 @@
 
 
 {% endblock body %}
-{% block js %}
-<script>
-  $('#add_more').click(function() {
-    var form_idx = $('#id_tasks-TOTAL_FORMS').val();
-    $('#tasks_set').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
-    $('#id_tasks-TOTAL_FORMS').val(parseInt(form_idx) + 1);
-  });
-
-  $(".tm").flatpickr({
-    enableTime: true,
-    noCalendar: true,
-    time_24hr: true,
-    dateFormat: "H:i",
-  });
-
-</script>
-{% endblock js %}

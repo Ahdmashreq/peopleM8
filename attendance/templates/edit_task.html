@@ -22,7 +22,7 @@
         <div class="mT-30">
           <div class="form-row">
             <div class="form-group col-md-3">
-              <label for="inputPassword4"><i class="ti-star"></i>Task</label>
+              <label><i class="ti-star"></i>Task</label>
               <br>
               {{task_form.task}}
             </div>
@@ -55,7 +55,7 @@
                   <button type="submit" class="btn cur-p btn-success">Save changes</button>
               </div>
               <div class="peer">
-                <a href="{% url 'attendance:list-tasks' all_tasks_id %}">
+                <a href="{% url 'attendance:list-tasks' slug_text=all_tasks_id %}">
                 <button type="button" class="btn cur-p btn-danger">Cancel</button>
                 </a>
               </div>

@@ -6,12 +6,13 @@ from attendance.models import Attendance, Task
 class AttendanceAdmin(admin.ModelAdmin):
     fields = (
         'employee',
-        'date',
         'check_in',
         'check_out',
         'work_time',
-        'overtime',
+        'slug',
     )
+    readonly_fields = ('date',)
+
     def save_model(self, request, instance, form, change):
         user = request.user
         instance = form.save(commit=False)
@@ -21,6 +22,7 @@ class AttendanceAdmin(admin.ModelAdmin):
         instance.save()
         form.save()
         return instance
+
 
 @admin.register(Task)
 class TaskAdmin(admin.ModelAdmin):
@@ -32,6 +34,7 @@ class TaskAdmin(admin.ModelAdmin):
         'end_time',
         'slug',
     )
+
     def save_model(self, request, instance, form, change):
         user = request.user
         instance = form.save(commit=False)
