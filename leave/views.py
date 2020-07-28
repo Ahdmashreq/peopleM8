@@ -1,24 +1,16 @@
 import os
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
 from leave.models import LeaveMaster, Leave
-from notification.models import Notification
 from employee.models import JobRoll, Employee
 from employee.notification_helper import NotificationHelper
 from leave.forms import FormLeave, FormLeaveMaster
 from django.shortcuts import get_object_or_404
-from django.contrib.auth import authenticate, login, logout  # for later
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect, HttpResponse
-from django.urls import reverse
 from django.contrib import messages
-from django import forms
 from django.core.mail import send_mail
 from django.template import loader
 import datetime
 from datetime import datetime
-from django.forms.forms import NON_FIELD_ERRORS
-from custom_user.models import User
 
 
 @login_required(login_url='/login')
@@ -111,7 +103,7 @@ def list_leave(request):
 
 
 @login_required(login_url='/login')
-def del_leave(request, id):
+def delete_leave_view(request, id):
     instance = get_object_or_404(Leave, id=id)
     instance.delete()
     messages.add_message(request, messages.SUCCESS,
@@ -122,10 +114,9 @@ def del_leave(request, id):
 @login_required(login_url='/login')
 def edit_leave(request, id):
     instance = get_object_or_404(Leave, id=id)
-    leave_form = FormLeave(instance=instance)
     employee = Employee.objects.get(user=instance.user)
     if request.method == "POST":
-        leave_form = FormLeave(data=request.POST, instance=instance)
+        leave_form = FormLeave(data=request.POST, form_type='respond', instance=instance)
         if leave_form.is_valid():
             leave = leave_form.save(commit=False)
             leave.save()
@@ -135,7 +126,7 @@ def edit_leave(request, id):
         else:
             print(leave_form.errors)
     else:  # http request
-        leave_form = FormLeave(instance=instance)
+        leave_form = FormLeave(form_type='respond', instance=instance)
     return render(request, 'edit-leave.html', {'leave_form': leave_form, 'leave_id': id, 'employee': employee})
 
 
