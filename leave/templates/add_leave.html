@@ -3,9 +3,9 @@
 {% load crispy_forms_tags %}
 {% load l10n %}
 {% load i18n %}
-
 {% block body %}
 {% include 'messages.html' %}
+
 <div class="container-fluid">
   <div class="mt-1">
     <div class="bgc-white p-20 bd">
@@ -36,14 +36,19 @@
             <label class="col-sm-2 col-form-label">{{leave_form.enddate.label}}</label>
             <div class="col-sm-4">
               {{leave_form.enddate}}
-              {{leave_form.enddate.errors }}
+              {%if not leave_form.non_field_errors %}
+                {{leave_form.enddate.errors }}
+              {%endif%}
             </div>
           </div>
           <div class="form-group row">
             <label class="col-sm-2 col-form-label">{{leave_form.resume_date.label}}</label>
             <div class="col-sm-4">
               {{leave_form.resume_date}}
-              {{leave_form.resume_date.errors }}
+              {%if not leave_form.non_field_errors %}
+                {{leave_form.resume_date.errors }}
+               {%endif%}
+
             </div>
           </div>
 
@@ -57,8 +62,14 @@
             <label class="col-sm-2 col-form-label">{{leave_form.attachment.label}}</label>
             <div class="col-sm-8">
               {{leave_form.attachment}}
+
             </div>
           </div>
+          {%if leave_form.non_field_errors %}
+          <div class="alert">
+            {{leave_form.non_field_errors}}
+          </div>
+          {%endif%}
 
           <div class="form-group row">
             <div class="col-sm-10">
