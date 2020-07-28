@@ -46,7 +46,7 @@ def list_attendance(request):
                 att_obj.check_in = my_time.strftime("%H:%M:%S")
                 messages.success(request, 'You are now checked in')
                 att_obj.save()
-                return redirect('attendance:list-attendance')
+                return redirect('attendance:user-list-attendance')
                 messages.success(request, 'Please fill your daily tasks')
             else:
                 messages.error(request, att_form.errors)
@@ -77,21 +77,21 @@ def check_out_time(request):
                 current_time = datetime.now().time()
                 att_obj.check_out = current_time.strftime("%H:%M:%S")
                 tdelta_worked_time = datetime.combine(datetime.now(), current_time) - datetime.combine(datetime.now(),
-                                                                                                 att_obj.check_in)
+                                                                                                       att_obj.check_in)
                 att_obj.work_time = strfdelta(tdelta_worked_time, "%H:%M:%S")
                 att_obj.save()
                 messages.success(request, 'You are now checked out')
-                return redirect('attendance:list-attendance')
+                return redirect('attendance:user-list-attendance')
             else:
                 messages.error(request, att_form.errors)
-        return render(request, 'check_out.html', {'att_form': att_form, })
+        return render(request, 'check_out.html', {'att_form': att_form, 'check_in_time': attendance_obj.check_in})
     else:
         return redirect('attendance:create_task')
 
 
 @login_required(login_url='/login')
-def list_tasks_view(request, slug_text):
-    attendance_obj = get_object_or_404(Attendance, slug=slug_text)
+def list_tasks_view(request, attendance_slug):
+    attendance_obj = get_object_or_404(Attendance, slug=attendance_slug)
     list_tasks = Task.objects.filter(attendance=attendance_obj)
     task_context = {
         'list_tasks': list_tasks,
@@ -103,7 +103,7 @@ def list_tasks_view(request, slug_text):
 @login_required(login_url='/login')
 def create_task(request):
     employee = Employee.objects.get(user=request.user)
-    user_last_attendance = Attendance.objects.filter(employee=employee, check_in__isnull=True).latest('id')
+    user_last_attendance = Attendance.objects.filter(employee=employee, check_out__isnull=True).latest('id')
     list_tasks = Task.objects.filter(attendance=user_last_attendance)
     if request.method == "POST":
         tasks_inline_formset = Tasks_inline_formset(data=request.POST)
@@ -124,7 +124,7 @@ def create_task(request):
 
 
 @login_required(login_url='/login')
-def edit_task(request, slug_text):
+def edit_task_view(request, slug_text):
     instance = get_object_or_404(Task, slug=slug_text)
     if request.method == "POST":
         task_form = FormTasks(data=request.POST, instance=instance)
@@ -133,7 +133,7 @@ def edit_task(request, slug_text):
             task.save()
             messages.success(request, 'Saved Successfully.')
         else:
-            print(task_form.errors)
+            messages.error(request, 'Something went wrong.')
     else:  # http request
         task_form = FormTasks(instance=instance)
     task_context = {
@@ -144,8 +144,8 @@ def edit_task(request, slug_text):
 
 
 @login_required(login_url='/login')
-def edit_inline_tasks(request, id):
-    required_att = Attendance.objects.get(id=id)
+def edit_inline_tasks(request, attendance_text):
+    required_att = Attendance.objects.get(slug=attendance_text)
     req_tasks_formset = Tasks_inline_formset(instance=required_att)
     if request.method == 'POST':
         req_tasks_formset = Tasks_inline_formset(request.POST, instance=required_att)
@@ -161,8 +161,8 @@ def edit_inline_tasks(request, id):
 
 
 @login_required(login_url='/login')
-def delete_task(request, text_slug):
-    instance = get_object_or_404(Task, slug=text_slug)
+def delete_task(request, slug_text):
+    instance = get_object_or_404(Task, slug=slug_text)
     instance.delete()
     messages.add_message(request, messages.SUCCESS, 'Task was deleted successfully')
-    return redirect('attendance:list_tasks', id=instance.attendance.id)
+    return redirect('attendance:list-tasks', attendance_slug=instance.attendance.slug)

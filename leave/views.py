@@ -13,6 +13,46 @@ import datetime
 from datetime import datetime
 
 
+
+def email_sender(subject, message, from_email, recipient_list, html_message):
+    try:
+        send_mail(subject=subject,
+                  message=message,
+                  from_email=from_email,
+                  recipient_list=[recipient_list],
+                  fail_silently=False,
+                  html_message=html_message)
+    except Exception as e:
+        print(e)
+
+
+def message_composer(request, html_template, instance_name, result):
+    reviewed_by = Employee.objects.get(user=request.user)
+    employee = Employee.objects.get(user=instance.user)
+    from_date = instance.startdate
+    to_date = instance.enddate
+    resume = instance.resume_date
+    reason = instance.reason
+    html_message = loader.render_to_string(
+        html_template,
+        {
+            'leave_id': instance.id,
+            'result': result,
+            'reviewer': reviewed_by,
+            'requestor':employee,
+            'user_name': instance.user,
+            'team_leader': reviewed_by,
+            'subject': 'Mashreq Arabia approval Form',
+            'date_from': from_date,
+            'date_to': to_date,
+            'date_back': resume,
+            'comments': reason,
+            'no_of_days': (to_date - from_date).days + 1
+        }
+    )
+    return html_message
+
+
 @login_required(login_url='/login')
 def add_leave(request):
     employee = Employee.objects.get(user=request.user)
@@ -29,30 +69,10 @@ def add_leave(request):
 
                     if employee_job.manager:
                         NotificationHelper(employee, employee_job.manager, leave).send_notification()
-                    requestor = employee
                     requestor_email = employee.email
-                    # leave_type = leave.leavetype
-                    from_date = leave.startdate
-                    to_date = leave.enddate
-                    resume = leave.resume_date
-                    reason = leave.reason
-                    team_leader = employee_job.manager
                     team_leader_email = employee_job.manager.email
-                    html_message = loader.render_to_string(
-                        'leave_mail.html',
-                        {
-                            'leave_id': leave.id,
-                            'requestor': requestor,
-                            'user_name': request.user,
-                            'team_leader': employee_job.manager,
-                            'subject': 'Mashreq Arabia Leave Form',
-                            'date_from': from_date,
-                            'date_to': to_date,
-                            'date_back': resume,
-                            'comments': reason,
-                            'no_of_days': (to_date - from_date).days + 1
-                        }
-                    )
+                    html_message = message_composer(request, html_template='leave_mail.html', instance_name=leave, result=None)
+
 
                     email_sender('Applying for a leave', 'Applying for a leave', requestor_email,
                                  team_leader_email, html_message)
@@ -133,45 +153,6 @@ def edit_leave(request, id):
     return render(request, 'edit-leave.html', {'leave_form': leave_form, 'leave_id': id, 'employee': employee})
 
 
-def email_sender(subject, message, from_email, recipient_list, html_message):
-    try:
-        send_mail(subject=subject,
-                  message=message,
-                  from_email=from_email,
-                  recipient_list=[recipient_list],
-                  fail_silently=False,
-                  html_message=html_message)
-    except Exception as e:
-        print(e)
-
-
-def message_composer(request, instance, leave_id, result):
-    reviewed_by = Employee.objects.get(user=request.user)
-    employee = Employee.objects.get(user=instance.user)
-    from_date = instance.startdate
-    to_date = instance.enddate
-    resume = instance.resume_date
-    reason = instance.reason
-    html_message = loader.render_to_string(
-        'reviewed_leave_mail.html',
-        {
-            'leave_id': leave_id,
-            'result': result,
-            'reviewer': reviewed_by,
-            'requestor':employee,
-            'user_name': instance.user,
-            'team_leader': reviewed_by,
-            'subject': 'Mashreq Arabia approval Form',
-            'date_from': from_date,
-            'date_to': to_date,
-            'date_back': resume,
-            'comments': reason,
-            'no_of_days': (to_date - from_date).days + 1
-        }
-    )
-    return html_message
-
-
 @login_required(login_url='/login')
 def leave_approve(request, leave_id):
     instance = get_object_or_404(Leave, id=leave_id)
@@ -180,7 +161,7 @@ def leave_approve(request, leave_id):
     instance.save(update_fields=['status', 'is_approved'])
     approved_by_email = Employee.objects.get(user=request.user).email
     employee_email = Employee.objects.get(user=instance.user).email
-    html_message = message_composer(request, instance, leave_id, result='approved')
+    html_message = message_composer(request, html_template='reviewed_leave_mail.html', instance_name=instance, result='approved')
     email_sender('Submitted leave reviewed', 'Submitted leave reviewed', approved_by_email, employee_email,
                  html_message)
     return redirect('leave:list_leave')
@@ -194,7 +175,7 @@ def leave_unapprove(request, leave_id):
     instance.save(update_fields=['status', 'is_approved'])
     approved_by_email = Employee.objects.get(user=request.user).email
     employee_email = Employee.objects.get(user=instance.user).email
-    html_message = message_composer(request, instance, leave_id, result='rejected')
+    html_message = message_composer(request, html_template='reviewed_leave_mail.html', instance_name=instance, result='rejected')
     email_sender('Submitted leave reviewed', 'Submitted leave reviewed', approved_by_email, employee_email,
                  html_message)
     return redirect('leave:list_leave')

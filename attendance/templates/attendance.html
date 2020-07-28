@@ -40,18 +40,18 @@
                         <tbody>
                         {% for i in attendances %}
                         <tr>
-                            <td>{{ forloop.counter }}</td>
+                            <td>{{forloop.counter }}</td>
                             <td>{{i.date}}</td>
                             <td>{{i.check_in}}</td>
                             <td>{{i.check_out}}</td>
                             <td>{{i.work_time}}</td>
                             <td>
                                 {% if i.check_out is None %}
-                                <a href="{% url 'attendance:edit-all-tasks' id=i.id %}">Add Tasks
+                                <a href="{% url 'attendance:edit-all-tasks' attendance_text=i.slug %}">Add Tasks</a>
                                     {% endif %}
                             </td>
                             <td>
-                                <a href="{% url 'attendance:list-tasks' slug_text=i.slug %}">View your tasks
+                                <a href="{% url 'attendance:list-tasks' attendance_slug=i.slug %}">View your tasks
                             </td>
                             <td>
                                 {% if i.check_out is None %}
