@@ -18,61 +18,63 @@ def add_leave(request):
     employee = Employee.objects.get(user=request.user)
     employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
     if request.method == "POST":
-        leave_form = FormLeave(data=request.POST)
+        leave_form = FormLeave(data=request.POST, form_type=None)
         if eligible_user_leave(request.user):
             if leave_form.is_valid():
+                if valid_leave(request.user, leave_form.cleaned_data['startdate'], leave_form.cleaned_data['enddate']):
 
-                leave = leave_form.save(commit=False)
-                leave.user = request.user
-                leave.save()
+                    leave = leave_form.save(commit=False)
+                    leave.user = request.user
+                    leave.save()
 
-                if employee_job.manager:
-                    NotificationHelper(employee, employee_job.manager, leave).send_notification()
-                requestor = employee
-                requestor_email = employee.email
-                # leave_type = leave.leavetype
-                from_date = leave.startdate
-                to_date = leave.enddate
-                resume = leave.resume_date
-                reason = leave.reason
-                team_leader = employee_job.manager
-                team_leader_email = employee_job.manager.email
+                    if employee_job.manager:
+                        NotificationHelper(employee, employee_job.manager, leave).send_notification()
+                    requestor = employee
+                    requestor_email = employee.email
+                    # leave_type = leave.leavetype
+                    from_date = leave.startdate
+                    to_date = leave.enddate
+                    resume = leave.resume_date
+                    reason = leave.reason
+                    team_leader = employee_job.manager
+                    team_leader_email = employee_job.manager.email
 
-                html_message = loader.render_to_string(
-                    'leave_mail.html',
-                    {
-                        'leave_id': leave.id,
-                        'requestor': requestor,
-                        'user_name': request.user,
-                        'team_leader': employee_job.manager,
-                        'subject': 'Mashreq Arabia Leave Form',
-                        'date_from': from_date,
-                        'date_to': to_date,
-                        'date_back': resume,
-                        'comments': reason,
-                        'no_of_days': (to_date - from_date).days + 1
-                    }
-                )
-                try:
-                    send_mail(subject='Applying for a leave',
-                              message='Applying for a leave',
-                              from_email=requestor_email,
-                              recipient_list=[team_leader_email],
-                              fail_silently=False,
-                              html_message=html_message)
-                except Exception as e:
-                    print(e)
+                    html_message = loader.render_to_string(
+                        'leave_mail.html',
+                        {
+                            'leave_id': leave.id,
+                            'requestor': requestor,
+                            'user_name': request.user,
+                            'team_leader': employee_job.manager,
+                            'subject': 'Mashreq Arabia Leave Form',
+                            'date_from': from_date,
+                            'date_to': to_date,
+                            'date_back': resume,
+                            'comments': reason,
+                            'no_of_days': (to_date - from_date).days + 1
+                        }
+                    )
+                    try:
+                        send_mail(subject='Applying for a leave',
+                                  message='Applying for a leave',
+                                  from_email=requestor_email,
+                                  recipient_list=[team_leader_email],
+                                  fail_silently=False,
+                                  html_message=html_message)
+                    except Exception as e:
+                        print(e)
 
-                messages.add_message(request, messages.SUCCESS,
-                                     'Leave Request was created successfully')
-                return redirect('leave:list_leave')
-
+                    messages.add_message(request, messages.SUCCESS,
+                                         'Leave Request was created successfully')
+                    return redirect('leave:list_leave')
+                else:
+                    leave_form.add_error(None, "Requested leave intersects with another leave")
             else:
                 print(leave_form.errors)
         else:
             leave_form.add_error(None, "You are not eligible for leave request")
     else:  # http request
-        leave_form = FormLeave()
+        leave_form = FormLeave(form_type=None)
     return render(request, 'add_leave.html', {'leave_form': leave_form})
 
 
@@ -80,13 +82,20 @@ def eligible_user_leave(user):
     now_date = datetime.date(datetime.now())
     leaves = Leave.objects.filter(user=user, status='Approved')
     for leave in leaves:
-        if leave.resume_date > now_date >= leave.startdate:
+        if leave.enddate >= now_date >= leave.startdate:
             return False
         else:
             continue
     return True
 
 
+def valid_leave(user,req_startdate,req_enddate):
+    leaves = Leave.objects.filter(user=user, status='Approved').order_by('-id')
+    for leave in leaves[0:3]:
+        if leave.enddate >= req_startdate >= leave.startdate or \
+                req_enddate >= leave.startdate >= req_startdate :
+            return False
+    return True
 
 @login_required(login_url='/login')
 def list_leave(request):
