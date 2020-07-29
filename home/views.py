@@ -67,7 +67,7 @@ def user_login(request):
                 if user.employee_type == 'A':
                     return redirect(reverse('home:homepage'))
                 else:
-                    return redirect(reverse('attendance:list-attendance'))
+                    return redirect(reverse('attendance:user-list-attendance'))
             else:
                 messages.error(request, 'Inactive Account')
                 return render(request, 'login.html')
