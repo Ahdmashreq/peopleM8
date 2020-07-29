@@ -27,20 +27,20 @@ def email_sender(subject, message, from_email, recipient_list, html_message):
 
 
 def message_composer(request, html_template, instance_name, result):
-    reviewed_by = Employee.objects.get(user=request.user)
-    employee = Employee.objects.get(user=instance.user)
-    from_date = instance.startdate
-    to_date = instance.enddate
-    resume = instance.resume_date
-    reason = instance.reason
+    employee = Employee.objects.get(user=instance_name.user)
+    employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
+    reviewed_by = employee_job.manager
+    from_date = instance_name.startdate
+    to_date = instance_name.enddate
+    resume = instance_name.resume_date
+    reason = instance_name.reason
     html_message = loader.render_to_string(
         html_template,
         {
-            'leave_id': instance.id,
+            'leave_id': instance_name.id,
             'result': result,
-            'reviewer': reviewed_by,
             'requestor':employee,
-            'user_name': instance.user,
+            'user_name': instance_name.user,
             'team_leader': reviewed_by,
             'subject': 'Mashreq Arabia approval Form',
             'date_from': from_date,
