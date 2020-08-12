@@ -6,93 +6,126 @@ from company.models import (Enterprise, Department, Grade, Job, Position)
 from defenition.models import LookupType, LookupDet
 from django.utils.translation import ugettext_lazy as _
 
+
 class Element_Batch(models.Model):
-    payroll_fk	=	models.ForeignKey(Payroll_Master , on_delete=models.CASCADE, null=True, blank=True,verbose_name=_('Payroll'))
-    batch_name	=	models.CharField(max_length=255,verbose_name=_('Batch Name'))
-    start_date	=	models.DateField(auto_now=False, auto_now_add=False, default= date.today,verbose_name=_('Start Date'))
-    end_date	=	models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True,verbose_name=_('End Date'))
-    created_by =    models.ForeignKey(settings.AUTH_USER_MODEL, blank=False,on_delete=models.CASCADE,related_name="element_batch_created_by")
-    creation_date	=	models.DateField(auto_now=True, auto_now_add=False)
-    last_update_by	=	models.ForeignKey(settings.AUTH_USER_MODEL, blank=False,on_delete=models.CASCADE,related_name="element_batch_last_update_by")
-    last_update_date	=	models.DateField(auto_now=False, auto_now_add=True)
+    payroll_fk = models.ForeignKey(Payroll_Master, on_delete=models.CASCADE, null=True, blank=True,
+                                   verbose_name=_('Payroll'))
+    batch_name = models.CharField(max_length=255, verbose_name=_('Batch Name'))
+    start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
+    end_date = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True, verbose_name=_('End Date'))
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
+                                   related_name="element_batch_created_by")
+    creation_date = models.DateField(auto_now=True, auto_now_add=False)
+    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
+                                       related_name="element_batch_last_update_by")
+    last_update_date = models.DateField(auto_now=False, auto_now_add=True)
 
     def __str__(self):
         return self.batch_name
 
+
 class Element_Master(models.Model):
-    enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name= 'enterprise_element_master', verbose_name=_('Enterprise Name'))
-    element_name	=	models.CharField(max_length=100,verbose_name=_('Name'))
-    db_name	=	models.CharField(max_length=4, null=True, blank=True, verbose_name=_('db Name'))
-    element_type	=	models.ForeignKey(LookupDet, on_delete=models.CASCADE, null=True, blank=True, related_name='lookup_element',verbose_name=_('Element Type'))
-    classification	=	models.ForeignKey(LookupDet, on_delete=models.CASCADE, null=True, blank=True, related_name='lookup_classification',verbose_name=_('classification'))
-    effective_date	=	models.DateField(auto_now=False, auto_now_add=False, default= date.today,null=True, blank=True,verbose_name=_('Effective Date'))
-    retro_flag	=	models.BooleanField(verbose_name=_('Retro Flag'))
-    tax_flag	=	models.BooleanField(verbose_name=_('Tax Flag'))
-    fixed_amount = models.IntegerField(default=0,verbose_name=_('Fixed Amount'))
-    element_formula = models.TextField(max_length=255, null=True, blank=True,verbose_name=_('Formula'))
-    start_date	=	models.DateField(auto_now=False, auto_now_add=False, default= date.today,verbose_name=_('Start Date'))
-    end_date	=	models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True,verbose_name=_('End Date'))
-    created_by =    models.ForeignKey(settings.AUTH_USER_MODEL, blank=False,on_delete=models.CASCADE,related_name="element_master_created_by")
-    creation_date	=	models.DateField(auto_now=True, auto_now_add=False)
-    last_update_by	=	models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,on_delete=models.CASCADE,related_name="element_master_last_update_by")
-    last_update_date	=	models.DateField(auto_now=False, auto_now_add=True)
+    enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name='enterprise_element_master',
+                                   verbose_name=_('Enterprise Name'))
+    element_name = models.CharField(max_length=100, verbose_name=_('Name'))
+    db_name = models.CharField(max_length=4, null=True, blank=True, verbose_name=_('db Name'))
+    element_type = models.ForeignKey(LookupDet, on_delete=models.CASCADE, null=True, blank=True,
+                                     related_name='lookup_element', verbose_name=_('Element Type'))
+    classification = models.ForeignKey(LookupDet, on_delete=models.CASCADE, null=True, blank=True,
+                                       related_name='lookup_classification', verbose_name=_('classification'))
+    effective_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, null=True, blank=True,
+                                      verbose_name=_('Effective Date'))
+    retro_flag = models.BooleanField(verbose_name=_('Retro Flag'))
+    tax_flag = models.BooleanField(verbose_name=_('Tax Flag'))
+    fixed_amount = models.IntegerField(default=0, verbose_name=_('Fixed Amount'))
+    element_formula = models.TextField(max_length=255, null=True, blank=True, verbose_name=_('Formula'))
+    start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
+    end_date = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True, verbose_name=_('End Date'))
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
+                                   related_name="element_master_created_by")
+    creation_date = models.DateField(auto_now=True, auto_now_add=False)
+    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE,
+                                       related_name="element_master_last_update_by")
+    last_update_date = models.DateField(auto_now=False, auto_now_add=True)
 
     def __str__(self):
         return self.element_name
 
-class Element_Detail(models.Model):
-    element_detail_master_fk	=	models.ForeignKey(Element_Master, on_delete=models.CASCADE, related_name = 'element_detail_master_fk',verbose_name=_('Element'))
-    element_parameter_name	=	models.CharField(max_length=20, null=True, blank=True,verbose_name=_('Parameter Name'))
-    parameter_type	=	models.ForeignKey(LookupDet, on_delete=models.CASCADE, null=True, blank=True, related_name='lookup_input_type',verbose_name=_('Parameter Type'))
-    user_enterable	=	models.BooleanField(verbose_name=_('User Enterable'))
-    required	=	models.BooleanField(verbose_name=_('Required'))
-    start_date	=	models.DateField(auto_now=False, auto_now_add=False, default= date.today,verbose_name=_('Start Date'))
-    end_date	=	models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True,verbose_name=_('End Date'))
-    created_by =    models.ForeignKey(settings.AUTH_USER_MODEL, blank=False,on_delete=models.CASCADE,related_name="element_det_created_by")
-    creation_date	=	models.DateField(auto_now=True, auto_now_add=False)
-    last_update_by	=	models.ForeignKey(settings.AUTH_USER_MODEL, blank=False,on_delete=models.CASCADE,related_name="element_det_last_update_by")
-    last_update_date	=	models.DateField(auto_now=False, auto_now_add=True)
 
+class Element_Detail(models.Model):
+    element_detail_master_fk = models.ForeignKey(Element_Master, on_delete=models.CASCADE,
+                                                 related_name='element_detail_master_fk', verbose_name=_('Element'))
+    element_parameter_name = models.CharField(max_length=20, null=True, blank=True, verbose_name=_('Parameter Name'))
+    parameter_type = models.ForeignKey(LookupDet, on_delete=models.CASCADE, null=True, blank=True,
+                                       related_name='lookup_input_type', verbose_name=_('Parameter Type'))
+    user_enterable = models.BooleanField(verbose_name=_('User Enterable'))
+    required = models.BooleanField(verbose_name=_('Required'))
+    start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
+    end_date = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True, verbose_name=_('End Date'))
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
+                                   related_name="element_det_created_by")
+    creation_date = models.DateField(auto_now=True, auto_now_add=False)
+    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
+                                       related_name="element_det_last_update_by")
+    last_update_date = models.DateField(auto_now=False, auto_now_add=True)
 
     def __str__(self):
         return self.element_parameter_name
 
+
 class Element_Batch_Master(models.Model):
-    element_master_fk	=	models.ForeignKey(Element_Master, on_delete=models.CASCADE, null=True, blank=True, related_name='element_master_fk', related_query_name = 'elementMaster',verbose_name=_('Element'))
-    element_batch_fk	=	models.ForeignKey(Element_Batch, on_delete=models.CASCADE, null=True, blank=True, related_name ='element_batch_fk', related_query_name = 'elementBatch',verbose_name=_('Element Batch'))
-    start_date	=	models.DateField(auto_now=False, auto_now_add=False, default= date.today,verbose_name=_('Start Date'))
-    end_date	=	models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True,verbose_name=_('End Date'))
-    created_by =    models.ForeignKey(settings.AUTH_USER_MODEL, blank=False,on_delete=models.CASCADE,related_name="element_created_by")
-    creation_date	=	models.DateField(auto_now=True, auto_now_add=False)
-    last_update_by	=	models.ForeignKey(settings.AUTH_USER_MODEL, blank=False,on_delete=models.CASCADE,related_name="element_last_update_by")
-    last_update_date	=	models.DateField(auto_now=False, auto_now_add=True)
+    element_master_fk = models.ForeignKey(Element_Master, on_delete=models.CASCADE, null=True, blank=True,
+                                          related_name='element_master_fk', related_query_name='elementMaster',
+                                          verbose_name=_('Element'))
+    element_batch_fk = models.ForeignKey(Element_Batch, on_delete=models.CASCADE, null=True, blank=True,
+                                         related_name='element_batch_fk', related_query_name='elementBatch',
+                                         verbose_name=_('Element Batch'))
+    start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
+    end_date = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True, verbose_name=_('End Date'))
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
+                                   related_name="element_created_by")
+    creation_date = models.DateField(auto_now=True, auto_now_add=False)
+    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
+                                       related_name="element_last_update_by")
+    last_update_date = models.DateField(auto_now=False, auto_now_add=True)
 
     def __str__(self):
         return self.element_master_fk.element_name
 
+
 class Element_Link(models.Model):
-    element_master_fk	=	models.ForeignKey(Element_Master, on_delete=models.CASCADE, null=True, blank=True, related_name='element_link_to_master',verbose_name=_('Element Name'))
-    batch = models.ForeignKey(Element_Batch, on_delete=models.CASCADE, null=True, blank=True, verbose_name=_('Batch Name'))
-    payroll_fk	=	models.ForeignKey(Payroll_Master, on_delete=models.CASCADE, null=True, blank=True,verbose_name=_('Payroll'))
-    element_dept_id_fk	=	models.ForeignKey(Department, on_delete=models.CASCADE, null=True, blank=True,verbose_name=_('Department'))
-    element_job_id_fk	=	models.ForeignKey(Job, on_delete=models.CASCADE, null=True, blank=True,verbose_name=_('Job'))
-    element_grade_fk	=	models.ForeignKey(Grade, on_delete=models.CASCADE, null=True, blank=True,verbose_name=_('Grade'))
-    element_position_id_fk	=	models.ForeignKey(Position, on_delete=models.CASCADE, null=True, blank=True,verbose_name=_('Position'))
-    employee = models.ForeignKey('employee.Employee', on_delete=models.CASCADE, null=True, blank=True, verbose_name=_('Employee Name'))
-    standard_flag = models.BooleanField(default=False, blank=True,verbose_name=_('Standard Flag'))
-    link_to_all_payroll_flag = models.BooleanField(default=False, blank=True,verbose_name=_('Link All'))
-    start_date	=	models.DateField(auto_now=False, auto_now_add=False, default= date.today,verbose_name=_('Start Date'))
-    end_date	=	models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True,verbose_name=_('End Date'))
-    created_by =    models.ForeignKey(settings.AUTH_USER_MODEL, blank=False,on_delete=models.CASCADE,related_name="element_link_created_by")
-    creation_date	=	models.DateField(auto_now=True, auto_now_add=False)
-    last_update_by	=	models.ForeignKey(settings.AUTH_USER_MODEL, blank=False,on_delete=models.CASCADE,related_name="element_link_last_update_by")
-    last_update_date	=	models.DateField(auto_now=False, auto_now_add=True)
+    element_master_fk = models.ForeignKey(Element_Master, on_delete=models.CASCADE, null=True, blank=True,
+                                          related_name='element_link_to_master', verbose_name=_('Element Name'))
+    batch = models.ForeignKey(Element_Batch, on_delete=models.CASCADE, null=True, blank=True,
+                              verbose_name=_('Batch Name'))
+    payroll_fk = models.ForeignKey(Payroll_Master, on_delete=models.CASCADE, null=True, blank=True,
+                                   verbose_name=_('Payroll'))
+    element_dept_id_fk = models.ForeignKey(Department, on_delete=models.CASCADE, null=True, blank=True,
+                                           verbose_name=_('Department'))
+    element_job_id_fk = models.ForeignKey(Job, on_delete=models.CASCADE, null=True, blank=True, verbose_name=_('Job'))
+    element_grade_fk = models.ForeignKey(Grade, on_delete=models.CASCADE, null=True, blank=True,
+                                         verbose_name=_('Grade'))
+    element_position_id_fk = models.ForeignKey(Position, on_delete=models.CASCADE, null=True, blank=True,
+                                               verbose_name=_('Position'))
+    employee = models.ForeignKey('employee.Employee', on_delete=models.CASCADE, null=True, blank=True,
+                                 verbose_name=_('Employee Name'))
+    standard_flag = models.BooleanField(default=False, blank=True, verbose_name=_('Standard Flag'))
+    link_to_all_payroll_flag = models.BooleanField(default=False, blank=True, verbose_name=_('Link All'))
+    start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
+    end_date = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True, verbose_name=_('End Date'))
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
+                                   related_name="element_link_created_by")
+    creation_date = models.DateField(auto_now=True, auto_now_add=False)
+    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
+                                       related_name="element_link_last_update_by")
+    last_update_date = models.DateField(auto_now=False, auto_now_add=True)
 
     def __str__(self):
         if self.element_master_fk:
             return self.element_master_fk.element_name
         else:
             return self.batch.batch_name
+
 
 class Custom_Python_Rule(models.Model):
     default_string = '''
@@ -114,11 +147,12 @@ class Custom_Python_Rule(models.Model):
     amount = extra_deduction
     Make Sure that your code is properly indented using 4 spaces
     '''
-    name = models.CharField(max_length=255,verbose_name=_('Name'))
-    element_master = models.ForeignKey(Element_Master, on_delete=models.CASCADE, null=True, blank=True, related_name = 'custom_python_rule',verbose_name=_('Element Master'))
-    help_text = models.TextField(default=default_string,verbose_name=_('Help Text'))
+    name = models.CharField(max_length=255, verbose_name=_('Name'))
+    element_master = models.ForeignKey(Element_Master, on_delete=models.CASCADE, null=True, blank=True,
+                                       related_name='custom_python_rule', verbose_name=_('Element Master'))
+    help_text = models.TextField(default=default_string, verbose_name=_('Help Text'))
     rule_definition = models.TextField(verbose_name=_('Rule Definition'))
-    taxable = models.BooleanField(default=False,verbose_name=_('Taxable'))
+    taxable = models.BooleanField(default=False, verbose_name=_('Taxable'))
 
     def _ensure_no_syntax_errors(self):
         basic = 0.0
@@ -134,13 +168,13 @@ class Custom_Python_Rule(models.Model):
 
     def _validate_custom_rule_security(self):
         danger = [
-            'im_class',	'im_func', '__func__', 'im_self', '__self__', '__dict__', '__class__', 'func_closure',
-            '__closure__', 'func_code',	'__code__',	'func_defaults', '__defaults__', 'func_dict', 'func_doc',
-            'func_globals',	'__globals__', 'func_name',	'gi_code', 'gi_frame', 'import', 'os', 'system',
+            'im_class', 'im_func', '__func__', 'im_self', '__self__', '__dict__', '__class__', 'func_closure',
+            '__closure__', 'func_code', '__code__', 'func_defaults', '__defaults__', 'func_dict', 'func_doc',
+            'func_globals', '__globals__', 'func_name', 'gi_code', 'gi_frame', 'import', 'os', 'system',
             'subprocess', '__', 'class', 'print', 'eval', 'exec', 'popen', 'sys', '__builtins__', '__name__',
             '__package__', '__cached__', '__doc__', '__file__', '__loader__', '__spec__', 're', 'run', 'self',
             'compile', 'builtins', 'locals', 'globals', '__module__', 'object', '__base__', '__subclasses__',
-            'type','Popen',
+            'type', 'Popen',
         ]
         for word in danger:
             if word in self.rule_definition:

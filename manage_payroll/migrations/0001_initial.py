@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ('employee', '0001_initial'),
         ('company', '0002_auto_20200726_1624'),
-        ('currencies', '0005_auto_20191017_1635'),
+        # ('currencies', '0005_auto_20191017_1635'),
         ('defenition', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('cities_light', '0008_city_timezone'),

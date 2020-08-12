@@ -43,5 +43,10 @@ urlpatterns=[
             path('position/update/<int:pk>', views.updatePositionView, name='position-update'),
             path('position/correct/<int:pk>', views.correctPositionView, name='position-correct'),
             path('position/delete/<int:pk>', views.deletePositionView, name='position-delete'),
+
+
     ])),
+        ######################### Working Hours Policy URLs ###################################
+        path('working_policy/new/', views.CreateWorkingPolicyView, name='policy-create'),
+
 ]

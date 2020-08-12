@@ -11,15 +11,18 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView
 from custom_user.models import User
 from company.forms import (EnterpriseForm, DepartmentInline, DepartmentForm, JobInline,
-                            JobForm, GradeInline, GradeForm, PositionInline, PositionForm,)
+                           JobForm, GradeInline, GradeForm, PositionInline, PositionForm, WorkingHoursForm,YearlyHolidayInline)
 from company.models import (Enterprise, Department, Job, Grade, Position)
 from django.utils.translation import ugettext_lazy as _
 from cities_light.models import City, Country
+
+
 ########################################Enterprise views###################################################################
 def load_cities(request):
     country_id = request.GET.get('country')
     cities = City.objects.filter(country_id=country_id).order_by('name')
     return render(request, 'city_dropdown_list_options.html', {'cities': cities})
+
 
 @login_required(login_url='/login')
 def companyCreateView(request):
@@ -37,20 +40,20 @@ def companyCreateView(request):
             current_user_obj.save()
             return redirect('company:list-company-information')
 
-            user_lang=to_locale(get_language())
-            if user_lang=='ar':
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
                 success_msg = 'تم الانشاء بنجاح'
             else:
-                success_msg ='Create Successfully'
+                success_msg = 'Create Successfully'
 
             messages.success(request, success_msg)
         else:  # Form was not valid
             # success_msg = 'The form is not valid.'
-            user_lang=to_locale(get_language())
-            if user_lang=='ar':
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
                 success_msg = 'لم يتم الانشاء بنجاح'
             else:
-                success_msg ='The form is not valid.'
+                success_msg = 'The form is not valid.'
             [messages.error(request, bgForm.errors)]
     myContext = {
         'page_title': _('Create Enterprise'),
@@ -69,6 +72,7 @@ def listCompanyInformation(request):
     }
     return render(request, 'company-list.html', myContext)
 
+
 @login_required(login_url='/login')
 def updateBusinessGroup(request, pk):
     required_enterprice = Enterprise.objects.get(pk=pk)
@@ -80,19 +84,19 @@ def updateBusinessGroup(request, pk):
             bg_obj.save()
             return redirect('company:list-company-information')
             # success_msg = 'Business Group Updated Successfully'
-            user_lang=to_locale(get_language())
-            if user_lang=='ar':
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
                 success_msg = 'تم التعديلء بنجاح'
             else:
-                success_msg ='Business Group Updated Successfully'
+                success_msg = 'Business Group Updated Successfully'
             messages.success(request, success_msg)
         else:  # Form was not valid
             # success_msg = 'The form is not valid.'
-            user_lang=to_locale(get_language())
-            if user_lang=='ar':
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
                 success_msg = 'لم يتم الانشاء بنجاح'
             else:
-                success_msg ='The form is not valid.'
+                success_msg = 'The form is not valid.'
             [messages.error(request, bgForm.errors)]
     myContext = {
         "page_title": _("update Business unit"),
@@ -109,20 +113,20 @@ def deleteBusinessGroup(request, pk):
         enterprise_obj = enterpriseForm.save(commit=False)
         enterprise_obj.end_date = date.today()
         enterprise_obj.save(update_fields=['end_date'])
-        user_lang=to_locale(get_language())
-        if user_lang=='ar':
+        user_lang = to_locale(get_language())
+        if user_lang == 'ar':
             success_msg = '{}تم حذف'.format(required_enterprice)
         else:
-            success_msg ='{} successfully deleted'.format(required_enterprice)
+            success_msg = '{} successfully deleted'.format(required_enterprice)
         # success_msg = '{} successfully deleted'.format(deleted_obj)
         messages.success(request, success_msg)
     except Exception as e:
         # error_msg = '{} cannot be deleted '.format(deleted_obj)
-        user_lang=to_locale(get_language())
-        if user_lang=='ar':
+        user_lang = to_locale(get_language())
+        if user_lang == 'ar':
             error_msg = '{} لم يتم حذف '.format(required_enterprice)
         else:
-            error_msg ='{} cannot be deleted '.format(required_enterprice)
+            error_msg = '{} cannot be deleted '.format(required_enterprice)
         messages.error(request, error_msg)
         raise e
     return redirect('company:list-company-information')
@@ -130,24 +134,26 @@ def deleteBusinessGroup(request, pk):
 
 @login_required(login_url='/login')
 def listAssignmentView(request):
-    num_of_dept =   Department.objects.all(request.user).count()
-    num_of_jobs =   Job.objects.all(request.user).count()
+    num_of_dept = Department.objects.all(request.user).count()
+    num_of_jobs = Job.objects.all(request.user).count()
     num_of_grades = Grade.objects.all(request.user).count()
-    num_of_positions =  Position.objects.all(request.user).count()
+    num_of_positions = Position.objects.all(request.user).count()
     context = {
 
-               "page_title":_("Company Structure Definition"),
-               'num_of_dept':num_of_dept,
-               'num_of_jobs':num_of_jobs,
-               'num_of_grades':num_of_grades,
-               'num_of_positions':num_of_positions,
-               }
-    return render(request, 'assinment-list.html' ,context=context)
+        "page_title": _("Company Structure Definition"),
+        'num_of_dept': num_of_dept,
+        'num_of_jobs': num_of_jobs,
+        'num_of_grades': num_of_grades,
+        'num_of_positions': num_of_positions,
+    }
+    return render(request, 'assinment-list.html', context=context)
+
 
 ########################################Department views###################################################################
 
 def viewHirarchy(request):
     return render(request, 'company-hierachy.html')
+
 
 @login_required(login_url='/login')
 def viewDepartmentView(request, pk):
@@ -166,9 +172,9 @@ def listDepartmentView(request):
         dept_list = Department.objects.all(request.user)
 
     myContext = {
-                 "page_title":_("list departments"),
-                 'dept_list': dept_list
-                 }
+        "page_title": _("list departments"),
+        'dept_list': dept_list
+    }
     return render(request, 'department-list.html', myContext)
 
 
@@ -176,7 +182,9 @@ def listDepartmentView(request):
 def createDepartmentView(request):
     dept_formset = DepartmentInline(queryset=Department.objects.none())
     for form in dept_formset:
-        form.fields['parent_dept'].queryset = Department.objects.filter((Q(enterprise = request.user.company)),parent_dept__isnull=True).filter(Q(end_date__gte=date.today())|Q(end_date__isnull=True))
+        form.fields['parent_dept'].queryset = Department.objects.filter((Q(enterprise=request.user.company)),
+                                                                        parent_dept__isnull=True).filter(
+            Q(end_date__gte=date.today()) | Q(end_date__isnull=True))
     if request.method == 'POST':
         dept_formset = DepartmentInline(request.POST)
         success_msg = ""
@@ -189,19 +197,19 @@ def createDepartmentView(request):
                 x.last_update_by = request.user
                 x.save()
             return redirect('company:list-department')
-            user_lang=to_locale(get_language())
-            if user_lang=='ar':
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
                 success_msg = 'تمت العملية بنجاح'
             else:
-                success_msg ='Create Successfully'
+                success_msg = 'Create Successfully'
             messages.success(request, success_msg)
         else:  # Form was not valid
             # success_msg = 'The form is not valid.'
-            user_lang=to_locale(get_language())
-            if user_lang=='ar':
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
                 success_msg = 'لم يتم الانشاء بنجاح'
             else:
-                success_msg ='The form is not valid.'
+                success_msg = 'The form is not valid.'
             [messages.error(request, dept_formset.errors)]
     myContext = {"page_title": "Create New Department",
                  'dept_formset': dept_formset,
@@ -213,27 +221,29 @@ def createDepartmentView(request):
 def correctDepartmentView(request, pk):
     required_dept = Department.objects.get_department(user=request.user, dept_id=pk)
     dept_form = DepartmentForm(instance=required_dept)
-    dept_form.fields['parent_dept'].queryset = Department.objects.filter((Q(enterprise = request.user.company)),parent_dept__isnull=True).filter(Q(end_date__gte=date.today())|Q(end_date__isnull=True))
+    dept_form.fields['parent_dept'].queryset = Department.objects.filter((Q(enterprise=request.user.company)),
+                                                                         parent_dept__isnull=True).filter(
+        Q(end_date__gte=date.today()) | Q(end_date__isnull=True))
     if request.method == 'POST':
         dept_form = DepartmentForm(request.POST, instance=required_dept)
         if dept_form.is_valid():
             dept_form.save()
             return redirect('company:list-department')
             # success_msg = 'Updated Successfully'
-            user_lang=to_locale(get_language())
-            if user_lang=='ar':
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
                 success_msg = 'تمت العملية بنجاح'
             else:
-                success_msg ='Create Successfully'
+                success_msg = 'Create Successfully'
 
             messages.success(request, success_msg)
         else:  # Form was not valid
             # success_msg = 'The form is not valid.'
-            user_lang=to_locale(get_language())
-            if user_lang=='ar':
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
                 success_msg = 'لم يتم الانشاء بنجاح'
             else:
-                success_msg ='The form is not valid.'
+                success_msg = 'The form is not valid.'
             [messages.error(request, dept_form.errors)]
     myContext = {
         'dept_form': dept_form,
@@ -245,12 +255,14 @@ def correctDepartmentView(request, pk):
 def updateDepartmentView(request, pk):
     required_dept = Department.objects.get_department(user=request.user, dept_id=pk)
     dept_form = DepartmentForm(instance=required_dept)
-    dept_form.fields['parent_dept'].queryset = Department.objects.filter((Q(enterprise = request.user.company)),parent_dept__isnull=True).filter(Q(end_date__gte=date.today())|Q(end_date__isnull=True))
+    dept_form.fields['parent_dept'].queryset = Department.objects.filter((Q(enterprise=request.user.company)),
+                                                                         parent_dept__isnull=True).filter(
+        Q(end_date__gte=date.today()) | Q(end_date__isnull=True))
     if request.method == 'POST':
         dept_form = DepartmentForm(request.POST, instance=required_dept)
         old_object = Department(
-            enterprise = request.user.company,
-            department_user = request.user,
+            enterprise=request.user.company,
+            department_user=request.user,
             dept_name=required_dept.dept_name,
             parent_dept=required_dept.parent_dept,
             start_date=required_dept.start_date,
@@ -262,19 +274,19 @@ def updateDepartmentView(request, pk):
             old_obj = dept_form.save()
             return redirect('company:list-department')
             # success_msg = 'Updated Successfully'
-            user_lang=to_locale(get_language())
-            if user_lang=='ar':
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
                 success_msg = 'تمت العملية بنجاح'
             else:
-                success_msg ='Create Successfully'
+                success_msg = 'Create Successfully'
             messages.success(request, success_msg)
         else:  # Form was not valid
             # success_msg = 'The form is not valid.'
-            user_lang=to_locale(get_language())
-            if user_lang=='ar':
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
                 success_msg = 'لم يتم الانشاء بنجاح'
             else:
-                success_msg ='The form is not valid.'
+                success_msg = 'The form is not valid.'
             [messages.error(request, dept_form.errors)]
     myContext = {
         'dept_form': dept_form,
@@ -290,37 +302,39 @@ def deleteDepartmentView(request, pk):
         department_obj = department_form.save(commit=False)
         department_obj.end_date = date.today()
         department_obj.save(update_fields=['end_date'])
-        user_lang=to_locale(get_language())
-        if user_lang=='ar':
+        user_lang = to_locale(get_language())
+        if user_lang == 'ar':
             success_msg = '{}تم حذف'.format(deleted_obj)
         else:
-            success_msg ='{} successfully deleted'.format(deleted_obj)
+            success_msg = '{} successfully deleted'.format(deleted_obj)
         # success_msg = '{} successfully deleted'.format(deleted_obj)
         messages.success(request, success_msg)
     except Exception as e:
         # error_msg = '{} cannot be deleted '.format(deleted_obj)
-        user_lang=to_locale(get_language())
-        if user_lang=='ar':
+        user_lang = to_locale(get_language())
+        if user_lang == 'ar':
             error_msg = '{} لم يتم حذف '.format(deleted_obj)
         else:
-            error_msg ='{} cannot be deleted '.format(deleted_obj)
+            error_msg = '{} cannot be deleted '.format(deleted_obj)
         messages.error(request, error_msg)
         raise e
     return redirect('company:list-department')
+
+
 ########################################Job views###################################################################
 @login_required(login_url='/login')
 def listJobView(request):
     if request.method == 'GET':
         job_list = Job.objects.all(request.user)
 
-    myContext = {"page_title":_("List jobs"),'job_list': job_list}
+    myContext = {"page_title": _("List jobs"), 'job_list': job_list}
     return render(request, 'job-list.html', myContext)
 
 
 @login_required(login_url='/login')
 def createJobView(request):
     job_formset = JobInline(queryset=Job.objects.none())
-    user_lang=to_locale(get_language())
+    user_lang = to_locale(get_language())
     if request.method == 'POST':
         job_formset = JobInline(request.POST)
         if job_formset.is_valid():
@@ -334,18 +348,18 @@ def createJobView(request):
             return redirect('company:list-jobs')
             # success_msg = 'Create Successfully'
 
-            if user_lang=='ar':
+            if user_lang == 'ar':
                 success_msg = 'تمت العملية بنجاح'
             else:
-                success_msg ='Create Successfully'
+                success_msg = 'Create Successfully'
             messages.success(request, success_msg)
         else:  # Form was not valid
             # success_msg = 'The form is not valid.'
-            user_lang=to_locale(get_language())
-            if user_lang=='ar':
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
                 success_msg = 'لم يتم الانشاء بنجاح'
             else:
-                success_msg ='The form is not valid.'
+                success_msg = 'The form is not valid.'
             [messages.error(request, job_formset.errors)]
     myContext = {
         "page_title": "create new job",
@@ -360,8 +374,8 @@ def updateJobView(request, pk):
     job_form = JobForm(instance=required_job)
     if request.method == 'POST':
         new_obj = Job(
-            enterprise = request.user.company,
-            job_user = request.user,
+            enterprise=request.user.company,
+            job_user=request.user,
             job_name=required_job.job_name,
             job_description=required_job.job_description,
             start_date=required_job.start_date,
@@ -375,19 +389,19 @@ def updateJobView(request, pk):
             old_obj = job_form.save()
             return redirect('company:list-jobs')
             # success_msg = 'Updated Successfully'
-            user_lang=to_locale(get_language())
-            if user_lang=='ar':
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
                 success_msg = 'تمت العملية بنجاح'
             else:
-                success_msg ='Create Successfully'
+                success_msg = 'Create Successfully'
             messages.success(request, success_msg)
         else:  # Form was not valid
             # success_msg = 'The form is not valid.'
-            user_lang=to_locale(get_language())
-            if user_lang=='ar':
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
                 success_msg = 'لم يتم الانشاء بنجاح'
             else:
-                success_msg ='The form is not valid.'
+                success_msg = 'The form is not valid.'
             [messages.error(request, job_form.errors)]
     myContext = {
         "page_title": 'Update Job',
@@ -406,19 +420,19 @@ def correctJobView(request, pk):
             job_form.save()
             return redirect('company:list-jobs')
             # success_msg = 'Updated Successfully'
-            user_lang=to_locale(get_language())
-            if user_lang=='ar':
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
                 success_msg = 'تمت العملية بنجاح'
             else:
-                success_msg ='Create Successfully'
+                success_msg = 'Create Successfully'
             messages.success(request, success_msg)
         else:  # Form was not valid
             # success_msg = 'The form is not valid.'
-            user_lang=to_locale(get_language())
-            if user_lang=='ar':
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
                 success_msg = 'لم يتم الانشاء بنجاح'
             else:
-                success_msg ='The form is not valid.'
+                success_msg = 'The form is not valid.'
             [messages.error(request, job_form.errors)]
     myContext = {
         "page_title": 'Update Job',
@@ -438,8 +452,8 @@ def deleteJobView(request, pk):
         success_msg = '{} successfully deleted'.format(deleted_obj)
         messages.success(request, success_msg)
     except Exception as e:
-        user_lang=to_locale(get_language())
-        if user_lang=='ar':
+        user_lang = to_locale(get_language())
+        if user_lang == 'ar':
             error_msg = '{} لم يتم حذف '.format(deleted_obj)
         else:
             error_msg = '{} cannot be deleted '.format(deleted_obj)
@@ -447,13 +461,15 @@ def deleteJobView(request, pk):
         messages.error(request, error_msg)
         raise e
     return redirect('company:list-jobs')
+
+
 ########################################Grade views###################################################################
 @login_required(login_url='/login')
 def listGradeView(request):
     if request.method == 'GET':
         grade_list = Grade.objects.all(request.user)
 
-    myContext = {"page_title":_("List grades"),'grade_list': grade_list}
+    myContext = {"page_title": _("List grades"), 'grade_list': grade_list}
     return render(request, 'grade-list.html', myContext)
 
 
@@ -472,25 +488,25 @@ def createGradeView(request):
                 x.save()
             return redirect('company:list-grades')
             # success_msg = 'Create Successfully'
-            user_lang=to_locale(get_language())
-            if user_lang=='ar':
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
                 success_msg = 'تم الانشاء بنجاح'
             else:
-                success_msg ='Create Successfully'
+                success_msg = 'Create Successfully'
             messages.success(request, success_msg)
         else:  # Form was not valid
             # success_msg = 'The form is not valid.'
-            user_lang=to_locale(get_language())
-            if user_lang=='ar':
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
                 success_msg = 'لم يتم الانشاء بنجاح'
             else:
-                success_msg ='The form is not valid.'
+                success_msg = 'The form is not valid.'
             [messages.error(request, grade_formset.errors)]
     myContext = {
 
-                 "page_title": _("create new grade"),
-                 'grade_formset': grade_formset,
-                 }
+        "page_title": _("create new grade"),
+        'grade_formset': grade_formset,
+    }
     return render(request, 'grade-create.html', context=myContext)
 
 
@@ -499,8 +515,8 @@ def updateGradeView(request, pk):
     required_grade = Grade.objects.get_job(user=request.user, grade_id=pk)
     grade_form = GradeForm(instance=required_grade)
     new_obj = Grade(
-        enterprise = request.user.company,
-        grade_user = request.user,
+        enterprise=request.user.company,
+        grade_user=request.user,
         grade_name=required_grade.grade_name,
         grade_description=required_grade.grade_description,
         start_date=required_grade.start_date,
@@ -515,20 +531,19 @@ def updateGradeView(request, pk):
             old_obj = grade_form.save()
             return redirect('company:list-grades')
             # success_msg = 'Updated Successfully'
-            user_lang=to_locale(get_language())
-            if user_lang=='ar':
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
                 success_msg = 'تمت العملية بنجاح'
             else:
-                success_msg ='Create Successfully'
+                success_msg = 'Create Successfully'
             messages.success(request, success_msg)
         else:  # Form was not valid
             # success_msg = 'The form is not valid.'
-            user_lang=to_locale(get_language())
-            if user_lang=='ar':
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
                 success_msg = 'لم يتم الانشاء بنجاح'
             else:
-                success_msg ='The form is not valid.'
-
+                success_msg = 'The form is not valid.'
 
             [messages.error(request, grade_form.errors)]
     myContext = {
@@ -547,19 +562,19 @@ def correctGradeView(request, pk):
             grade_form.save()
             return redirect('company:list-grades')
             # success_msg = 'Updated Successfully'
-            user_lang=to_locale(get_language())
-            if user_lang=='ar':
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
                 success_msg = 'تمت العملية بنجاح'
             else:
-                success_msg ='Create Successfully'
+                success_msg = 'Create Successfully'
             messages.success(request, success_msg)
         else:  # Form was not valid
             # success_msg = 'The form is not valid.'
-            user_lang=to_locale(get_language())
-            if user_lang=='ar':
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
                 success_msg = 'لم يتم الانشاء بنجاح'
             else:
-                success_msg ='The form is not valid.'
+                success_msg = 'The form is not valid.'
             [messages.error(request, grade_form.errors)]
     myContext = {
         'grade_form': grade_form,
@@ -575,8 +590,8 @@ def deleteGradeView(request, pk):
         required_obj = required_form.save(commit=False)
         required_obj.end_date = date.today()
         required_obj.save(update_fields=['end_date'])
-        user_lang=to_locale(get_language())
-        if user_lang=='ar':
+        user_lang = to_locale(get_language())
+        if user_lang == 'ar':
             success_msg = '{} تم حذف '.format(deleted_obj)
         else:
             success_msg = '{} successfully deleted'.format(deleted_obj)
@@ -584,21 +599,23 @@ def deleteGradeView(request, pk):
         messages.success(request, success_msg)
     except Exception as e:
         # error_msg = '{} cannot be deleted '.format(deleted_obj)
-        user_lang=to_locale(get_language())
-        if user_lang=='ar':
+        user_lang = to_locale(get_language())
+        if user_lang == 'ar':
             error_msg = '{} لم يتم حذف '.format(deleted_obj)
         else:
             error_msg = '{} cannot be deleted '.format(deleted_obj)
         messages.error(request, error_msg)
         raise e
     return redirect('company:list-grades')
+
+
 ########################################Position views###################################################################
 @login_required(login_url='/login')
 def listPositionView(request):
     if request.method == 'GET':
         position_list = Position.objects.all(request.user)
 
-    myContext = {"page_title":_("List positions"),'position_list': position_list}
+    myContext = {"page_title": _("List positions"), 'position_list': position_list}
     return render(request, 'position-list.html', myContext)
 
 
@@ -606,9 +623,12 @@ def listPositionView(request):
 def createPositionView(request):
     position_formset = PositionInline(queryset=Position.objects.none())
     for form in position_formset:
-        form.fields['department'].queryset = Department.objects.filter((Q(enterprise = request.user.company))).filter(Q(end_date__gte=date.today())|Q(end_date__isnull=True))
-        form.fields['job'].queryset = Job.objects.filter((Q(enterprise = request.user.company))).filter(Q(end_date__gte=date.today())|Q(end_date__isnull=True))
-        form.fields['grade'].queryset = Grade.objects.filter((Q(enterprise = request.user.company))).filter(Q(end_date__gte=date.today())|Q(end_date__isnull=True))
+        form.fields['department'].queryset = Department.objects.filter((Q(enterprise=request.user.company))).filter(
+            Q(end_date__gte=date.today()) | Q(end_date__isnull=True))
+        form.fields['job'].queryset = Job.objects.filter((Q(enterprise=request.user.company))).filter(
+            Q(end_date__gte=date.today()) | Q(end_date__isnull=True))
+        form.fields['grade'].queryset = Grade.objects.filter((Q(enterprise=request.user.company))).filter(
+            Q(end_date__gte=date.today()) | Q(end_date__isnull=True))
     if request.method == 'POST':
         position_formset = PositionInline(request.POST)
         if position_formset.is_valid():
@@ -621,27 +641,27 @@ def createPositionView(request):
                 x.save()
             return redirect('company:list-positions')
             # success_msg = 'Create Successfully'
-            user_lang=to_locale(get_language())
-            if user_lang=='ar':
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
                 success_msg = 'تم الانشاء بنجاح'
             else:
-                success_msg ='Create Successfully'
+                success_msg = 'Create Successfully'
 
             messages.success(request, success_msg)
         else:  # Form was not valid
             # success_msg = 'The form is not valid.'
-            user_lang=to_locale(get_language())
-            if user_lang=='ar':
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
                 success_msg = 'لم يتم الانشاء بنجاح'
             else:
-                success_msg ='The form is not valid.'
+                success_msg = 'The form is not valid.'
 
             [messages.error(request, position_formset.errors)]
     myContext = {
 
-                 "page_title": _("create new position"),
-                 'position_formset': position_formset,
-                 }
+        "page_title": _("create new position"),
+        'position_formset': position_formset,
+    }
     return render(request, 'position-create.html', context=myContext)
 
 
@@ -650,7 +670,7 @@ def updatePositionView(request, pk):
     required_position = Position.objects.get_position(user=request.user, position_id=pk)
     position_form = PositionForm(instance=required_position)
     new_obj = Position(
-       position_user=request.user,
+        position_user=request.user,
         job=required_position.job,
         department=required_position.department,
         grade=required_position.grade,
@@ -668,19 +688,19 @@ def updatePositionView(request, pk):
             old_obj = position_form.save()
             return redirect('company:list-positions')
             # success_msg = 'Updated Successfully'
-            user_lang=to_locale(get_language())
-            if user_lang=='ar':
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
                 success_msg = 'تمت العملية بنجاح'
             else:
-                success_msg ='Create Successfully'
+                success_msg = 'Create Successfully'
             messages.success(request, success_msg)
         else:  # Form was not valid
             # success_msg = 'The form is not valid.'
-            user_lang=to_locale(get_language())
-            if user_lang=='ar':
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
                 success_msg = 'لم يتم الانشاء بنجاح'
             else:
-                success_msg ='The form is not valid.'
+                success_msg = 'The form is not valid.'
 
             [messages.error(request, position_form.errors)]
     myContext = {"page_title": _("update position"),
@@ -698,19 +718,19 @@ def correctPositionView(request, pk):
             position_form.save()
             return redirect('company:list-positions')
             # success_msg = 'Updated Successfully'
-            user_lang=to_locale(get_language())
-            if user_lang=='ar':
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
                 success_msg = 'تمت العملية بنجاح'
             else:
-                success_msg ='Create Successfully'
+                success_msg = 'Create Successfully'
             messages.success(request, success_msg)
         else:  # Form was not valid
             # success_msg = 'The form is not valid.'
-            user_lang=to_locale(get_language())
-            if user_lang=='ar':
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
                 success_msg = 'لم يتم الانشاء بنجاح'
             else:
-                success_msg ='The form is not valid.'
+                success_msg = 'The form is not valid.'
 
             [messages.error(request, position_form.errors)]
     myContext = {"page_title": _("correct position"),
@@ -727,15 +747,15 @@ def deletePositionView(request, pk):
         required_obj.end_date = date.today()
         required_obj.save(update_fields=['end_date'])
         # success_msg = '{} successfully deleted'.format(deleted_obj)
-        user_lang=to_locale(get_language())
-        if user_lang=='ar':
-            success_msg =  '{} تم حذف السجل'.format(deleted_obj)
+        user_lang = to_locale(get_language())
+        if user_lang == 'ar':
+            success_msg = '{} تم حذف السجل'.format(deleted_obj)
         else:
-            success_msg =  '{} successfully deleted'.format(deleted_obj)
+            success_msg = '{} successfully deleted'.format(deleted_obj)
         messages.success(request, success_msg)
     except Exception as e:
-        user_lang=to_locale(get_language())
-        if user_lang=='ar':
+        user_lang = to_locale(get_language())
+        if user_lang == 'ar':
             error_msg = '{} لم يتم حذف '.format(deleted_obj)
         else:
             error_msg = '{} cannot be deleted '.format(deleted_obj)
@@ -743,3 +763,48 @@ def deletePositionView(request, pk):
         messages.error(request, error_msg)
         raise e
     return redirect('company:list-positions')
+
+
+@login_required(login_url='/login')
+def CreateWorkingPolicyView(request):
+    working_policy_form = WorkingHoursForm()
+    yearly_holiday_formset = YearlyHolidayInline()
+    user_lang = to_locale(get_language())
+    if request.method == 'POST':
+        working_policy_form = WorkingHoursForm(request.POST)
+        yearly_holiday_formset = YearlyHolidayInline(request.POST)
+        if working_policy_form.is_valid() and YearlyHolidayInline.is_valid():
+            policy_obj = working_policy_form.save(commit=False)
+            policy_obj.enterprise = request.user.company
+            policy_obj.created_by = request.user
+            policy_obj.last_update_by = request.user
+            policy_obj.save()
+            for form in YearlyHolidayInline:
+                holiday_obj = form.save(commit=False)
+                holiday_obj.enterprise = request.user.company
+                holiday_obj.created_by = request.user
+                holiday_obj.last_update_by = request.user
+                holiday_obj.save()
+
+
+            if user_lang == 'ar':
+                success_msg = 'تمت العملية بنجاح'
+            else:
+                success_msg = 'Create Successfully'
+            messages.success(request, success_msg)
+            return redirect('company:policy-create')
+
+        else:  # Form was not valid
+            # success_msg = 'The form is not valid.'
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
+                success_msg = 'لم يتم الانشاء بنجاح'
+            else:
+                success_msg = 'The form is not valid.'
+            [messages.error(request, working_policy_form.errors)]
+    my_context = {
+        "page_title": "create new working hours policy",
+        'policy_form': working_policy_form,
+        'yearly_holiday_formset':yearly_holiday_formset,
+    }
+    return render(request, 'working_policy_create.html', context=my_context)

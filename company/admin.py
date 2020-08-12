@@ -1,6 +1,7 @@
 from django.contrib import admin
 from company import models
 
+
 ####################################### Admin Forms #############################################
 @admin.register(models.Enterprise)
 class EnterpriseAdmin(admin.ModelAdmin):
@@ -20,6 +21,7 @@ class EnterpriseAdmin(admin.ModelAdmin):
         'end_date',
     )
     list_display = ('pk', 'name')
+
     def save_model(self, request, instance, form, change):
         user = request.user
         instance = form.save(commit=False)
@@ -30,15 +32,18 @@ class EnterpriseAdmin(admin.ModelAdmin):
         form.save()
         return instance
 
+
 @admin.register(models.Department)
 class DepartmentAdmin(admin.ModelAdmin):
-    fields =(
-         'department_user',
+    fields = (
+        'enterprise',
+        'department_user',
         'dept_name',
         'parent_dept',
         'start_date',
         'end_date',
     )
+
     def save_model(self, request, instance, form, change):
         user = request.user
         instance = form.save(commit=False)
@@ -48,6 +53,7 @@ class DepartmentAdmin(admin.ModelAdmin):
         instance.save()
         form.save_m2m()
         return instance
+
 
 @admin.register(models.Job)
 class JobAdmin(admin.ModelAdmin):
@@ -58,6 +64,7 @@ class JobAdmin(admin.ModelAdmin):
         'start_date',
         'end_date',
     )
+
     def save_model(self, request, instance, form, change):
         user = request.user
         instance = form.save(commit=False)
@@ -68,15 +75,17 @@ class JobAdmin(admin.ModelAdmin):
         form.save_m2m()
         return instance
 
+
 @admin.register(models.Grade)
 class GradeAdmin(admin.ModelAdmin):
     fields = (
-              'grade_user',
+        'grade_user',
         'grade_name',
         'grade_description',
         'start_date',
         'end_date',
     )
+
     def save_model(self, request, instance, form, change):
         user = request.user
         instance = form.save(commit=False)
@@ -87,22 +96,70 @@ class GradeAdmin(admin.ModelAdmin):
         form.save_m2m()
         return instance
 
+
 @admin.register(models.Position)
 class PositionAdmin(admin.ModelAdmin):
     fields = (
-             'job',
-             'department',
-             'grade',
-             'position_name',
-             'position_description',
-             'start_date',
-             'end_date',
+        'job',
+        'department',
+        'grade',
+        'position_name',
+        'position_description',
+        'start_date',
+        'end_date',
     )
+
     def save_model(self, request, instance, form, change):
         user = request.user
         instance = form.save(commit=False)
         if not change or not instance.created_by:
             instance.created_by = user
+        instance.last_update_by = user
+        instance.save()
+        form.save_m2m()
+        return instance
+
+
+@admin.register(models.WorkingHoursPolicy)
+class WorkingHoursPolicyAdmin(admin.ModelAdmin):
+    fields = (
+        'number_of_daily_working_hrs',
+        'normal_over_time_hourly_rate',
+        'exceptional_over_time_hourly_rate',
+        'delay_hours_rate',
+        'absence_days_rate',
+
+    )
+
+    def save_model(self, request, instance, form, change):
+        user = request.user
+        enterprise = request.user.company
+        instance = form.save(commit=False)
+        if not change or not instance.created_by:
+            instance.created_by = user
+            instance.enterprise = enterprise
+        instance.last_update_by = user
+        instance.save()
+        form.save_m2m()
+        return instance
+
+
+@admin.register(models.YearlyHoliday)
+class YearlyHolidaysAdmin(admin.ModelAdmin):
+    fields = (
+        'name',
+        'start_date',
+        'end_date',
+        'number_of_days_off',
+    )
+
+    def save_model(self, request, instance, form, change):
+        user = request.user
+        enterprise = request.user.company
+        instance = form.save(commit=False)
+        if not change or not instance.created_by:
+            instance.created_by = user
+            instance.enterprise = enterprise
         instance.last_update_by = user
         instance.save()
         form.save_m2m()
