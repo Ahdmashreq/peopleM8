@@ -69,29 +69,21 @@
             </div>
           </div>
            {{ yearly_holiday_formset.management_form }}
-          <div id="form_set">
+          <div id="form_set2">
             <div class="form-row">
               <div class="form-group col-md-1.5">
-                <label>{% trans "department Name" %}</label>
+                <label>{% trans "Name" %}</label>
               </div>
               <div class="form-group col-md-1.5">
-                <label>{% trans "Job Name" %}</label>
+                <label>{% trans "End Date" %}</label>
               </div>
               <div class="form-group col-md-1.5">
-                <label>{% trans "Grade Name" %}</label>
+                <label>{% trans "Start Date" %}</label>
               </div>
               <div class="form-group col-md-2">
-                <label>{% trans "Position Name" %}</label>
+                <label>{% trans "Number Of Days Off" %}</label>
               </div>
-              <div class="form-group col-md-2">
-                <label>{% trans "Position Description" %}</label>
-              </div>
-              <div class="form-group col-md-1.5">
-                <label>{% trans "Position Start Date" %}</label>
-              </div>
-              <div class="form-group col-md-1.5">
-                <label>{% trans "Position End Date" %}</label>
-              </div>
+
             </div>
             {% for form in yearly_holiday_formset.forms %}
             {{form.non_field_errors}}
@@ -101,10 +93,10 @@
                 {{ form.name }}
               </div>
               <div class="form-group col-md-1.5">
-                {{ form.start-date }}
+                {{ form.start_date }}
               </div>
               <div class="form-group col-md-1.5">
-                {{ form.end-date }}
+                {{ form.end_date }}
               </div>
               <div class="form-group col-md-2">
                 {{ form.number_of_days_off }}
@@ -157,20 +149,3 @@
 </script>
 {% endblock js %}
 
-          <button type="button" id="add_more" class="btn cur-p btn-success">{% trans "Add New Line"%}</button>
-
-        </div>
-      </div>
-    </div>
-  </form>
-</div>
-{% endblock body%}
-{% block js %}
-<script>
-  $('#add_more').click(function() {
-    var form_idx = $('#id_form-TOTAL_FORMS').val();
-    $('#form_set').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
-    $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
-  });
-</script>
-{% endblock js %}
