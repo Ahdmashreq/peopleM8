@@ -54,6 +54,7 @@ urlpatterns = [
         path('working_hrs_policy/correct/<int:pk>', views.correctPolicyView, name='policy-correct'),
         path('yearly_holidays/list/', views.listYearlyHolidayView, name='yearly-holiday-list'),
         path('yearly_holidays/create/', views.CreateYearlyHolidayView, name='yearly-holiday-create'),
+        path('yearly_holidays/correct/<int:pk>', views.correctYearlyHolidayView, name='yearly-holiday-correct'),
 
     ]
     )),

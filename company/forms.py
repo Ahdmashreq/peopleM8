@@ -156,7 +156,7 @@ class WorkingHoursForm(forms.ModelForm):
 
 class YearlyHolidayForm(forms.ModelForm):
     class Meta:
-
+        model = YearlyHoliday
         fields = (
             'name',
             'start_date',
