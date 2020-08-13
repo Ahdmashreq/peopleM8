@@ -848,7 +848,7 @@ def correctPolicyView(request, pk):
 @login_required(login_url='/login')
 def listPoliciesView(request):
     num_of_working_policy = WorkingHoursPolicy.objects.all(request.user).count()
-    num_of_yearly_holidays = Job.objects.all(request.user).count()
+    num_of_yearly_holidays = YearlyHoliday.objects.all(request.user).count()
 
     context = {
 
