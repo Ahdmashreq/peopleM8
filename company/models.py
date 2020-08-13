@@ -5,7 +5,8 @@ from django.db.models.signals import pre_save
 from home.slugify import unique_slug_generator
 from cities_light.models import City, Country
 from django.utils.translation import ugettext_lazy as _
-from .manager import CompanyManager, DepartmentManager, JobManager, GradeManager, PositionManager
+from .manager import CompanyManager, DepartmentManager, JobManager, GradeManager, PositionManager, PolicyManager, \
+    YearlyHolidayManager
 
 
 class Enterprise(models.Model):
@@ -250,6 +251,7 @@ class Enterprise_Policies(models.Model):
 class WorkingHoursPolicy(models.Model):
     enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name='enterprise_working_hrs_policy',
                                    verbose_name=_('Enterprise Name'))
+    objects = PolicyManager()
     number_of_daily_working_hrs = models.DecimalField(decimal_places=1, max_digits=2)
     normal_over_time_hourly_rate = models.DecimalField(decimal_places=1, max_digits=2)
     exceptional_over_time_hourly_rate = models.DecimalField(decimal_places=1, max_digits=2)
@@ -263,16 +265,17 @@ class WorkingHoursPolicy(models.Model):
     last_update_date = models.DateField(auto_now=False, auto_now_add=True)
 
     def __str__(self):
-        return "Working Days Policies"
+        return "Working Hours Policy"
 
 
 class YearlyHoliday(models.Model):
     enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name='enterprise_yearly_holidays',
                                    verbose_name=_('Enterprise Name'))
+    objects = YearlyHolidayManager()
     name = models.CharField(max_length=255)
     start_date = models.DateField(auto_now=False, auto_now_add=False, verbose_name=_('Start Date'))
     end_date = models.DateField(auto_now=False, auto_now_add=False, verbose_name=_('End Date'))
-    number_of_days_off = models.IntegerField(null=True,blank=True)
+    number_of_days_off = models.IntegerField(null=True, blank=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
                                    related_name="holiday_policy_created_by")
     creation_date = models.DateField(auto_now=True, auto_now_add=False)
@@ -282,4 +285,3 @@ class YearlyHoliday(models.Model):
 
     def __str__(self):
         return self.name + " Holiday"
-

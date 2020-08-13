@@ -11,8 +11,9 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView
 from custom_user.models import User
 from company.forms import (EnterpriseForm, DepartmentInline, DepartmentForm, JobInline,
-                           JobForm, GradeInline, GradeForm, PositionInline, PositionForm, WorkingHoursForm,YearlyHolidayInline)
-from company.models import (Enterprise, Department, Job, Grade, Position)
+                           JobForm, GradeInline, GradeForm, PositionInline, PositionForm, WorkingHoursForm,
+                           YearlyHolidayInline)
+from company.models import (Enterprise, Department, Job, Grade, Position, YearlyHoliday, WorkingHoursPolicy)
 from django.utils.translation import ugettext_lazy as _
 from cities_light.models import City, Country
 
@@ -670,7 +671,7 @@ def updatePositionView(request, pk):
     required_position = Position.objects.get_position(user=request.user, position_id=pk)
     position_form = PositionForm(instance=required_position)
     new_obj = Position(
-        position_user=request.user,
+        # position_user=request.user,
         job=required_position.job,
         department=required_position.department,
         grade=required_position.grade,
@@ -768,7 +769,7 @@ def deletePositionView(request, pk):
 @login_required(login_url='/login')
 def CreateWorkingPolicyView(request):
     working_policy_form = WorkingHoursForm()
-    yearly_holiday_formset = YearlyHolidayInline()
+    yearly_holiday_formset = YearlyHolidayInline(queryset=YearlyHoliday.objects.none())
     user_lang = to_locale(get_language())
     if request.method == 'POST':
         working_policy_form = WorkingHoursForm(request.POST)
@@ -785,7 +786,6 @@ def CreateWorkingPolicyView(request):
                 holiday_obj.created_by = request.user
                 holiday_obj.last_update_by = request.user
                 holiday_obj.save()
-
 
             if user_lang == 'ar':
                 success_msg = 'تمت العملية بنجاح'
@@ -805,6 +805,111 @@ def CreateWorkingPolicyView(request):
     my_context = {
         "page_title": "create new working hours policy",
         'policy_form': working_policy_form,
-        'yearly_holiday_formset':yearly_holiday_formset,
+        'yearly_holiday_formset': yearly_holiday_formset,
     }
-    return render(request, 'working_policy_create.html', context=my_context)
+    return render(request, 'working-hrs-policy-create.html', context=my_context)
+
+
+@login_required(login_url='/login')
+def listWorkingPolicyView(request):
+    if request.method == 'GET':
+        working_policy_list = WorkingHoursPolicy.objects.all(request.user)
+
+    myContext = {"page_title": _("List working policies"), 'policy_list': working_policy_list}
+    return render(request, 'working-hrs-policy-list.html', myContext)
+
+
+@login_required(login_url='/login')
+def correctPolicyView(request, pk):
+    required_policy = WorkingHoursPolicy.objects.get_policy(user=request.user, policy_id=pk)
+    required_yearly_holiday = YearlyHoliday.objects.get_holiday(user=request.user, yearly_holiday_id=pk)
+    policy_form = WorkingHoursForm(instance=required_policy)
+    yearly_holiday_formset = YearlyHolidayInline(instance=required_yearly_holiday)
+
+    if request.method == 'POST':
+        policy_form = WorkingHoursForm(request.POST, instance=required_policy)
+        yearly_holiday_formset = YearlyHolidayInline(request.POST, instance=required_yearly_holiday)
+
+        if policy_form.is_valid() and yearly_holiday_formset.is_valid():
+            policy_form.last_update_by = request.user
+            yearly_holiday_formset.last_update_by = request.user
+            policy_form.save()
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
+                success_msg = 'تمت العملية بنجاح'
+            else:
+                success_msg = 'Updated Successfully'
+            messages.success(request, success_msg)
+            return redirect('company:policy-list')
+
+        else:  # Form was not valid
+            # success_msg = 'The form is not valid.'
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
+                success_msg = 'لم يتم الانشاء بنجاح'
+            else:
+                success_msg = 'The form is not valid.'
+            [messages.error(request, policy_form.errors)]
+    myContext = {
+        "page_title": "Update working hours policy",
+        'policy_form': policy_form,
+    }
+    return render(request, 'working-hrs-policy-create.html', context=myContext)
+
+
+@login_required(login_url='/login')
+def listPoliciesView(request):
+    num_of_working_policy = WorkingHoursPolicy.objects.all(request.user).count()
+    num_of_yearly_holidays = Job.objects.all(request.user).count()
+
+    context = {
+
+        "page_title": _("Company Working Policy Definition"),
+        'num_of_working_policy': num_of_working_policy,
+        'num_of_yearly_holidays': num_of_yearly_holidays,
+    }
+    return render(request, 'policy-list.html', context=context)
+
+
+@login_required(login_url='/login')
+def listYearlyHolidayView(request):
+    if request.method == 'GET':
+        yearly_holiday_list = YearlyHoliday.objects.all(request.user)
+
+    myContext = {"page_title": _("List yearly holidays"), 'yearly_holiday_list': yearly_holiday_list}
+    return render(request, 'yearly-holiday-list.html', myContext)
+
+@login_required(login_url='/login')
+def CreateYearlyHolidayView(request):
+    yearly_holiday_formset = YearlyHolidayInline(queryset=YearlyHoliday.objects.none())
+    user_lang = to_locale(get_language())
+    if request.method == 'POST':
+        yearly_holiday_formset = YearlyHolidayInline(request.POST)
+        if YearlyHolidayInline.is_valid():
+            for form in YearlyHolidayInline:
+                holiday_obj = form.save(commit=False)
+                holiday_obj.enterprise = request.user.company
+                holiday_obj.created_by = request.user
+                holiday_obj.last_update_by = request.user
+                holiday_obj.save()
+
+            if user_lang == 'ar':
+                success_msg = 'تمت العملية بنجاح'
+            else:
+                success_msg = 'Create Successfully'
+            messages.success(request, success_msg)
+            return redirect('company:policy-create')
+
+        else:  # Form was not valid
+            # success_msg = 'The form is not valid.'
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
+                success_msg = 'لم يتم الانشاء بنجاح'
+            else:
+                success_msg = 'The form is not valid.'
+            [messages.error(request, yearly_holiday_formset.errors)]
+    my_context = {
+        "page_title": "create new yearly holiday",
+        'yearly_holiday_formset': yearly_holiday_formset,
+    }
+    return render(request, 'working-hrs-policy-create.html', context=my_context)

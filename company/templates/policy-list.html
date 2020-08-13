@@ -1,0 +1,46 @@
+{% extends 'master.html'%}
+{% load staticfiles%}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+
+{% block body%}
+
+<div class="container-fluid">
+  <div class="row" style="margin-left:0px;">
+    <div class="col-md-8">
+      <h4 class="c-grey-900">{{page_title|title}}</h4>
+    </div>
+
+  </div>
+  <div class="row" style="margin-left:0px;">
+    <div class="col-md-12">
+      <div class="bgc-white bd bdrs-3 p-20 mB-20">
+        <table class="table table-striped table-bordered" id="dataTable"  width="100%">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>{% trans "Working Policies" %}</th>
+              <th>{% trans "Number Of Policies" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">{% trans "1" %}</th>
+              <td><a href="{% url 'company:working-hrs-policy-list' %}">{% trans "Working Hours Policy" %}</a></td>
+              <td>{{num_of_working_policy}}</td>
+            </tr>
+            <tr>
+              <th scope="row">{% trans "2" %}</th>
+              <td><a href="{% url 'company:yearly-holiday-list' %}">{% trans "Yearly Holidays" %}</a></td>
+              <td>{{num_of_yearly_holidays}}</td>
+            </tr>
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock body%}
+
