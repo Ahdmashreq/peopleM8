@@ -257,6 +257,9 @@ class WorkingHoursPolicy(models.Model):
     exceptional_over_time_hourly_rate = models.DecimalField(decimal_places=1, max_digits=2)
     delay_hours_rate = models.DecimalField(decimal_places=1, max_digits=2)
     absence_days_rate = models.DecimalField(decimal_places=1, max_digits=2)
+    start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
+    end_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=_('End Date'))
+
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
                                    related_name="working_hr_policy_created_by")
     creation_date = models.DateField(auto_now=True, auto_now_add=False)
@@ -285,3 +288,17 @@ class YearlyHoliday(models.Model):
 
     def __str__(self):
         return self.name + " Holiday"
+
+
+# class year(models.Model):
+#     YearlyHoliday = models.ForeignKey(YearlyHoliday, on_delete=models.CASCADE, verbose_name=_('Holidays'))
+#     year = models.IntegerField()
+#     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
+#                                    related_name="year_created_by")
+#     creation_date = models.DateField(auto_now=False, auto_now_add=True)
+#     last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
+#                                        related_name="year_update_by")
+#     last_update_date = models.DateField(auto_now=True, auto_now_add=False)
+#
+#     def __str__(self):
+#         return self.year

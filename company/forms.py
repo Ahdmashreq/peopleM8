@@ -138,13 +138,17 @@ class WorkingHoursForm(forms.ModelForm):
             'exceptional_over_time_hourly_rate',
             'delay_hours_rate',
             'absence_days_rate',
+            'start_date',
+            'end_date',
+
 
         )
         exclude = common_items_to_execlude
 
     def __init__(self, *args, **kwargs):
         super(WorkingHoursForm, self).__init__(*args, **kwargs)
-
+        self.fields['start_date'].widget.input_type = 'date'
+        self.fields['end_date'].widget.input_type = 'date'
         for field in self.fields:
             if self.fields[field].widget.input_type == 'checkbox':
                 self.fields[field].widget.attrs['class'] = 'checkbox'

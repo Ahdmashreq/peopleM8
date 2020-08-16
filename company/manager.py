@@ -51,15 +51,19 @@ class PositionManager(models.Manager):
 
 class PolicyManager(models.Manager):
     def all(self, user, *args, **kwargs):
-        return super(PolicyManager, self).filter(enterprise=user.company)
+        return super(PolicyManager, self).filter(enterprise=user.company).filter(
+            Q(end_date__gte=date.today()) | Q(end_date__isnull=True))
 
     def get_policy(self, user, policy_id, *args, **kwargs):
-        return super(PolicyManager, self).filter(enterprise=user.company).get(id=policy_id)
+        return super(PolicyManager, self).filter(enterprise=user.company).filter(
+            Q(end_date__gte=date.today()) | Q(end_date__isnull=True)).get(id=policy_id)
 
 
 class YearlyHolidayManager(models.Manager):
     def all(self, user, *args, **kwargs):
-        return super(YearlyHolidayManager, self).filter(enterprise=user.company)
+        return super(YearlyHolidayManager, self).filter(enterprise=user.company).filter(
+            Q(start_date__year=date.today().year))
 
     def get_holiday(self, user, yearly_holiday_id, *args, **kwargs):
-        return super(YearlyHolidayManager, self).filter(enterprise=user.company).get(id=yearly_holiday_id)
+        return super(YearlyHolidayManager, self).filter(enterprise=user.company).filter(
+            Q(start_date__year=date.today().year)).get(id=yearly_holiday_id)

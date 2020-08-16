@@ -779,7 +779,6 @@ def CreateWorkingPolicyView(request):
             policy_obj.last_update_by = request.user
             policy_obj.save()
 
-
             if user_lang == 'ar':
                 success_msg = 'تمت العملية بنجاح'
             else:
@@ -880,6 +879,9 @@ def CreateYearlyHolidayView(request):
                 holiday_obj.enterprise = request.user.company
                 holiday_obj.created_by = request.user
                 holiday_obj.last_update_by = request.user
+                if holiday_obj.number_of_days_off is None:
+                    delta = holiday_obj.end_date - holiday_obj.start_date
+                    holiday_obj.number_of_days_off = delta.days
                 holiday_obj.save()
 
             if user_lang == 'ar':
@@ -914,6 +916,9 @@ def correctYearlyHolidayView(request, pk):
 
         if holiday_form.is_valid():
             holiday_form.last_update_by = request.user
+            if holiday_form.number_of_days_off is None:
+                delta = holiday_form.end_date - holiday_form.start_date
+                holiday_form.number_of_days_off = delta.days
             holiday_form.save()
             user_lang = to_locale(get_language())
             if user_lang == 'ar':
@@ -936,3 +941,4 @@ def correctYearlyHolidayView(request, pk):
         'holiday_form': holiday_form,
     }
     return render(request, 'yearly-holiday-update.html', context=myContext)
+

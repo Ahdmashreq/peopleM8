@@ -25,6 +25,7 @@
               <th>{% trans "Holiday Name" %}</th>
               <th>{% trans "Start Date" %}</th>
               <th>{% trans "End Date" %}</th>
+              <th>{% trans "Days Off" %}</th>
               <th>{% trans "Actions" %}</th>
             </tr>
           </thead>
@@ -35,6 +36,7 @@
               <td>{{holiday.name}}</td>
               <td>{{holiday.start_date}}</td>
               <td>{{holiday.end_date}}</td>
+              <td>{{holiday.number_of_days_off}}</td>
 
               <td class="Actions">
                 <div class="w-100 gap-10 peers">
