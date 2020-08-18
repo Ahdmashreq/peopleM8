@@ -3,12 +3,17 @@ from django.contrib.auth.decorators import login_required
 from attendance.models import Attendance, Task
 from employee.models import Employee
 from django.utils import timezone
-from attendance.forms import FormAttendance, Tasks_inline_formset, FormTasks
+from attendance.forms import FormAttendance, Tasks_inline_formset, FormTasks, ConfirmImportForm, ImportForm
 from datetime import datetime, timedelta
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import get_object_or_404
 from string import Template
+from tablib import Dataset
+from django.utils.encoding import force_str
+from attendance.resources import AttendanceResource
+from attendance.tmp_storage import TempFolderStorage
+from django.conf import settings
 
 
 class DeltaTemplate(Template):
@@ -166,3 +171,79 @@ def delete_task(request, slug_text):
     instance.delete()
     messages.add_message(request, messages.SUCCESS, 'Task was deleted successfully')
     return redirect('attendance:list-tasks', attendance_slug=instance.attendance.slug)
+
+
+TMP_STORAGE_CLASS = getattr(settings, 'IMPORT_EXPORT_TMP_STORAGE_CLASS',
+                            TempFolderStorage)
+
+
+def write_to_tmp_storage(import_file):
+    tmp_storage = TMP_STORAGE_CLASS()
+    data = bytes()
+    for chunk in import_file.chunks():
+        data += chunk
+
+    tmp_storage.save(data, 'rb')
+    return tmp_storage
+
+
+@login_required(login_url='/login')
+def upload_xls_file(request):
+    attendance_resource = AttendanceResource()
+    context = {}
+    if request.method == "POST":
+        import_file = request.FILES['import_file']
+        dataset = Dataset()
+        imported_data = dataset.load(import_file.read().decode(), format='csv')
+        result = attendance_resource.import_data(imported_data, dry_run=True,
+                                                 user=request.user)  # Test the data import
+        context['result'] = result
+        tmp_storage = write_to_tmp_storage(import_file)
+        if not result.has_errors() and not result.has_validation_errors():
+            initial = {
+                'import_file_name': tmp_storage.name,
+                'original_file_name': import_file.name,
+            }
+            confirm_form = ConfirmImportForm(initial=initial)
+            context['confirm_form'] = confirm_form
+
+    context['fields'] = [f.column_name for f in attendance_resource.get_user_visible_fields()]
+
+    return render(request, 'upload-attendance.html', context=context)
+
+
+@login_required(login_url='/login')
+def confirm_xls_upload(request):
+    if request.method == "POST":
+        confirm_form = ConfirmImportForm(request.POST)
+        attendance_resource = AttendanceResource()
+        if confirm_form.is_valid():
+            tmp_storage = TMP_STORAGE_CLASS(name=confirm_form.cleaned_data['import_file_name'])
+            data = tmp_storage.read('rb')
+            data = force_str(data, "utf-8")
+            print(data)
+            dataset = Dataset()
+            imported_data = dataset.load(data, format='csv')
+
+            result = attendance_resource.import_data(imported_data,
+                                                     dry_run=False,
+                                                     raise_errors=True,
+                                                     file_name=confirm_form.cleaned_data['original_file_name'],
+                                                     user=request.user, )
+
+            print(result)
+            tmp_storage.remove()
+
+    return redirect('attendance:emp-attendance')
+
+
+@login_required(login_url='/login')
+def list_all_attendance(request):
+    attendance_list = Attendance.objects.filter(created_by__company=request.user.company)
+
+    att_context = {
+        'attendances': attendance_list,
+        'page_title': 'Employees Attendance',
+
+    }
+    return render(request, 'list_attendance.html', att_context)

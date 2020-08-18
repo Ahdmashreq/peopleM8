@@ -9,11 +9,16 @@ from home.slugify import unique_slug_generator
 
 class Attendance(models.Model):
     employee = models.ForeignKey(Employee, related_name='emp_attendance', on_delete=models.CASCADE)
-    date = models.DateField(auto_now_add=True)
+    date = models.DateField()
     check_in = models.TimeField(blank=True, null=True, )
     check_out = models.TimeField(blank=True, null=True)
     work_time = models.CharField(max_length=100, blank=True, null=True)
-    overtime = models.DateTimeField(blank=True, null=True)
+    normal_hrs = models.DecimalField(decimal_places=2, max_digits=4, blank=True, null=True, default=0)
+    normal_overtime = models.DecimalField(decimal_places=2, max_digits=4, blank=True, null=True, default=0)
+    exceptional_hrs = models.DecimalField(decimal_places=2, max_digits=4, blank=True, null=True, default=0)
+    exceptional_overtime = models.DecimalField(decimal_places=2, max_digits=4, blank=True, null=True, default=0)
+    delay_hrs = models.DecimalField(decimal_places=2, max_digits=4, blank=True, null=True, default=0)
+    absence_days = models.IntegerField(blank=True, null=True, default=0)
     slug = models.SlugField(blank=True, null=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                                    blank=True, null=True, related_name='attendance_created_by')
