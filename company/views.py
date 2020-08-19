@@ -13,7 +13,7 @@ from custom_user.models import User
 from company.forms import (EnterpriseForm, DepartmentInline, DepartmentForm, JobInline,
                            JobForm, GradeInline, GradeForm, PositionInline, PositionForm, WorkingHoursForm,
                            YearlyHolidayInline, YearlyHolidayForm)
-from company.models import (Enterprise, Department, Job, Grade, Position, YearlyHoliday, WorkingHoursPolicy)
+from company.models import (Enterprise, Department, Job, Grade, Position, YearlyHoliday, WorkingHoursPolicy, Year)
 from django.utils.translation import ugettext_lazy as _
 from cities_light.models import City, Country
 
@@ -767,6 +767,20 @@ def deletePositionView(request, pk):
 
 
 @login_required(login_url='/login')
+def listPoliciesView(request):
+    num_of_working_policy = WorkingHoursPolicy.objects.all(request.user).count()
+    num_of_yearly_holidays = Year.objects.all(request.user).count()
+
+    context = {
+
+        "page_title": _("Company Working Policy Definition"),
+        'num_of_working_policy': num_of_working_policy,
+        'num_of_yearly_holidays': num_of_yearly_holidays,
+    }
+    return render(request, 'policy-list.html', context=context)
+
+
+@login_required(login_url='/login')
 def CreateWorkingPolicyView(request):
     working_policy_form = WorkingHoursForm()
     user_lang = to_locale(get_language())
@@ -787,13 +801,11 @@ def CreateWorkingPolicyView(request):
             return redirect('company:working-hrs-policy-list')
 
         else:  # Form was not valid
-            # success_msg = 'The form is not valid.'
-            user_lang = to_locale(get_language())
             if user_lang == 'ar':
                 success_msg = 'لم يتم الانشاء بنجاح'
             else:
                 success_msg = 'The form is not valid.'
-            [messages.error(request, working_policy_form.errors)]
+            messages.error(request, success_msg)
     my_context = {
         "page_title": "create new working hours policy",
         'policy_form': working_policy_form,
@@ -803,6 +815,7 @@ def CreateWorkingPolicyView(request):
 
 @login_required(login_url='/login')
 def listWorkingPolicyView(request):
+    working_policy_list = []
     if request.method == 'GET':
         working_policy_list = WorkingHoursPolicy.objects.all(request.user)
 
@@ -811,32 +824,29 @@ def listWorkingPolicyView(request):
 
 
 @login_required(login_url='/login')
-def correctPolicyView(request, pk):
+def correctWorkingPolicyView(request, pk):
     required_policy = WorkingHoursPolicy.objects.get_policy(user=request.user, policy_id=pk)
     policy_form = WorkingHoursForm(instance=required_policy)
-
+    user_lang = to_locale(get_language())
     if request.method == 'POST':
         policy_form = WorkingHoursForm(request.POST, instance=required_policy)
 
         if policy_form.is_valid():
-            policy_form.last_update_by = request.user
-            policy_form.save()
-            user_lang = to_locale(get_language())
+            policy_obj = policy_form.save(commit=False)
+            policy_obj.last_update_by = request.user
+            policy_obj.save()
             if user_lang == 'ar':
                 success_msg = 'تمت العملية بنجاح'
             else:
                 success_msg = 'Updated Successfully'
             messages.success(request, success_msg)
-            return redirect('company:working-hrs-policy-list')
 
         else:  # Form was not valid
-            # success_msg = 'The form is not valid.'
-            user_lang = to_locale(get_language())
             if user_lang == 'ar':
                 success_msg = 'لم يتم الانشاء بنجاح'
             else:
                 success_msg = 'The form is not valid.'
-            [messages.error(request, policy_form.errors)]
+            messages.error(request, success_msg)
     myContext = {
         "page_title": "Update working hours policy",
         'policy_form': policy_form,
@@ -845,38 +855,42 @@ def correctPolicyView(request, pk):
 
 
 @login_required(login_url='/login')
-def listPoliciesView(request):
-    num_of_working_policy = WorkingHoursPolicy.objects.all(request.user).count()
-    num_of_yearly_holidays = YearlyHoliday.objects.all(request.user).count()
+def deleteWorkingPolicyView(request, pk):
+    req_working_policy = WorkingHoursPolicy.objects.get_policy(user=request.user, policy_id=pk)
+    deleted = req_working_policy.delete()
+    if deleted:
+        messages.success(request, 'Record successfully deleted')
 
-    context = {
+    else:
+        messages.error(request, 'Record is NOT deleted')
 
-        "page_title": _("Company Working Policy Definition"),
-        'num_of_working_policy': num_of_working_policy,
-        'num_of_yearly_holidays': num_of_yearly_holidays,
-    }
-    return render(request, 'policy-list.html', context=context)
+    return redirect('company:working-hrs-policy-list')
 
 
 @login_required(login_url='/login')
-def listYearlyHolidayView(request):
+def listYearlyHolidayView(request, year_id):
+    yearly_holiday_list = []
+    year = Year.objects.get_year(request.user,year_id)
     if request.method == 'GET':
-        yearly_holiday_list = YearlyHoliday.objects.all(request.user)
+        yearly_holiday_list = YearlyHoliday.objects.get_year_holiday(year_id)
 
-    myContext = {"page_title": _("List yearly holidays"), 'yearly_holiday_list': yearly_holiday_list}
+    myContext = {"page_title": f"List yearly holidays for {year}",
+                 'yearly_holiday_list': yearly_holiday_list, 'year_id': year_id}
     return render(request, 'yearly-holiday-list.html', myContext)
 
 
 @login_required(login_url='/login')
-def CreateYearlyHolidayView(request):
+def CreateYearlyHolidayView(request, year_id):
     yearly_holiday_formset = YearlyHolidayInline(queryset=YearlyHoliday.objects.none())
     user_lang = to_locale(get_language())
+    year = Year.objects.get_year(request.user, year_id)
     if request.method == 'POST':
         yearly_holiday_formset = YearlyHolidayInline(request.POST)
         if yearly_holiday_formset.is_valid():
             fomrset = yearly_holiday_formset.save(commit=False)
             for holiday_obj in fomrset:
                 holiday_obj.enterprise = request.user.company
+                holiday_obj.year = year
                 holiday_obj.created_by = request.user
                 holiday_obj.last_update_by = request.user
                 if holiday_obj.number_of_days_off is None:
@@ -889,19 +903,18 @@ def CreateYearlyHolidayView(request):
             else:
                 success_msg = 'Create Successfully'
             messages.success(request, success_msg)
-            return redirect('company:yearly-holiday-list')
+            return redirect('company:yearly-holiday-list', year_id=year_id)
 
         else:  # Form was not valid
-            # success_msg = 'The form is not valid.'
-            user_lang = to_locale(get_language())
             if user_lang == 'ar':
                 success_msg = 'لم يتم الانشاء بنجاح'
             else:
                 success_msg = 'The form is not valid.'
-            [messages.error(request, yearly_holiday_formset.errors)]
+            messages.error(request, success_msg)
     my_context = {
-        "page_title": "create new yearly holiday",
+        "page_title": f"create new yearly holidays for {year}",
         'yearly_holiday_formset': yearly_holiday_formset,
+        'year_id': year_id,
     }
     return render(request, 'yearly-holiday-create.html', context=my_context)
 
@@ -910,35 +923,66 @@ def CreateYearlyHolidayView(request):
 def correctYearlyHolidayView(request, pk):
     required_holiday = YearlyHoliday.objects.get_holiday(user=request.user, yearly_holiday_id=pk)
     holiday_form = YearlyHolidayForm(instance=required_holiday)
+    year_id = required_holiday.year.id
+    user_lang = to_locale(get_language())
 
     if request.method == 'POST':
         holiday_form = YearlyHolidayForm(request.POST, instance=required_holiday)
 
         if holiday_form.is_valid():
-            holiday_form.last_update_by = request.user
-            if holiday_form.number_of_days_off is None:
-                delta = holiday_form.end_date - holiday_form.start_date
-                holiday_form.number_of_days_off = delta.days
-            holiday_form.save()
-            user_lang = to_locale(get_language())
+            holiday_obj = holiday_form.save(commit=False)
+            holiday_obj.last_update_by = request.user
+            # TODO: update the field number_of_days after saving the new dates
+            if holiday_obj.number_of_days_off is None:
+                delta = holiday_obj.end_date - holiday_obj.start_date
+                holiday_obj.number_of_days_off = delta.days
+            holiday_obj.save()
             if user_lang == 'ar':
                 success_msg = 'تمت العملية بنجاح'
             else:
                 success_msg = 'Updated Successfully'
             messages.success(request, success_msg)
-            return redirect('company:yearly-holiday-list')
 
         else:  # Form was not valid
-            # success_msg = 'The form is not valid.'
-            user_lang = to_locale(get_language())
             if user_lang == 'ar':
                 success_msg = 'لم يتم الانشاء بنجاح'
             else:
                 success_msg = 'The form is not valid.'
-            [messages.error(request, holiday_form.errors)]
+            messages.error(request, success_msg)
     myContext = {
         "page_title": "Update yearly holiday",
         'holiday_form': holiday_form,
+        'year_id': year_id,
     }
     return render(request, 'yearly-holiday-update.html', context=myContext)
 
+
+@login_required(login_url='/login')
+def deleteYearlyHolidayView(request, pk):
+    req_holiday = YearlyHoliday.objects.get_holiday(user=request.user, yearly_holiday_id=pk)
+    year_ID = req_holiday.year.id
+    deleted = req_holiday.delete()
+    if deleted:
+        messages.success(request, 'Record successfully deleted')
+
+    else:
+        messages.error(request, 'Record is NOT deleted')
+
+    return redirect('company:yearly-holiday-list', year_id=year_ID)
+
+
+@login_required(login_url='/login')
+def listYearsView(request):
+    years = Year.objects.all(request.user)
+    num_of_holidays = {}
+    for year in years:
+        num_of_holidays[year.year] = YearlyHoliday.objects.get_year_holiday(year.id).count()
+        print(num_of_holidays[year.year])
+
+    context = {
+
+        "page_title": _("Years"),
+        'num_of_holidays': num_of_holidays,
+        'years': years,
+    }
+    return render(request, 'years-list.html', context=context)

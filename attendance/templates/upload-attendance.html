@@ -7,6 +7,7 @@
 {% block body %}
 {% include 'messages.html' %}
 <div class="container-fluid " >
+    {% if not confirm_form %}
     <div class="row" style="margin-left:0px;">
         <div class="col-md-8">
             <h4 class="c-grey-900">Import Attendance Sheet</h4>
@@ -20,18 +21,19 @@
             </p>
         </div>
     </div>
-<div class="row" style="margin-left:0px;">
-    <div class="col-md-8">
-  <form action="{% url 'attendance:upload-attendance' %}" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-          <label for="file1"> File to import</label>
-          <input type="file" id="file1" name="import_file">
-        <div class="submit-row" style="margin-top: 25px;">
-            <input type="submit" class="btn cur-p btn-primary" value="Upload">
+    <div class="row" style="margin-left:0px;">
+        <div class="col-md-8">
+      <form action="{% url 'attendance:upload-attendance' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+              <label for="file1"> File to import</label>
+              <input type="file" id="file1" name="import_file">
+            <div class="submit-row" style="margin-top: 25px;">
+                <input type="submit" class="btn cur-p btn-primary" value="Upload">
+            </div>
+      </form>
         </div>
-  </form>
     </div>
-</div>
+    {% endif %}
 
  {% if confirm_form %}
 <form action="{% url 'attendance:confirm-upload' %}" method="POST">
@@ -41,7 +43,7 @@
     {% trans "Below is a preview of data to be imported. If you are satisfied with the results, click 'Confirm import'" %}
   </p>
   <div class="submit-row">
-    <input type="submit" class="default" name="confirm" value="{% trans 'Confirm import' %}">
+    <input type="submit" class="btn cur-p btn-primary" name="confirm" value="{% trans 'Confirm import' %}">
   </div>
 </form>
 {% endif %}

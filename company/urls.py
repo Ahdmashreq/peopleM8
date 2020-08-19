@@ -49,12 +49,15 @@ urlpatterns = [
     path('policies/', include([
         ######################### Department URLs ###################################
         path('list/', views.listPoliciesView, name='list-policies'),
+        path('years/list/', views.listYearsView, name='list-years'),
         path('working_hrs_policy/new/', views.CreateWorkingPolicyView, name='policy-create'),
         path('working_hrs_policy/list/', views.listWorkingPolicyView, name='working-hrs-policy-list'),
-        path('working_hrs_policy/correct/<int:pk>', views.correctPolicyView, name='policy-correct'),
-        path('yearly_holidays/list/', views.listYearlyHolidayView, name='yearly-holiday-list'),
-        path('yearly_holidays/create/', views.CreateYearlyHolidayView, name='yearly-holiday-create'),
+        path('working_hrs_policy/correct/<int:pk>', views.correctWorkingPolicyView, name='policy-correct'),
+        path('yearly_holidays/list/<year_id>', views.listYearlyHolidayView, name='yearly-holiday-list'),
+        path('yearly_holidays/create/<year_id>', views.CreateYearlyHolidayView, name='yearly-holiday-create'),
         path('yearly_holidays/correct/<int:pk>', views.correctYearlyHolidayView, name='yearly-holiday-correct'),
+        path('yearly_holidays/delete/<int:pk>', views.deleteYearlyHolidayView, name='yearly-holiday-delete'),
+        path('working_hrs_policy/delete/<int:pk>', views.deleteWorkingPolicyView, name='working-hrs-policy-delete'),
 
     ]
     )),

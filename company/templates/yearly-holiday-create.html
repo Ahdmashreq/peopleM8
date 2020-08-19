@@ -19,7 +19,7 @@
             <button type="submit" class="btn cur-p btn-primary">Save</button>
           </div>
           <div class="peer">
-            <a href="{% url 'company:yearly-holiday-list' %}"class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
+            <a href="{% url 'company:yearly-holiday-list' year_id=year_id %}"class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
           </div>
         </div>
       </div>
@@ -45,20 +45,23 @@
 
            </div>
            {% for form in yearly_holiday_formset.forms %}
-           {{form.non_field_errors}}
-           {{form.errors}}
+
            <div class="form-row">
              <div class="form-group col-md-3">
                {{ form.name }}
+               {{ form.name.errors }}
              </div>
              <div class="form-group col-md-3">
                {{ form.start_date }}
+               {{ form.start_date.errors }}
              </div>
              <div class="form-group col-md-3">
                {{ form.end_date }}
+               {{ form.end_date.errors }}
              </div>
              <div class="form-group col-md-3">
                {{ form.number_of_days_off }}
+               {{ form.number_of_days_off.errors }}
              </div>
            </div>
            {% endfor %}

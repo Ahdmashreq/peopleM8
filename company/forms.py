@@ -140,6 +140,8 @@ class WorkingHoursForm(forms.ModelForm):
             'absence_days_rate',
             'start_date',
             'end_date',
+            'hrs_start_from',
+            'hrs_end_at',
 
 
         )
@@ -149,6 +151,8 @@ class WorkingHoursForm(forms.ModelForm):
         super(WorkingHoursForm, self).__init__(*args, **kwargs)
         self.fields['start_date'].widget.input_type = 'date'
         self.fields['end_date'].widget.input_type = 'date'
+        self.fields['hrs_start_from'].widget.input_type = 'time'
+        self.fields['hrs_end_at'].widget.input_type = 'time'
         for field in self.fields:
             if self.fields[field].widget.input_type == 'checkbox':
                 self.fields[field].widget.attrs['class'] = 'checkbox'
@@ -165,6 +169,7 @@ class YearlyHolidayForm(forms.ModelForm):
             'name',
             'start_date',
             'end_date',
+            'year',
             'number_of_days_off',
         )
 
@@ -174,6 +179,7 @@ class YearlyHolidayForm(forms.ModelForm):
         super(YearlyHolidayForm, self).__init__(*args, **kwargs)
         self.fields['start_date'].widget.input_type = 'date'
         self.fields['end_date'].widget.input_type = 'date'
+        self.fields['year'].widget= forms.HiddenInput()
         for field in self.fields:
             if self.fields[field].widget.input_type == 'checkbox':
                 self.fields[field].widget.attrs['class'] = 'checkbox'

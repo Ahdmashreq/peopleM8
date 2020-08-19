@@ -164,3 +164,21 @@ class YearlyHolidaysAdmin(admin.ModelAdmin):
         instance.save()
         form.save_m2m()
         return instance
+
+
+@admin.register(models.Year)
+class YearAdmin(admin.ModelAdmin):
+    fields = (
+        'year',
+    )
+
+    def save_model(self, request, instance, form, change):
+        user = request.user
+        enterprise = request.user.company
+        instance = form.save(commit=False)
+        if not change or not instance.created_by:
+            instance.created_by = user
+            instance.enterprise = enterprise
+        instance.last_update_by = user
+        instance.save()
+        return instance

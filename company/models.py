@@ -6,11 +6,11 @@ from home.slugify import unique_slug_generator
 from cities_light.models import City, Country
 from django.utils.translation import ugettext_lazy as _
 from .manager import CompanyManager, DepartmentManager, JobManager, GradeManager, PositionManager, PolicyManager, \
-    YearlyHolidayManager
+    YearlyHolidayManager,YearsManager
 
 
 class Enterprise(models.Model):
-    enterprise_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    enterprise_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="company_user")
     name = models.CharField(max_length=255, verbose_name=_('Company Name'))
     reg_tax_num = models.CharField(max_length=150, verbose_name=_('Reg Tax Num'))
     commercail_record = models.CharField(max_length=150, verbose_name=_('Commercial Record'))
@@ -257,6 +257,8 @@ class WorkingHoursPolicy(models.Model):
     exceptional_over_time_hourly_rate = models.DecimalField(decimal_places=1, max_digits=2)
     delay_hours_rate = models.DecimalField(decimal_places=1, max_digits=2)
     absence_days_rate = models.DecimalField(decimal_places=1, max_digits=2)
+    hrs_start_from = models.TimeField(blank=True, null=True, verbose_name=_('Working Hours From '))
+    hrs_end_at = models.TimeField(blank=True, null=True, verbose_name=_('Working Hours To '))
     start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
     end_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=_('End Date'))
 
@@ -271,9 +273,26 @@ class WorkingHoursPolicy(models.Model):
         return "Working Hours Policy"
 
 
+class Year(models.Model):
+    enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name='enterprise_year',
+                                   verbose_name=_('Enterprise Name'))
+    objects = YearsManager()
+    year = models.IntegerField()
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
+                                   related_name="year_created_by")
+    creation_date = models.DateField(auto_now=False, auto_now_add=True)
+    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
+                                       related_name="year_update_by")
+    last_update_date = models.DateField(auto_now=True, auto_now_add=False)
+
+    def __str__(self):
+        return str(self.year)
+
+
 class YearlyHoliday(models.Model):
     enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name='enterprise_yearly_holidays',
                                    verbose_name=_('Enterprise Name'))
+    year = models.ForeignKey(Year, on_delete=models.CASCADE, verbose_name=_('Year'),blank=True,null=True)
     objects = YearlyHolidayManager()
     name = models.CharField(max_length=255)
     start_date = models.DateField(auto_now=False, auto_now_add=False, verbose_name=_('Start Date'))
@@ -288,17 +307,3 @@ class YearlyHoliday(models.Model):
 
     def __str__(self):
         return self.name + " Holiday"
-
-
-# class year(models.Model):
-#     YearlyHoliday = models.ForeignKey(YearlyHoliday, on_delete=models.CASCADE, verbose_name=_('Holidays'))
-#     year = models.IntegerField()
-#     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
-#                                    related_name="year_created_by")
-#     creation_date = models.DateField(auto_now=False, auto_now_add=True)
-#     last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
-#                                        related_name="year_update_by")
-#     last_update_date = models.DateField(auto_now=True, auto_now_add=False)
-#
-#     def __str__(self):
-#         return self.year

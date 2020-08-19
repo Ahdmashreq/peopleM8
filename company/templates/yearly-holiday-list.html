@@ -4,14 +4,15 @@
 {% load l10n %}
 {% load i18n %}
 {% block body%}
-
+  {% include 'messages.html' %}
   <div class="row" style="margin-left:0px;">
     <div class="col-md-8">
       <h4 class="c-grey-900">{{page_title|title}}</h4>
     </div>
     <div class="col-md-4">
       <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
-        <div class="peer"><a href="{% url 'company:yearly-holiday-create' %}" class="btn cur-p btn-primary">{% trans "Add Yearly Holiday" %}</a></div>
+        <div class="peer"><a href="{% url 'company:yearly-holiday-create' year_id=year_id %}" class="btn cur-p btn-primary">{% trans "Add Yearly Holiday" %}</a></div>
+        <div class="peer"><a href="{% url 'company:list-years' %}" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a></div>
       </div>
     </div>
   </div>
@@ -66,7 +67,7 @@
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
-                  <a href="{% url 'company:delete-enterprise' pk=holiday.pk %}" class="btn btn-danger" type="button">{% trans "Delete" %}</a>
+                  <a href="{% url 'company:yearly-holiday-delete' pk=holiday.pk %}" class="btn btn-danger" type="button">{% trans "Delete" %}</a>
                 </div>
               </div>
             </div>

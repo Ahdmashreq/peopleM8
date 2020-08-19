@@ -28,42 +28,64 @@
       <div class="bgc-white p-20 bd">
         <div class="mT-30">
           <div id="">
-            {{policy_form.non_field_errors}}
-            {{policy_form.errors}}
+
             <div class="form-row">
               <div class="form-group col-md-4">
                 <label>{{ policy_form.number_of_daily_working_hrs.label }}</label>
                 {{ policy_form.number_of_daily_working_hrs }}
+                {{ policy_form.number_of_daily_working_hrs.errors }}
               </div>
             </div>
+            <div class="form-row">
+               <div class="form-group col-md-3">
+                  <label>{{ policy_form.hrs_start_from.label }}</label>
+                  {{ policy_form.hrs_start_from }}
+                  {{ policy_form.hrs_start_from.errors }}
+              </div>
+              <div class="form-group col-md-3">
+                  <label>{{ policy_form.hrs_end_at.label }}</label>
+                  {{ policy_form.hrs_end_at }}
+                  {{ policy_form.hrs_end_at.errors }}
+              </div>
+            </div>
+
             <div class="form-row">
               <div class="form-group col-md-4">
                 <label>{{ policy_form.normal_over_time_hourly_rate.label }}</label>
                 {{ policy_form.normal_over_time_hourly_rate }}
+                {{ policy_form.normal_over_time_hourly_rate.errors }}
               </div>
                <div class="form-group col-md-4">
                  <label>{{ policy_form.exceptional_over_time_hourly_rate.label }}</label>
                 {{ policy_form.exceptional_over_time_hourly_rate }}
+                 {{ policy_form.exceptional_over_time_hourly_rate.errors}}
               </div>
             </div>
             <div class="form-row">
               <div class="form-group col-md-4">
                 <label>{{ policy_form.delay_hours_rate.label }}</label>
                 {{ policy_form.delay_hours_rate }}
+                {{ policy_form.delay_hours_rate.errors }}
               </div>
               <div class="form-group col-md-4">
                 <label>{{ policy_form.absence_days_rate.label }}</label>
                 {{ policy_form.absence_days_rate }}
+                {{ policy_form.absence_days_rate.errors }}
               </div>
+             </div>
+            <div class="form-row">
                <div class="form-group col-md-4">
                 <label>{{ policy_form.start_date.label }}</label>
                  {{ policy_form.start_date}}
+                  {{ policy_form.start_date.errors}}
               </div>
               <div class="form-group col-md-3">
                 <label>{{ policy_form.end_date.label }}</label>
                 {{ policy_form.end_date }}
               </div>
             </div>
+
+
           </div>
         </div>
       </div>

@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from attendance.models import Attendance, Task
 from employee.models import Employee
 from django.utils import timezone
-from attendance.forms import FormAttendance, Tasks_inline_formset, FormTasks, ConfirmImportForm, ImportForm
+from attendance.forms import FormAttendance, Tasks_inline_formset, FormTasks, ConfirmImportForm
 from datetime import datetime, timedelta
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
@@ -199,6 +199,7 @@ def upload_xls_file(request):
                                                  user=request.user)  # Test the data import
         context['result'] = result
         tmp_storage = write_to_tmp_storage(import_file)
+        print(tmp_storage)
         if not result.has_errors() and not result.has_validation_errors():
             initial = {
                 'import_file_name': tmp_storage.name,
@@ -230,11 +231,13 @@ def confirm_xls_upload(request):
                                                      raise_errors=True,
                                                      file_name=confirm_form.cleaned_data['original_file_name'],
                                                      user=request.user, )
-
+            messages.success(request, 'Attendance successfully uploaded')
             print(result)
             tmp_storage.remove()
-
-    return redirect('attendance:emp-attendance')
+            return redirect('attendance:emp-attendance')
+        else:
+            messages.error(request, 'Uploading failed ,please try again')
+            return redirect('attendance:upload-attendance')
 
 
 @login_required(login_url='/login')
@@ -247,3 +250,39 @@ def list_all_attendance(request):
 
     }
     return render(request, 'list_attendance.html', att_context)
+
+
+@login_required(login_url='/login')
+def update_attendance(request, att_update_slug):
+    required_att = Attendance.objects.get(slug=att_update_slug)
+    att_form = FormAttendance(form_type=None, instance=required_att)
+    if request.method == "POST":
+        att_form = FormAttendance(request.POST, form_type=None, instance=required_att)
+        if att_form.is_valid():
+            att_obj = att_form.save(commit=False)
+            att_obj.last_update_by = request.user
+            att_obj.save()
+            messages.success(request, 'Record is successfully updated')
+        else:
+            messages.error(request, 'Record is NOT updated')
+
+    name = required_att.employee.emp_name
+    print(name)
+    context = {
+        'attendance_form': att_form,
+        'page_title': f"Update {name} attendance"
+    }
+    return render(request, 'create-attendance.html', context)
+
+
+@login_required(login_url='/login')
+def delete_attendance(request, att_delete_slug):
+    required_att = Attendance.objects.get(slug=att_delete_slug)
+    deleted = required_att.delete()
+    if deleted:
+        messages.success(request, 'Record successfully deleted')
+
+    else:
+        messages.error(request, 'Record is NOT deleted')
+
+    return redirect('attendance:emp-attendance')

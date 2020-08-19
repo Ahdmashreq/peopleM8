@@ -1,5 +1,5 @@
 import os
-
+from crispy_forms.helper import FormHelper
 from django import forms
 from attendance.models import Attendance, Task
 
@@ -15,6 +15,13 @@ class FormAttendance(forms.ModelForm):
         super(FormAttendance, self).__init__(*args, **kwargs)
         if form_type == 'check_out':
             self.fields['check_in'].widget.attrs['disabled'] = True
+        self.fields['date'].widget.input_type = 'date'
+        self.fields['check_in'].widget.input_type = 'time'
+        self.fields['check_out'].widget.input_type = 'time'
+        for field in self.fields:
+            self.fields[field].widget.attrs['class'] = 'form-control parsley-validated'
+            self.helper = FormHelper()
+            self.helper.form_show_labels = False
 
 
 class FormTasks(forms.ModelForm):
@@ -33,9 +40,9 @@ class FormTasks(forms.ModelForm):
 Tasks_inline_formset = forms.inlineformset_factory(Attendance, Task, form=FormTasks, extra=3, can_delete=True)
 
 
-class ImportForm(forms.Form):
-    import_file = forms.FileField(label='File to import')
-
+# class ImportForm(forms.Form):
+#     import_file = forms.FileField(label='File to import')
+#
 
 class ConfirmImportForm(forms.Form):
     import_file_name = forms.CharField(widget=forms.HiddenInput())
@@ -45,4 +52,3 @@ class ConfirmImportForm(forms.Form):
         data = self.cleaned_data['import_file_name']
         data = os.path.basename(data)
         return data
-
