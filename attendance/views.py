@@ -194,7 +194,10 @@ def upload_xls_file(request):
     if request.method == "POST":
         import_file = request.FILES['import_file']
         dataset = Dataset()
-        imported_data = dataset.load(import_file.read().decode(), format='csv')
+        # unhash the following line in case of csv file
+        # imported_data = dataset.load(import_file.read().decode(), format='csv')
+        imported_data = dataset.load(import_file.read(), format='xlsx') # this line in case of excel file
+
         result = attendance_resource.import_data(imported_data, dry_run=True,
                                                  user=request.user)  # Test the data import
         context['result'] = result
@@ -221,10 +224,12 @@ def confirm_xls_upload(request):
         if confirm_form.is_valid():
             tmp_storage = TMP_STORAGE_CLASS(name=confirm_form.cleaned_data['import_file_name'])
             data = tmp_storage.read('rb')
-            data = force_str(data, "utf-8")
+            # Uncomment the following line in case of 'csv' file
+            #data = force_str(data, "utf-8")
             print(data)
             dataset = Dataset()
-            imported_data = dataset.load(data, format='csv')
+            # Enter format = 'csv' for csv file
+            imported_data = dataset.load(data, format='xlsx')
 
             result = attendance_resource.import_data(imported_data,
                                                      dry_run=False,
