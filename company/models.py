@@ -2,6 +2,7 @@ from django.conf import settings
 from django.db import models
 from datetime import date
 from django.db.models.signals import pre_save
+
 from home.slugify import unique_slug_generator
 from cities_light.models import City, Country
 from django.utils.translation import ugettext_lazy as _
@@ -10,7 +11,6 @@ from .manager import CompanyManager, DepartmentManager, JobManager, GradeManager
 
 
 class Enterprise(models.Model):
-    enterprise_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="company_user")
     name = models.CharField(max_length=255, verbose_name=_('Company Name'))
     reg_tax_num = models.CharField(max_length=150, verbose_name=_('Reg Tax Num'))
     commercail_record = models.CharField(max_length=150, verbose_name=_('Commercial Record'))
@@ -98,9 +98,9 @@ class Department(models.Model):
 
 
 class Job(models.Model):
-    enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name='job_enterprise',
+    enterprise = models.ForeignKey('custom_user.UserCompany', on_delete=models.CASCADE, related_name='job_enterprise',
                                    verbose_name=_('Enterprise Name'))
-    job_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    job_user = models.ForeignKey('custom_user.UserCompany', on_delete=models.CASCADE)
     job_name = models.CharField(max_length=100, verbose_name=_('Job Name'))
     job_description = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('Job Description'))
     objects = JobManager()

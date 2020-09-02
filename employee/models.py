@@ -9,7 +9,7 @@ from manage_payroll.models import (Bank_Master, Payroll_Master)
 from element_definition.models import Element_Master, Element_Detail, Element_Link
 from employee.fast_formula import FastFormula
 from django.utils.translation import ugettext_lazy as _
-
+from custom_user.models import UserCompany
 payment_type_list = [("c", _("Cash")), ("k", _("Check")),
                      ("b", _("Bank transfer")), ]
 account_type_list = [('c', _('Company account')), ('e', _('Employee account'))]
@@ -22,7 +22,7 @@ class Employee(models.Model):
     military_status_list = [("E", _("Exemption")), ("C", _("Complete the service")), ("P", _("Postponed"))]
     religion_list = [("M", _("Muslim")), ("C", _("Chrestin"))]
     # ##########################################################################
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True, related_name='employee_user')
+    user = models.ForeignKey(UserCompany, on_delete=models.CASCADE, blank=True, null=True, related_name='employee_user')
     enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE,related_name='enterprise_employee', verbose_name=_('Department'))
     emp_number = models.IntegerField(default=0, blank=True, null=True, verbose_name=_('Employee Number'))
     emp_name = models.CharField(max_length=60, verbose_name=_('Employee Name'))

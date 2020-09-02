@@ -28,6 +28,8 @@ from company.models import Enterprise
 from notification.models import Notification
 from leave.models import Leave
 from datetime import datetime, timezone
+from custom_user.models import UserCompany
+
 
 def viewAR(request):
     if translation.LANGUAGE_SESSION_KEY in request.session:
@@ -40,6 +42,7 @@ def viewAR(request):
     request.session.modified = True
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
+
 def viewEN(request):
     if translation.LANGUAGE_SESSION_KEY in request.session:
         del request.session[translation.LANGUAGE_SESSION_KEY]
@@ -51,6 +54,7 @@ def viewEN(request):
     request.LANGUAGE_CODE = translation.get_language()
     request.session.modified = True
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
 
 @never_cache
 def user_login(request):
@@ -81,50 +85,66 @@ def user_login(request):
 
 @login_required(login_url='/login')
 def user_home_page(request):
-    time_since=0
-    not_header=None
-    employee = Employee.objects.get(user=request.user)
+    time_since = 0
+    not_header = None
+    print("**********")
+    print(request.user)
+    # user= UserCompany.objects.get(user = request.user.usercomapny_set.all())
+
+    employee = Employee.objects.get(user=request.user.usercomapny_set.all())
+    print("**********")
+    print(request.user.usercomapny_set.all())
+    # print(employee)
     employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
 
     leave_count = Leave.objects.filter(user=request.user, status='pending').count()
-    unread_notifications = Notification.objects.filter(status = 'delivered', to_emp=employee).order_by('-creation_date')
+    unread_notifications = Notification.objects.filter(status='delivered', to_emp=employee).order_by('-creation_date')
     notification_count = Notification.objects.filter(status='delivered', to_emp=employee).count()
 
-    birthdays_count = Employee.objects.filter(date_of_birth__month = date.today().month).count()
+    birthdays_count = Employee.objects.filter(date_of_birth__month=date.today().month).count()
     employee_count = Employee.objects.all().count()
 
-    emps_birthdays = Employee.objects.filter(date_of_birth__month = date.today().month)
+    emps_birthdays = Employee.objects.filter(date_of_birth__month=date.today().month)
 
     # List MY Bussiness_Travel/services
     bussiness_travel_service = Bussiness_Travel.objects.filter(Q(emp=employee) | Q(manager=employee), status='pending')
 
-
     context = {
-            'birthdays': emps_birthdays,
-            'count_birthdays': birthdays_count,
-            'count_employees': employee_count,
-            'count_leaves': leave_count,
-            'count_notifications': notification_count,
-            'bussiness_travel_service': bussiness_travel_service,
-            'notifications': unread_notifications,
+        'birthdays': emps_birthdays,
+        'count_birthdays': birthdays_count,
+        'count_employees': employee_count,
+        'count_leaves': leave_count,
+        'count_notifications': notification_count,
+        'bussiness_travel_service': bussiness_travel_service,
+        'notifications': unread_notifications,
     }
     return render(request, 'index_user.html', context=context)
 
+
 @login_required(login_url='/login')
 def admin_home_page(request):
+    print("**********")
+    print(request.user.user_fk.all())
+    # print(employee)
+
+    # employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
+
     return render(request, 'index.html', context=None)
+
 
 @login_required(login_url='/login')
 def homepage(request):
-    if request.user.employee_type =="A":
+    if request.user.employee_type == "A":
         return admin_home_page(request)
     else:
         return user_home_page(request)
+
 
 @login_required(login_url='/login')
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect(reverse('home:user-login'))
+
 
 def register(request):
     form = CustomUserCreationForm()
@@ -134,13 +154,13 @@ def register(request):
             user = form.save(commit=False)
             user.save()
             comp = Enterprise(
-                           name = form.cleaned_data.get('company_name'),
-                           business_unit_name = form.cleaned_data.get('business_unit_name'),
-                           reg_tax_num = form.cleaned_data.get('reg_tax_num'),
-                           commercail_record = form.cleaned_data.get('commercail_record'),
-                           created_by_id = user.id,
-                           last_update_by_id = user.id,
-                           )
+                name=form.cleaned_data.get('company_name'),
+                business_unit_name=form.cleaned_data.get('business_unit_name'),
+                reg_tax_num=form.cleaned_data.get('reg_tax_num'),
+                commercail_record=form.cleaned_data.get('commercail_record'),
+                created_by_id=user.id,
+                last_update_by_id=user.id,
+            )
             comp.save()
             user.company_id = comp.id
             user.save(update_fields=['company'])
@@ -148,13 +168,14 @@ def register(request):
                 login(request, user)
                 return HttpResponseRedirect(reverse('home:homepage'))
             else:
-                user_lang=user_lang=to_locale(get_language())
-                if user_lang=='ar':
+                user_lang = user_lang = to_locale(get_language())
+                if user_lang == 'ar':
                     messages.error(request, 'This account is deactivated!')
                 else:
                     messages.error(request, 'This Account is inactive!')
                 return render(request, 'login.html')
     return render(request, 'register.html', {'register_form': form})
+
 
 def addUserView(request):
     form = AddUserForm()
@@ -185,6 +206,7 @@ def addUserView(request):
     }
     return render(request, 'add-user.html', myContext)
 
+
 class PasswordContextMixin:
     extra_context = None
 
@@ -196,6 +218,7 @@ class PasswordContextMixin:
         })
         return context
 
+
 class PasswordChangeView(PasswordContextMixin, FormView):
     form_class = PasswordChangeForm
     success_url = reverse_lazy('password_change_done')
@@ -219,6 +242,7 @@ class PasswordChangeView(PasswordContextMixin, FormView):
         # except the current one.
         update_session_auth_hash(self.request, form.user)
         return super().form_valid(form)
+
 
 class PasswordResetCompleteView(PasswordContextMixin, TemplateView):
     template_name = 'registration/password_reset_complete.html'
@@ -229,6 +253,7 @@ class PasswordResetCompleteView(PasswordContextMixin, TemplateView):
         context['login_url'] = resolve_url(settings.LOGIN_URL)
         return context
 
+
 class PasswordChangeView(PasswordContextMixin, FormView):
     form_class = PasswordChangeForm
     success_url = reverse_lazy('password_change_done')
@@ -252,6 +277,7 @@ class PasswordChangeView(PasswordContextMixin, FormView):
         # except the current one.
         update_session_auth_hash(self.request, form.user)
         return super().form_valid(form)
+
 
 class PasswordChangeDoneView(PasswordContextMixin, TemplateView):
     template_name = 'registration/password_change_done.html'

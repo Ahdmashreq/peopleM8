@@ -6,7 +6,6 @@ from company import models
 @admin.register(models.Enterprise)
 class EnterpriseAdmin(admin.ModelAdmin):
     fields = (
-        'enterprise_user',
         'name',
         'slug',
         'reg_tax_num',
@@ -58,6 +57,7 @@ class DepartmentAdmin(admin.ModelAdmin):
 @admin.register(models.Job)
 class JobAdmin(admin.ModelAdmin):
     fields = (
+        'enterprise',
         'job_user',
         'job_name',
         'job_description',
