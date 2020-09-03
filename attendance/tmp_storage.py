@@ -3,7 +3,6 @@ import os
 
 
 class BaseStorage:
-
     def __init__(self, name=None):
         self.name = name
 
@@ -18,7 +17,6 @@ class BaseStorage:
 
 
 class TempFolderStorage(BaseStorage):
-
     def open(self, mode='r'):
         if self.name:
             return open(self.get_full_path(), mode)
@@ -43,5 +41,3 @@ class TempFolderStorage(BaseStorage):
             tempfile.gettempdir(),
             self.name
         )
-
-

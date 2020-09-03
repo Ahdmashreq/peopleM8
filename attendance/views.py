@@ -1,9 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from attendance.models import Attendance, Task
 from employee.models import Employee
 from django.utils import timezone
-from attendance.forms import FormAttendance, Tasks_inline_formset, FormTasks, ConfirmImportForm
+from django.db.models import Count
 from datetime import datetime, timedelta
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
@@ -11,9 +10,13 @@ from django.shortcuts import get_object_or_404
 from string import Template
 from tablib import Dataset
 from django.utils.encoding import force_str
+from django.conf import settings
+from attendance.models import Attendance, Task, Employee_Attendance_History
+from attendance.forms import FormAttendance, Tasks_inline_formset, FormTasks, ConfirmImportForm, FormEmployeeAttendanceHistory
 from attendance.resources import AttendanceResource
 from attendance.tmp_storage import TempFolderStorage
-from django.conf import settings
+from leave.models import Leave
+from service.models import Bussiness_Travel
 
 
 class DeltaTemplate(Template):
@@ -30,6 +33,7 @@ def strfdelta(tdelta, fmt):
 
 @login_required(login_url='/login')
 def list_attendance(request):
+
     employee = Employee.objects.get(user=request.user)
     attendance_list = Attendance.objects.filter(employee=employee)
     work_time = []
@@ -202,7 +206,6 @@ def upload_xls_file(request):
                                                  user=request.user)  # Test the data import
         context['result'] = result
         tmp_storage = write_to_tmp_storage(import_file)
-        print(tmp_storage)
         if not result.has_errors() and not result.has_validation_errors():
             initial = {
                 'import_file_name': tmp_storage.name,
@@ -226,7 +229,6 @@ def confirm_xls_upload(request):
             data = tmp_storage.read('rb')
             # Uncomment the following line in case of 'csv' file
             #data = force_str(data, "utf-8")
-            print(data)
             dataset = Dataset()
             # Enter format = 'csv' for csv file
             imported_data = dataset.load(data, format='xlsx')
@@ -237,7 +239,6 @@ def confirm_xls_upload(request):
                                                      file_name=confirm_form.cleaned_data['original_file_name'],
                                                      user=request.user, )
             messages.success(request, 'Attendance successfully uploaded')
-            print(result)
             tmp_storage.remove()
             return redirect('attendance:emp-attendance')
         else:
@@ -247,14 +248,58 @@ def confirm_xls_upload(request):
 
 @login_required(login_url='/login')
 def list_all_attendance(request):
-    attendance_list = Attendance.objects.filter(created_by__company=request.user.company)
-
+    attendance_list = Attendance.objects.filter(created_by__company=request.user.company).order_by('-date')
     att_context = {
         'attendances': attendance_list,
         'page_title': 'Employees Attendance',
 
     }
     return render(request, 'list_attendance.html', att_context)
+
+
+@login_required(login_url='/login')
+def list_employee_attendance_history_view(request):
+    emp_attendance_form = FormEmployeeAttendanceHistory()
+    emp_attendance_list = Employee_Attendance_History.objects.filter(created_by__company=request.user.company).order_by('-month')
+    if request.method == 'POST':
+        emp_attendance_form = FormEmployeeAttendanceHistory(request.POST)
+        if emp_attendance_form.is_valid():
+            fill_employee_attendance_days_employee_view(request,
+                                                        emp_attendance_form.cleaned_data['month'],
+                                                        emp_attendance_form.cleaned_data['year'],
+                                                        )
+        else:
+            messages.error(request, emp_attendance_form.errors)
+            # print(emp_attendance_form.errors)
+    att_context = {
+        'emp_attendance_list': emp_attendance_list,
+        'page_title': 'Employees Attendance Days',
+        'emp_attendance_form':emp_attendance_form,
+    }
+    return render(request, 'employee_attendance_history.html', att_context)
+
+
+@login_required(login_url='/login')
+def fill_employee_attendance_days_employee_view(request, month_v, year_v):
+    employees_list = Employee.objects.filter(enterprise = request.user.company)
+    # Employee_Attendance_History.objects.bulk_create([ Employee_Attendance_History(employee=q, month=month_v, year=year_v,created_by=request.user) for q in employees_list ])
+    fill_employee_attendance_days_attendance_view(request, month_v, year_v)
+    return True
+
+
+@login_required(login_url='/login')
+def fill_employee_attendance_days_attendance_view(request, month_v, year_v):
+    employee_attendance = Attendance.objects.filter(created_by__company=request.user.company).values('employee','date__month', 'date__year').annotate(attendance_count = Count('date'))
+    for emp in employee_attendance:
+        print(emp)
+    return True
+
+
+@login_required(login_url='/login')
+def fill_employee_attendance_days_leaves_view(request, month_v, year_v):
+    all_leave_list = Leave.objects.filter(employee__user=request.user).values('employee','startdate__month').annotate(leave_count = Count('startdate'))
+    bussiness_travel_list = Bussiness_Travel.objects.filter(emp=employees_list)
+    return True
 
 
 @login_required(login_url='/login')
@@ -272,7 +317,6 @@ def update_attendance(request, att_update_slug):
             messages.error(request, 'Record is NOT updated')
 
     name = required_att.employee.emp_name
-    print(name)
     context = {
         'attendance_form': att_form,
         'page_title': f"Update {name} attendance"

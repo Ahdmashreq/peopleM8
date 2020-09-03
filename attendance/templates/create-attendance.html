@@ -45,6 +45,13 @@
                  <label>{{ attendance_form.check_out.label }}</label>
                 {{ attendance_form.check_out }}
               </div>
+              {% for form_field in attendance_form.visible_fields %}
+              <div class="form-group col-md-4">
+               <label>{{ form_field.label }}</label>
+               {{ form_field }}
+             </div>
+              {% endfor %}
+
             </div>
             </div>
           </div>

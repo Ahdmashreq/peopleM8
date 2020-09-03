@@ -14,6 +14,8 @@ urlpatterns = [
         path('upload-file/', views.upload_xls_file, name='upload-attendance'),
         path('confirm-file/', views.confirm_xls_upload, name='confirm-upload'),
         path('list-attendance/', views.list_all_attendance, name='emp-attendance'),
+        path('list/emp/attendance/', views.list_employee_attendance_history_view, name='emp-attendance-history'),
+        path('list/emp/attendance/<int:month_v>/<int:year_v>/', views.fill_employee_attendance_days_employee_view, name='emp-attendance-employee'),
         path('update-attendance/<slug:att_update_slug>/', views.update_attendance, name='update-attendance'),
         path('delete-attendance/<slug:att_delete_slug>/', views.delete_attendance, name='delete-attendance'),
 

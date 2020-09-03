@@ -5,6 +5,23 @@ from django.dispatch import receiver
 from employee.models import Employee
 import datetime
 from home.slugify import unique_slug_generator
+from company.models import Working_Hours_Policy
+from django.utils.translation import ugettext_lazy as _
+
+
+work_start_time = Working_Hours_Policy.objects.get()
+
+class Attendance_Interface(models.Model):
+    employee = models.PositiveIntegerField()
+    date = models.DateField()
+    check_in = models.TimeField(blank=True, null=True, )
+    check_out = models.TimeField(blank=True, null=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                                   blank=True, null=True, related_name='attendance_interface_created_by')
+    creation_date = models.DateField(auto_now_add=True)
+    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                                       blank=True, null=True, related_name='attendance_interface_last_updated_by')
+    last_update_date = models.DateField(auto_now=True)
 
 
 class Attendance(models.Model):
@@ -12,13 +29,14 @@ class Attendance(models.Model):
     date = models.DateField()
     check_in = models.TimeField(blank=True, null=True, )
     check_out = models.TimeField(blank=True, null=True)
-    work_time = models.CharField(max_length=100, blank=True, null=True)
+    work_hours = models.CharField(max_length=100, blank=True, null=True)
     normal_hrs = models.DecimalField(decimal_places=2, max_digits=4, blank=True, null=True, default=0)
-    normal_overtime = models.DecimalField(decimal_places=2, max_digits=4, blank=True, null=True, default=0)
+    normal_overtime_hours = models.DecimalField(decimal_places=2, max_digits=4, blank=True, null=True, default=0)
     exceptional_hrs = models.DecimalField(decimal_places=2, max_digits=4, blank=True, null=True, default=0)
     exceptional_overtime = models.DecimalField(decimal_places=2, max_digits=4, blank=True, null=True, default=0)
-    delay_hrs = models.DecimalField(decimal_places=2, max_digits=4, blank=True, null=True, default=0)
+    delay_hrs = models.DecimalField(decimal_places=3, max_digits=4, blank=True, null=True, default=0)
     absence_days = models.IntegerField(blank=True, null=True, default=0)
+    day_of_week = models.CharField(max_length=12)
     slug = models.SlugField(blank=True, null=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                                    blank=True, null=True, related_name='attendance_created_by')
@@ -32,11 +50,10 @@ class Attendance(models.Model):
 
     @property
     def is_late(self):
-        return self.check_in > datetime.datetime.strptime('09:00', '%H:%M').time()
+        return self.check_in > work_start_time.hrs_start_from
 
     @property
     def how_late(self):
-        # return self.check_in - datetime.datetime.strptime('09:00', '%H:%M').time()
         return datetime.datetime.strptime(str(self.check_in), '%H:%M:%S') - datetime.datetime.strptime('09:00:00',
                                                                                                        '%H:%M:%S')
 
@@ -45,10 +62,37 @@ class Attendance(models.Model):
         return self.check_out > datetime.datetime.strptime('05:00', '%H:%M').time()
 
     @property
+    def worktime(self):
+        return datetime.datetime.strptime(str(self.check_out), '%H:%M:%S') - datetime.datetime.strptime(str(self.check_in), '%H:%M:%S')
+
+    @property
     def how_much_overtime(self):
-        # return self.check_in - datetime.datetime.strptime('09:00', '%H:%M').time()
         return datetime.datetime.strptime(str(self.check_out), '%H:%M:%S') - datetime.datetime.strptime('05:00:00',
                                                                                                         '%H:%M:%S')
+
+class Employee_Attendance_History(models.Model):
+    month_list = [
+        (1, _('January')), (2, _('February')), (3, _('March')), (4, _('April')),
+        (5, _('May')), (6, _('June')), (7, _('July')), (8, _('August')),
+        (9, _('September')), (10, _('October')
+                              ), (11, _('November')), (12, _('December')),
+    ]
+    employee = models.ForeignKey(Employee, related_name='employee_attendance_history_employee', on_delete=models.CASCADE)
+    month = models.PositiveIntegerField(choices=month_list)
+    year = models.PositiveIntegerField()
+    attendance_days = models.PositiveIntegerField(default=0, blank=True, null=True)
+    leave_days = models.PositiveIntegerField(default=0, blank=True, null=True)
+    absence_days = models.PositiveIntegerField(default=0, blank=True, null=True)
+    slug = models.SlugField(blank=True, null=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                                   blank=True, null=True, related_name='employee_attendance_history_created_by')
+    creation_date = models.DateField(auto_now_add=True)
+    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                                       blank=True, null=True, related_name='employee_attendance_history_last_updated_by')
+    last_update_date = models.DateField(auto_now=True)
+
+    def __str__(self):
+        return self.employee.emp_name +" "+str(self.month)+" "+str(self.year)
 
 
 class Task(models.Model):
@@ -74,3 +118,7 @@ class Task(models.Model):
 def slug_task_generator(sender, instance, *args, **kwargs):
     if not instance.slug:
         instance.slug = unique_slug_generator(instance)
+
+@receiver(pre_save, sender=Attendance)
+def working_time(sender, instance, *args, **kwargs):
+    instance.work_time = datetime.datetime.strptime(str(instance.check_out), '%H:%M:%S') - datetime.datetime.strptime(str(instance.check_in), '%H:%M:%S')

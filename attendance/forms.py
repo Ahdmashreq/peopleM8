@@ -1,14 +1,14 @@
 import os
 from crispy_forms.helper import FormHelper
 from django import forms
-from attendance.models import Attendance, Task
+from attendance.models import Attendance, Task, Employee_Attendance_History
 
 
 class FormAttendance(forms.ModelForm):
     class Meta:
         model = Attendance
         fields = '__all__'
-        exclude = ['created_by', 'creation_date', 'last_update_by', 'last_update_date', 'employee']
+        exclude = [ 'slug', 'created_by', 'creation_date', 'last_update_by', 'last_update_date', 'employee']
 
     def __init__(self, *args, **kwargs):
         form_type = kwargs.pop('form_type')
@@ -40,9 +40,15 @@ class FormTasks(forms.ModelForm):
 Tasks_inline_formset = forms.inlineformset_factory(Attendance, Task, form=FormTasks, extra=3, can_delete=True)
 
 
-# class ImportForm(forms.Form):
-#     import_file = forms.FileField(label='File to import')
-#
+class FormEmployeeAttendanceHistory(forms.ModelForm):
+    class Meta():
+        model = Employee_Attendance_History
+        fields = ('month', 'year')
+        exclude = ['created_by', 'creation_date',
+                   'last_update_by', 'last_update_date',
+                   'employee', 'attendance_days', 'leave_days',
+                   'absence_days', 'slug']
+
 
 class ConfirmImportForm(forms.Form):
     import_file_name = forms.CharField(widget=forms.HiddenInput())
