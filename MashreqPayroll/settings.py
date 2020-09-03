@@ -4,9 +4,8 @@ from django.utils.translation import ugettext_lazy as _
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'MashreqPayroll', 'templates')
-STATIC_DIR = os.path.join(BASE_DIR,"MashreqPayroll","static")
-MEDIA_DIR = os.path.join(BASE_DIR,"MashreqPayroll","media")
-
+STATIC_DIR = os.path.join(BASE_DIR, "MashreqPayroll", "static")
+MEDIA_DIR = os.path.join(BASE_DIR, "MashreqPayroll", "media")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
@@ -14,7 +13,7 @@ MEDIA_DIR = os.path.join(BASE_DIR,"MashreqPayroll","media")
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = '5)#8)5o+2%j!ipx9e++pvu-vnro_j7l=q+((2e#39bv7*u(j_h'
 # SECRET_KEY = os.environ['SECRET_KEY']
-KEY_PATH = os.path.join(BASE_DIR, 'MashreqPayroll','django_key.txt')
+KEY_PATH = os.path.join(BASE_DIR, 'MashreqPayroll', 'django_key.txt')
 with open(KEY_PATH) as f:
     SECRET_KEY = f.read().strip()
 
@@ -52,6 +51,7 @@ INSTALLED_APPS = [
     'recruitment',
     'service',
     'import_export',
+
 ]
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 IMPORT_EXPORT_USE_TRANSACTIONS = True
@@ -67,6 +67,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'home.middleware.PreventConcurrentLoginsMiddleware',
 ]
 
 ROOT_URLCONF = 'MashreqPayroll.urls'
@@ -74,7 +75,7 @@ ROOT_URLCONF = 'MashreqPayroll.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [TEMPLATES_DIR,],
+        'DIRS': [TEMPLATES_DIR, ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -83,7 +84,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.i18n',
-		'django.template.context_processors.csrf',
+                'django.template.context_processors.csrf',
             ],
         },
     },
@@ -100,6 +101,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'MashreqPayroll.middleware.ForceDefaultLanguageMiddleware',
+    'home.middleware.PreventConcurrentLoginsMiddleware',
+
 )
 
 WSGI_APPLICATION = 'MashreqPayroll.wsgi.application'
@@ -109,10 +112,10 @@ SESSION_SAVE_EVERY_REQUEST = True
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
 DATABASES = {
-   'default': {
-       'ENGINE': 'django.db.backends.sqlite3',
-       'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-   }
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
 }
 
 # DATABASES = {
@@ -155,16 +158,16 @@ AUTH_PASSWORD_VALIDATORS = [
 
 DATE_INPUT_FORMATS = [
     '%Y-%m-%d', '%m/%d/%Y', '%m/%d/%y',  # '2006-10-25', '10/25/2006', '10/25/06'
-    '%b %d %Y', '%b %d, %Y',             # 'Oct 25 2006', 'Oct 25, 2006'
-    '%d %b %Y', '%d %b, %Y',             # '25 Oct 2006', '25 Oct, 2006'
-    '%B %d %Y', '%B %d, %Y',             # 'October 25 2006', 'October 25, 2006'
-    '%d %B %Y', '%d %B, %Y',             # '25 October 2006', '25 October, 2006'
+    '%b %d %Y', '%b %d, %Y',  # 'Oct 25 2006', 'Oct 25, 2006'
+    '%d %b %Y', '%d %b, %Y',  # '25 Oct 2006', '25 Oct, 2006'
+    '%B %d %Y', '%B %d, %Y',  # 'October 25 2006', 'October 25, 2006'
+    '%d %B %Y', '%d %B, %Y',  # '25 October 2006', '25 October, 2006'
 ]
 
 OPENEXCHANGERATES_APP_ID = "c2b2efcb306e075d9c2f2d0b614119ea"
 
-CITIES_LIGHT_TRANSLATION_LANGUAGES = ['en','ar']
-CITIES_LIGHT_INCLUDE_COUNTRIES = ['EG','UAE','SA']
+CITIES_LIGHT_TRANSLATION_LANGUAGES = ['en', 'ar']
+CITIES_LIGHT_INCLUDE_COUNTRIES = ['EG', 'UAE', 'SA']
 CITIES_LIGHT_TRANSLATION_LANGUAGES = ['en', 'ar']
 
 # to end the user session when closing the browser
@@ -176,7 +179,7 @@ LOGIN_URL = '/home/login/'
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
-LANGUAGE_CODE='ar'
+LANGUAGE_CODE = 'ar'
 
 TIME_ZONE = 'UTC'
 
@@ -194,7 +197,7 @@ LANGUAGES = (
 DEFAULT_LANGUAGE = 1
 
 LOCALE_PATHS = (
-                os.path.join(BASE_DIR, 'locale'),
+    os.path.join(BASE_DIR, 'locale'),
 )
 # Languages using BiDi (right-to-left) layout
 LANGUAGES_BIDI = ["ar"]
@@ -206,7 +209,7 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     STATIC_DIR,
-    ]
+]
 
 # Media files uploaded by user (images etc.)
 MEDIA_URL = '/media/'
