@@ -5,10 +5,11 @@ from django.dispatch import receiver
 from employee.models import Employee
 import datetime
 from home.slugify import unique_slug_generator
-from company.models import Working_Hours_Policy
+#from company.models import Working_Hours_Policy
 from django.utils.translation import ugettext_lazy as _
 
 
+#work_start_time = Working_Hours_Policy.objects.get()
 
 class Attendance_Interface(models.Model):
     employee = models.PositiveIntegerField()
@@ -46,6 +47,11 @@ class Attendance(models.Model):
 
     def __str__(self):
         return self.employee.emp_name
+
+
+    # @property
+    # def is_late(self):
+    #     return self.check_in > work_start_time.hrs_start_from
 
     @property
     def how_late(self):

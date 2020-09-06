@@ -18,7 +18,8 @@ class User(AbstractUser):
 
 
 class UserCompany(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE, related_name='user_fk',
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE,
+                             related_name='user_fk',
                              verbose_name=_('User'))
     company = models.ForeignKey(Enterprise, null=True, blank=True, on_delete=models.CASCADE,
                                 related_name='company', verbose_name=_('Company'))
@@ -31,4 +32,12 @@ class UserCompany(models.Model):
     last_update_date = models.DateField(auto_now=True)
 
     def __str__(self):
-        return self.user.username+' ' +self.company.name
+        return self.user.username + ' ' + self.company.name
+
+
+AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', User)
+
+
+class Visitor(models.Model):
+    user = models.OneToOneField(AUTH_USER_MODEL, null=False, related_name='visitor', on_delete=models.CASCADE)
+    session_key = models.CharField(null=False, max_length=40)
