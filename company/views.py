@@ -9,13 +9,14 @@ from datetime import date
 from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView
-from custom_user.models import User
+from custom_user.models import User, UserCompany
 from company.forms import (EnterpriseForm, DepartmentInline, DepartmentForm, JobInline,
                            JobForm, GradeInline, GradeForm, PositionInline, PositionForm, WorkingHoursForm,
-                           YearlyHolidayInline, YearlyHolidayForm)
-from company.models import (Enterprise, Department, Job, Grade, Position, YearlyHoliday, WorkingHoursPolicy, Year)
+                           YearlyHolidayInline, YearlyHolidayForm, YearForm)
+from company.models import (Enterprise, Department, Job, Grade, Position, YearlyHoliday, Working_Hours_Policy, Year)
 from django.utils.translation import ugettext_lazy as _
 from cities_light.models import City, Country
+from django.core.exceptions import ObjectDoesNotExist
 
 
 ########################################Enterprise views###################################################################
@@ -24,6 +25,91 @@ def load_cities(request):
     cities = City.objects.filter(country_id=country_id).order_by('name')
     return render(request, 'city_dropdown_list_options.html', {'cities': cities})
 
+
+def list_user_companies_view(request):
+    user_companies = UserCompany.objects.filter(user=request.user)
+    userCompanyContext = {
+        'page_title': _('User Companies List'),
+        'user_companies': user_companies,
+    }
+    return render(request, 'user-companies-list.html', userCompanyContext)
+
+
+def deactivate_company(user_v, new_active_company):
+    try:
+        old_active_company = UserCompany.objects.get(user=user_v, active=True)
+        old_active_company.active = False
+        old_active_company.save(update_fields=['active'])
+        update_user_company = User.objects.get(id=user_v.id)
+        new_company = Enterprise.objects.get(id=new_active_company)
+        update_user_company.company = new_company
+        update_user_company.save(update_fields=['company'])
+        return True
+    except ObjectDoesNotExist as e:
+        return False
+        messages.error(request, _('Company Does Not Exist'))
+
+
+def mark_as_active_view(request, company_id):
+    success_flag = deactivate_company(request.user, company_id)
+    required_company = UserCompany.objects.get(company=company_id)
+    required_company.active = True
+    required_company.last_update_by = request.user
+    required_company.save(update_fields=['active','last_update_by'])
+    if success_flag:
+        return redirect('home:homepage')
+    else:
+        messages.error(request, _('Something went wrong'))
+        return redirect('company:user-companies-list')
+
+
+
+def create_user_companies_view(request):
+    bgForm = EnterpriseForm()
+    current_user_obj = User.objects.get(id=request.user.id)
+    if request.method == "POST":
+        bgForm = EnterpriseForm(request.POST)
+        if bgForm.is_valid():
+            bg_obj = bgForm.save(commit=False)
+            bg_obj.enterprise_user = request.user
+            bg_obj.created_by = request.user
+            bg_obj.save()
+            current_user_obj.company = bg_obj
+            current_user_obj.save(update_fields=['company',])
+            user_company_count = UserCompany.objects.filter(user=request.user).count()
+            user_co = UserCompany(
+                    user = request.user,
+                    company = bg_obj,
+                    active = False if user_company_count >= 1 else True,
+                    created_by = request.user
+            )
+            user_co.save()
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
+                success_msg = 'تم الانشاء بنجاح'
+            else:
+                success_msg = 'Create Successfully'
+
+            messages.success(request, success_msg)
+
+            if 'Save and exit' in request.POST:
+                return redirect('company:user-companies-list')
+            elif 'Save and add' in request.POST:
+                return redirect('company:user-companies-create')
+
+        else:  # Form was not valid
+            # success_msg = 'The form is not valid.'
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
+                success_msg = 'لم يتم الانشاء بنجاح'
+            else:
+                success_msg = 'The form is not valid.'
+            [messages.error(request, bgForm.errors)]
+    userCompanyContext = {
+        'page_title': _('Create Enterprise'),
+        'bgForm': bgForm,
+    }
+    return render(request, 'user-companies-create.html', userCompanyContext)
 
 @login_required(login_url='/login')
 def companyCreateView(request):
@@ -66,7 +152,8 @@ def companyCreateView(request):
 @login_required(login_url='/login')
 def listCompanyInformation(request):
     if request.method == 'GET':
-        bgList = Enterprise.objects.all(request.user)
+        bgList = Enterprise.objects.filter(enterprise_user=request.user).filter(Q(end_date__gt=date.today()) | Q(end_date__isnull=True))
+
     myContext = {
         'page_title': _('Enterprises'),
         'bgList': bgList,
@@ -768,7 +855,7 @@ def deletePositionView(request, pk):
 
 @login_required(login_url='/login')
 def listPoliciesView(request):
-    num_of_working_policy = WorkingHoursPolicy.objects.all(request.user).count()
+    num_of_working_policy = Working_Hours_Policy.objects.all(request.user).count()
     num_of_yearly_holidays = Year.objects.all(request.user).count()
 
     context = {
@@ -779,6 +866,7 @@ def listPoliciesView(request):
     }
     return render(request, 'policy-list.html', context=context)
 
+########################################Company Policies views###################################################################
 
 @login_required(login_url='/login')
 def CreateWorkingPolicyView(request):
@@ -805,7 +893,7 @@ def CreateWorkingPolicyView(request):
                 success_msg = 'لم يتم الانشاء بنجاح'
             else:
                 success_msg = 'The form is not valid.'
-            messages.error(request, success_msg)
+            messages.error(request, working_policy_form.errors)
     my_context = {
         "page_title": "create new working hours policy",
         'policy_form': working_policy_form,
@@ -815,17 +903,17 @@ def CreateWorkingPolicyView(request):
 
 @login_required(login_url='/login')
 def listWorkingPolicyView(request):
-    working_policy_list = []
     if request.method == 'GET':
-        working_policy_list = WorkingHoursPolicy.objects.all(request.user)
-
-    myContext = {"page_title": _("List working policies"), 'policy_list': working_policy_list}
+        working_policy_list = Working_Hours_Policy.objects.all(request.user)
+    myContext = {
+                 "page_title": _("List working policies"),
+                 'policy_list': working_policy_list
+                 }
     return render(request, 'working-hrs-policy-list.html', myContext)
-
 
 @login_required(login_url='/login')
 def correctWorkingPolicyView(request, pk):
-    required_policy = WorkingHoursPolicy.objects.get_policy(user=request.user, policy_id=pk)
+    required_policy = Working_Hours_Policy.objects.get_policy(user=request.user, policy_id=pk)
     policy_form = WorkingHoursForm(instance=required_policy)
     user_lang = to_locale(get_language())
     if request.method == 'POST':
@@ -856,7 +944,7 @@ def correctWorkingPolicyView(request, pk):
 
 @login_required(login_url='/login')
 def deleteWorkingPolicyView(request, pk):
-    req_working_policy = WorkingHoursPolicy.objects.get_policy(user=request.user, policy_id=pk)
+    req_working_policy = Working_Hours_Policy.objects.get_policy(user=request.user, policy_id=pk)
     deleted = req_working_policy.delete()
     if deleted:
         messages.success(request, 'Record successfully deleted')
@@ -870,20 +958,23 @@ def deleteWorkingPolicyView(request, pk):
 @login_required(login_url='/login')
 def listYearlyHolidayView(request, year_id):
     yearly_holiday_list = []
-    year = Year.objects.get_year(request.user,year_id)
+    year = Year.objects.get_year(request.user, year_id)
     if request.method == 'GET':
-        yearly_holiday_list = YearlyHoliday.objects.get_year_holiday(year_id)
+        yearly_holiday_list = YearlyHoliday.objects.get_year_holiday(user=request.user, year_name = year_id)
 
-    myContext = {"page_title": f"List yearly holidays for {year}",
-                 'yearly_holiday_list': yearly_holiday_list, 'year_id': year_id}
+    myContext = {
+                 "page_title": f"List yearly holidays for {year}",
+                 'yearly_holiday_list': yearly_holiday_list,
+                 'year_id': year_id
+                 }
     return render(request, 'yearly-holiday-list.html', myContext)
 
 
 @login_required(login_url='/login')
-def CreateYearlyHolidayView(request, year_id):
+def createYearlyHolidayView(request, year_id):
+    year = Year.objects.get_year(user= request.user, year_id=year_id)
     yearly_holiday_formset = YearlyHolidayInline(queryset=YearlyHoliday.objects.none())
     user_lang = to_locale(get_language())
-    year = Year.objects.get_year(request.user, year_id)
     if request.method == 'POST':
         yearly_holiday_formset = YearlyHolidayInline(request.POST)
         if yearly_holiday_formset.is_valid():
@@ -923,9 +1014,8 @@ def CreateYearlyHolidayView(request, year_id):
 def correctYearlyHolidayView(request, pk):
     required_holiday = YearlyHoliday.objects.get_holiday(user=request.user, yearly_holiday_id=pk)
     holiday_form = YearlyHolidayForm(instance=required_holiday)
-    year_id = required_holiday.year.id
+    year_id = required_holiday.year.year
     user_lang = to_locale(get_language())
-
     if request.method == 'POST':
         holiday_form = YearlyHolidayForm(request.POST, instance=required_holiday)
 
@@ -976,13 +1066,20 @@ def listYearsView(request):
     years = Year.objects.all(request.user)
     num_of_holidays = {}
     for year in years:
-        num_of_holidays[year.year] = YearlyHoliday.objects.get_year_holiday(year.id).count()
-        print(num_of_holidays[year.year])
-
+        num_of_holidays[year.year] = YearlyHoliday.objects.get_year_holiday(user=request.user, year_name = year.year).count()
+    year_form = YearForm()
+    if request.method == 'POST':
+        year_form = YearForm(request.POST)
+        if year_form.is_valid():
+            year_obj = year_form.save(commit=False)
+            year_obj.enterprise = request.user.company
+            year_obj.created_by = request.user
+            year_obj.save()
+            return redirect('company:yearly-holiday-create', year_id= year_obj.year)
     context = {
-
         "page_title": _("Years"),
         'num_of_holidays': num_of_holidays,
         'years': years,
+        'year_form':year_form,
     }
     return render(request, 'years-list.html', context=context)

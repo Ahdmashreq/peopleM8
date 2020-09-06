@@ -6,6 +6,7 @@ from company import models
 @admin.register(models.Enterprise)
 class EnterpriseAdmin(admin.ModelAdmin):
     fields = (
+        'enterprise_user',
         'name',
         'slug',
         'reg_tax_num',
@@ -57,7 +58,6 @@ class DepartmentAdmin(admin.ModelAdmin):
 @admin.register(models.Job)
 class JobAdmin(admin.ModelAdmin):
     fields = (
-        'enterprise',
         'job_user',
         'job_name',
         'job_description',
@@ -120,8 +120,8 @@ class PositionAdmin(admin.ModelAdmin):
         return instance
 
 
-@admin.register(models.WorkingHoursPolicy)
-class WorkingHoursPolicyAdmin(admin.ModelAdmin):
+@admin.register(models.Working_Hours_Policy)
+class Working_Hours_PolicyAdmin(admin.ModelAdmin):
     fields = (
         'number_of_daily_working_hrs',
         'normal_over_time_hourly_rate',

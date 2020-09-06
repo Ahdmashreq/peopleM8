@@ -1,16 +1,19 @@
 from django.conf import settings
 from django.db import models
 from datetime import date
+import datetime
 from django.db.models.signals import pre_save
-
+from django.dispatch import receiver
 from home.slugify import unique_slug_generator
 from cities_light.models import City, Country
 from django.utils.translation import ugettext_lazy as _
-from .manager import CompanyManager, DepartmentManager, JobManager, GradeManager, PositionManager, PolicyManager, \
-    YearlyHolidayManager,YearsManager
+from .manager import (DepartmentManager, JobManager, GradeManager, PositionManager, WorkingHoursPolicy,
+    YearlyHolidayManager,YearsManager)
+from multiselectfield import MultiSelectField
 
 
 class Enterprise(models.Model):
+    enterprise_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="company_user")
     name = models.CharField(max_length=255, verbose_name=_('Company Name'))
     reg_tax_num = models.CharField(max_length=150, verbose_name=_('Reg Tax Num'))
     commercail_record = models.CharField(max_length=150, verbose_name=_('Commercial Record'))
@@ -21,14 +24,13 @@ class Enterprise(models.Model):
     email = models.EmailField(blank=True, null=True, verbose_name=_('Email'))
     country = models.ForeignKey(Country, on_delete=models.CASCADE, null=True, blank=True, verbose_name=_('Country'))
     slug = models.SlugField(blank=True, null=True)
-    objects = CompanyManager()
     start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
     end_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=_('End Date'))
 
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
                                    related_name="company_created_by")
     creation_date = models.DateField(auto_now=True, auto_now_add=False)
-    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
+    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE,
                                        related_name="company_last_update_by")
     last_update_date = models.DateField(auto_now=False, auto_now_add=True)
     attribute1 = models.CharField(max_length=255)
@@ -51,12 +53,12 @@ class Enterprise(models.Model):
         return self.name
 
 
-def slug_enterprise_generator(sender, instance, *args, **kwargs):
-    if not instance.slug:
-        instance.slug = unique_slug_generator(instance)
-
-
-pre_save.connect(slug_enterprise_generator, sender=Enterprise)
+# def slug_enterprise_generator(sender, instance, *args, **kwargs):
+#     if not instance.slug:
+#         instance.slug = unique_slug_generator(instance)
+#
+#
+# pre_save.connect(slug_enterprise_generator, sender=Enterprise)
 
 
 class Department(models.Model):
@@ -98,9 +100,9 @@ class Department(models.Model):
 
 
 class Job(models.Model):
-    enterprise = models.ForeignKey('custom_user.UserCompany', on_delete=models.CASCADE, related_name='job_enterprise',
+    enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name='job_enterprise',
                                    verbose_name=_('Enterprise Name'))
-    job_user = models.ForeignKey('custom_user.UserCompany', on_delete=models.CASCADE)
+    job_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     job_name = models.CharField(max_length=100, verbose_name=_('Job Name'))
     job_description = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('Job Description'))
     objects = JobManager()
@@ -248,15 +250,26 @@ class Enterprise_Policies(models.Model):
         return self.position_name
 
 
-class WorkingHoursPolicy(models.Model):
+class Working_Hours_Policy(models.Model):
+    week_days =(
+                    ("SATERDAY", "Saterday"),
+                    ("SUNDAY", "Sunday"),
+                    ("MONDAY", "Monday"),
+                    ("TUESDAY", "Tuesday"),
+                    ("WEDNESDAY", "Wednesday"),
+                    ("THURSDAY", "Thursday"),
+                    ("FRIDAY", "Friday"),
+                )
+    #######################################################################################################
     enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name='enterprise_working_hrs_policy',
                                    verbose_name=_('Enterprise Name'))
-    objects = PolicyManager()
-    number_of_daily_working_hrs = models.DecimalField(decimal_places=1, max_digits=2)
-    normal_over_time_hourly_rate = models.DecimalField(decimal_places=1, max_digits=2)
-    exceptional_over_time_hourly_rate = models.DecimalField(decimal_places=1, max_digits=2)
-    delay_hours_rate = models.DecimalField(decimal_places=1, max_digits=2)
-    absence_days_rate = models.DecimalField(decimal_places=1, max_digits=2)
+    objects = WorkingHoursPolicy()
+    number_of_daily_working_hrs = models.DecimalField(decimal_places=2, max_digits=3, default=8)
+    week_end_days = MultiSelectField(max_length=100, choices= week_days, null=True, blank=True)
+    normal_over_time_hourly_rate = models.DecimalField(decimal_places=2, max_digits=3)
+    exceptional_over_time_hourly_rate = models.DecimalField(decimal_places=2, max_digits=3)
+    delay_hours_rate = models.DecimalField(decimal_places=2, max_digits=3)
+    absence_days_rate = models.DecimalField(decimal_places=2, max_digits=3)
     hrs_start_from = models.TimeField(blank=True, null=True, verbose_name=_('Working Hours From '))
     hrs_end_at = models.TimeField(blank=True, null=True, verbose_name=_('Working Hours To '))
     start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
@@ -281,7 +294,7 @@ class Year(models.Model):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
                                    related_name="year_created_by")
     creation_date = models.DateField(auto_now=False, auto_now_add=True)
-    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
+    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE,
                                        related_name="year_update_by")
     last_update_date = models.DateField(auto_now=True, auto_now_add=False)
 
@@ -307,3 +320,7 @@ class YearlyHoliday(models.Model):
 
     def __str__(self):
         return self.name + " Holiday"
+
+@receiver(pre_save, sender=YearlyHoliday)
+def working_time(sender, instance, *args, **kwargs):
+    instance.number_of_days_off = (instance.end_date-instance.start_date).days+1

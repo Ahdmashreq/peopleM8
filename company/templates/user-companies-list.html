@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+{% load i18n %}
+{% load l10n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% get_current_language_bidi as LANGUAGE_BIDI %}
+
+<html {% if LANGUAGE_BIDI %} dir="rtl" {% else %} dir="ltr" {% endif %}>
+<meta content="text/html;charset=UTF-8" />
+
+<head>
+  <title>PeopleM8 {% trans "Login" %}</title>
+
+  {% if LANGUAGE_BIDI %}
+  <link href="{% static 'css/style-main-ar.css'%}" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
+  {% else %}
+  <link href="{% static 'css/style-main-en.css'%}" rel="stylesheet">
+  {% endif %}
+  <link href="{% static 'css/style.css'%}" rel="stylesheet">
+  <!-- datatable -->
+
+
+</head>
+
+<body class="app " style="background-image:url(/static/assets/static/images/bgEnterprise.png);background-position: center;background-size: contain;">
+  <div id="loader">
+    <div class="spinner"></div>
+  </div>
+  <script type="text/javascript">
+    window.addEventListener('load', () => {
+      const loader = document.getElementById('loader');
+      setTimeout(() => {
+        loader.classList.add('fadeOut');
+      }, 300);
+    });
+  </script>
+
+
+  <div class="peers ai-s fxw-nw h-100vh">
+      <div class="col-12 col-md-12 peer pX-40 pY-80 h-100 scrollable pos-r">
+
+
+        <div class="row" style="margin-left:0px;">
+          <!-- <div class="col-md-8">
+            <h4 class="c-grey-900">{{page_title|title}}</h4>
+          </div> -->
+          <div class="col-md-11 ">
+            <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
+              <div class="peer">
+                <a href="{% url 'company:user-companies-create' %}" class="btn cur-p btn-primary">{% trans "Add Enterprise" %}</a>
+                <a href="{% url 'home:homepage' %}" class="btn cur-p btn-secondary">{% trans "Back to Dashboard" %}</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-1">
+
+                  <div class=" p-20 bd PanelEnt">
+
+                    <h3 class="c-grey-900 text-center">{{page_title|title}}</h3>
+                    <div class="col-md-12">
+                      <div class="bgc-offwhite bd bdrs-3 p-20 mB-20">
+                        {% if not user_companies %}
+                        <h2 class="c-grey-900 text-center">{% trans "You didn't create any company yet.<br>Click on add enterprise for adding one" %}</h2>
+                        {% endif %}
+
+                        <div class="row">
+                          {% for company in user_companies %}
+                          <div class="col-sm-4">
+                            <div class="card">
+                              <div class="card-body text-center">
+                                <h5 class="card-title">{{company.company}}</h5>
+                                <hr>
+                                <button type="button" class="btn cur-p btn-outline-dark" data-toggle="modal" data-target="#activeModal{{company.company.id}}">{% trans "Mark As Active" %}</button>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- Make Active Modal -->
+                          <div class="modal fade" id="activeModal{{company.company.id}}" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+                            <div class="modal-dialog" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title">{% trans "Company Active " %}</h5>
+                                </div>
+                                <div class="modal-body">
+                                  <p>{% trans "Are you sure you want to make this company active?" %}</p>
+
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
+                                  <a href="{% url 'company:user-company-active' company_id=company.company.id %}" class="btn btn-danger" type="button">{% trans "Make Active" %}</a>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          {% endfor %}
+                        </div>
+
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+      </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="{% static 'jquery/jquery.min.js'%}"></script>
+    <script type="text/javascript" src="{% static 'js/vendor.js'%}"></script>
+    {% if LANGUAGE_BIDI %}
+    <script type="text/javascript" src="{% static 'js/bundleAr.js'%}"></script>
+    {% else %}
+    <script type="text/javascript" src="{% static 'js/bundle.js'%}"></script>
+    {% endif %}
+    <script src="{% static 'js/rocket-loader.min.js' %}" data-cf-settings="b7f1894beadbd64bfa501e09-|49" defer=""></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.20/datatables.min.js"></script>
+    {% block js %} {% endblock js %}
+</body>
+
+</html>

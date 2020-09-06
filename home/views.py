@@ -2,9 +2,7 @@ from django.shortcuts import render, reverse, redirect
 from django.contrib import messages
 from django.db.models import Q
 from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
-from django.contrib.auth.forms import (
-    AuthenticationForm, PasswordChangeForm, PasswordResetForm, SetPasswordForm,
-)
+from django.contrib.auth.forms import (PasswordChangeForm, )
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
 from django.views.decorators.debug import sensitive_post_parameters
@@ -16,18 +14,15 @@ from custom_user.models import User
 from employee.models import Employee, JobRoll
 from service.models import Bussiness_Travel
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect, HttpResponseNotFound, HttpResponseServerError, HttpResponseBadRequest
 from django.utils import translation
 from datetime import date, datetime
 from django.urls import reverse_lazy
-from django.utils import formats
 from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import to_locale, get_language
 from company.models import Enterprise
 from notification.models import Notification
 from leave.models import Leave
-from datetime import datetime, timezone
 from custom_user.models import UserCompany
 
 
@@ -85,16 +80,7 @@ def user_login(request):
 
 @login_required(login_url='/login')
 def user_home_page(request):
-    time_since = 0
-    not_header = None
-    print("**********")
-    print(request.user)
-    # user= UserCompany.objects.get(user = request.user.usercomapny_set.all())
-
     employee = Employee.objects.get(user=request.user.usercomapny_set.all())
-    print("**********")
-    print(request.user.usercomapny_set.all())
-    # print(employee)
     employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
 
     leave_count = Leave.objects.filter(user=request.user, status='pending').count()
@@ -123,13 +109,14 @@ def user_home_page(request):
 
 @login_required(login_url='/login')
 def admin_home_page(request):
-    print("**********")
-    print(request.user.user_fk.all())
-    # print(employee)
-
-    # employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
-
-    return render(request, 'index.html', context=None)
+    user_companies_count = UserCompany.objects.filter(user=request.user).count()
+    print(user_companies_count)
+    if user_companies_count == 0:
+        return redirect('company:user-companies-list')
+        pass
+    else:
+        # employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
+        return render(request, 'index.html', context=None)
 
 
 @login_required(login_url='/login')
