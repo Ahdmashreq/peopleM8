@@ -1574,7 +1574,22 @@ a.fc-more {
 .fc-unthemed .fc-list-empty {
     background-color: #eee
 }
-
+.logoEnt
+{
+  width:20%;
+}
+.PanelEnt
+{
+  margin: 0px 120px;
+}
+.bgc-offwhite{
+  background-color: #d38c443d !important;
+}
+.card-title
+{
+  color: #ed9943;
+  font-size: 25px;
+}
 th {
   text-align: center;
 }

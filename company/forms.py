@@ -1,6 +1,7 @@
 from django import forms
 from crispy_forms.helper import FormHelper
-from company.models import (Enterprise, Department, Grade, Job, Position, WorkingHoursPolicy, YearlyHoliday)
+from company.models import (Enterprise, Department, Grade, Job,
+                            Position, Working_Hours_Policy, YearlyHoliday, Year)
 from defenition.models import LookupDet
 from cities_light.models import City, Country
 from datetime import date
@@ -131,21 +132,9 @@ PositionInline = forms.modelformset_factory(Position, form=PositionForm, extra=5
 
 class WorkingHoursForm(forms.ModelForm):
     class Meta:
-        model = WorkingHoursPolicy
-        fields = (
-            'number_of_daily_working_hrs',
-            'normal_over_time_hourly_rate',
-            'exceptional_over_time_hourly_rate',
-            'delay_hours_rate',
-            'absence_days_rate',
-            'start_date',
-            'end_date',
-            'hrs_start_from',
-            'hrs_end_at',
-
-
-        )
-        exclude = common_items_to_execlude
+        model = Working_Hours_Policy
+        fields = ('__all__')
+        exclude = common_items_to_execlude+('enterprise',)
 
     def __init__(self, *args, **kwargs):
         super(WorkingHoursForm, self).__init__(*args, **kwargs)
@@ -153,6 +142,20 @@ class WorkingHoursForm(forms.ModelForm):
         self.fields['end_date'].widget.input_type = 'date'
         self.fields['hrs_start_from'].widget.input_type = 'time'
         self.fields['hrs_end_at'].widget.input_type = 'time'
+        for field in self.fields:
+            if self.fields[field].widget.input_type != 'checkbox':
+                self.fields[field].widget.attrs['class'] = 'form-control parsley-validated'
+        self.helper = FormHelper()
+        self.helper.form_show_labels = False
+
+class YearForm(forms.ModelForm):
+    class Meta:
+        model = Year
+        fields = '__all__'
+        exclude = common_items_to_execlude+('enterprise',)
+
+    def __init__(self, *args, **kwargs):
+        super(YearForm, self).__init__(*args, **kwargs)
         for field in self.fields:
             if self.fields[field].widget.input_type == 'checkbox':
                 self.fields[field].widget.attrs['class'] = 'checkbox'
@@ -166,13 +169,12 @@ class YearlyHolidayForm(forms.ModelForm):
     class Meta:
         model = YearlyHoliday
         fields = (
+            'year',
             'name',
             'start_date',
             'end_date',
-            'year',
-            'number_of_days_off',
+            # 'number_of_days_off',
         )
-
         exclude = common_items_to_execlude
 
     def __init__(self, *args, **kwargs):
@@ -188,5 +190,5 @@ class YearlyHolidayForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_show_labels = False
 
-
-YearlyHolidayInline = forms.modelformset_factory(YearlyHoliday, form=YearlyHolidayForm, extra=5, can_delete=True)
+YearlyHolidayInline = forms.modelformset_factory(YearlyHoliday, form=YearlyHolidayForm, extra=5, can_delete=False)
+# YearlyHolidayInline = forms.inlineformset_factory(Year, YearlyHoliday, form=YearlyHolidayForm, extra=5, can_delete=False)

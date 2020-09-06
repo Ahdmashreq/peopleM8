@@ -2,13 +2,6 @@ from django.db import models
 from datetime import date
 from django.db.models import Q
 
-
-class CompanyManager(models.Manager):
-    def all(self, user, *args, **kwargs):
-        return super(CompanyManager, self).filter(enterprise_user=user).filter(
-            Q(end_date__gt=date.today()) | Q(end_date__isnull=True))
-
-
 class DepartmentManager(models.Manager):
     def all(self, user, *args, **kwargs):
         return super(DepartmentManager, self).filter(enterprise=user.company).filter(
@@ -49,13 +42,13 @@ class PositionManager(models.Manager):
             Q(end_date__gt=date.today()) | Q(end_date__isnull=True)).get(id=position_id)
 
 
-class PolicyManager(models.Manager):
+class WorkingHoursPolicy(models.Manager):
     def all(self, user, *args, **kwargs):
-        return super(PolicyManager, self).filter(enterprise=user.company).filter(
+        return super(WorkingHoursPolicy, self).filter(enterprise=user.company).filter(
             Q(end_date__gte=date.today()) | Q(end_date__isnull=True))
 
     def get_policy(self, user, policy_id, *args, **kwargs):
-        return super(PolicyManager, self).filter(enterprise=user.company).filter(
+        return super(WorkingHoursPolicy, self).filter(enterprise=user.company).filter(
             Q(end_date__gte=date.today()) | Q(end_date__isnull=True)).get(id=policy_id)
 
 
@@ -66,8 +59,8 @@ class YearlyHolidayManager(models.Manager):
     def get_holiday(self, user, yearly_holiday_id, *args, **kwargs):
         return super(YearlyHolidayManager, self).filter(enterprise=user.company).get(id=yearly_holiday_id)
 
-    def get_year_holiday(self,year_id, *args, **kwargs):
-        return super(YearlyHolidayManager, self).filter(year__id=year_id)
+    def get_year_holiday(self, user, year_name, *args, **kwargs):
+        return super(YearlyHolidayManager, self).filter(enterprise=user.company, year__year=year_name)
 
 
 class YearsManager(models.Manager):
@@ -75,7 +68,7 @@ class YearsManager(models.Manager):
         return super(YearsManager, self).filter(enterprise=user.company)
 
     def get_year(self,user,year_id, *args, **kwargs):
-        return super(YearsManager, self).filter(enterprise=user.company).get(id=year_id)
+        return super(YearsManager, self).filter(enterprise=user.company).get(year=year_id)
 
     def get_holiday(self, user, *args, **kwargs):
         return super(YearsManager, self).filter(enterprise=user.company)

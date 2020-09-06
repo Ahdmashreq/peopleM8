@@ -5,6 +5,9 @@ app_name = 'company'
 
 urlpatterns = [
     ######################### BusinessGroup URLs ###################################
+    path('user/companies/list/', views.list_user_companies_view, name='user-companies-list'),
+    path('user/companies/create/', views.create_user_companies_view, name='user-companies-create'),
+    path('user/companies/makeActive/<int:company_id>/', views.mark_as_active_view, name='user-company-active'),
     path('enterprise/', include([
         path('new/', views.companyCreateView, name='company-create'),
         path('information/list/', views.listCompanyInformation, name='list-company-information'),
@@ -53,8 +56,8 @@ urlpatterns = [
         path('working_hrs_policy/new/', views.CreateWorkingPolicyView, name='policy-create'),
         path('working_hrs_policy/list/', views.listWorkingPolicyView, name='working-hrs-policy-list'),
         path('working_hrs_policy/correct/<int:pk>', views.correctWorkingPolicyView, name='policy-correct'),
-        path('yearly_holidays/list/<year_id>', views.listYearlyHolidayView, name='yearly-holiday-list'),
-        path('yearly_holidays/create/<year_id>', views.CreateYearlyHolidayView, name='yearly-holiday-create'),
+        path('yearly_holidays/list/<int:year_id>', views.listYearlyHolidayView, name='yearly-holiday-list'),
+        path('yearly_holidays/create/<int:year_id>', views.createYearlyHolidayView, name='yearly-holiday-create'),
         path('yearly_holidays/correct/<int:pk>', views.correctYearlyHolidayView, name='yearly-holiday-correct'),
         path('yearly_holidays/delete/<int:pk>', views.deleteYearlyHolidayView, name='yearly-holiday-delete'),
         path('working_hrs_policy/delete/<int:pk>', views.deleteWorkingPolicyView, name='working-hrs-policy-delete'),

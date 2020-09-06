@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+{% load i18n %}
+{% load l10n %}
+{% get_current_language as LANGUAGE_CODE %}
+{% get_current_language_bidi as LANGUAGE_BIDI %}
+
+<html {% if LANGUAGE_BIDI %} dir="rtl" {% else %} dir="ltr" {% endif %}>
+<meta content="text/html;charset=UTF-8" />
+
+<head>
+  <title>PeopleM8 {% trans "Login" %}</title>
+
+  {% if LANGsUAGE_BIDI %}
+  <link href="{% static 'css/style-main-ar.css'%}" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
+  {% else %}
+  <link href="{% static 'css/style-main-en.css'%}" rel="stylesheet">
+  {% endif %}
+  <link href="{% static 'css/style.css'%}" rel="stylesheet">
+  <!-- datatable -->
+
+
+</head>
+
+<body class="app">
+  <div id="loader">
+    <div class="spinner"></div>
+  </div>
+  <script type="text/javascript">
+    window.addEventListener('load', () => {
+      const loader = document.getElementById('loader');
+      setTimeout(() => {
+        loader.classList.add('fadeOut');
+      }, 300);
+    });
+  </script>
+  <div class="peers ai-s fxw-nw h-100vh">
+    <div class="d-n@sm- peer peer-greed h-100 pos-r bgr-n bgpX-c bgpY-c bgsz-cv" style="background-image:url({% static 'assets/static/images/bg4.jpg'%})">
+      <div class="pos-a centerXY">
+        <div class="bgc-white bdrs-50p pos-r" style="width:120px;height:120px"><img class="pos-a centerXY" src="{% static 'assets/static/images/logo.png'%}" alt=""></div>
+      </div>
+    </div>
+    {% if LANGUAGE_BIDI %}
+    <div class="col-12 col-md-4 peer pY-80 h-100 bgc-white scrollable pos-r text-right" style="min-width:320px;padding-left:40px;padding-right:40px">
+      {%else%}
+    <div class="col-12 col-md-4 peer pX-40 pY-80 h-100 bgc-white scrollable pos-r" style="min-width:320px">
+      {% endif %}
+      <h4 class="fw-300 c-grey-900 mB-40">{% trans "Login" %}</h4>
+      {% include 'messages.html' %}
+      <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+          <label class="text-normal text-dark">{% trans "User Name" %}</label>
+          <input class="form-control" type="text" name="username" placeholder="{% trans "User Name" %}" required="required">
+        </div>
+        <div class="form-group">
+          <label class="text-normal text-dark">{% trans "Password" %}</label>
+          <input class="form-control" type="password" name="password" placeholder="{% trans "Password" %}" required="required">
+        </div>
+        <div class="form-group">
+          <div class="peers ai-c jc-sb fxw-nw">
+            <div class="peer">
+              <button type="submit" class="btn btn-primary btn-block">{% trans "Log In" %}</button>
+            </div>
+          </div>
+          <div class="row mT-40 text-center">
+            <div class="col-md-12">
+              {% if LANGUAGE_BIDI%}
+              <a class="forgot pull-left" href="{% url 'home:en' %}">{% trans "English" %} </a>
+              {%else%}
+              <a class="forgot pull-right" href="{% url 'home:ar' %}">{% trans "English" %} </a>
+              {%endif%}
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- jQuery -->
+  <script src="{% static 'jquery/jquery.min.js'%}"></script>
+  <script type="text/javascript" src="{% static 'js/vendor.js'%}"></script>
+  {% if LANGUAGE_BIDI %}
+  <script type="text/javascript" src="{% static 'js/bundleAr.js'%}"></script>
+  {% else %}
+  <script type="text/javascript" src="{% static 'js/bundle.js'%}"></script>
+  {% endif %}
+  <script src="{% static 'js/rocket-loader.min.js' %}" data-cf-settings="b7f1894beadbd64bfa501e09-|49" defer=""></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.20/datatables.min.js"></script>
+  {% block js %} {% endblock js %}
+</body>
+
+</html>

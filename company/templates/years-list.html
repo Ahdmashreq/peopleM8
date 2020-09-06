@@ -11,7 +11,12 @@
     </div>
       <div class="col-md-4">
         <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
-         <div class="peer"><a href="{% url 'company:list-policies' %}" class="btn cur-p btn-primary">{% trans "Back to List" %}</a></div>
+          <div class="peer">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#yearModal">{% trans "Add Yearly Holidays" %}</button>
+          </div>
+          <div class="peer">
+            <a href="{% url 'company:list-policies' %}" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
+          </div>
       </div>
       </div>
   </div>
@@ -32,7 +37,7 @@
           {% for year in years %}
             <tr>
               <td scope="row">{{forloop.counter}}</td>
-              <td><a href="{% url 'company:yearly-holiday-list' year_id=year.id %}">{{year}}</a></td>
+              <td><a href="{% url 'company:yearly-holiday-list' year_id=year.year %}">{{year}}</a></td>
               {% for key,value in num_of_holidays.items %}
                 {% if key == year.year %}
                   <td>{{ value }}</td>
@@ -40,12 +45,34 @@
               {% endfor %}
             </tr>
           {% endfor %}
-            
+
           </tbody>
         </table>
       </div>
     </div>
   </div>
-</div>
-{% endblock body%}
+  <div class="mT-30">
+    <div class="modal fade" id="yearModal" tabindex="-1" role="dialog" aria-labelledby="yearModalLabel" aria-hidden="true" style="display: none;">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="yearModalLabel">Modal title</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+          </div>
+          <form method="post">
+          <div class="modal-body">
 
+              {% csrf_token %}
+              {{year_form}}
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save</button>
+          </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock body%}
