@@ -3,7 +3,7 @@ from django.conf import settings
 from django import VERSION as DJANGO_VERSION
 from django.utils import deprecation
 from importlib import import_module
-
+from django.contrib import messages
 from custom_user.models import Visitor
 
 engine = import_module(settings.SESSION_ENGINE)
@@ -35,6 +35,7 @@ class PreventConcurrentLoginsMiddleware(deprecation.MiddlewareMixin if DJANGO_VE
                     engine.SessionStore(session_key_in_visitor_db).delete()
                     request.user.visitor.session_key = key_from_cookie
                     request.user.visitor.save()
+                    messages.warning(request,'Your session has been expired.')
             else:
                 Visitor.objects.create(
                     user=request.user,
