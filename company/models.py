@@ -10,6 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 from .manager import (DepartmentManager, JobManager, GradeManager, PositionManager, WorkingHoursPolicy,
     YearlyHolidayManager,YearsManager)
 from multiselectfield import MultiSelectField
+from mptt.models import MPTTModel, TreeForeignKey
 
 
 class Enterprise(models.Model):
@@ -53,22 +54,14 @@ class Enterprise(models.Model):
         return self.name
 
 
-# def slug_enterprise_generator(sender, instance, *args, **kwargs):
-#     if not instance.slug:
-#         instance.slug = unique_slug_generator(instance)
-#
-#
-# pre_save.connect(slug_enterprise_generator, sender=Enterprise)
 
-
-class Department(models.Model):
+class Department(MPTTModel):
     enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name='department_enterprise',
                                    verbose_name=_('Enterprise Name'))
     department_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     dept_name = models.CharField(max_length=150, verbose_name=_('Department'))
-    parent_dept = models.ForeignKey('Department', on_delete=models.CASCADE, null=True, blank=True,
-                                    verbose_name=_('Parent Department'))
-    # dept_type   =   models.ForeignKey("defenition.LookupDet", on_delete=models.CASCADE, null=True, blank=True,verbose_name=_('Department Type'))
+    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, verbose_name=_('Parent Department'))
+
     objects = DepartmentManager()
     start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start  Date'))
     end_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=_('End Date'))
@@ -94,6 +87,9 @@ class Department(models.Model):
     attribute13 = models.CharField(max_length=255)
     attribute14 = models.CharField(max_length=255)
     attribute15 = models.CharField(max_length=255)
+
+    class MPTTMeta:
+        order_insertion_by = ['dept_name']
 
     def __str__(self):
         return self.dept_name
@@ -283,7 +279,7 @@ class Working_Hours_Policy(models.Model):
     last_update_date = models.DateField(auto_now=False, auto_now_add=True)
 
     def __str__(self):
-        return "Working Hours Policy"
+        return self.enterprise.name + "Working Hours Policy"
 
 
 class Year(models.Model):

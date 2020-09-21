@@ -5,7 +5,6 @@
 {% load i18n %}
 
 {% block body %}
-{% include 'messages.html' %}
 <div class="container-fluid">
     <div class="row" style="margin-left:0px;">
         <div class="col-md-8">
@@ -13,11 +12,9 @@
         </div>
         <div class="col-md-4">
             <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
-                <form method="POST">
-                    <div class="form-group">
-                        {% csrf_token %}
-                        <input type="submit" class="btn btn-primary" value="Check In">
-                </form>
+              <div class="peer">
+                <a class="btn btn-primary" href="{% url 'attendance:check_in_time' %}">{% trans "Check in" %}</a>
+              </div>
             </div>
         </div>
     </div>
@@ -25,7 +22,7 @@
         <div class="row" style="margin-left:0px;">
             <div class="col-md-12">
                 <div class="bgc-white bd bdrs-3 p-20 mB-20">
-                    <table class="table table-striped table-bordered" id="dataTable" width="100%">
+                    <table class="table table-striped table-bordered" id="dataTable"  width="100%">
                         <thead>
                         <tr>
                             <th>#</th>
@@ -44,14 +41,14 @@
                             <td>{{i.date}}</td>
                             <td>{{i.check_in}}</td>
                             <td>{{i.check_out}}</td>
-                            <td>{{i.work_time}}</td>
+                            <td>{{i.work_hours}}</td>
                             <td>
                                 {% if i.check_out is None %}
-                                <a href="{% url 'attendance:edit-all-tasks' attendance_text=i.slug %}">Add Tasks</a>
+                                <a href="{% url 'attendance:edit-all-tasks' attendance_text=i.id %}">Add Tasks</a>
                                     {% endif %}
                             </td>
                             <td>
-                                <a href="{% url 'attendance:list-tasks' attendance_slug=i.slug %}">View your tasks
+                                <a href="{% url 'attendance:list-tasks' attendance_slug=i.id %}">View your tasks
                             </td>
                             <td>
                                 {% if i.check_out is None %}

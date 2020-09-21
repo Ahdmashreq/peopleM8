@@ -94,6 +94,9 @@ class Element_Batch_Master(models.Model):
 
 
 class Element_Link(models.Model):
+    class Meta:
+        unique_together = ('element_master_fk', 'employee')
+        
     element_master_fk = models.ForeignKey(Element_Master, on_delete=models.CASCADE, null=True, blank=True,
                                           related_name='element_link_to_master', verbose_name=_('Element Name'))
     batch = models.ForeignKey(Element_Batch, on_delete=models.CASCADE, null=True, blank=True,

@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from employee.models import Employee
 from django.utils import timezone
 from django.db.models import Count
 from datetime import datetime, timedelta
@@ -16,6 +15,8 @@ from attendance.forms import FormAttendance, Tasks_inline_formset, FormTasks, Co
     FormEmployeeAttendanceHistory
 from attendance.resources import AttendanceResource
 from attendance.tmp_storage import TempFolderStorage
+from employee.models import Employee
+from company.models import Working_Hours_Policy
 from leave.models import Leave
 from service.models import Bussiness_Travel
 
@@ -39,28 +40,28 @@ def list_attendance(request):
     work_time = []
     att_form = FormAttendance(form_type='check_in')
     employee = Employee.objects.get(user=request.user)
-    opened_attendance = False
-    for att in attendance_list:
-        if att.check_out is None:
-            opened_attendance = True
-    if request.method == "POST":
-        if not opened_attendance:
-            att_form = FormAttendance(request.POST, form_type='check_in')
-            if att_form.is_valid():
-                att_obj = att_form.save(commit=False)
-                att_obj.employee = employee
-                att_obj.created_by = request.user
-                att_obj.last_update_by = request.user
-                my_time = datetime.now().time()
-                att_obj.check_in = my_time.strftime("%H:%M:%S")
-                messages.success(request, 'You are now checked in')
-                att_obj.save()
-                return redirect('attendance:user-list-attendance')
-                messages.success(request, 'Please fill your daily tasks')
-            else:
-                messages.error(request, att_form.errors)
-        else:
-            messages.error(request, _("You still have attendance opened. Please check out first"))
+    # opened_attendance = False
+    # for att in attendance_list:
+    #     if att.check_out is None:
+    #         opened_attendance = True
+    # if request.method == "POST":
+    #     if not opened_attendance:
+    #         # att_form = FormAttendance(request.POST, form_type='check_in')
+    #         # if att_form.is_valid():
+    #         #     att_obj = att_form.save(commit=False)
+    #         #     att_obj.employee = employee
+    #         #     att_obj.created_by = request.user
+    #         #     att_obj.last_update_by = request.user
+    #         #     my_time = datetime.now().time()
+    #         #     att_obj.check_in = my_time.strftime("%H:%M:%S")
+    #         #     messages.success(request, 'You are now checked in')
+    #         #     att_obj.save()
+    #         #     return redirect('attendance:user-list-attendance')
+    #         #     messages.success(request, 'Please fill your daily tasks')
+    #         # else:
+    #         #     messages.error(request, att_form.errors)
+    #     else:
+    #         messages.error(request, _("You still have attendance opened. Please check out first"))
     att_context = {
         'attendances': attendance_list,
         'work_time': work_time,
@@ -69,38 +70,68 @@ def list_attendance(request):
     return render(request, 'attendance.html', att_context)
 
 
+
+@login_required(login_url='/login')
+def check_in_time(request):
+    company_policy = Working_Hours_Policy.objects.get(enterprise = request.user.company)
+    current_employee = Employee.objects.get(user=request.user)
+    attendance_list = Attendance.objects.filter(employee=current_employee)
+
+    current_date = datetime.now().date()
+    current_time = datetime.now().time()
+    difference = datetime.combine(datetime.now(), current_time) - datetime.combine(datetime.now(), company_policy.hrs_start_from)
+
+    opened_attendance = False
+    for att in attendance_list:
+        if att.check_out is None:
+            opened_attendance = True
+    if not opened_attendance:
+        att_obj = Attendance(
+                             employee = current_employee,
+                             date = current_date,
+                             check_in = current_time,
+                             delay_hrs = strfdelta(difference, "%H:%M:%S"),
+                             day_of_week = current_date.weekday(),
+                             created_by = request.user,
+        )
+        att_obj.save()
+    else:
+        print("You still have attendance opened. Please check out first")
+        messages.error(request, _("You still have attendance opened. Please check out first"))
+    return redirect('attendance:user-list-attendance')
+
+
 @login_required(login_url='/login')
 def check_out_time(request):
     employee = Employee.objects.get(user=request.user)
     attendance_obj = Attendance.objects.get(employee=employee, check_out__isnull=True)
     user_tasks = Task.objects.filter(attendance=attendance_obj)
+
     if user_tasks:
         att_form = FormAttendance(form_type='check_out', instance=attendance_obj)
         if request.method == "POST":
-            att_form = FormAttendance(request.POST, form_type='check_out', instance=attendance_obj)
             required_check_in = attendance_obj.check_in
-            if att_form.is_valid():
-                att_obj = att_form.save(commit=False)
-                att_obj.last_update_by = request.user
-                att_obj.check_in = required_check_in
-                current_time = datetime.now().time()
-                att_obj.check_out = current_time.strftime("%H:%M:%S")
-                tdelta_worked_time = datetime.combine(datetime.now(), current_time) - datetime.combine(datetime.now(),
-                                                                                                       att_obj.check_in)
-                att_obj.work_time = strfdelta(tdelta_worked_time, "%H:%M:%S")
-                att_obj.save()
-                messages.success(request, 'You are now checked out')
-                return redirect('attendance:user-list-attendance')
-            else:
-                messages.error(request, att_form.errors)
-        return render(request, 'check_out.html', {'att_form': att_form, 'check_in_time': attendance_obj.check_in})
+            current_time = datetime.now().time()
+            # attendance_obj.check_out = current_time.strftime("%H:%M:%S")
+            attendance_obj.check_out = current_time
+            attendance_obj.last_update_by = request.user
+            attendance_obj.save()
+            messages.success(request, 'You are now checked out')
+            return redirect('attendance:user-list-attendance')
+
+        att_context = {
+                    'att_form': att_form,
+                    'check_in_time': attendance_obj.check_in,
+                    'check_out_time':datetime.now().time(),
+        }
+        return render(request, 'check_out.html', att_context)
     else:
         return redirect('attendance:create_task')
 
 
 @login_required(login_url='/login')
 def list_tasks_view(request, attendance_slug):
-    attendance_obj = get_object_or_404(Attendance, slug=attendance_slug)
+    attendance_obj = get_object_or_404(Attendance, id=attendance_slug)
     list_tasks = Task.objects.filter(attendance=attendance_obj)
     task_context = {
         'list_tasks': list_tasks,
@@ -134,7 +165,7 @@ def create_task(request):
 
 @login_required(login_url='/login')
 def edit_task_view(request, slug_text):
-    instance = get_object_or_404(Task, slug=slug_text)
+    instance = get_object_or_404(Task, id=slug_text)
     if request.method == "POST":
         task_form = FormTasks(data=request.POST, instance=instance)
         if task_form.is_valid():
@@ -147,14 +178,14 @@ def edit_task_view(request, slug_text):
         task_form = FormTasks(instance=instance)
     task_context = {
         'task_form': task_form,
-        'all_tasks_id': instance.attendance.slug,
+        'all_tasks_id': instance.attendance.id,
     }
     return render(request, 'edit_task.html', task_context)
 
 
 @login_required(login_url='/login')
 def edit_inline_tasks(request, attendance_text):
-    required_att = Attendance.objects.get(slug=attendance_text)
+    required_att = Attendance.objects.get(id=attendance_text)
     req_tasks_formset = Tasks_inline_formset(instance=required_att)
     if request.method == 'POST':
         req_tasks_formset = Tasks_inline_formset(request.POST, instance=required_att)
@@ -171,7 +202,7 @@ def edit_inline_tasks(request, attendance_text):
 
 @login_required(login_url='/login')
 def delete_task(request, slug_text):
-    instance = get_object_or_404(Task, slug=slug_text)
+    instance = get_object_or_404(Task, id=slug_text)
     instance.delete()
     messages.add_message(request, messages.SUCCESS, 'Task was deleted successfully')
     return redirect('attendance:list-tasks', attendance_slug=instance.attendance.slug)

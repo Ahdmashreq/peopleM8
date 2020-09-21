@@ -1,90 +1,90 @@
 {% extends 'master.html'%}
 {% load staticfiles%}
-{% load crispy_forms_tags %}
+{% load mptt_tags %}
 {% load l10n %}
 {% load i18n %}
-{% block body%}
 
+{% block head %}
+<style>
+  .tf-ancestor-tree {
+    position: relative;
+  }
+
+  .tf-ancestor-tree>ul {
+    transform: rotateX(180deg);
+  }
+
+  .tf-ancestor-tree li ul {
+    margin-bottom: 1em;
+  }
+
+  .node-text {
+    display: inline-block;
+    transform: rotateX(180deg);
+  }
+
+  .tf-custom .tf-nc {
+    height: 1em;
+    width: 1em;
+    background-color: dodgerblue;
+    border-color: dodgerblue;
+    padding: 0;
+    border-radius: 50%;
+  }
+
+  /* make the horizontal and vertical connectors thick and change their color */
+
+  .tf-custom .tf-nc:before,
+  .tf-custom .tf-nc:after {
+    border-left-color: dodgerblue;
+    border-left-width: 2px;
+  }
+
+  .tf-custom li li:before {
+    border-top-color: dodgerblue;
+    border-top-width: 2px;
+  }
+</style>
+{% endblock head %}
+
+{% block body%}
 <div class="container-fluid">
 
-<div class="row">
-  <div class="col-md-8">
-    <h4 class="c-grey-900">Enterprise Hierachy</h4>
+  <div class="row">
+    <div class="col-md-8">
+      <h4 class="c-grey-900">Enterprise Hierachy</h4>
+    </div>
+    <div class="col-md-4">
+      <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
+        <div class="peer">
+          <a href="{% url 'company:list-assignment' %}" class="btn cur-p btn-secondary">{% trans "Back" %}</a>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="col-md-4">
-    <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
-      <div class="peer">
-        <a href="{% url 'company:list-assignment' %}" class="btn cur-p btn-secondary">{% trans "Back" %}</a>
+
+  <div class="mt-1">
+    <div class="bgc-white p-20 bd">
+      <div class="mT-30">
+        <div class="tf-tree">
+        <ul>
+          {% recursetree dept_list %}
+          <li>
+            <span class="tf-nc"><a href="#" data-toggle="modal" data-target="#modal-{{ node.id }}">{{ node.dept_name }}</a></span>
+            <ul>
+              {% if not node.is_leaf_node %}
+              <li>
+                <span class="tf-nc">{{ children }}</span>
+              </li>
+              {% endif %}
+            </ul>
+          </li>
+          {% endrecursetree %}
+        </ul>
+      </div>
       </div>
     </div>
   </div>
 </div>
 
-<div class="mt-1">
-  <div class="bgc-white p-20 bd">
-    <div class="mT-30">
-            <div class="tree row">
-                <ul class="col-md-12">
-                    <li class="col-md-12">
-                        <a href="#">Enterprise Board</a>
-                        <ul>
-                            <li class="col-md-2">
-                                <a href="#">Departments</a>
-                                <ul class="vertical">
-                                    <li><a href="#">Human Resources</a></li>
-                                    <li><a href="#">Finance</a></li>
-                                    <li><a href="#">Marketing</a></li>
-                                    <li><a href="#">IT/IS</a></li>
-                                    <li><a href="#">Service Delivery</a></li>
-                                </ul>
-                            </li>
-                            <li class="col-md-2">
-                                <a href="#">Jobs</a>
-                                <ul class="vertical">
-                                    <li><a href="#">Applications</a></li>
-                                    <li><a href="#">Mobility</a></li>
-                                    <li><a href="#">Collaboration</a></li>
-                                </ul>
-                            </li>
-                            <li class="col-md-2"><a href="#">Grades</a></li>
-                            <li class="col-md-3">
-                                <a href="#">Positions</a>
-                                <ul>
-                                    <li>
-                                        <a href="#">Team Leads</a>
-                                        <ul class="vertical">
-                                            <li><a href="#">Team 1</a></li>
-                                            <li><a href="#">Team 2</a></li>
-                                            <li><a href="#">Team 3</a></li>
-                                            <li><a href="#">Team 4</a></li>
-                                            <li><a href="#">Team 5</a></li>
-                                            <li><a href="#">Team 6</a></li>
-                                            <li><a href="#">Team 7</a></li>
-                                            <li><a href="#">Team 8</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="#">Sales</a></li>
-                                </ul>
-                            </li>
-                            <li class="col-md-3">
-                                <a href="#">Delivery Stockholm</a>
-                                <ul>
-                                    <li>
-                                        <a href="#">Team Leads</a>
-                                        <ul class="vertical">
-                                            <li><a href="#">Hokutō</a></li>
-                                            <li><a href="#">The Other Team</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="#">Sales</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-    </div>
-</div>
-</div>
-</div>
 {% endblock body%}

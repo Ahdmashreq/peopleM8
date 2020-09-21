@@ -39,13 +39,13 @@
               <td class="Actions">
                 <div class="w-100 gap-10 peers">
                   <div class="peer">
-                    <a href="{% url 'attendance:edit-task' slug_text=i.slug%}">
+                    <a href="{% url 'attendance:edit-task' slug_text=i.id%}">
                       <button type="button" class="btn cur-p btn-outline-primary">{% trans "Update" %}</button>
                     </a>
                   </div>
                   <div class="peer">
                     <a href="#">
-                      <button type="button" class="btn cur-p btn-outline-danger" data-toggle="modal" data-target="#delete-modal{{i.slug}}">{% trans "Delete" %}</button>
+                      <button type="button" class="btn cur-p btn-outline-danger" data-toggle="modal" data-target="#delete-modal{{i.id}}">{% trans "Delete" %}</button>
                     </a>
                   </div>
                 </div>
@@ -58,7 +58,7 @@
                   <div class="modal-body">
                     <p>{% trans "Are you sure you want to delete this task?" %}</p>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
-                    <a href="{% url 'attendance:delete_task' slug_text=i.slug%}" class="btn btn-danger" type="button">{% trans "Delete" %}</a>
+                    <a href="{% url 'attendance:delete_task' slug_text=i.id%}" class="btn btn-danger" type="button">{% trans "Delete" %}</a>
                   </div>
                 </div>
               </div>

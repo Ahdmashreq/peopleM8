@@ -8,7 +8,7 @@
 <div class="container-fluid">
   <form method="post">
     {% csrf_token %}
-    {% include 'messages.html' %}
+    <!--  -->
     <div class="row">
       <div class="col-md-8">
         <h4 class="c-grey-900">{{page_title|title}}</h4>
@@ -51,7 +51,7 @@
                 {{ form.dept_name }}
               </div>
               <div class="form-group col-md-3">
-                {{ form.parent_dept }}
+                {{ form.parent }}
               </div>
               <div class="form-group col-md-3">
                 {{ form.start_date }}
@@ -70,7 +70,7 @@
                   {{ dept_formset.empty_form.dept_name }}
                 </div>
                 <div class="form-group col-md-3">
-                  {{ dept_formset.empty_form.parent_dept }}
+                  {{ dept_formset.empty_form.parent }}
                 </div>
                 <div class="form-group col-md-3">
                   {{ dept_formset.empty_form.start_date }}

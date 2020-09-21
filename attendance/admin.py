@@ -14,8 +14,7 @@ from attendance.resources import AttendanceResource
 #         'employee',
 #         'check_in',
 #         'check_out',
-#         'work_time',
-#         'slug',
+#         'work_hours',
 #     )
 #     readonly_fields = ('date',)
 #

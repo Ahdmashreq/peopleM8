@@ -79,10 +79,10 @@
                   <div class="peer">
                     <a href="#">
                       {% if salary.is_final == 1 %}
-                      <a hidden href="" data-toggle="modal" data-target="#delete-modal{{salary.pk}}">
+                      <a hidden href="" data-toggle="modal" data-target="#delete-modal{{salary.salary_month}}{{salary.salary_year}}">
                         {% trans "Delete" %}</a>
                       {% else %}
-                      <a href="" data-toggle="modal" data-target="#delete-modal{{salary.pk}}">
+                      <a href="" data-toggle="modal" data-target="#delete-modal{{salary.salary_month}}{{salary.salary_year}}">
                         {% trans "Delete" %}</a>
                       {% endif %}
                     </a>
@@ -91,13 +91,13 @@
               </td>
             </tr>
             <!-- Delete Modal -->
-            <div class="modal fade" id="delete-modal{{salary.pk}}" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal fade" id="delete-modal{{salary.salary_month}}{{salary.salary_year}}" tabindex="-1" role="dialog" aria-hidden="true">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-body">
                     <p>{% trans "Are you sure you want to delete this record?" %}</p>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
-                    <a href="" class="btn btn-danger" type="button">{% trans "Delete" %}</a>
+                    <a href="{% url 'payroll_run:delete-salary' month=salary.salary_month year=salary.salary_year %}" class="btn btn-danger" type="button">{% trans "Delete" %}</a>
                   </div>
                 </div>
               </div>

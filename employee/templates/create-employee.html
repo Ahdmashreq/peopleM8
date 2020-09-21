@@ -7,7 +7,7 @@
 
 <form id="my_form" method="POST">
   {% csrf_token %}
-  {% include 'messages.html' %}
+  <!--  -->
 
   <div class="container-fluid">
     <div class="row">
@@ -147,7 +147,7 @@
                         <label class="fw-500">{% trans "Eductaion Degree" %}</label>
                         {{ emp_form.education_degree}}
                       </div>
-                      <div class="form-group col-md-4 checkbox checkbox-circle checkbox-info peers ai-c">
+                      <div class="form-group col-md-4 checkbox-info peers ai-c">
                         {{ emp_form.is_active}}
                         <label for="inputCall2" class="peers peer-greed js-sb ai-c">
                           <span class="peer peer-greed">{% trans "Is Active" %}</span>
@@ -155,23 +155,28 @@
                       </div>
                     </div>
                     <div class="form-row col-md-12">
-                      <div class="form-group col-md-4 checkbox checkbox-circle checkbox-info peers ai-c">
+                      <div class="form-group col-md-3 checkbox-info peers ai-c">
                         {{ emp_form.insured }}
                         <label for="id_insured" class="peers peer-greed js-sb ai-c">
                           {{ emp_form.insured.label }}
                         </label>
                       </div>
-                      <div class="form-group col-md-4">
-                        <label class="fw-500">{% trans "Insurance Number" %}</label>
-                        {{ emp_form.insurance_number}}
-                      </div>
-                      <div class="form-group col-md-4">
+                      <div class="form-group col-md-3">
                         <label class="fw-500">{% trans "Insurance Date" %}</label>
                         {{ emp_form.insurance_date}}
                       </div>
+                      <div class="form-group col-md-3">
+                        <label class="fw-500">{% trans "Insurance Number" %}</label>
+                        {{ emp_form.insurance_number}}
+                      </div>
+                      <div class="form-group col-md-3">
+                        <label class="fw-500">{% trans "Insurance Salary" %}</label>
+                        {{ emp_form.insurance_salary}}
+                      </div>
                     </div>
+
                     <div class="form-row col-md-12">
-                      <div class="form-group col-md-4 checkbox checkbox-circle checkbox-info peers ai-c">
+                      <div class="form-group col-md-4 checkbox-info peers ai-c">
                         {{ emp_form.has_medical}}
                         <label for="id_has_medical" class="peers peer-greed js-sb ai-c">
                         {{ emp_form.has_medical.label }}

@@ -44,7 +44,7 @@ class EnterpriseForm(forms.ModelForm):
 class DepartmentForm(forms.ModelForm):
     class Meta:
         model = Department
-        fields = ('dept_name', 'parent_dept', 'start_date', 'end_date',)
+        fields = ('dept_name', 'parent', 'start_date', 'end_date',)
         exclude = common_items_to_execlude
 
     def __init__(self, *args, **kwargs):

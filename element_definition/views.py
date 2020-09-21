@@ -261,7 +261,7 @@ def deleteElementBatchView(request, pk):
 
 def linkElementToEmps(link_to_all=False, payroll_v=None, dept_v=None,
                       job_v=None, grade_v=None, position_v=None,
-                      element_id=None, global_v=None, user_id=None):
+                      element_id=None, global_v=0, user_id=None):
     if link_to_all == True:
         all_emps = Employee.objects.all().filter(
             Q(end_date__gte=date.today()) | Q(end_date__isnull=True))
@@ -452,18 +452,21 @@ def updateElementLinkView(request, pk):
 
 def deleteElementLinkView(request, pk):
     required_link = get_object_or_404(Element_Link, pk=pk)
-    try:
-        link_form = ElementLinkForm(
-            user_v=request.user, instance=required_link)
-        link_obj = link_form.save(commit=False)
-        link_obj.end_date = date.today()
-        link_obj.save(update_fields=['end_date'])
-        success_msg = '{} was deleted successfully'.format(required_link)
-        messages.success(request, success_msg)
-    except Exception as e:
-        error_msg = '{} cannot be deleted '.format(required_link)
-        messages.error(request, error_msg)
-        raise e
+    # if required_link.batch:
+    #
+    # Employee_Element.objects.filter()
+    # try:
+    #     link_form = ElementLinkForm(user_v=request.user, instance=required_link)
+    #     link_obj = link_form.save(commit=False)
+    #     link_obj.end_date = date.today()
+    #     link_obj.save(update_fields=['end_date'])
+    #     success_msg = '{} was deleted successfully'.format(required_link)
+    #     messages.success(request, success_msg)
+    # except Exception as e:
+    #     error_msg = '{} cannot be deleted '.format(required_link)
+    #     messages.error(request, error_msg)
+    #     raise e
+    required_link.delete()
     return redirect('element_definition:list-links')
 #######################################Custom Rule###################################################
 

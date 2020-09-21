@@ -8,7 +8,7 @@
 <div class="container-fluid">
   <form method="post">
     {% csrf_token %}
-    {% include 'messages.html' %}
+    <!--  -->
     <div class="row">
       <div class="col-md-8">
         <h4 class="c-grey-900">{{page_title|title}}</h4>
@@ -30,7 +30,7 @@
           {{ yearly_holiday_formset.management_form }}
           <div id="form_set">
             <div class="form-row">
-              <div class="form-group col-md-3">
+              <div class="form-group col-md-6">
                 <label>{% trans "Name" %}</label>
               </div>
               <div class="form-group col-md-3">
@@ -64,7 +64,7 @@
           <div id="empty_form" style="display:none">
             <table class='no_error'>
               <div class="form-row">
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-6">
                   {{ yearly_holiday_formset.empty_form.name }}
                 </div>
                 <div class="form-group col-md-3">

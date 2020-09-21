@@ -51,7 +51,7 @@ INSTALLED_APPS = [
     'recruitment',
     'service',
     'import_export',
-
+    'mptt',
 ]
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 IMPORT_EXPORT_USE_TRANSACTIONS = True

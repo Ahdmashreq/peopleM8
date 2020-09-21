@@ -3,13 +3,25 @@ from django.conf import settings
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from employee.models import Employee
-import datetime
+from datetime import datetime, date
+from string import Template
+from tablib import Dataset
 from home.slugify import unique_slug_generator
-#from company.models import Working_Hours_Policy
 from django.utils.translation import ugettext_lazy as _
 
 
-#work_start_time = Working_Hours_Policy.objects.get()
+
+class DeltaTemplate(Template):
+    delimiter = "%"
+
+
+def strfdelta(tdelta, fmt):
+    d = {"D": tdelta.days}
+    d["H"], rem = divmod(tdelta.seconds, 3600)
+    d["M"], d["S"] = divmod(rem, 60)
+    t = DeltaTemplate(fmt)
+    return t.substitute(**d)
+
 
 class Attendance_Interface(models.Model):
     employee = models.PositiveIntegerField()
@@ -25,8 +37,8 @@ class Attendance_Interface(models.Model):
 
 
 class Attendance(models.Model):
-    employee = models.ForeignKey(Employee, related_name='emp_attendance', on_delete=models.CASCADE)
-    date = models.DateField()
+    employee = models.ForeignKey(Employee, related_name='emp_attendance', on_delete=models.CASCADE, blank=True, null=True,)
+    date = models.DateField(blank=True, null=True,)
     check_in = models.TimeField(blank=True, null=True, )
     check_out = models.TimeField(blank=True, null=True)
     work_hours = models.CharField(max_length=100, blank=True, null=True)
@@ -34,29 +46,17 @@ class Attendance(models.Model):
     normal_overtime_hours = models.DecimalField(decimal_places=2, max_digits=4, blank=True, null=True, default=0)
     exceptional_hrs = models.DecimalField(decimal_places=2, max_digits=4, blank=True, null=True, default=0)
     exceptional_overtime = models.DecimalField(decimal_places=2, max_digits=4, blank=True, null=True, default=0)
-    delay_hrs = models.DecimalField(decimal_places=3, max_digits=4, blank=True, null=True, default=0)
+    delay_hrs = models.TimeField(blank=True, null=True)
     absence_days = models.IntegerField(blank=True, null=True, default=0)
-    day_of_week = models.CharField(max_length=12)
+    day_of_week = models.CharField(max_length=12, blank=True, null=True,)
     slug = models.SlugField(blank=True, null=True)
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
-                                   blank=True, null=True, related_name='attendance_created_by')
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True, related_name='attendance_created_by')
     creation_date = models.DateField(auto_now_add=True)
-    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
-                                       blank=True, null=True, related_name='attendance_last_updated_by')
+    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True, related_name='attendance_last_updated_by')
     last_update_date = models.DateField(auto_now=True)
 
     def __str__(self):
         return self.employee.emp_name
-
-
-    # @property
-    # def is_late(self):
-    #     return self.check_in > work_start_time.hrs_start_from
-
-    @property
-    def how_late(self):
-        return datetime.datetime.strptime(str(self.check_in), '%H:%M:%S') - datetime.datetime.strptime('09:00:00',
-                                                                                                       '%H:%M:%S')
 
     @property
     def overtime(self):
@@ -114,7 +114,7 @@ class Task(models.Model):
         return self.task
 
 
-@receiver(pre_save, sender=Attendance)
+# @receiver(pre_save, sender=Attendance)
 @receiver(pre_save, sender=Task)
 def slug_task_generator(sender, instance, *args, **kwargs):
     if not instance.slug:
@@ -122,4 +122,8 @@ def slug_task_generator(sender, instance, *args, **kwargs):
 
 @receiver(pre_save, sender=Attendance)
 def working_time(sender, instance, *args, **kwargs):
-    instance.work_time = datetime.datetime.strptime(str(instance.check_out), '%H:%M:%S') - datetime.datetime.strptime(str(instance.check_in), '%H:%M:%S')
+    if instance.check_out:
+        difference = datetime.combine(datetime.now(), instance.check_out) - datetime.combine(datetime.now(), instance.check_in)
+        instance.work_hours = strfdelta(difference, "%H:%M:%S")
+    else:
+        instance.work_hours = 0

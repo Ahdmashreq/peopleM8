@@ -54,9 +54,9 @@
       <ul class="dropdown-menu">
         <li><a class="sidebar-link" href="{% url 'manage_payroll:list-banks' %}">{% trans 'Bank and branchs'%}</a></li>
         <li><a class="sidebar-link" href="{% url 'manage_payroll:list-payments' %}">{% trans 'Payments'%}</a></li>
-        <li><a class="sidebar-link" href="{% url 'defenition:insurance-list' %}">{% trans 'Insurance Rules'%}</a></li>
-        <li><a class="sidebar-link" href="{% url 'defenition:tax-list' %}">{% trans 'Tax Rules'%}</a></li>
+        <!-- <li><a class="sidebar-link" href="{% url 'defenition:insurance-list' %}">{% trans 'Insurance Rules'%}</a></li> -->
         <li><a class="sidebar-link" href="{% url 'manage_payroll:list-payroll' %}">{% trans 'Payroll Definition'%}</a></li>
+        <li><a class="sidebar-link" href="{% url 'defenition:tax-list' %}">{% trans 'Tax Rules'%}</a></li>
         <li><a class="sidebar-link" href="{% url 'manage_payroll:list-assignBatch' %}">{% trans 'Assignment Batch'%}</a></li>
       </ul>
     </li>
@@ -66,12 +66,12 @@
         <li><a class="sidebar-link" href="{% url 'employee:list-employee' %}">{% trans 'Employees'%}</a></li>
       </ul>
     </li>
-    <li class="nav-item dropdown">
+    <!-- <li class="nav-item dropdown">
       <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-teal-500 ti-view-list-alt"></i> </span><span class="title">{% trans "Costing" %}</span> <span class="arrow"><i class="ti-angle-right"></i></span></a>
       <ul class="dropdown-menu">
         <li><a class="sidebar-link" href="{% url 'balanc_definition:list-costing' %}">{% trans 'Costing'%}</a></li>
       </ul>
-    </li>
+    </li> -->
 
     <li class="nav-item dropdown">
       <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-pink-500 ti-agenda"></i> </span><span class="title">{% trans "Services" %}</span> <span class="arrow"><i class="ti-angle-right"></i></span></a>
@@ -83,9 +83,9 @@
     <li class="nav-item dropdown">
       <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-blue-500 ti-alarm-clock"></i> </span><span class="title">{% trans "Attendance" %}</span> <span class="arrow"><i class="ti-angle-right"></i></span></a>
       <ul class="dropdown-menu">
-        <li><a class="sidebar-link" href="{% url 'attendance:emp-attendance' %}">{% trans 'Attendance'%}</a></li>
-        <li><a class="sidebar-link" href="{% url 'leave:list_leave' %}">{% trans 'Leave Form'%}</a></li>
         <li><a class="sidebar-link" href="{% url 'attendance:upload-attendance' %}">{% trans 'Upload Attendance'%}</a></li>
+        <li><a class="sidebar-link" href="{% url 'attendance:user-list-attendance' %}">{% trans 'Manual Attendance'%}</a></li>
+        <li><a class="sidebar-link" href="{% url 'leave:list_leave' %}">{% trans 'Leave Form'%}</a></li>
       </ul>
     </li>
 

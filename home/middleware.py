@@ -8,7 +8,6 @@ from custom_user.models import Visitor
 
 engine = import_module(settings.SESSION_ENGINE)
 
-
 def is_authenticated(user):
     """
     Check if user is authenticated, consider backwards compatibility
@@ -27,17 +26,18 @@ class PreventConcurrentLoginsMiddleware(deprecation.MiddlewareMixin if DJANGO_VE
 
     def process_request(self, request):
         if is_authenticated(request.user):
-            key_from_cookie = request.session.session_key
+            new_logedin_session = request.session.session_key
             if hasattr(request.user, 'visitor'):
-                session_key_in_visitor_db = request.user.visitor.session_key
-                if session_key_in_visitor_db != key_from_cookie:
+                old_session_key = request.user.visitor.session_key
+                if old_session_key != new_logedin_session:
                     # Delete the Session object from database and cache
-                    engine.SessionStore(session_key_in_visitor_db).delete()
-                    request.user.visitor.session_key = key_from_cookie
+                    engine.SessionStore(old_session_key).delete()
+                    request.user.visitor.session_key = new_logedin_session
                     request.user.visitor.save()
                     messages.warning(request,'Your session has been expired.')
             else:
+                django_session =Session.objects.get(session_key=new_logedin_session)
                 Visitor.objects.create(
                     user=request.user,
-                    session_key=key_from_cookie
+                    session_key=new_logedin_session,
                 )

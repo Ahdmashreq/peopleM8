@@ -7,23 +7,26 @@
   <ul class="{% if LANGUAGE_BIDI %} nav-right {% else %} nav-left {% endif %}">
     <li><a id="sidebar-toggle" class="sidebar-toggle" href="javascript:void(0);"><i class="ti-menu"></i></a></li>
 
-    <li class="dropdown">
-      <a href="#" class="dropdown-toggle no-after peers fxw-nw ai-c lh-1" data-toggle="dropdown">
-        <div class="peer">
-          {% if LANGUAGE_BIDI %}
-          <i class="ti-angle-down" style="font-size: xx-small;"></i>
-          <span class="fsz-sm c-grey-900">{{request.user.company}}</span>
-          {% else %}
-          <span class="fsz-sm c-grey-900">{{request.user.company}}</span>
-          <i class="ti-angle-down" style="font-size: xx-small;"></i>
-          {% endif %}
-
-        </div>
+    <li class="notifications dropdown">
+      <a href="#" class="dropdown-toggle no-after" data-toggle="dropdown">
+        {% if LANGUAGE_BIDI %}
+        <i class="ti-angle-down" style="font-size: xx-small;"></i>
+        <span class="fsz-sm c-grey-900">{{request.user.company}}</span>
+        {% else %}
+        <span class="fsz-sm c-grey-900">{{request.user.company}}</span>
+        <i class="ti-angle-down" style="font-size: xx-small;"></i>
+        {% endif %}
       </a>
-      <ul class="dropdown-menu p-5 fsz-sm" style="position: relative;">
-        <li><a href="{% url 'company:user-companies-list' %}" class="d-b td-n pY-5 bgcH-grey-100 c-grey-700">{% trans "Change Company" %}</a></li>
+
+      <ul class="dropdown-menu" style="min-width: 125px;">
+        <li>
+          <ul class="dropdown-menu p-5 fsz-sm" style="position: relative;">
+            <li><a href="{% url 'company:user-companies-list' %}" class="d-b td-n pY-5 bgcH-grey-100 c-grey-700">{% trans "Change Company" %}</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
+
 
     <li class="search-input"><input class="form-control" type="text" placeholder="Search..."></li>
   </ul>

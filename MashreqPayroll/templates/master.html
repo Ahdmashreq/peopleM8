@@ -44,6 +44,8 @@
     });
   </script>
   <div>
+
+
     <div class="sidebar">
       {% if request.user.employee_type == 'A'%}
         {% include 'side_bar.html' %}
@@ -52,6 +54,7 @@
       {% endif %}
     </div>
     <div class="page-container">
+      {% include 'messages.html' %}
       <div class="header navbar">
         {% include 'top_nav.html' %}
       </div>

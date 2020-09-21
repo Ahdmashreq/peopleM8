@@ -4,7 +4,7 @@
     "pk": 1,
     "fields": {
       "name": "قانون التأمينات المصري",
-      "enterprise_name": 1,
+      "enterprise_name": 4,
       "basic_deduction_percentage": 14,
       "variable_deduction_percentage": 11,
       "maximum_insurable_basic_salary": 1250,
@@ -21,7 +21,7 @@
     "pk": 1,
     "fields": {
       "name": "قانون الضرائب المصري",
-      "enterprise": 1,
+      "enterprise": 4,
       "personal_exemption": 7200.0,
       "round_down_to_nearest_10": 1,
       "start_date": "2000-01-01",

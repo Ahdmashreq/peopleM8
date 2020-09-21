@@ -130,8 +130,8 @@ def viewEmployeeView(request, pk):
     required_employee = get_object_or_404(Employee, pk=pk)
     required_jobRoll = JobRoll.objects.filter(Q(end_date__gte=date.today())|Q(end_date__isnull=True)).get(emp_id=pk)
     all_jobRoll = JobRoll.objects.filter(emp_id=pk)
-    all_payment = Payment.objects.filter(emp_id=pk)
-    all_elements = Employee_Element.objects.filter(emp_id=pk)
+    all_payment = Payment.objects.filter(emp_id=pk, end_date__isnull=True)
+    all_elements = Employee_Element.objects.filter(emp_id=pk, end_date__isnull=True)
     myContext = {
         "page_title": _("view employee"),
         "required_employee": required_employee,
@@ -146,12 +146,11 @@ def viewEmployeeView(request, pk):
 @login_required(login_url='/login')
 def updateEmployeeView(request, pk):
     required_employee = get_object_or_404(Employee, pk=pk)
-    Employee_Element.set_formula_amount(required_employee)
     required_jobRoll = JobRoll.objects.get(emp_id=required_employee)
     emp_form = EmployeeForm(instance=required_employee)
     jobroll_form = JobRollForm(user_v=request.user, instance=required_jobRoll)
     payment_form = Employee_Payment_formset(instance=required_employee)
-    elements_form = Employee_Element_Inline(instance=required_employee)
+    elements_form = Employee_Element_Inline(queryset=Employee_Element.objects.filter(end_date__isnull=True), instance=required_employee)
 
     # elements = Element_Link.objects.filter(
     #                                       Q(payroll_fk=required_jobRoll.payroll) | Q(payroll_fk__isnull=True),
@@ -163,10 +162,8 @@ def updateEmployeeView(request, pk):
     if request.method == 'POST':
         emp_form = EmployeeForm(request.POST, instance=required_employee)
         jobroll_form = JobRollForm(request.user, request.POST, instance=required_jobRoll)
-        payment_form = Employee_Payment_formset(
-            request.POST, instance=required_employee)
-        elements_form = Employee_Element_Inline(
-            request.POST, initial=[{'employee_id':1}], instance=required_employee)
+        payment_form = Employee_Payment_formset( request.POST, instance=required_employee)
+        elements_form = Employee_Element_Inline( request.POST, instance=required_employee)
         if emp_form.is_valid():
             emp_obj = emp_form.save(commit=False)
             emp_obj.created_by = request.user
@@ -191,8 +188,7 @@ def updateEmployeeView(request, pk):
                 x.save()
         else:
             messages.error(request, payment_form.errors)
-        emp_element_form = Employee_Element_Inline(
-            request.POST, instance=emp_obj)
+        emp_element_form = Employee_Element_Inline(request.POST, instance=emp_obj)
         if emp_element_form.is_valid():
             emp_element_obj = emp_element_form.save(commit=False)
             for x in emp_element_obj:
@@ -201,6 +197,8 @@ def updateEmployeeView(request, pk):
                 x.save()
         else:
             messages.error(request, emp_element_form.errors)
+        Employee_Element.set_formula_amount(required_employee)
+
         user_lang=to_locale(get_language())
         if user_lang=='ar':
             success_msg = ' {},تم تسجيل الموظف'.format(emp_obj.emp_name)
@@ -210,6 +208,7 @@ def updateEmployeeView(request, pk):
         success_msg = 'Employee {} updated successfully'.format(emp_obj.emp_name)
         # messages.success(request, success_msg)
         return redirect('employee:list-employee')
+
     myContext = {
         "page_title": _("update employee"),
         "emp_form": emp_form,

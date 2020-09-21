@@ -13,7 +13,9 @@
     </div>
     <div class="col-md-4">
       <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
-        <div class="peer"><a href="{% url 'company:hirarchy' %}" class="btn cur-p btn-primary">{% trans "View Hierachy" %}</a></div>
+        <div class="peer">
+          <a href="{% url 'company:hirarchy' %}" class="btn cur-p btn-primary">{% trans "View Hierachy" %}</a>
+        </div>
       </div>
     </div>
   </div>

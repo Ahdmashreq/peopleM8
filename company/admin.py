@@ -39,7 +39,7 @@ class DepartmentAdmin(admin.ModelAdmin):
         'enterprise',
         'department_user',
         'dept_name',
-        'parent_dept',
+        'parent',
         'start_date',
         'end_date',
     )

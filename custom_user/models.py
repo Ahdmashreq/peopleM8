@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
+from django.contrib.sessions.models import Session
 from MashreqPayroll import settings
 from company.models import Enterprise
 from django.utils.translation import ugettext_lazy as _

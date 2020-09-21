@@ -1,12 +1,14 @@
 from django.shortcuts import render, reverse, redirect
 from django.contrib import messages
 from django.db.models import Q
-from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
+from django.contrib.auth import login, logout, authenticate, update_session_auth_hash, user_logged_in, user_logged_out
 from django.contrib.auth.forms import (PasswordChangeForm, )
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.csrf import csrf_protect
+from django.dispatch.dispatcher import receiver
+from django.contrib.sessions.models import Session
 from .forms import CustomUserCreationForm, AddUserForm
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
@@ -23,7 +25,7 @@ from django.utils.translation import to_locale, get_language
 from company.models import Enterprise
 from notification.models import Notification
 from leave.models import Leave
-from custom_user.models import UserCompany
+from custom_user.models import UserCompany, Visitor
 
 
 def viewAR(request):
@@ -110,7 +112,6 @@ def user_home_page(request):
 @login_required(login_url='/login')
 def admin_home_page(request):
     user_companies_count = UserCompany.objects.filter(user=request.user).count()
-    print(user_companies_count)
     if user_companies_count == 0:
         return redirect('company:user-companies-list')
         pass

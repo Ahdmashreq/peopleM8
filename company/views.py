@@ -240,7 +240,12 @@ def listAssignmentView(request):
 ########################################Department views###################################################################
 
 def viewHirarchy(request):
-    return render(request, 'company-hierachy.html')
+    dept_list = Department.objects.all(request.user)
+    myContext = {
+        "page_title": _("list departments"),
+        'dept_list': dept_list
+    }
+    return render(request, 'company-hierachy.html', myContext)
 
 
 @login_required(login_url='/login')
@@ -257,8 +262,7 @@ def viewDepartmentView(request, pk):
 @login_required(login_url='/login')
 def listDepartmentView(request):
     if request.method == 'GET':
-        dept_list = Department.objects.all(request.user)
-
+        dept_list = Department.objects.all(request.user).order_by('tree_id')
     myContext = {
         "page_title": _("list departments"),
         'dept_list': dept_list
@@ -270,8 +274,7 @@ def listDepartmentView(request):
 def createDepartmentView(request):
     dept_formset = DepartmentInline(queryset=Department.objects.none())
     for form in dept_formset:
-        form.fields['parent_dept'].queryset = Department.objects.filter((Q(enterprise=request.user.company)),
-                                                                        parent_dept__isnull=True).filter(
+        form.fields['parent'].queryset = Department.objects.filter((Q(enterprise=request.user.company))).filter(
             Q(end_date__gte=date.today()) | Q(end_date__isnull=True))
     if request.method == 'POST':
         dept_formset = DepartmentInline(request.POST)
@@ -309,8 +312,7 @@ def createDepartmentView(request):
 def correctDepartmentView(request, pk):
     required_dept = Department.objects.get_department(user=request.user, dept_id=pk)
     dept_form = DepartmentForm(instance=required_dept)
-    dept_form.fields['parent_dept'].queryset = Department.objects.filter((Q(enterprise=request.user.company)),
-                                                                         parent_dept__isnull=True).filter(
+    dept_form.fields['parent'].queryset = Department.objects.filter((Q(enterprise=request.user.company))).filter(
         Q(end_date__gte=date.today()) | Q(end_date__isnull=True))
     if request.method == 'POST':
         dept_form = DepartmentForm(request.POST, instance=required_dept)
@@ -343,8 +345,7 @@ def correctDepartmentView(request, pk):
 def updateDepartmentView(request, pk):
     required_dept = Department.objects.get_department(user=request.user, dept_id=pk)
     dept_form = DepartmentForm(instance=required_dept)
-    dept_form.fields['parent_dept'].queryset = Department.objects.filter((Q(enterprise=request.user.company)),
-                                                                         parent_dept__isnull=True).filter(
+    dept_form.fields['parent'].queryset = Department.objects.filter((Q(enterprise=request.user.company))).filter(
         Q(end_date__gte=date.today()) | Q(end_date__isnull=True))
     if request.method == 'POST':
         dept_form = DepartmentForm(request.POST, instance=required_dept)
@@ -352,7 +353,7 @@ def updateDepartmentView(request, pk):
             enterprise=request.user.company,
             department_user=request.user,
             dept_name=required_dept.dept_name,
-            parent_dept=required_dept.parent_dept,
+            parent=required_dept.parent,
             start_date=required_dept.start_date,
             end_date=date.today(),
             created_by=required_dept.created_by,

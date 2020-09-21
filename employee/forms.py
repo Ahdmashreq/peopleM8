@@ -8,6 +8,7 @@ from defenition.models import LookupType, LookupDet
 from element_definition.models import Element_Master, Element_Detail, Element_Link
 from django.shortcuts import  get_object_or_404, get_list_or_404
 from datetime import date
+from django.forms import BaseInlineFormSet
 
 
 common_items_to_execlude = (
@@ -87,6 +88,13 @@ class PaymentForm(forms.ModelForm):
             self.fields[field].widget.attrs['class'] = 'form-control parsley-validated'
         self.helper = FormHelper()
         self.helper.form_show_labels = True
+
+# class PaymentTotalCheckFormSet(BaseInlineFormSet):
+#     def clean(self):
+#         super().clean()
+#         total_percentage = sum(f.cleaned_data['percentage'] for f in self.forms)
+#         if total_percentage != 100:
+#             raise forms.ValidationError("Total percentage must be 100")
 
 Employee_Payment_formset = forms.inlineformset_factory(Employee, Payment, form=PaymentForm, can_delete=False)
 

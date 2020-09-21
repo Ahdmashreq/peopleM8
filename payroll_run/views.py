@@ -29,7 +29,7 @@ from weasyprint.fonts import FontConfiguration
 @login_required(login_url='/login')
 def listSalaryView(request):
     salary_list = Salary_elements.objects.filter(
-        (Q(end_date__gte=date.today()) | Q(end_date__isnull=True))).values(
+        (Q(end_date__gt=date.today()) | Q(end_date__isnull=True))).values(
             'salary_month', 'salary_year',
             'is_final').annotate(num_salaries=Count('salary_month'))
     salaryContext = {
@@ -264,7 +264,6 @@ def changeSalaryToFinal(request, month, year):
     draft_salary = Salary_elements.objects.filter(
         salary_month=month, salary_year=year)
     for draft in draft_salary:
-        print(draft.is_final)
         draft.is_final = True
         draft.save()
     return redirect('payroll_run:list-salary')
@@ -281,11 +280,11 @@ def userSalaryInformation(request, month_number, salary_year, salary_id,emp_id):
     emp_elements_incomes = Employee_Element.objects.filter(
                                                            emp_id=emp_id,
                                                            element_id__classification__code='earn',
-                                                           start_date__month__lt=month_number
+                                                           start_date__month=month_number
                                                            )
     emp_elements_deductions = Employee_Element.objects.filter(emp_id=emp_id,
                                                               element_id__classification__code='deduct',
-                                                              start_date__month__lt=month_number
+                                                              start_date__month=month_number
                                                               )
     emp_payment = Payment.objects.filter((Q(end_date__gte=date.today()) | Q(end_date__isnull=True)),emp_id=emp_id)
     monthSalaryContext = {
@@ -342,3 +341,11 @@ def render_all_payslip(request, month, year):
     font_config = FontConfiguration()
     HTML(string=html).write_pdf(response, font_config=font_config)
     return response
+
+@login_required(login_url='/login')
+def delete_salary_view(request, month, year):
+    required_salary = Salary_elements.objects.filter(salary_month=month, salary_year=year)
+    for sal in required_salary:
+        sal.end_date = date.today()
+        sal.save()
+    return redirect('payroll_run:list-salary')

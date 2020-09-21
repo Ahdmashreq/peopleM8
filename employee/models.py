@@ -9,7 +9,7 @@ from manage_payroll.models import (Bank_Master, Payroll_Master)
 from element_definition.models import Element_Master, Element_Detail, Element_Link
 from employee.fast_formula import FastFormula
 from django.utils.translation import ugettext_lazy as _
-from custom_user.models import UserCompany
+
 payment_type_list = [("c", _("Cash")), ("k", _("Check")),
                      ("b", _("Bank transfer")), ]
 account_type_list = [('c', _('Company account')), ('e', _('Employee account'))]
@@ -22,7 +22,7 @@ class Employee(models.Model):
     military_status_list = [("E", _("Exemption")), ("C", _("Complete the service")), ("P", _("Postponed"))]
     religion_list = [("M", _("Muslim")), ("C", _("Chrestin"))]
     # ##########################################################################
-    user = models.ForeignKey(UserCompany, on_delete=models.CASCADE, blank=True, null=True, related_name='employee_user')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True, related_name='employee_user')
     enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE,related_name='enterprise_employee', verbose_name=_('Department'))
     emp_number = models.IntegerField(default=0, blank=True, null=True, verbose_name=_('Employee Number'))
     emp_name = models.CharField(max_length=60, verbose_name=_('Employee Name'))
@@ -48,6 +48,7 @@ class Employee(models.Model):
     insured = models.BooleanField(verbose_name=_('Insured'))
     insurance_number = models.CharField(max_length=30, blank=True, null=True, verbose_name=_('Insurance Number'))
     insurance_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=_('Insurance Date'))
+    insurance_salary = models.FloatField(default=0.0, null=True, blank=True, verbose_name=_('Insurance Salary'))
     has_medical = models.BooleanField(verbose_name=_('Has Medical'))
     medical_number = models.CharField(max_length=30, blank=True, null=True, verbose_name=_('Medical Number'))
     medical_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=_('Medical Date'))
@@ -55,7 +56,7 @@ class Employee(models.Model):
     end_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=_('End Date'))
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE, related_name="emp_created_by")
     creation_date = models.DateField(auto_now=True, auto_now_add=False)
-    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE)
+    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE)
     last_update_date = models.DateField(auto_now=False, auto_now_add=True)
 
     def get_absolute_url(self):
@@ -81,7 +82,7 @@ class Medical(models.Model):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE, related_name="medical_created_by")
     creation_date = models.DateField(auto_now=True, auto_now_add=False)
     last_update_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE, related_name="medical_last_update_by")
+        settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE, related_name="medical_last_update_by")
 
     def __str__(self):
         return self.emp_id.emp_name
@@ -107,7 +108,7 @@ class JobRoll(models.Model):
         settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE, related_name="jobRoll_created_by")
     creation_date = models.DateField(auto_now=True, auto_now_add=False)
     last_update_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE, related_name="jobroll_last_updated_by")
+        settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE, related_name="jobroll_last_updated_by")
     last_update_date = models.DateField(auto_now=False, auto_now_add=True)
 
 
@@ -129,10 +130,10 @@ class Payment(models.Model):
     end_date = models.DateField(
         auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=_('End Date'))
     created_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE, related_name="payment_created_by")
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="payment_created_by")
     creation_date = models.DateField(auto_now=True, auto_now_add=False)
     last_update_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE, related_name="payment_last_updated_by")
+        settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE, related_name="payment_last_updated_by")
     last_update_date = models.DateField(auto_now=False, auto_now_add=True)
 
     def __str__(self):
@@ -140,36 +141,25 @@ class Payment(models.Model):
 
 
 class Employee_Element(models.Model):
-    emp_id = models.ForeignKey(
-        Employee, on_delete=models.CASCADE, verbose_name=_('Employee'))
-    element_id = models.ForeignKey(
-        Element_Master, on_delete=models.CASCADE, verbose_name=_('Element'))
-    element_value = models.FloatField(
-        blank=True, null=True, verbose_name=_('Element Value'))
-    start_date = models.DateField(
-        auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
-    end_date = models.DateField(
-        auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=_('End Date'))
-    created_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE, related_name="emp_element_created_by")
+    emp_id = models.ForeignKey(Employee, on_delete=models.CASCADE, verbose_name=_('Employee'))
+    element_id = models.ForeignKey(Element_Master, on_delete=models.CASCADE, verbose_name=_('Element'))
+    element_value = models.FloatField(blank=True, null=True, verbose_name=_('Element Value'))
+    start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
+    end_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=_('End Date'))
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE, related_name="emp_element_created_by")
     creation_date = models.DateField(auto_now=True, auto_now_add=False)
-    last_update_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE, related_name="emp_element_last_update_by")
+    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE, related_name="emp_element_last_update_by")
     last_update_date = models.DateField(auto_now=False, auto_now_add=True)
 
     def set_formula_amount(emp):
-        print("inside set_formula_amount")
         formula_element = Employee_Element.objects.filter(emp_id=emp.id,element_id__element_formula__isnull=False)
-        # emp_element = Employee_Element.objects.filter(emp_id=emp.id)
         for x in formula_element:
-            print("inside set_formula_amount in the foor loop")
-            if x.element_value ==0:
-                print("inside set_formula_amount in the if statement")
+            if x.element_value is None:
+                x.element_value = 0
+                x.save()
+            if x.element_value == 0:
                 value = FastFormula(emp.id, x.element_id, Employee_Element)
                 x.element_value = value.get_formula_amount()
-                # for z in emp_element:
-                #     if x.element_id == z.element_id:
-                #         z.element_value = value.get_formula_amount()
                 x.save()
 
     def get_element_value(self):
