@@ -504,3 +504,4 @@ def deletePayrollView(request, pk):
         messages.error(request, error_msg)
         raise e
     return redirect('manage_payroll:list-payroll')
+

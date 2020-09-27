@@ -8,7 +8,7 @@ from home.slugify import unique_slug_generator
 from cities_light.models import City, Country
 from django.utils.translation import ugettext_lazy as _
 from .manager import (DepartmentManager, JobManager, GradeManager, PositionManager, WorkingHoursPolicy,
-    YearlyHolidayManager,YearsManager)
+                      YearlyHolidayManager, YearsManager)
 from multiselectfield import MultiSelectField
 from mptt.models import MPTTModel, TreeForeignKey
 
@@ -54,13 +54,13 @@ class Enterprise(models.Model):
         return self.name
 
 
-
 class Department(MPTTModel):
     enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name='department_enterprise',
                                    verbose_name=_('Enterprise Name'))
     department_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     dept_name = models.CharField(max_length=150, verbose_name=_('Department'))
-    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, verbose_name=_('Parent Department'))
+    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True,
+                            verbose_name=_('Parent Department'))
 
     objects = DepartmentManager()
     start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start  Date'))
@@ -247,21 +247,21 @@ class Enterprise_Policies(models.Model):
 
 
 class Working_Hours_Policy(models.Model):
-    week_days =(
-                    ("SATERDAY", "Saterday"),
-                    ("SUNDAY", "Sunday"),
-                    ("MONDAY", "Monday"),
-                    ("TUESDAY", "Tuesday"),
-                    ("WEDNESDAY", "Wednesday"),
-                    ("THURSDAY", "Thursday"),
-                    ("FRIDAY", "Friday"),
-                )
+    week_days = (
+        ("SATERDAY", "Saterday"),
+        ("SUNDAY", "Sunday"),
+        ("MONDAY", "Monday"),
+        ("TUESDAY", "Tuesday"),
+        ("WEDNESDAY", "Wednesday"),
+        ("THURSDAY", "Thursday"),
+        ("FRIDAY", "Friday"),
+    )
     #######################################################################################################
     enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name='enterprise_working_hrs_policy',
                                    verbose_name=_('Enterprise Name'))
     objects = WorkingHoursPolicy()
     number_of_daily_working_hrs = models.DecimalField(decimal_places=2, max_digits=3, default=8)
-    week_end_days = MultiSelectField(max_length=100, choices= week_days, null=True, blank=True)
+    week_end_days = MultiSelectField(max_length=100, choices=week_days, null=True, blank=True)
     normal_over_time_hourly_rate = models.DecimalField(decimal_places=2, max_digits=3)
     exceptional_over_time_hourly_rate = models.DecimalField(decimal_places=2, max_digits=3)
     delay_hours_rate = models.DecimalField(decimal_places=2, max_digits=3)
@@ -281,14 +281,16 @@ class Working_Hours_Policy(models.Model):
     def __str__(self):
         return self.enterprise.name + "Working Hours Policy"
 
+
 class Working_Hours_Deductions_Policy(models.Model):
     class Meta:
         unique_together = ['working_hours_policy', 'day_number']
+
     working_hours_policy = models.ForeignKey(Working_Hours_Policy, blank=True, null=True, on_delete=models.CASCADE)
     day_number = models.IntegerField()
     delay_rate = models.DecimalField(decimal_places=2, max_digits=3, default=0.0)
-    notify = models.BooleanField(default=False,)
-    susbend = models.BooleanField(default=False,)
+    notify = models.BooleanField(default=False, )
+    susbend = models.BooleanField(default=False, )
     start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
     end_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=_('End Date'))
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
@@ -321,7 +323,7 @@ class Year(models.Model):
 class YearlyHoliday(models.Model):
     enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name='enterprise_yearly_holidays',
                                    verbose_name=_('Enterprise Name'))
-    year = models.ForeignKey(Year, on_delete=models.CASCADE, verbose_name=_('Year'),blank=True,null=True)
+    year = models.ForeignKey(Year, on_delete=models.CASCADE, verbose_name=_('Year'), blank=True, null=True)
     objects = YearlyHolidayManager()
     name = models.CharField(max_length=255)
     start_date = models.DateField(auto_now=False, auto_now_add=False, verbose_name=_('Start Date'))
@@ -337,6 +339,9 @@ class YearlyHoliday(models.Model):
     def __str__(self):
         return self.name + " Holiday"
 
+
 @receiver(pre_save, sender=YearlyHoliday)
 def working_time(sender, instance, *args, **kwargs):
-    instance.number_of_days_off = (instance.end_date-instance.start_date).days+1
+    instance.number_of_days_off = (instance.end_date - instance.start_date).days + 1
+
+

@@ -19,7 +19,7 @@ from employee.models import Employee
 from company.models import Working_Hours_Policy
 from leave.models import Leave
 from service.models import Bussiness_Travel
-
+from datetime import date,timedelta
 
 class DeltaTemplate(Template):
     delimiter = "%"
@@ -70,16 +70,16 @@ def list_attendance(request):
     return render(request, 'attendance.html', att_context)
 
 
-
 @login_required(login_url='/login')
 def check_in_time(request):
-    company_policy = Working_Hours_Policy.objects.get(enterprise = request.user.company)
+    company_policy = Working_Hours_Policy.objects.get(enterprise=request.user.company)
     current_employee = Employee.objects.get(user=request.user)
     attendance_list = Attendance.objects.filter(employee=current_employee)
 
     current_date = datetime.now().date()
     current_time = datetime.now().time()
-    difference = datetime.combine(datetime.now(), current_time) - datetime.combine(datetime.now(), company_policy.hrs_start_from)
+    difference = datetime.combine(datetime.now(), current_time) - datetime.combine(datetime.now(),
+                                                                                   company_policy.hrs_start_from)
 
     opened_attendance = False
     for att in attendance_list:
@@ -87,12 +87,12 @@ def check_in_time(request):
             opened_attendance = True
     if not opened_attendance:
         att_obj = Attendance(
-                             employee = current_employee,
-                             date = current_date,
-                             check_in = current_time,
-                             delay_hrs = strfdelta(difference, "%H:%M:%S"),
-                             day_of_week = current_date.weekday(),
-                             created_by = request.user,
+            employee=current_employee,
+            date=current_date,
+            check_in=current_time,
+            delay_hrs=strfdelta(difference, "%H:%M:%S"),
+            day_of_week=current_date.weekday(),
+            created_by=request.user,
         )
         att_obj.save()
     else:
@@ -120,9 +120,9 @@ def check_out_time(request):
             return redirect('attendance:user-list-attendance')
 
         att_context = {
-                    'att_form': att_form,
-                    'check_in_time': attendance_obj.check_in,
-                    'check_out_time':datetime.now().time(),
+            'att_form': att_form,
+            'check_in_time': attendance_obj.check_in,
+            'check_out_time': datetime.now().time(),
         }
         return render(request, 'check_out.html', att_context)
     else:
@@ -290,6 +290,7 @@ def list_all_attendance(request):
 
 @login_required(login_url='/login')
 def list_employee_attendance_history_view(request):
+    calculate_absence()
     emp_attendance_form = FormEmployeeAttendanceHistory()
     emp_attendance_list = Employee_Attendance_History.objects.filter(created_by__company=request.user.company).order_by(
         '-month')
@@ -371,3 +372,23 @@ def delete_attendance(request, att_delete_slug):
         messages.error(request, 'Record is NOT deleted')
 
     return redirect('attendance:emp-attendance')
+
+
+def get_all_days(month):
+    pass
+
+
+def get_employee_attendance(day, employee_id):
+    pass
+
+
+def calculate_hours(day, employee_id):
+    pass
+
+
+def calculate_absence(month, employee_id):
+    attendance = Attendance.objects.filter(employee__id=employee_id)
+    attendance_list = list(attendance)
+    date_set = set(attendance_list[0]+timedelta(x) for x in range((attendance_list[-1]-attendance_list[0]).days))
+    missing = sorted(date_set - set(attendance_list))
+    print(missing)
