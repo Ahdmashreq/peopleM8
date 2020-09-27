@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-from django.db.models import Count
+from django.db.models import Count, Q
 from datetime import datetime, timedelta
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
@@ -16,7 +16,7 @@ from attendance.forms import FormAttendance, Tasks_inline_formset, FormTasks, Co
 from attendance.resources import AttendanceResource
 from attendance.tmp_storage import TempFolderStorage
 from employee.models import Employee
-from company.models import Working_Hours_Policy
+from company.models import Working_Hours_Policy,YearlyHoliday
 from leave.models import Leave
 from service.models import Bussiness_Travel
 from datetime import date,timedelta
@@ -389,7 +389,11 @@ def calculate_hours(day, employee_id):
 
 
 def calculate_absence(month, year, employee_id):
+    weekends = Working_Hours_Policy.objects.values('week_end_days')
     attendance = Attendance.objects.filter(date__month=month ,employee__id=employee_id)
+    month_holidays = YearlyHoliday.objects.values('start_date','end_date').filter(Q(year=year) and (Q(start_date__month = month) or Q(end_date__month =month )))
+    holiday_list = []
+    holiday_list.append(x.values() for x in month_holidays)
     number_of_days = calendar.monthrange(2020,month)[1]
     days= [datetime.date(year, month, day) for day in range(1, number_of_days+1)]
     attendance_list = list()
@@ -397,4 +401,13 @@ def calculate_absence(month, year, employee_id):
         attendance_list.append(date.date)
 
     missing = sorted(set(days) - set(attendance_list))
-    print(missing)
+    print(weekends)
+    for day in missing:
+        day_name = calendar.day_name[day.weekday()]
+        if day_name.upper() in weekends[0]['week_end_days']:
+            pass
+        elif day in holiday_list:
+           print('hi')
+    print(holiday_list)
+
+
