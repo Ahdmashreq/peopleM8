@@ -391,7 +391,7 @@ def calculate_hours(day, employee_id):
 def calculate_absence(month, year, employee_id):
     weekends = Working_Hours_Policy.objects.values('week_end_days')
     attendance = Attendance.objects.filter(date__month=month ,employee__id=employee_id)
-    month_holidays = YearlyHoliday.objects.values('start_date','end_date').filter(Q(year=year) and (Q(start_date__month = month) or Q(end_date__month =month )))
+    month_holidays = YearlyHoliday.objects.filter(Q(year=year) and (Q(start_date__month = month) or Q(end_date__month =month ))).values('start_date','end_date')
     holiday_list = []
     holiday_list.append(x.values() for x in month_holidays)
     number_of_days = calendar.monthrange(2020,month)[1]
@@ -405,9 +405,10 @@ def calculate_absence(month, year, employee_id):
     for day in missing:
         day_name = calendar.day_name[day.weekday()]
         if day_name.upper() in weekends[0]['week_end_days']:
-            pass
-        elif day in holiday_list:
-           print('hi')
-    print(holiday_list)
+            print("weekend day")
+        else :
+           pass
+    print(month_holidays)
+
 
 
