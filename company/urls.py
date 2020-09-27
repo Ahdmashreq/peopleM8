@@ -19,7 +19,6 @@ urlpatterns = [
     path('assinment/', include([
         ######################### Department URLs ###################################
         path('department/list/', views.listDepartmentView, name='list-department'),
-        path('list/', views.listAssignmentView, name='list-assignment'),
         path('department/new/', views.createDepartmentView, name='department-create'),
         path('department/update/<int:pk>', views.updateDepartmentView, name='department-update'),
         path('department/view/<int:pk>', views.viewDepartmentView, name='department-view'),
@@ -51,7 +50,6 @@ urlpatterns = [
     ######################### Working Hours Policy URLs ###################################
     path('policies/', include([
         ######################### Department URLs ###################################
-        path('list/', views.listPoliciesView, name='list-policies'),
         path('years/list/', views.listYearsView, name='list-years'),
         path('working_hrs_policy/new/', views.CreateWorkingPolicyView, name='policy-create'),
         path('working_hrs_policy/list/', views.listWorkingPolicyView, name='working-hrs-policy-list'),
@@ -61,6 +59,9 @@ urlpatterns = [
         path('yearly_holidays/correct/<int:pk>', views.correctYearlyHolidayView, name='yearly-holiday-correct'),
         path('yearly_holidays/delete/<int:pk>', views.deleteYearlyHolidayView, name='yearly-holiday-delete'),
         path('working_hrs_policy/delete/<int:pk>', views.deleteWorkingPolicyView, name='working-hrs-policy-delete'),
+
+        path('working-hrs-deduction-policy/new/', views.create_working_hours_deductions_view, name='hours-deduction-policy-create'),
+        path('working-hrs-deductions/list/', views.list_working_hours_deductions_view, name='working-hrs-deductions-list'),
 
     ]
     )),

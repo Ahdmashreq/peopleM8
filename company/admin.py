@@ -143,6 +143,29 @@ class Working_Hours_PolicyAdmin(admin.ModelAdmin):
         form.save_m2m()
         return instance
 
+@admin.register(models.Working_Hours_Deductions_Policy)
+class Working_Hours_Deductions_PolicyAdmin(admin.ModelAdmin):
+    fields = (
+            'working_hours_policy',
+            'day_number',
+            'delay_rate',
+            'notify',
+            'susbend',
+            'start_date',
+            'end_date',
+    )
+
+    def save_model(self, request, instance, form, change):
+        user = request.user
+        enterprise = request.user.company
+        instance = form.save(commit=False)
+        if not change or not instance.created_by:
+            instance.created_by = user
+            instance.enterprise = enterprise
+        instance.last_update_by = user
+        instance.save()
+        form.save_m2m()
+        return instance
 
 @admin.register(models.YearlyHoliday)
 class YearlyHolidaysAdmin(admin.ModelAdmin):

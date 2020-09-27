@@ -1,7 +1,8 @@
 from django import forms
 from crispy_forms.helper import FormHelper
 from company.models import (Enterprise, Department, Grade, Job,
-                            Position, Working_Hours_Policy, YearlyHoliday, Year)
+                            Position, Working_Hours_Policy,
+                            Working_Hours_Deductions_Policy, YearlyHoliday, Year)
 from defenition.models import LookupDet
 from cities_light.models import City, Country
 from datetime import date
@@ -133,7 +134,7 @@ PositionInline = forms.modelformset_factory(Position, form=PositionForm, extra=5
 class WorkingHoursForm(forms.ModelForm):
     class Meta:
         model = Working_Hours_Policy
-        fields = ('__all__')
+        fields = '__all__'
         exclude = common_items_to_execlude+('enterprise',)
 
     def __init__(self, *args, **kwargs):
@@ -147,6 +148,26 @@ class WorkingHoursForm(forms.ModelForm):
                 self.fields[field].widget.attrs['class'] = 'form-control parsley-validated'
         self.helper = FormHelper()
         self.helper.form_show_labels = False
+
+
+class WorkingHoursDeductionForm(forms.ModelForm):
+    class Meta:
+        model = Working_Hours_Deductions_Policy
+        fields = ('__all__')
+        exclude = common_items_to_execlude
+
+    def __init__(self, *args, **kwargs):
+        super(WorkingHoursDeductionForm, self).__init__(*args, **kwargs)
+        self.fields['start_date'].widget.input_type = 'date'
+        self.fields['end_date'].widget.input_type = 'date'
+        for field in self.fields:
+            if self.fields[field].widget.input_type != 'checkbox':
+                self.fields[field].widget.attrs['class'] = 'form-control parsley-validated'
+        self.helper = FormHelper()
+        self.helper.form_show_labels = False
+
+Working_Hours_Deduction_Form_Inline = forms.modelformset_factory(Working_Hours_Deductions_Policy, form=WorkingHoursDeductionForm, extra=1, can_delete=False)
+
 
 class YearForm(forms.ModelForm):
     class Meta:
@@ -190,5 +211,5 @@ class YearlyHolidayForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_show_labels = False
 
-YearlyHolidayInline = forms.modelformset_factory(YearlyHoliday, form=YearlyHolidayForm, extra=5, can_delete=False)
+YearlyHolidayInline = forms.modelformset_factory(YearlyHoliday, form=YearlyHolidayForm, extra=1, can_delete=False)
 # YearlyHolidayInline = forms.inlineformset_factory(Year, YearlyHoliday, form=YearlyHolidayForm, extra=5, can_delete=False)

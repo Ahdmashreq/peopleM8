@@ -32,10 +32,30 @@
             class="ti-angle-right"></i></span></a>
       <ul class="dropdown-menu">
         <li><a class="sidebar-link" href="{% url 'company:list-company-information' %}">{% trans 'Enterprise'%}</a></li>
-        <li><a class="sidebar-link" href="{% url 'company:list-assignment' %}">{% trans 'Assignment Structure'%}</a></li>
+        <li class="nav-item dropdown">
+          <a href="javascript:void(0);">
+          <span>{% trans 'Assignment Structure'%}</span>
+          <span class="arrow"><i class="ti-angle-right"></i></span>
+          </a>
+          <ul class="dropdown-menu" style="display: none;">
+            <li><a href="{% url 'company:list-department' %}">{% trans "Departments" %}</a></li>
+            <li><a href="{% url 'company:list-jobs' %}">{% trans "Jobs" %}</a></li>
+            <li><a href="{% url 'company:list-grades' %}">{% trans "Grades" %}</a></li>
+            <li><a href="{% url 'company:list-positions' %}">{% trans "Positions" %}</a></li>
+          </ul>
+        </li>
         <li><a class="sidebar-link" href="{% url 'defenition:list-lookups' %}">{% trans 'Lookup Details'%}</a></li>
-        <li><a class="sidebar-link" href="{% url 'company:list-policies' %}">{% trans 'Working Policies '%}</a></li>
-
+        <li class="nav-item dropdown">
+          <a href="javascript:void(0);">
+          <span>{% trans 'Working Policies '%}</span>
+          <span class="arrow"><i class="ti-angle-right"></i></span>
+          </a>
+          <ul class="dropdown-menu" style="display: none;">
+            <li><a href="{% url 'company:working-hrs-policy-list' %}">{% trans "Working Hours Policy" %}</a></li>
+            <li><a href="{% url 'company:working-hrs-deductions-list' %}">{% trans "Working hours Deductions Policy" %}</a></li>
+            <li><a href="{% url 'company:list-years' %}">{% trans "Yearly Holidays" %}</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
     <li class="nav-item dropdown">

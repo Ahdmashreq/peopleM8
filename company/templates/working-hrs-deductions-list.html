@@ -3,15 +3,17 @@
 {% load crispy_forms_tags %}
 {% load l10n %}
 {% load i18n %}
+
 {% block body%}
-<!--  -->
 <div class="row" style="margin-left:0px;">
   <div class="col-md-8">
     <h4 class="c-grey-900">{{page_title|title}}</h4>
   </div>
   <div class="col-md-4">
     <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
-      <div class="peer"><a href="{% url 'company:policy-create' %}" class="btn cur-p btn-primary">{% trans "Add Working Hours Policy" %}</a></div>
+      <div class="peer">
+        <a href="{% url 'company:hours-deduction-policy-create' %}" class="btn cur-p btn-primary">{% trans "Add Working Hours Policy" %}</a>
+      </div>
     </div>
   </div>
 </div>
@@ -27,7 +29,7 @@
           </tr>
         </thead>
         <tbody>
-          {% for policy in policy_list %}
+          {% for policy in working_deductions_list %}
           <tr>
             <th scope="row">{{ forloop.counter }}</th>
             <td><a href="#" data-toggle="modal" data-target="#viewModal">{{request.user.company}}&emsp;{{ policy }}</a></td>

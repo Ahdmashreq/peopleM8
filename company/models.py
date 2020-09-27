@@ -274,12 +274,32 @@ class Working_Hours_Policy(models.Model):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
                                    related_name="working_hr_policy_created_by")
     creation_date = models.DateField(auto_now=True, auto_now_add=False)
-    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
+    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE,
                                        related_name="working_hr_policy_update_by")
     last_update_date = models.DateField(auto_now=False, auto_now_add=True)
 
     def __str__(self):
         return self.enterprise.name + "Working Hours Policy"
+
+class Working_Hours_Deductions_Policy(models.Model):
+    class Meta:
+        unique_together = ['working_hours_policy', 'day_number']
+    working_hours_policy = models.ForeignKey(Working_Hours_Policy, blank=True, null=True, on_delete=models.CASCADE)
+    day_number = models.IntegerField()
+    delay_rate = models.DecimalField(decimal_places=2, max_digits=3, default=0.0)
+    notify = models.BooleanField(default=False,)
+    susbend = models.BooleanField(default=False,)
+    start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
+    end_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=_('End Date'))
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
+                                   related_name="working_hr_deductions_created_by")
+    creation_date = models.DateField(auto_now=True, auto_now_add=False)
+    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE,
+                                       related_name="working_hr_deductions_update_by")
+    last_update_date = models.DateField(auto_now=False, auto_now_add=True)
+
+    def __str__(self):
+        return "Day Number " + str(self.day_number)
 
 
 class Year(models.Model):

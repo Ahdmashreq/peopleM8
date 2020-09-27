@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
+from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.utils import translation
@@ -12,8 +13,10 @@ from django.views.generic import DetailView
 from custom_user.models import User, UserCompany
 from company.forms import (EnterpriseForm, DepartmentInline, DepartmentForm, JobInline,
                            JobForm, GradeInline, GradeForm, PositionInline, PositionForm, WorkingHoursForm,
+                           WorkingHoursDeductionForm, Working_Hours_Deduction_Form_Inline,
                            YearlyHolidayInline, YearlyHolidayForm, YearForm)
-from company.models import (Enterprise, Department, Job, Grade, Position, YearlyHoliday, Working_Hours_Policy, Year)
+from company.models import (Enterprise, Department, Job, Grade,
+                            Position, YearlyHoliday, Working_Hours_Policy, Working_Hours_Deductions_Policy, Year)
 from django.utils.translation import ugettext_lazy as _
 from cities_light.models import City, Country
 from django.core.exceptions import ObjectDoesNotExist
@@ -218,23 +221,6 @@ def deleteBusinessGroup(request, pk):
         messages.error(request, error_msg)
         raise e
     return redirect('company:list-company-information')
-
-
-@login_required(login_url='/login')
-def listAssignmentView(request):
-    num_of_dept = Department.objects.all(request.user).count()
-    num_of_jobs = Job.objects.all(request.user).count()
-    num_of_grades = Grade.objects.all(request.user).count()
-    num_of_positions = Position.objects.all(request.user).count()
-    context = {
-
-        "page_title": _("Company Structure Definition"),
-        'num_of_dept': num_of_dept,
-        'num_of_jobs': num_of_jobs,
-        'num_of_grades': num_of_grades,
-        'num_of_positions': num_of_positions,
-    }
-    return render(request, 'assinment-list.html', context=context)
 
 
 ########################################Department views###################################################################
@@ -853,20 +839,6 @@ def deletePositionView(request, pk):
         raise e
     return redirect('company:list-positions')
 
-
-@login_required(login_url='/login')
-def listPoliciesView(request):
-    num_of_working_policy = Working_Hours_Policy.objects.all(request.user).count()
-    num_of_yearly_holidays = Year.objects.all(request.user).count()
-
-    context = {
-
-        "page_title": _("Company Working Policy Definition"),
-        'num_of_working_policy': num_of_working_policy,
-        'num_of_yearly_holidays': num_of_yearly_holidays,
-    }
-    return render(request, 'policy-list.html', context=context)
-
 ########################################Company Policies views###################################################################
 
 @login_required(login_url='/login')
@@ -1084,3 +1056,41 @@ def listYearsView(request):
         'year_form':year_form,
     }
     return render(request, 'years-list.html', context=context)
+
+
+@login_required(login_url='/login')
+def list_working_hours_deductions_view(request):
+    working_deductions_list = Working_Hours_Deductions_Policy.objects.filter(working_hours_policy__enterprise = request.user.company)
+    working_hrs_deduction_form = WorkingHoursDeductionForm()
+    context = {
+        "page_title": _("Work Hours Deduction Policy"),
+        'working_deductions_list': working_deductions_list,
+    }
+    return render(request, 'working-hrs-deductions-list.html', context=context)
+
+
+@login_required(login_url='/login')
+def create_working_hours_deductions_view(request):
+    working_deductions_formset = Working_Hours_Deduction_Form_Inline(queryset=Working_Hours_Deductions_Policy.objects.none())
+    if request.method == 'POST':
+        company_working_policy = Working_Hours_Policy.objects.get(enterprise=request.user.company)
+        working_deductions_formset = Working_Hours_Deduction_Form_Inline(request.POST)
+        if working_deductions_formset.is_valid():
+            try:
+                formset_obj = working_deductions_formset.save(commit=False)
+                for form in formset_obj:
+                    form.working_hours_policy_id = company_working_policy.id
+                    form.created_by = request.user
+                    form.save()
+                messages.success(request, _('Working Hours Deductions Created Successfully'))
+            except IntegrityError as e:
+                messages.error(request, _('UNIQUE constraint failed'))
+
+        else:
+            messages.error(request, working_deductions_formset.errors)
+
+    context = {
+        "page_title": _("Work Hours Deduction Policy"),
+        'working_deductions_formset': working_deductions_formset,
+    }
+    return render(request, 'working-hrs-deductions-create.html', context=context)

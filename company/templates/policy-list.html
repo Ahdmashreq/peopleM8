@@ -32,10 +32,15 @@
             </tr>
             <tr>
               <th scope="row">{% trans "2" %}</th>
+              <td><a href="{% url 'company:working-hrs-deductions-list' %}">{% trans "Working hours Deductions Policy" %}</a></td>
+              <td>{{working_deductions_count}}</td>
+            </tr>
+            <tr>
+              <th scope="row">{% trans "3" %}</th>
               <td><a href="{% url 'company:list-years' %}">{% trans "Yearly Holidays" %}</a></td>
               <td>{{num_of_yearly_holidays}}</td>
             </tr>
-            
+
           </tbody>
         </table>
       </div>
@@ -43,4 +48,3 @@
   </div>
 </div>
 {% endblock body%}
-

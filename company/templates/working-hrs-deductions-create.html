@@ -1,0 +1,122 @@
+{% extends 'master.html'%}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+
+{% block body%}
+<div class="container-fluid">
+  <form method="post">
+    {% csrf_token %}
+    <div class="row">
+      <div class="col-md-8">
+        <h4 class="c-grey-900">{{page_title|title}}</h4>
+      </div>
+      <div class="col-md-4">
+        <div class="gap-10 peers push-right">
+          <div class="peer">
+            <button type="submit" class="btn cur-p btn-primary">Save</button>
+          </div>
+          <div class="peer">
+            <a href="{% url 'company:working-hrs-deductions-list' %}" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-1">
+      <div class="bgc-white p-20 bd">
+        <div class="mT-30">
+          {{ working_deductions_formset.management_form }}
+          <div id="form_set">
+            <div class="form-row">
+              <div class="form-group col-md-2">
+                <label>{% trans "Day Number" %}</label>
+              </div>
+              <div class="form-group col-md-2">
+                <label>{% trans "Delay Rate" %}</label>
+              </div>
+              <div class="form-group col-md-1">
+                <label>{% trans "Notify" %}</label>
+              </div>
+              <div class="form-group col-md-1">
+                <label>{% trans "Susbend" %}</label>
+              </div>
+              <div class="form-group col-md-2">
+                <label>{% trans "Start Date" %}</label>
+              </div>
+              <div class="form-group col-md-2">
+                <label>{% trans "End Date" %}</label>
+              </div>
+            </div>
+            {% for form in working_deductions_formset.forms %}
+
+            <div class="form-row">
+              <div class="form-group col-md-2">
+                {{ form.day_number }}
+                {{ form.day_number.errors }}
+              </div>
+              <div class="form-group col-md-2">
+                {{ form.delay_rate }}
+                {{ form.delay_rate.errors }}
+              </div>
+              <div class="form-group col-md-1">
+                {{ form.notify }}
+                {{ form.notify.errors }}
+              </div>
+              <div class="form-group col-md-1">
+                {{ form.susbend }}
+                {{ form.susbend.errors }}
+              </div>
+              <div class="form-group col-md-2">
+                {{ form.start_date }}
+                {{ form.start_date.errors }}
+              </div>
+              <div class="form-group col-md-2">
+                {{ form.end_date }}
+                {{ form.end_date.errors }}
+              </div>
+
+            </div>
+            {% endfor %}
+          </div>
+          <button type="button" id="add_more" class="btn cur-p btn-success">{% trans "Add New Line"%}</button>
+          <div id="empty_form" style="display:none">
+            <table class='no_error'>
+              <div class="form-row">
+                <div class="form-group col-md-2">
+                  {{ working_deductions_formset.empty_form.day_number }}
+                </div>
+                <div class="form-group col-md-2">
+                  {{ working_deductions_formset.empty_form.delay_rate }}
+                </div>
+                <div class="form-group col-md-1">
+                  {{ working_deductions_formset.empty_form.notify }}
+                </div>
+                <div class="form-group col-md-1">
+                  {{ working_deductions_formset.empty_form.susbend }}
+                </div>
+                <div class="form-group col-md-2">
+                  {{ working_deductions_formset.empty_form.start_date }}
+                </div>
+                <div class="form-group col-md-2">
+                  {{ working_deductions_formset.empty_form.end_date }}
+                </div>
+              </div>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock body %}
+
+{% block js %}
+<script>
+  $('#add_more').click(function() {
+    var form_idx = $('#id_form-TOTAL_FORMS').val();
+    $('#form_set').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
+    $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+  });
+</script>
+{% endblock js %}
