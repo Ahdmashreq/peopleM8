@@ -20,6 +20,8 @@ from company.models import Working_Hours_Policy
 from leave.models import Leave
 from service.models import Bussiness_Travel
 from datetime import date,timedelta
+import datetime
+import calendar
 
 class DeltaTemplate(Template):
     delimiter = "%"
@@ -290,7 +292,7 @@ def list_all_attendance(request):
 
 @login_required(login_url='/login')
 def list_employee_attendance_history_view(request):
-    calculate_absence()
+    calculate_absence(8, 2020, 2)
     emp_attendance_form = FormEmployeeAttendanceHistory()
     emp_attendance_list = Employee_Attendance_History.objects.filter(created_by__company=request.user.company).order_by(
         '-month')
@@ -386,9 +388,13 @@ def calculate_hours(day, employee_id):
     pass
 
 
-def calculate_absence(month, employee_id):
-    attendance = Attendance.objects.filter(employee__id=employee_id)
-    attendance_list = list(attendance)
-    date_set = set(attendance_list[0]+timedelta(x) for x in range((attendance_list[-1]-attendance_list[0]).days))
-    missing = sorted(date_set - set(attendance_list))
+def calculate_absence(month, year, employee_id):
+    attendance = Attendance.objects.filter(date__month=month ,employee__id=employee_id)
+    number_of_days = calendar.monthrange(2020,month)[1]
+    days= [datetime.date(year, month, day) for day in range(1, number_of_days+1)]
+    attendance_list = list()
+    for date in attendance:
+        attendance_list.append(date.date)
+
+    missing = sorted(set(days) - set(attendance_list))
     print(missing)
