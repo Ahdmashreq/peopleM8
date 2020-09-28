@@ -1,5 +1,7 @@
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 from django.db import models
 from datetime import date
 from .manager import (LookupTypeManager,InsuranceRuleManager,TaxRuleManager)
@@ -83,3 +85,20 @@ class TaxSection(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class New_Tax_Section(models.Model):
+    name = models.CharField(max_length=255,verbose_name=_('Name'))
+    tax_rule_id = models.ForeignKey(TaxRule, related_name='New_sections', on_delete=models.PROTECT,verbose_name=_('Tax Rule Id'))
+    salary_from = models.FloatField(verbose_name=_('Salary From'))
+    salary_to = models.FloatField(default=1000000,verbose_name=_('Salary To'))
+    tax_percentage = models.FloatField(verbose_name=_('Tax Percentage'))
+    tax_difference = models.FloatField(blank=True, null=True, verbose_name=_('Tax Difference'))
+    section_execution_sequence = models.IntegerField(default=0,verbose_name=_('Section Execution Sequence'))
+
+    def __str__(self):
+        return self.name
+
+@receiver(pre_save, sender=New_Tax_Section)
+def tax_difference_calc(sender, instance, *args, **kwargs):
+    instance.tax_difference = instance.salary_to - instance.salary_from+1

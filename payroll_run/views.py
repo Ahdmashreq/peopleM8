@@ -24,10 +24,13 @@ from django.utils.text import slugify
 from weasyprint import HTML, CSS
 from weasyprint.fonts import FontConfiguration
 # ############################################################
-
+from .new_tax_rules import Tax_Deduction
 
 @login_required(login_url='/login')
 def listSalaryView(request):
+    new_tax = Tax_Deduction(9000,True)
+    print('*****************************************************')
+    print(new_tax.run_tax_calc(10000))
     salary_list = Salary_elements.objects.filter(
         (Q(end_date__gt=date.today()) | Q(end_date__isnull=True))).values(
             'salary_month', 'salary_year',
