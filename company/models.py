@@ -248,7 +248,7 @@ class Enterprise_Policies(models.Model):
 
 class Working_Hours_Policy(models.Model):
     week_days = (
-        ("SATERDAY", "Saterday"),
+        ("SATURDAY", "Saturday"),
         ("SUNDAY", "Sunday"),
         ("MONDAY", "Monday"),
         ("TUESDAY", "Tuesday"),

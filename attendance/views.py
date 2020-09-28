@@ -16,12 +16,13 @@ from attendance.forms import FormAttendance, Tasks_inline_formset, FormTasks, Co
 from attendance.resources import AttendanceResource
 from attendance.tmp_storage import TempFolderStorage
 from employee.models import Employee
-from company.models import Working_Hours_Policy,YearlyHoliday
+from company.models import Working_Hours_Policy, YearlyHoliday
 from leave.models import Leave
 from service.models import Bussiness_Travel
-from datetime import date,timedelta
+from datetime import date, timedelta
 import datetime
 import calendar
+
 
 class DeltaTemplate(Template):
     delimiter = "%"
@@ -113,8 +114,8 @@ def check_out_time(request):
         att_form = FormAttendance(form_type='check_out', instance=attendance_obj)
         if request.method == "POST":
             required_check_in = attendance_obj.check_in
-            current_time = datetime.now().time()
-            # attendance_obj.check_out = current_time.strftime("%H:%M:%S")
+            current_time = datetime.datetime.now().time()
+            #attendance_obj.check_out = current_time.strftime("%H:%M:%S")
             attendance_obj.check_out = current_time
             attendance_obj.last_update_by = request.user
             attendance_obj.save()
@@ -124,7 +125,7 @@ def check_out_time(request):
         att_context = {
             'att_form': att_form,
             'check_in_time': attendance_obj.check_in,
-            'check_out_time': datetime.now().time(),
+            'check_out_time': datetime.datetime.now().time(),
         }
         return render(request, 'check_out.html', att_context)
     else:
@@ -292,7 +293,7 @@ def list_all_attendance(request):
 
 @login_required(login_url='/login')
 def list_employee_attendance_history_view(request):
-    calculate_absence(8, 2020, 2)
+    print(get_deductions_overtime_and_delay(employee_id=1, month=9, year=2020))
     emp_attendance_form = FormEmployeeAttendanceHistory()
     emp_attendance_list = Employee_Attendance_History.objects.filter(created_by__company=request.user.company).order_by(
         '-month')
@@ -376,39 +377,117 @@ def delete_attendance(request, att_delete_slug):
     return redirect('attendance:emp-attendance')
 
 
-def get_all_days(month):
-    pass
+def get_deductions_overtime_and_delay(employee_id, month, year):
+    deduction_days = calculate_deduction_days(month, year, employee_id)
+    overtime_hrs = calculate_overtime(employee_id, month,year)
+    delay_hrs = calculate_delay_hrs(employee_id, month,year)
+    return {"deduction_days": deduction_days, "overtime_hrs": overtime_hrs, "delay_hrs": delay_hrs}
 
 
-def get_employee_attendance(day, employee_id):
-    pass
+def is_day_a_leave(user_id, day):
+    leaves = Leave.objects.filter(
+        Q(user__id=user_id) and ((Q(startdate__month=day.month) and Q(startdate__year=day.year)) or (
+                Q(enddate__month=day.month) and Q(enddate__year=day.year))))
+    for leave in leaves:
+        if leave['startdate'] <= day <= leave['enddate']:
+            return True
+    return False
 
 
-def calculate_hours(day, employee_id):
-    pass
+def is_day_a_service(employee_id, day):
+    services = Bussiness_Travel.objects.filter(
+        Q(emp__id=employee_id) and (
+                (Q(estimated_date_of_travel_from__month=day.month) and Q(
+                    estimated_date_of_travel_from__year=day.year)) or (
+                        Q(estimated_date_of_travel_to__month=day.month) and Q(
+                    estimated_date_of_travel_from__year=day.year))))
+    for service in services:
+        if service['estimated_date_of_travel_from'] <= day <= service['estimated_date_of_travel_to']:
+            return True
+    return False
 
 
-def calculate_absence(month, year, employee_id):
+def is_day_a_holiday(day):
+    month_holidays = YearlyHoliday.objects.filter(
+        Q(year=day.year) and (Q(start_date__month=day.month) or
+                              Q(end_date__month=day.month))).values('start_date',
+                                                                    'end_date')
+    for x in month_holidays:
+        if x['start_date'] <= day <= x['end_date']:
+            return True
+    return False
+
+
+def is_day_a_weekend(day):
     weekends = Working_Hours_Policy.objects.values('week_end_days')
-    attendance = Attendance.objects.filter(date__month=month ,employee__id=employee_id)
-    month_holidays = YearlyHoliday.objects.filter(Q(year=year) and (Q(start_date__month = month) or Q(end_date__month =month ))).values('start_date','end_date')
-    holiday_list = []
-    holiday_list.append(x.values() for x in month_holidays)
-    number_of_days = calendar.monthrange(2020,month)[1]
-    days= [datetime.date(year, month, day) for day in range(1, number_of_days+1)]
+    day_name = calendar.day_name[day.weekday()]
+    if day_name.upper() in weekends[0]['week_end_days']:
+        return True
+    else:
+        return False
+
+
+def calculate_deduction_days(month, year, employee_id):
+    employee = Employee.objects.get(id=employee_id)
+    attendance = Attendance.objects.filter(date__month=month, employee__id=employee_id)
+    absence_day_rate = \
+        Working_Hours_Policy.objects.filter(enterprise=employee.enterprise).values('absence_days_rate')[0][
+            'absence_days_rate']
+    absence_days = []
+    number_of_days = calendar.monthrange(2020, month)[1]
+    days = [datetime.date(year, month, day) for day in range(1, number_of_days + 1)]
     attendance_list = list()
     for date in attendance:
         attendance_list.append(date.date)
-
     missing = sorted(set(days) - set(attendance_list))
-    print(weekends)
     for day in missing:
-        day_name = calendar.day_name[day.weekday()]
-        if day_name.upper() in weekends[0]['week_end_days']:
-            print("weekend day")
-        else :
-           pass
-    print(month_holidays)
+        if is_day_a_weekend(day):
+            print("this day is weekend", day)
+            pass
+        elif is_day_a_holiday(day):
+            print("this day is Holiday", day)
+            pass
+        elif is_day_a_leave(employee.user.id, day):
+            print("this day is a leave", day)
+            pass
+        elif is_day_a_service(employee_id, day):
+            print("this day is a service", day)
+            pass
+        else:
+            absence_days.append(day)
+    for day in absence_days:
+        print(day)
+    deduction_days = absence_day_rate * len(absence_days)
+    return deduction_days
 
 
+def calculate_overtime(employee_id, month,year):
+    attendance = Attendance.objects.filter(date__month=month,date__year=year,  employee__id=employee_id)
+    overtime_hrs = datetime.datetime.strptime('00:00:00', '%H:%M:%S').time()
+    for x in attendance:
+        if x.check_out:
+            try:
+                overtime_hrs += x.normal_overtime_hours
+            except TypeError as e:
+                print(e,x.normal_overtime_hours)
+    return overtime_hrs
 
+
+def calculate_delay_hrs(employee_id, month,year):
+    attendance = Attendance.objects.filter(date__month=month,date__year=year, employee__id=employee_id).values("delay_hrs")
+    delay_hrs = datetime.datetime.strptime('00:00:00', '%H:%M:%S').time()
+    print(attendance)
+    llll = []
+    for x in attendance:
+        for key,value in x.items():
+            llll.append(value+ timedelta(hours=1))
+    print(llll)
+    print(sum(llll))
+    # for x in attendance:
+    #     if x.check_out:
+    #         try:
+    #             delay_hrs = sum(attendance)
+    #         except TypeError as e:
+    #             print(e,x.delay_hrs)
+    print("^^^^^^^^^^^^^^^^^^^^^^",delay_hrs)
+    return delay_hrs
