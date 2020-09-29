@@ -74,7 +74,6 @@ class TaxRule:
 
 # use this method to check the result of all above functions.
 
-
 def test(annual_salary):
     """
     >>> test(60000)
