@@ -87,12 +87,13 @@ class Attendance(models.Model):
         hrs_end_at = Working_Hours_Policy.objects.filter(enterprise=self.employee.enterprise).values("hrs_end_at")[0][
             'hrs_end_at']
         print("&&&&&&&&&&", hrs_end_at)
-        first_delta = mydatetime.timedelta(hours=self.check_out.hour, minutes=self.check_out.minute,
-                                           seconds=self.check_out.second)
-        second_delta = mydatetime.timedelta(hours=hrs_end_at.hour, minutes=hrs_end_at.minute,
-                                           seconds=hrs_end_at.second)
-        difference = first_delta - second_delta
-        #difference = datetime.combine(datetime.now(), self.check_out) - datetime.combine(datetime.now(), hrs_end_at)
+        # first_delta = mydatetime.timedelta(hours=self.check_out.hour, minutes=self.check_out.minute,
+        #                                    seconds=self.check_out.second)
+        # second_delta = mydatetime.timedelta(hours=hrs_end_at.hour, minutes=hrs_end_at.minute,
+        #                                    seconds=hrs_end_at.second)
+        # difference = first_delta - second_delta
+
+        difference = datetime.combine(datetime.now(), self.check_out) - datetime.combine(datetime.now(), hrs_end_at)
         return difference
 
     @property
@@ -100,12 +101,12 @@ class Attendance(models.Model):
         hrs_start_from = \
         Working_Hours_Policy.objects.filter(enterprise=self.employee.enterprise).values("hrs_start_from")[0][
             'hrs_start_from']
-        first_delta = mydatetime.timedelta(hours=self.check_in.hour, minutes=self.check_in.minute,
-                                           seconds=self.check_in.second)
-        second_delta = mydatetime.timedelta(hours=hrs_start_from.hour, minutes=hrs_start_from.minute,
-                                            seconds=hrs_start_from.second)
-        difference = first_delta - second_delta
-        #difference = datetime.combine(datetime.now(), self.check_in) - datetime.combine(datetime.now(), hrs_start_from)
+        # first_delta = mydatetime.timedelta(hours=self.check_in.hour, minutes=self.check_in.minute,
+        #                                    seconds=self.check_in.second)
+        # second_delta = mydatetime.timedelta(hours=hrs_start_from.hour, minutes=hrs_start_from.minute,
+        #                                     seconds=hrs_start_from.second)
+        # difference = first_delta - second_delta
+        difference = datetime.combine(datetime.now(), self.check_in) - datetime.combine(datetime.now(), hrs_start_from)
         return difference
 
 

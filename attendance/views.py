@@ -378,8 +378,9 @@ def get_deductions_overtime_and_delay(employee_id, month, year):
     deduction_days = calculate_deduction_days(month, year, employee_id)
     overtime_hrs = calculate_overtime(employee_id, month, year)
     delay_hrs = calculate_delay_hrs(employee_id, month, year)
-    print("MY claculaed delays are ",delay_hrs)
-    return {"deduction_days": deduction_days, "overtime": overtime_hrs, "delay_hrs": delay_hrs}
+    print("mY calculated delays are ",delay_hrs)
+    print("mY calculated overtime are ",overtime_hrs)
+    return {"deduction_days": deduction_days,"overtime_hrs":overtime_hrs,"delay_hrs": delay_hrs}
 
 
 def is_day_a_leave(user_id, day):
@@ -468,9 +469,9 @@ def calculate_overtime(employee_id, month, year):
     for x in attendance:
         if x.check_out:
             try:
-                delta = mydatetime.timedelta(hours=x.normal_overtime_hours.hour, minutes=x.normal_overtime_hours.minute,
-                                           seconds=x.normal_overtime_hours.second)
-                overtime_hrs += delta
+                # delta = mydatetime.timedelta(hours=x.normal_overtime_hours.hour, minutes=x.normal_overtime_hours.minute,
+                #                            seconds=x.normal_overtime_hours.second)
+                overtime_hrs += x.normal_overtime_hours
             except Exception as e:
                 print(e)
     return overtime_hrs
@@ -484,9 +485,9 @@ def calculate_delay_hrs(employee_id, month, year):
     for x in attendance:
         if x.check_out:
             try:
-                delta = mydatetime.timedelta(hours=x.delay_hrs.hour, minutes=x.delay_hrs.minute,
-                                           seconds=x.delay_hrs.second)
-                delay_hrs += delta
+                # delta = mydatetime.timedelta(hours=x.delay_hrs.hour, minutes=x.delay_hrs.minute,
+                #                            seconds=x.delay_hrs.second)
+                delay_hrs = delay_hrs + x.delay_hrs
             except Exception as e:
                 print(e)
 
