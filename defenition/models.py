@@ -91,7 +91,7 @@ class New_Tax_Section(models.Model):
     name = models.CharField(max_length=255,verbose_name=_('Name'))
     tax_rule_id = models.ForeignKey(TaxRule, related_name='New_sections', on_delete=models.PROTECT,verbose_name=_('Tax Rule Id'))
     salary_from = models.FloatField(verbose_name=_('Salary From'))
-    salary_to = models.FloatField(default=1000000,verbose_name=_('Salary To'))
+    salary_to = models.FloatField(default=1000000000,verbose_name=_('Salary To'))
     tax_percentage = models.FloatField(verbose_name=_('Tax Percentage'))
     tax_difference = models.FloatField(blank=True, null=True, verbose_name=_('Tax Difference'))
     section_execution_sequence = models.IntegerField(default=0,verbose_name=_('Section Execution Sequence'))

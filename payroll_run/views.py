@@ -28,9 +28,8 @@ from .new_tax_rules import Tax_Deduction
 
 @login_required(login_url='/login')
 def listSalaryView(request):
-    new_tax = Tax_Deduction(9000,True)
-    print('*****************************************************')
-    print(new_tax.run_tax_calc(10000))
+    new_tax = Tax_Deduction(exemption=9000, round_down_to_nearest_10=True)
+    new_tax.run_tax_calc(monthly_salary=95000)
     salary_list = Salary_elements.objects.filter(
         (Q(end_date__gt=date.today()) | Q(end_date__isnull=True))).values(
             'salary_month', 'salary_year',
