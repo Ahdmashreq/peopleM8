@@ -8,7 +8,7 @@ from string import Template
 from home.slugify import unique_slug_generator
 from django.utils.translation import ugettext_lazy as _
 from company.models import Working_Hours_Policy
-
+import datetime as mydatetime
 class DeltaTemplate(Template):
     delimiter = "%"
 
@@ -148,11 +148,11 @@ def working_time(sender, instance, *args, **kwargs):
             overtime = instance.how_much_overtime
             instance.normal_overtime_hours = overtime
         else:
-            instance.normal_overtime_hours = datetime.strptime('00:00', '%H:%M').time()
+            instance.normal_overtime_hours = mydatetime.timedelta(hours=0, minutes=0, seconds=0)
         if instance.delay:
             delay = instance.how_much_delay
             instance.delay_hrs = delay
         else:
-            instance.delay_hrs = datetime.strptime('00:00', '%H:%M').time()
+            instance.delay_hrs = mydatetime.timedelta(hours=0, minutes=0, seconds=0)
     else:
         instance.work_hours = 0

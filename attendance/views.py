@@ -115,7 +115,7 @@ def check_out_time(request):
         if request.method == "POST":
             required_check_in = attendance_obj.check_in
             current_time = datetime.datetime.now().time()
-            #attendance_obj.check_out = current_time.strftime("%H:%M:%S")
+            # attendance_obj.check_out = current_time.strftime("%H:%M:%S")
             attendance_obj.check_out = current_time
             attendance_obj.last_update_by = request.user
             attendance_obj.save()
@@ -293,7 +293,7 @@ def list_all_attendance(request):
 
 @login_required(login_url='/login')
 def list_employee_attendance_history_view(request):
-    print(get_deductions_overtime_and_delay(employee_id=1, month=9, year=2020))
+    get_deductions_overtime_and_delay(employee_id=1, month=9, year=2020)
     emp_attendance_form = FormEmployeeAttendanceHistory()
     emp_attendance_list = Employee_Attendance_History.objects.filter(created_by__company=request.user.company).order_by(
         '-month')
@@ -379,9 +379,9 @@ def delete_attendance(request, att_delete_slug):
 
 def get_deductions_overtime_and_delay(employee_id, month, year):
     deduction_days = calculate_deduction_days(month, year, employee_id)
-    overtime_hrs = calculate_overtime(employee_id, month,year)
-    delay_hrs = calculate_delay_hrs(employee_id, month,year)
-    return {"deduction_days": deduction_days, "overtime_hrs": overtime_hrs, "delay_hrs": delay_hrs}
+    overtime_hrs = calculate_overtime(employee_id, month, year)
+    delay_hrs = calculate_delay_hrs(employee_id, month, year)
+    return {"deduction_days": deduction_days, "overtime": overtime_hrs, "delay_hrs": delay_hrs}
 
 
 def is_day_a_leave(user_id, day):
@@ -428,8 +428,10 @@ def is_day_a_weekend(day):
 
 
 def calculate_deduction_days(month, year, employee_id):
+    # return the number of days to be deducted from a given employee in a given month and year
+    # days that are either weekends,holidays ,leaves or services are not deduced
     employee = Employee.objects.get(id=employee_id)
-    attendance = Attendance.objects.filter(date__month=month, employee__id=employee_id)
+    attendances = Attendance.objects.filter(date__month=month, date__year=year, employee__id=employee_id)
     absence_day_rate = \
         Working_Hours_Policy.objects.filter(enterprise=employee.enterprise).values('absence_days_rate')[0][
             'absence_days_rate']
@@ -437,7 +439,7 @@ def calculate_deduction_days(month, year, employee_id):
     number_of_days = calendar.monthrange(2020, month)[1]
     days = [datetime.date(year, month, day) for day in range(1, number_of_days + 1)]
     attendance_list = list()
-    for date in attendance:
+    for date in attendances:
         attendance_list.append(date.date)
     missing = sorted(set(days) - set(attendance_list))
     for day in missing:
@@ -455,39 +457,39 @@ def calculate_deduction_days(month, year, employee_id):
             pass
         else:
             absence_days.append(day)
-    for day in absence_days:
-        print(day)
+
     deduction_days = absence_day_rate * len(absence_days)
     return deduction_days
 
 
-def calculate_overtime(employee_id, month,year):
-    attendance = Attendance.objects.filter(date__month=month,date__year=year,  employee__id=employee_id)
-    overtime_hrs = datetime.datetime.strptime('00:00:00', '%H:%M:%S').time()
+def calculate_overtime(employee_id, month, year):
+    # calculate normal overtime hours for a given employee in a given month and year for all records that have checkout
+    # ignoring records with no checkout
+    attendance = Attendance.objects.filter(date__month=month, date__year=year, employee__id=employee_id)
+    overtime_hrs = datetime.timedelta(hours=0, minutes=0, seconds=0)
     for x in attendance:
         if x.check_out:
             try:
-                overtime_hrs += x.normal_overtime_hours
-            except TypeError as e:
-                print(e,x.normal_overtime_hours)
+                delta = datetime.timedelta(hours=x.normal_overtime_hours.hour, minutes=x.normal_overtime_hours.minute,
+                                           seconds=x.normal_overtime_hours.second)
+                overtime_hrs += delta
+            except Exception as e:
+                print(e)
     return overtime_hrs
 
 
-def calculate_delay_hrs(employee_id, month,year):
-    attendance = Attendance.objects.filter(date__month=month,date__year=year, employee__id=employee_id).values("delay_hrs")
-    delay_hrs = datetime.datetime.strptime('00:00:00', '%H:%M:%S').time()
-    print(attendance)
-    llll = []
+def calculate_delay_hrs(employee_id, month, year):
+    # calculate delay hours for a given employee in a given month and year for all records that have checkout
+    # ignoring records with no checkout
+    attendance = Attendance.objects.filter(date__month=month, date__year=year, employee__id=employee_id)
+    delay_hrs = datetime.timedelta(hours=0, minutes=0, seconds=0)
     for x in attendance:
-        for key,value in x.items():
-            llll.append(value+ timedelta(hours=1))
-    print(llll)
-    print(sum(llll))
-    # for x in attendance:
-    #     if x.check_out:
-    #         try:
-    #             delay_hrs = sum(attendance)
-    #         except TypeError as e:
-    #             print(e,x.delay_hrs)
-    print("^^^^^^^^^^^^^^^^^^^^^^",delay_hrs)
+        if x.check_out:
+            try:
+                delta = datetime.timedelta(hours=x.delay_hrs.hour, minutes=x.delay_hrs.minute,
+                                           seconds=x.delay_hrs.second)
+                delay_hrs += delta
+            except Exception as e:
+                print(e)
+
     return delay_hrs
