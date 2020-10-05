@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.db import models
-from employee.models import JobRoll
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
+from employee.models import JobRoll, Employee
 from datetime import date
 from django.utils.translation import ugettext_lazy as _
 from .manager import LeaveManager
@@ -26,7 +28,8 @@ class Leave(models.Model):
     leave_type_list = [("A", _("Annual Leave")),
                        ("S", _("Sick Leave")),
                        ("C", _("Casual Leave")),
-                       ("U", _("Unpaid Leave")),
+                       ("U", _("Usual Leave")),
+                       ("UP", _("Unpaid Leave")),
                        ("M", _("Maternity/Paternity")),
                        ("O", _("Other")) ]
     # ###########################################################################################
@@ -104,3 +107,36 @@ class Leave(models.Model):
         @property
         def is_rejected(self):
             return self.status == 'rejected'
+
+@receiver(pre_save, sender=Leave)
+def update_employee_leave_balance(sender, instance, *args, **kwargs):
+    required_employee = Employee.objects.get(user=instance.user)
+    employee_balance = Employee_Leave_balance.objects.get(employee=required_employee)
+    startdate = instance.startdate
+    enddate = instance.enddate
+    dates = (enddate - startdate)
+    if instance.is_approved and instance.leavetype == 'C':
+        employee_balance.casual = employee_balance.casual-  (dates.days + 1)
+        employee_balance.save()
+    elif instance.is_approved and instance.leavetype == 'U':
+        employee_balance.usual = employee_balance.usual- (dates.days + 1)
+        employee_balance.save()
+    else:
+        return
+
+
+class Employee_Leave_balance(models.Model):
+    employee = models.OneToOneField(Employee, on_delete=models.CASCADE)
+    casual = models.PositiveSmallIntegerField()     # رصيد الاجازات الاعتيادية
+    usual = models.PositiveSmallIntegerField()      # رصيد الاجازات العارضة
+    carried_forward = models.PositiveSmallIntegerField()        # رصيد الاجازات المرحلة
+    absence = models.PositiveSmallIntegerField()        # عدد ايايم الغياب
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                                   blank=True, null=True, related_name='Leave_balance_created_by')
+    creation_date = models.DateField(auto_now_add=True)
+    last_update_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True, related_name='Leave_balance_last_updated_by')
+    last_update_date = models.DateField(auto_now=True, blank=True, null=True,)
+
+    def __str__(self):
+        return self.employee.emp_name

@@ -47,13 +47,13 @@
         <li><a class="sidebar-link" href="{% url 'defenition:list-lookups' %}">{% trans 'Lookup Details'%}</a></li>
         <li class="nav-item dropdown">
           <a href="javascript:void(0);">
-          <span>{% trans 'Working Policies '%}</span>
+          <span>{% trans 'قوانين العمل'%}</span>
           <span class="arrow"><i class="ti-angle-right"></i></span>
           </a>
           <ul class="dropdown-menu" style="display: none;">
-            <li><a href="{% url 'company:working-hrs-policy-list' %}">{% trans "Working Hours Policy" %}</a></li>
-            <li><a href="{% url 'company:working-hrs-deductions-list' %}">{% trans "Working hours Deductions Policy" %}</a></li>
-            <li><a href="{% url 'company:list-years' %}">{% trans "Yearly Holidays" %}</a></li>
+            <li><a href="{% url 'company:working-hrs-policy-list' %}">{% trans "قوانين ساعات العمل" %}</a></li>
+            <li><a href="{% url 'company:working-hrs-deductions-list' %}">{% trans "قوانين ساعات الخصم" %}</a></li>
+            <li><a href="{% url 'company:list-years' %}">{% trans "الاجازات السنوية" %}</a></li>
           </ul>
         </li>
       </ul>
@@ -84,28 +84,23 @@
       <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-pink-500  ti-user"></i> </span><span class="title">{% trans "Employees" %}</span> <span class="arrow"><i class="ti-angle-right"></i></span></a>
       <ul class="dropdown-menu">
         <li><a class="sidebar-link" href="{% url 'employee:list-employee' %}">{% trans 'Employees'%}</a></li>
+        <li><a class="sidebar-link" href="{% url 'leave:leave-balance' %}">{% trans 'Employee Leaves Balance'%}</a></li>
       </ul>
     </li>
-    <!-- <li class="nav-item dropdown">
-      <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-teal-500 ti-view-list-alt"></i> </span><span class="title">{% trans "Costing" %}</span> <span class="arrow"><i class="ti-angle-right"></i></span></a>
-      <ul class="dropdown-menu">
-        <li><a class="sidebar-link" href="{% url 'balanc_definition:list-costing' %}">{% trans 'Costing'%}</a></li>
-      </ul>
-    </li> -->
 
     <li class="nav-item dropdown">
-      <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-pink-500 ti-agenda"></i> </span><span class="title">{% trans "Services" %}</span> <span class="arrow"><i class="ti-angle-right"></i></span></a>
+      <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-pink-500 ti-agenda"></i> </span><span class="title">{% trans "خدمات" %}</span> <span class="arrow"><i class="ti-angle-right"></i></span></a>
       <ul class="dropdown-menu">
         <li><a class="sidebar-link" href="{% url 'service:services_list' %}">{% trans 'Bussiness Travel Form'%}</a></li>
         <li><a class="sidebar-link" href="{% url 'service:purchase-request-list' %}">{% trans 'Purchase Request Form'%}</a></li>
       </ul>
     </li>
     <li class="nav-item dropdown">
-      <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-blue-500 ti-alarm-clock"></i> </span><span class="title">{% trans "Attendance" %}</span> <span class="arrow"><i class="ti-angle-right"></i></span></a>
+      <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-blue-500 ti-alarm-clock"></i> </span><span class="title">{% trans "الحضور و الانصراف" %}</span> <span class="arrow"><i class="ti-angle-right"></i></span></a>
       <ul class="dropdown-menu">
-        <li><a class="sidebar-link" href="{% url 'attendance:upload-attendance' %}">{% trans 'Upload Attendance'%}</a></li>
-        <li><a class="sidebar-link" href="{% url 'attendance:user-list-attendance' %}">{% trans 'Manual Attendance'%}</a></li>
-        <li><a class="sidebar-link" href="{% url 'leave:list_leave' %}">{% trans 'Leave Form'%}</a></li>
+        <li><a class="sidebar-link" href="{% url 'attendance:upload-attendance' %}">{% trans 'رفع ملف اكسيل'%}</a></li>
+        <li><a class="sidebar-link" href="{% url 'attendance:user-list-attendance' %}">{% trans 'حضور و انصراف يدويا'%}</a></li>
+        <li><a class="sidebar-link" href="{% url 'leave:list_leave' %}">{% trans 'طلبات الاجازة'%}</a></li>
       </ul>
     </li>
 

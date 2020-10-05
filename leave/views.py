@@ -1,9 +1,10 @@
 import os
 from django.shortcuts import render, redirect
-from leave.models import LeaveMaster, Leave
 from employee.models import JobRoll, Employee
 from employee.notification_helper import NotificationHelper
-from leave.forms import FormLeave, FormLeaveMaster
+from leave.models import LeaveMaster, Leave, Employee_Leave_balance
+from leave.forms import FormLeave, FormLeaveMaster, Leave_Balance_Form
+from django.views.generic import ListView
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -11,6 +12,7 @@ from django.core.mail import send_mail
 from django.template import loader
 import datetime
 from datetime import datetime
+from django.utils.translation import ugettext_lazy as _
 
 
 
@@ -226,3 +228,39 @@ def del_leave_master(request, id):
     messages.add_message(request, messages.SUCCESS,
                          'Leave Type was deleted successfully')
     return redirect('leave:add_leave_master')
+
+
+class Elmplyees_Leave_Balance(ListView):
+    model = Employee_Leave_balance
+    context_object_name = 'employee_leave_balance_list'
+    template_name = 'leave_balance_list.html'
+
+
+@login_required(login_url='/login')
+def create_employee_leave_balance(request):
+    leave_balance_form = Leave_Balance_Form()
+    if request.method == 'POST':
+        leave_balance_form = Leave_Balance_Form(request.POST)
+        if leave_balance_form.is_valid():
+            balance_obj = leave_balance_form.save(commit=False)
+            balance_obj.created_by = request.user
+            balance_obj.save()
+            messages.success(request, _('Balance Saved Successfully'))
+            return redirect('leave:leave-balance')
+        else:
+            messages.error(request, leave_balance_form.errors)
+    leave_balance_context = {
+                    'leave_balance_form':leave_balance_form,
+    }
+    return render(request, 'leave_balance_create.html', leave_balance_context)
+
+
+@login_required(login_url='/login')
+def view_employee_leaves_list(request, employee_id):
+    employee = Employee.objects.get(id=employee_id)
+    list_leaves = Leave.objects.filter(user=employee.user)
+    leave_balance_context = {
+                    'list_leaves':list_leaves,
+                    'employee':employee,
+    }
+    return render(request, 'list_leave_by_employee.html', leave_balance_context)

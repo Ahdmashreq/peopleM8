@@ -1,14 +1,14 @@
-from defenition.models import TaxRule, New_Tax_Section
+from defenition.models import TaxRule, Tax_Sections
 
 
-class Tax_Deduction:
+class Tax_Deduction_Amount:
     def __init__(self, exemption, round_down_to_nearest_10):
         self.exemption = exemption
         self.round_down_to_nearest_10 = round_down_to_nearest_10
 
 
     def _tax_special_sextion(self, salary, section_seq_start):
-        tax_sections = New_Tax_Section.objects.filter(section_execution_sequence__gte=section_seq_start)
+        tax_sections = Tax_Sections.objects.filter(section_execution_sequence__gte=section_seq_start)
         employee_sections = {}
         tax_values = []
         for section in tax_sections:
@@ -32,7 +32,7 @@ class Tax_Deduction:
         employee_sections = {}
         tax_values = []
         # هل المرتب اكثر من 600 الف ؟
-        tax_sections = New_Tax_Section.objects.filter()
+        tax_sections = Tax_Sections.objects.filter()
         if annual_tax_salary < 600000:
             return self._tax_special_sextion(annual_tax_salary, 0)
         else:

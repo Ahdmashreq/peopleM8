@@ -1,0 +1,64 @@
+{% extends 'master.html'%}
+{% load staticfiles%}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+{% block body%}
+
+<div class="container-fluid">
+  {% include 'messages.html'%}
+  
+  <form method="post">
+    {% csrf_token %}
+    <!--  -->
+
+    <div class="row">
+      <div class="col-md-8">
+        <h4 class="c-grey-900">{{page_title|title}}</h4>
+      </div>
+      <div class="col-md-4">
+        <div class="gap-10 peers push-right">
+          <div class="peer">
+            <button type="submit" class="btn cur-p btn-primary">Save</button>
+          </div>
+          <div class="peer">
+            <a href="{% url 'leave:leave-balance' %}" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-1">
+      <div class="bgc-white p-20 bd">
+        <div class="mT-30">
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <label>{{ leave_balance_form.employee.label }}</label>
+              {{ leave_balance_form.employee }}
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-3">
+              <label>{{ leave_balance_form.casual.label }}</label>
+              {{ leave_balance_form.casual }}
+            </div>
+            <div class="form-group col-md-3">
+              <label>{{ leave_balance_form.usual.label }}</label>
+              {{ leave_balance_form.usual }}
+            </div>
+            <div class="form-group col-md-3">
+              <label>{{ leave_balance_form.carried_forward.label }}</label>
+              {{ leave_balance_form.carried_forward }}
+            </div>
+            <div class="form-group col-md-3">
+              <label>{{ leave_balance_form.absence.label }}</label>
+              {{ leave_balance_form.absence }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+{% endblock body%}

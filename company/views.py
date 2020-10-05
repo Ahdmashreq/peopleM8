@@ -12,11 +12,11 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView
 from custom_user.models import User, UserCompany
 from company.forms import (EnterpriseForm, DepartmentInline, DepartmentForm, JobInline,
-                           JobForm, GradeInline, GradeForm, PositionInline, PositionForm, WorkingHoursForm,
+                           JobForm, GradeInline, GradeForm, PositionInline, PositionForm, WorkingDaysForm,
                            WorkingHoursDeductionForm, Working_Hours_Deduction_Form_Inline,
                            YearlyHolidayInline, YearlyHolidayForm, YearForm)
-from company.models import (Enterprise, Department, Job, Grade,
-                            Position, YearlyHoliday, Working_Hours_Policy, Working_Hours_Deductions_Policy, Year)
+from company.models import (Enterprise, Department, Job, Grade, Position, YearlyHoliday,
+                            Working_Days_Policy, Working_Hours_Deductions_Policy, Year)
 from django.utils.translation import ugettext_lazy as _
 from cities_light.models import City, Country
 from django.core.exceptions import ObjectDoesNotExist
@@ -843,10 +843,10 @@ def deletePositionView(request, pk):
 
 @login_required(login_url='/login')
 def CreateWorkingPolicyView(request):
-    working_policy_form = WorkingHoursForm()
+    working_policy_form = WorkingDaysForm()
     user_lang = to_locale(get_language())
     if request.method == 'POST':
-        working_policy_form = WorkingHoursForm(request.POST)
+        working_policy_form = WorkingDaysForm(request.POST)
         if working_policy_form.is_valid():
             policy_obj = working_policy_form.save(commit=False)
             policy_obj.enterprise = request.user.company
@@ -877,7 +877,7 @@ def CreateWorkingPolicyView(request):
 @login_required(login_url='/login')
 def listWorkingPolicyView(request):
     if request.method == 'GET':
-        working_policy_list = Working_Hours_Policy.objects.all(request.user)
+        working_policy_list = Working_Days_Policy.objects.all(request.user)
     myContext = {
                  "page_title": _("List working policies"),
                  'policy_list': working_policy_list
@@ -886,11 +886,11 @@ def listWorkingPolicyView(request):
 
 @login_required(login_url='/login')
 def correctWorkingPolicyView(request, pk):
-    required_policy = Working_Hours_Policy.objects.get_policy(user=request.user, policy_id=pk)
-    policy_form = WorkingHoursForm(instance=required_policy)
+    required_policy = Working_Days_Policy.objects.get_policy(user=request.user, policy_id=pk)
+    policy_form = WorkingDaysForm(instance=required_policy)
     user_lang = to_locale(get_language())
     if request.method == 'POST':
-        policy_form = WorkingHoursForm(request.POST, instance=required_policy)
+        policy_form = WorkingDaysForm(request.POST, instance=required_policy)
 
         if policy_form.is_valid():
             policy_obj = policy_form.save(commit=False)
@@ -917,7 +917,7 @@ def correctWorkingPolicyView(request, pk):
 
 @login_required(login_url='/login')
 def deleteWorkingPolicyView(request, pk):
-    req_working_policy = Working_Hours_Policy.objects.get_policy(user=request.user, policy_id=pk)
+    req_working_policy = Working_Days_Policy.objects.get_policy(user=request.user, policy_id=pk)
     deleted = req_working_policy.delete()
     if deleted:
         messages.success(request, 'Record successfully deleted')
@@ -1060,7 +1060,7 @@ def listYearsView(request):
 
 @login_required(login_url='/login')
 def list_working_hours_deductions_view(request):
-    working_deductions_list = Working_Hours_Deductions_Policy.objects.filter(working_hours_policy__enterprise = request.user.company)
+    working_deductions_list = Working_Hours_Deductions_Policy.objects.filter(working_days_policy__enterprise = request.user.company)
     working_hrs_deduction_form = WorkingHoursDeductionForm()
     context = {
         "page_title": _("Work Hours Deduction Policy"),
@@ -1073,13 +1073,13 @@ def list_working_hours_deductions_view(request):
 def create_working_hours_deductions_view(request):
     working_deductions_formset = Working_Hours_Deduction_Form_Inline(queryset=Working_Hours_Deductions_Policy.objects.none())
     if request.method == 'POST':
-        company_working_policy = Working_Hours_Policy.objects.get(enterprise=request.user.company)
+        company_working_policy = Working_Days_Policy.objects.get(enterprise=request.user.company)
         working_deductions_formset = Working_Hours_Deduction_Form_Inline(request.POST)
         if working_deductions_formset.is_valid():
             try:
                 formset_obj = working_deductions_formset.save(commit=False)
                 for form in formset_obj:
-                    form.working_hours_policy_id = company_working_policy.id
+                    form.Working_Days_Policy_id = company_working_policy.id
                     form.created_by = request.user
                     form.save()
                 messages.success(request, _('Working Hours Deductions Created Successfully'))

@@ -10,7 +10,7 @@ from element_definition.models import Element_Master, Element_Detail, Element_Ba
 from manage_payroll.models import Assignment_Batch, Payroll_Master
 from company.models import Department, Grade, Position
 from defenition.models import TaxSection
-from payroll_run.tax_calculator import TaxRule as TR
+from payroll_run.new_tax_rules import Tax_Deduction_Amount
 from django.utils.translation import ugettext_lazy as _
 
 month_name_choises = [
@@ -139,15 +139,11 @@ class Salary_elements(models.Model):
 
     def _calc_taxes_deduction(self):
         tax_rule_master = Payroll_Master.objects.get()
-        sections = TaxSection.objects.filter(
-            tax_rule_id=tax_rule_master.tax_rule)
-        tax_rules = TR(tax_rule_master.tax_rule.personal_exemption,
-                       tax_rule_master.tax_rule.round_down_to_nearest_10)
-        for section in sections:
-            tax_rules.add_section(section.section_execution_sequence, section.salary_from,
-                                  section.salary_to, section.tax_percentage, section.tax_discount_percentage)
-        taxable_salary = self._calc_all_incomes()
-        taxes = tax_rules.calculate_monthly_tax(taxable_salary)
+        personal_exemption = tax_rule_master.tax_rule.personal_exemption
+        round_to_10 = tax_rule_master.tax_rule.round_down_to_nearest_10
+        tax_deduction_amount = Tax_Deduction_Amount(personal_exemption, round_to_10)
+        taxable_salary = self._calc_gross_salary()
+        taxes = tax_deduction_amount.run_tax_calc(taxable_salary)
         self.tax_amount = taxes
         return round(taxes, 2)
 

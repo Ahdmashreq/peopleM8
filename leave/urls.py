@@ -1,6 +1,5 @@
 from django.urls import path
 from leave import views
-from django.contrib import admin
 
 app_name = 'leave'
 
@@ -14,4 +13,9 @@ urlpatterns = [
     path('del_leave_master/<int:id>', views.del_leave_master, name='del_leave_master'),
     path('leave-approve/<int:leave_id>', views.leave_approve, name='leave-approve'),
     path('leave-unapprove/<int:leave_id>', views.leave_unapprove, name='leave-unapprove'),
+    path('leave-balance/', views.Elmplyees_Leave_Balance.as_view(), name='leave-balance'),
+
+    path('leave-balance-add/', views.create_employee_leave_balance, name='leave-balance-create'),
+    path('leave-balance-list/<int:employee_id>/', views.view_employee_leaves_list, name='employee-leave-list'),
+
 ]

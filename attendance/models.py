@@ -7,7 +7,7 @@ from datetime import datetime, date
 from string import Template
 from home.slugify import unique_slug_generator
 from django.utils.translation import ugettext_lazy as _
-from company.models import Working_Hours_Policy
+from company.models import Working_Days_Policy
 import datetime as mydatetime
 
 
@@ -64,7 +64,7 @@ class Attendance(models.Model):
     @property
     def overtime(self):
         print("$$$$$$$$$$$$", self.check_out)
-        hrs_end_at = Working_Hours_Policy.objects.filter(enterprise=self.employee.enterprise).values("hrs_end_at")[0][
+        hrs_end_at = Working_Days_Policy.objects.filter(enterprise=self.employee.enterprise).values("hrs_end_at")[0][
             'hrs_end_at']
 
         return self.check_out > hrs_end_at
@@ -73,7 +73,7 @@ class Attendance(models.Model):
     def delay(self):
         print("&&&&&&&&&&")
         hrs_start_from = \
-            Working_Hours_Policy.objects.filter(enterprise=self.employee.enterprise).values("hrs_start_from")[0][
+            Working_Days_Policy.objects.filter(enterprise=self.employee.enterprise).values("hrs_start_from")[0][
                 'hrs_start_from']
         return self.check_in > hrs_start_from
 
@@ -84,7 +84,7 @@ class Attendance(models.Model):
 
     @property
     def how_much_overtime(self):
-        hrs_end_at = Working_Hours_Policy.objects.filter(enterprise=self.employee.enterprise).values("hrs_end_at")[0][
+        hrs_end_at = Working_Days_Policy.objects.filter(enterprise=self.employee.enterprise).values("hrs_end_at")[0][
             'hrs_end_at']
         print("&&&&&&&&&&", hrs_end_at)
         # first_delta = mydatetime.timedelta(hours=self.check_out.hour, minutes=self.check_out.minute,
@@ -99,7 +99,7 @@ class Attendance(models.Model):
     @property
     def how_much_delay(self):
         hrs_start_from = \
-        Working_Hours_Policy.objects.filter(enterprise=self.employee.enterprise).values("hrs_start_from")[0][
+        Working_Days_Policy.objects.filter(enterprise=self.employee.enterprise).values("hrs_start_from")[0][
             'hrs_start_from']
         # first_delta = mydatetime.timedelta(hours=self.check_in.hour, minutes=self.check_in.minute,
         #                                    seconds=self.check_in.second)

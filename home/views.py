@@ -82,7 +82,7 @@ def user_login(request):
 
 @login_required(login_url='/login')
 def user_home_page(request):
-    employee = Employee.objects.get(user=request.user.usercomapny_set.all())
+    employee = Employee.objects.get(user=request.user)
     employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
 
     leave_count = Leave.objects.filter(user=request.user, status='pending').count()

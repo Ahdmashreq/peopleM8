@@ -213,6 +213,7 @@ def path_and_rename(instance, filename):
 
 
 class Enterprise_Policies(models.Model):
+    # Company attachemnts
     enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name='policy_enterprise',
                                    verbose_name=_('Enterprise Name'))
     policy_description = models.CharField(max_length=255, null=True, blank=True, verbose_name=_('Policy Description'))
@@ -246,7 +247,7 @@ class Enterprise_Policies(models.Model):
         return self.position_name
 
 
-class Working_Hours_Policy(models.Model):
+class Working_Days_Policy(models.Model):
     week_days = (
         ("SATURDAY", "Saturday"),
         ("SUNDAY", "Sunday"),
@@ -264,10 +265,11 @@ class Working_Hours_Policy(models.Model):
     week_end_days = MultiSelectField(max_length=100, choices=week_days, null=True, blank=True)
     normal_over_time_hourly_rate = models.DecimalField(decimal_places=2, max_digits=3)
     exceptional_over_time_hourly_rate = models.DecimalField(decimal_places=2, max_digits=3)
-    delay_hours_rate = models.DecimalField(decimal_places=2, max_digits=3)
-    absence_days_rate = models.DecimalField(decimal_places=2, max_digits=3)
-    hrs_start_from = models.TimeField(blank=True, null=True, verbose_name=_('Working Hours From '))
-    hrs_end_at = models.TimeField(blank=True, null=True, verbose_name=_('Working Hours To '))
+    hrs_start_from = models.TimeField(blank=True, null=True, verbose_name=_('Working Hours From'))
+    hrs_end_at = models.TimeField(blank=True, null=True, verbose_name=_('Working Hours To'))
+    delay_allowed = models.TimeField(blank=True, null=True, verbose_name=_('Delay allowed'))
+    delay_starts_from = models.TimeField(blank=True, null=True, verbose_name=_('Delay calculation starts from'))
+    absence_starts_from = models.TimeField(blank=True, null=True, verbose_name=_('Absence calculation starts from'))
     start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
     end_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=_('End Date'))
 
@@ -281,12 +283,11 @@ class Working_Hours_Policy(models.Model):
     def __str__(self):
         return self.enterprise.name + "Working Hours Policy"
 
-
 class Working_Hours_Deductions_Policy(models.Model):
     class Meta:
-        unique_together = ['working_hours_policy', 'day_number']
+        unique_together = ['working_days_policy', 'day_number']
 
-    working_hours_policy = models.ForeignKey(Working_Hours_Policy, blank=True, null=True, on_delete=models.CASCADE)
+    working_days_policy = models.ForeignKey(Working_Days_Policy, blank=True, null=True, on_delete=models.CASCADE)
     day_number = models.IntegerField()
     delay_rate = models.DecimalField(decimal_places=2, max_digits=3, default=0.0)
     notify = models.BooleanField(default=False, )
@@ -343,5 +344,3 @@ class YearlyHoliday(models.Model):
 @receiver(pre_save, sender=YearlyHoliday)
 def working_time(sender, instance, *args, **kwargs):
     instance.number_of_days_off = (instance.end_date - instance.start_date).days + 1
-
-

@@ -1,8 +1,7 @@
 from django import forms
 from crispy_forms.helper import FormHelper
 from company.models import (Enterprise, Department, Grade, Job,
-                            Position, Working_Hours_Policy,
-                            Working_Hours_Deductions_Policy, YearlyHoliday, Year)
+                            Position, Working_Days_Policy, Working_Hours_Deductions_Policy, YearlyHoliday, Year)
 from defenition.models import LookupDet
 from cities_light.models import City, Country
 from datetime import date
@@ -131,18 +130,21 @@ class PositionForm(forms.ModelForm):
 PositionInline = forms.modelformset_factory(Position, form=PositionForm, extra=5, can_delete=True)
 
 
-class WorkingHoursForm(forms.ModelForm):
+class WorkingDaysForm(forms.ModelForm):
     class Meta:
-        model = Working_Hours_Policy
+        model = Working_Days_Policy
         fields = '__all__'
         exclude = common_items_to_execlude+('enterprise',)
 
     def __init__(self, *args, **kwargs):
-        super(WorkingHoursForm, self).__init__(*args, **kwargs)
+        super(WorkingDaysForm, self).__init__(*args, **kwargs)
         self.fields['start_date'].widget.input_type = 'date'
         self.fields['end_date'].widget.input_type = 'date'
         self.fields['hrs_start_from'].widget.input_type = 'time'
         self.fields['hrs_end_at'].widget.input_type = 'time'
+        self.fields['delay_allowed'].widget.input_type = 'time'
+        self.fields['delay_starts_from'].widget.input_type = 'time'
+        self.fields['absence_starts_from'].widget.input_type = 'time'
         for field in self.fields:
             if self.fields[field].widget.input_type != 'checkbox':
                 self.fields[field].widget.attrs['class'] = 'form-control parsley-validated'

@@ -24,12 +24,11 @@ from django.utils.text import slugify
 from weasyprint import HTML, CSS
 from weasyprint.fonts import FontConfiguration
 # ############################################################
-from .new_tax_rules import Tax_Deduction
+from .new_tax_rules import Tax_Deduction_Amount
 
 @login_required(login_url='/login')
 def listSalaryView(request):
-    new_tax = Tax_Deduction(exemption=9000, round_down_to_nearest_10=True)
-    new_tax.run_tax_calc(monthly_salary=95000)
+    
     salary_list = Salary_elements.objects.filter(
         (Q(end_date__gt=date.today()) | Q(end_date__isnull=True))).values(
             'salary_month', 'salary_year',
@@ -282,11 +281,13 @@ def userSalaryInformation(request, month_number, salary_year, salary_id,emp_id):
     emp_elements_incomes = Employee_Element.objects.filter(
                                                            emp_id=emp_id,
                                                            element_id__classification__code='earn',
-                                                           start_date__month=month_number
+                                                           # start_date__month=month_number
+                                                           end_date__isnull=True
                                                            )
     emp_elements_deductions = Employee_Element.objects.filter(emp_id=emp_id,
                                                               element_id__classification__code='deduct',
-                                                              start_date__month=month_number
+                                                              # start_date__month=month_number
+                                                              end_date__isnull=True
                                                               )
     emp_payment = Payment.objects.filter((Q(end_date__gte=date.today()) | Q(end_date__isnull=True)),emp_id=emp_id)
     monthSalaryContext = {

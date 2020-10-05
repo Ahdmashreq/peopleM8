@@ -1,5 +1,5 @@
 from django.contrib import admin
-from defenition.models import LookupType, LookupDet, InsuranceRule, TaxRule, TaxSection, New_Tax_Section
+from defenition.models import LookupType, LookupDet, InsuranceRule, TaxRule, TaxSection, Tax_Sections
 
 
 ####################################### Inlines Goes Here #############################################
@@ -84,9 +84,9 @@ class TaxSectionAdmin(admin.ModelAdmin):
         'section_execution_sequence',
     )
 
-@admin.register(New_Tax_Section)
+@admin.register(Tax_Sections)
 class NewTaxAdmin(admin.ModelAdmin):
-    model = New_Tax_Section
+    model = Tax_Sections
     fields = (
         'name',
         'tax_rule_id',

@@ -1,6 +1,6 @@
 from django import forms
 from crispy_forms.helper import FormHelper
-from defenition.models import LookupType, LookupDet, InsuranceRule, TaxRule, TaxSection
+from defenition.models import LookupType, LookupDet, InsuranceRule, TaxRule, TaxSection, Tax_Sections
 from datetime import date
 from django.db.models import Q
 
@@ -100,7 +100,7 @@ class TaxRuleForm(forms.ModelForm):
 
 class TaxSectionForm(forms.ModelForm):
     class Meta:
-        model = TaxSection
+        model = Tax_Sections
         fields = '__all__'
         exclude = common_items_to_execlude
 
@@ -116,4 +116,4 @@ class TaxSectionForm(forms.ModelForm):
             else:
                 self.fields[field].widget.attrs['class'] = 'form-control parsley-validated'
 
-TaxSectionFormSet = forms.inlineformset_factory(TaxRule, TaxSection, form= TaxSectionForm, extra=5, can_delete=False)
+TaxSectionFormSet = forms.inlineformset_factory(TaxRule, Tax_Sections, form= TaxSectionForm, extra=2, can_delete=False)

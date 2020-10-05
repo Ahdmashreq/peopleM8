@@ -155,13 +155,13 @@
                       </div>
                     </div>
                     <div class="form-row col-md-12">
-                      <div class="form-group col-md-3 checkbox-info peers ai-c">
-                        {{ emp_form.insured }}
+                      <div class="form-group col-md-2 checkbox-info peers ai-c">
                         <label for="id_insured" class="peers peer-greed js-sb ai-c">
                           {{ emp_form.insured.label }}
                         </label>
+                        {{ emp_form.insured }}
                       </div>
-                      <div class="form-group col-md-3">
+                      <div class="form-group col-md-2">
                         <label class="fw-500">{% trans "Insurance Date" %}</label>
                         {{ emp_form.insurance_date}}
                       </div>
@@ -169,18 +169,18 @@
                         <label class="fw-500">{% trans "Insurance Number" %}</label>
                         {{ emp_form.insurance_number}}
                       </div>
-                      <div class="form-group col-md-3">
-                        <label class="fw-500">{% trans "Insurance Salary" %}</label>
+                      <div class="form-group col-md-2">
+                        <label class="fw-500">{% trans "الراتب التأميني" %}</label>
                         {{ emp_form.insurance_salary}}
                       </div>
                     </div>
 
                     <div class="form-row col-md-12">
                       <div class="form-group col-md-4 checkbox-info peers ai-c">
-                        {{ emp_form.has_medical}}
                         <label for="id_has_medical" class="peers peer-greed js-sb ai-c">
                         {{ emp_form.has_medical.label }}
                         </label>
+                        {{ emp_form.has_medical}}
                       </div>
                       <div class="form-group col-md-4">
                         <label class="fw-500">{% trans "Medical Number" %}</label>
@@ -199,7 +199,7 @@
                     <div class="form-row col-md-12">
                       <div class="col-md-2"></div>
                       <div class="form-group col-md-4">
-                        <label class="fw-500">Start Date</label>
+                        <label class="fw-500">تاريخ البداية</label>
                         <div class="timepicker-input input-icon form-group">
                           <div class="input-group">
                             <div class="input-group-addon bgc-white bd bdwR-0"><i class="ti-calendar"></i></div>
@@ -208,7 +208,7 @@
                         </div>
                       </div>
                       <div class="form-group col-md-4">
-                        <label class="fw-500">End Date</label>
+                        <label class="fw-500">تاريخ النهاية</label>
                         <div class="timepicker-input input-icon form-group">
                           <div class="input-group">
                             <div class="input-group-addon bgc-white bd bdwR-0"><i class="ti-calendar"></i></div>

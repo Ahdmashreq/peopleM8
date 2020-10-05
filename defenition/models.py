@@ -87,18 +87,24 @@ class TaxSection(models.Model):
         return self.name
 
 
-class New_Tax_Section(models.Model):
-    name = models.CharField(max_length=255,verbose_name=_('Name'))
-    tax_rule_id = models.ForeignKey(TaxRule, related_name='New_sections', on_delete=models.PROTECT,verbose_name=_('Tax Rule Id'))
+class Tax_Sections(models.Model):
+    name = models.CharField(max_length=255,verbose_name=_('Section Name'))
+    tax_rule_id = models.ForeignKey(TaxRule, related_name='tax_sections', on_delete=models.PROTECT,verbose_name=_('Tax Rule Id'))
     salary_from = models.FloatField(verbose_name=_('Salary From'))
     salary_to = models.FloatField(default=1000000000,verbose_name=_('Salary To'))
     tax_percentage = models.FloatField(verbose_name=_('Tax Percentage'))
     tax_difference = models.FloatField(blank=True, null=True, verbose_name=_('Tax Difference'))
     section_execution_sequence = models.IntegerField(default=0,verbose_name=_('Section Execution Sequence'))
+    start_date	=	models.DateField(auto_now=False, auto_now_add=False, default=date.today,verbose_name=_('Start Date') )
+    end_date	=	models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True,verbose_name=_('End Date'))
+    created_by  =   models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,on_delete=models.CASCADE,related_name="TaxSections_created_by")
+    creation_date	=	models.DateField(auto_now=True, auto_now_add=False)
+    last_update_by	=	models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True,on_delete=models.CASCADE,related_name="TaxSections_last_update_by")
+    last_update_date	=	models.DateField(auto_now=False, auto_now_add=True)
 
     def __str__(self):
         return self.name
 
-@receiver(pre_save, sender=New_Tax_Section)
+@receiver(pre_save, sender=Tax_Sections)
 def tax_difference_calc(sender, instance, *args, **kwargs):
     instance.tax_difference = instance.salary_to - instance.salary_from+1

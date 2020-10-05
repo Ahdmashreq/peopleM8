@@ -120,8 +120,8 @@ class PositionAdmin(admin.ModelAdmin):
         return instance
 
 
-@admin.register(models.Working_Hours_Policy)
-class Working_Hours_PolicyAdmin(admin.ModelAdmin):
+@admin.register(models.Working_Days_Policy)
+class Working_Days_PolicyAdmin(admin.ModelAdmin):
     fields = (
         'number_of_daily_working_hrs',
         'normal_over_time_hourly_rate',
@@ -146,7 +146,7 @@ class Working_Hours_PolicyAdmin(admin.ModelAdmin):
 @admin.register(models.Working_Hours_Deductions_Policy)
 class Working_Hours_Deductions_PolicyAdmin(admin.ModelAdmin):
     fields = (
-            'working_hours_policy',
+            'working_days_policy',
             'day_number',
             'delay_rate',
             'notify',

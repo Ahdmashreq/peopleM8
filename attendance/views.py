@@ -16,7 +16,7 @@ from attendance.forms import FormAttendance, Tasks_inline_formset, FormTasks, Co
 from attendance.resources import AttendanceResource
 from attendance.tmp_storage import TempFolderStorage
 from employee.models import Employee
-from company.models import Working_Hours_Policy, YearlyHoliday
+from company.models import Working_Days_Policy, YearlyHoliday
 from leave.models import Leave
 from service.models import Bussiness_Travel
 from datetime import date, timedelta
@@ -290,7 +290,7 @@ def list_all_attendance(request):
 
 @login_required(login_url='/login')
 def list_employee_attendance_history_view(request):
-    get_deductions_overtime_and_delay(employee_id=4, month=9, year=2020)
+    get_deductions_overtime_and_delay(employee_id=1, month=9, year=2020)
     emp_attendance_form = FormEmployeeAttendanceHistory()
     emp_attendance_list = Employee_Attendance_History.objects.filter(created_by__company=request.user.company).order_by(
         '-month')
