@@ -13,20 +13,20 @@
     <!--  -->
     <div class="row">
       <div class="col-md-8">
-        <h4 class="c-grey-900">Service Form</h4>
+        <h4 class="c-grey-900">{% trans "Service Form" %}</h4>
       </div>
     </div>
     <div class="mt-1">
       <div class="bgc-white p-20 bd">
-        <h5 class="c-grey-900">Service requested from user <strong>{{employee}}</strong></h5>
+        <h5 class="c-grey-900">{% trans "Service requested from user" %} <strong>{{employee}}</strong></h5>
         <div class="mT-30">
           <div class="form-row">
             <div class="form-group col-md-3">
-              <label for="inputPassword4">Purpose of Trip</label>
+              <label for="inputPassword4">{% trans "Purpose of Trip" %}</label>
               {{service_form.prupose_of_trip}}
             </div>
             <div class="form-group col-md-3">
-              <label class="fw-500">From</label>
+              <label class="fw-500">{% trans "From" %}</label>
               <div class="timepicker-input input-icon form-group">
                 <div class="input-group">
                   <div class="input-group-addon bgc-white bd bdwR-0"><i class="ti-calendar"></i></div>
@@ -35,7 +35,7 @@
               </div>
             </div>
             <div class="form-group col-md-3">
-              <label class="fw-500">To</label>
+              <label class="fw-500">{% trans "To" %}</label>
               <div class="timepicker-input input-icon form-group">
                 <div class="input-group">
                   <div class="input-group-addon bgc-white bd bdwR-0"><i class="ti-calendar"></i></div>
@@ -44,28 +44,28 @@
               </div>
             </div>
             <div class="form-group col-md-3">
-              <label for="inputCity">Project Name</label>
+              <label for="inputCity">{% trans "Project Name" %}</label>
               {{service_form.project_name}}
             </div>
             <div class="form-group col-md-9">
-              <label for="inputCity">Total Cost</label>
+              <label for="inputCity">{% trans "Total Cost" %}</label>
               {{service_form.total_cost}}
             </div>
           </div>
           <div class="form-row gap-10 peers">
             <div class="peer">
               <a href="{% url 'service:service-approve' service_id=service_id %}">
-                <button type="button" class="btn cur-p btn-success">Approve</button>
+                <button type="button" class="btn cur-p btn-success">{% trans "Approve" %}</button>
               </a>
 
             </div>
             <div class="peer">
               <a href="{% url 'service:service-unapprove' service_id=service_id %}">
-              <button type="button" class="btn cur-p btn-danger">Reject</button>
+              <button type="button" class="btn cur-p btn-danger">{% trans "Reject" %}</button>
               </a>
             </div>
             <div class="peer">
-              <a href="{% url 'service:services_list' %}" class="btn cur-p btn-secondary">Cancel</a>
+              <a href="{% url 'service:services_list' %}" class="btn cur-p btn-secondary">{% trans "Cancel" %}</a>
             </div>
           </div>
         </div>

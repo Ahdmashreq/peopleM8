@@ -1,15 +1,14 @@
 from django.conf import settings
 from django.db import models
-from datetime import date, datetime
+from datetime import date
 from django.db.models import Q
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
-from defenition.models import LookupDet
-from employee.models import Employee, JobRoll, Employee_Element
-from element_definition.models import Element_Master, Element_Detail, Element_Batch, Element_Batch_Master
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
+from employee.models import Employee, JobRoll, Employee_Element, Employee_Element_History
+from element_definition.models import Element_Batch
 from manage_payroll.models import Assignment_Batch, Payroll_Master
-from company.models import Department, Grade, Position
-from defenition.models import TaxSection
 from payroll_run.new_tax_rules import Tax_Deduction_Amount
 from django.utils.translation import ugettext_lazy as _
 
@@ -55,16 +54,20 @@ class Salary_elements(models.Model):
         default=0.0, null=True, blank=True, verbose_name=_('Net Salary'))
     is_final = models.BooleanField(
         default=False, blank=True, verbose_name=_('Salary is final'))
-    start_date  = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
-    end_date    = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=_('End Date'))
-    created_by = models.ForeignKey( settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE, related_name="salary_created_by")
+    start_date = models.DateField(
+        auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
+    end_date = models.DateField(
+        auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=_('End Date'))
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False,
+                                   on_delete=models.CASCADE, related_name="salary_created_by")
     creation_date = models.DateField(auto_now=True, auto_now_add=False)
-    last_update_by = models.ForeignKey( settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE, related_name="salary_last_update_by")
+    last_update_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE, related_name="salary_last_update_by")
     last_update_date = models.DateField(auto_now=False, auto_now_add=True)
 
     def _get_insured_emp_basic(self):
         emp_element = Employee_Element.objects.filter(
-            emp_id=self.emp, element_id__db_name='001', emp_id__insured=1).filter((Q(end_date__gte=date.today())|Q(end_date__isnull=True)))
+            emp_id=self.emp, element_id__db_name='001', emp_id__insured=1).filter((Q(end_date__gte=date.today()) | Q(end_date__isnull=True)))
         emp_basic = 0.0
         for x in emp_element:
             emp_basic += x.element_value
@@ -73,14 +76,15 @@ class Salary_elements(models.Model):
     def _get_uninsured_emp_basic(self):
         emp_element = Employee_Element.objects.filter(
             emp_id=self.emp, element_id__db_name='001', emp_id__insured=0).filter(
-                (Q(end_date__gte=date.today())|Q(end_date__isnull=True)))
+                (Q(end_date__gte=date.today()) | Q(end_date__isnull=True)))
         emp_basic = 0.0
         for x in emp_element:
             emp_basic += x.element_value
         return emp_basic
 
     def _get_emp_income(self):
-        emp_allowance = Employee_Element.objects.filter(element_id__classification__code='earn', emp_id=self.emp).filter((Q(end_date__gte=date.today())|Q(end_date__isnull=True)))
+        emp_allowance = Employee_Element.objects.filter(element_id__classification__code='earn', emp_id=self.emp).filter(
+            (Q(end_date__gte=date.today()) | Q(end_date__isnull=True)))
         self.incomes = 0
         for x in emp_allowance:
             self.incomes += x.element_value
@@ -89,7 +93,7 @@ class Salary_elements(models.Model):
     def _get_emp_deduction_elements(self):
         emp_deductions = Employee_Element.objects.filter(
             element_id__classification__code='deduct', emp_id=self.emp).filter(
-                (Q(end_date__gte=date.today())|Q(end_date__isnull=True)))
+                (Q(end_date__gte=date.today()) | Q(end_date__isnull=True)))
         self.deductions = 0
         for x in emp_deductions:
             self.deductions += x.element_value
@@ -119,8 +123,8 @@ class Salary_elements(models.Model):
     def _calc_insurance(self):
         if self.emp.insured == 1:
             insurance_rule_master = Payroll_Master.objects.get()
-            constant_amount_ratio = insurance_rule_master.social_insurance.basic_deduction_percentage/100
-            variable_amount_ratio = insurance_rule_master.social_insurance.variable_deduction_percentage/100
+            constant_amount_ratio = insurance_rule_master.social_insurance.basic_deduction_percentage / 100
+            variable_amount_ratio = insurance_rule_master.social_insurance.variable_deduction_percentage / 100
             if self._get_insured_emp_basic() <= insurance_rule_master.social_insurance.maximum_insurable_basic_salary:
                 constant_amount = self._get_insured_emp_basic() * constant_amount_ratio
             else:
@@ -141,18 +145,20 @@ class Salary_elements(models.Model):
         tax_rule_master = Payroll_Master.objects.get()
         personal_exemption = tax_rule_master.tax_rule.personal_exemption
         round_to_10 = tax_rule_master.tax_rule.round_down_to_nearest_10
-        tax_deduction_amount = Tax_Deduction_Amount(personal_exemption, round_to_10)
+        tax_deduction_amount = Tax_Deduction_Amount(
+            personal_exemption, round_to_10)
         taxable_salary = self._calc_gross_salary()
         taxes = tax_deduction_amount.run_tax_calc(taxable_salary)
         self.tax_amount = taxes
         return round(taxes, 2)
 
     def _calc_gross_salary(self):
-        self.gross_salary = self._calc_all_incomes()-self._calc_all_deductions() - self._calc_insurance()
+        self.gross_salary = self._calc_all_incomes() - self._calc_all_deductions() - \
+            self._calc_insurance()
         return self.gross_salary
 
     def _calc_net_salary(self):
-        self.net_salary = self._calc_gross_salary()-self._calc_taxes_deduction()
+        self.net_salary = self._calc_gross_salary() - self._calc_taxes_deduction()
         return self.net_salary
 
     def _validate_is_latest_record(self):
@@ -181,3 +187,23 @@ class Salary_elements(models.Model):
 
     def __str__(self):
         return self.emp.emp_name
+
+
+@receiver(pre_save, sender=Salary_elements)
+def employee_elements_history(sender, instance, *args, **kwargs):
+    employee_old_elements = Employee_Element.objects.filter(emp_id=instance.emp)
+    check_for_element = Employee_Element_History.objects.filter(employee=instance.emp_id, salary_month=instance.salary_month, salary_year=instance.salary_year)
+    if len(check_for_element) > 0:
+        for record in check_for_element:
+            record.delete()
+    for element in employee_old_elements:
+        element_history = Employee_Element_History(
+                                 employee = element.emp_id,
+                                 element = element.element_id,
+                                 element_value = element.element_value,
+                                 salary_month = instance.salary_month,
+                                 salary_year = instance.salary_year,
+                                 creation_date = date.today(),
+        )
+        element_history.save()
+    

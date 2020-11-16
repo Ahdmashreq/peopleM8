@@ -55,7 +55,7 @@ def message_composer(request, html_template, instance_name, result):
     return html_message
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def add_leave(request):
     employee = Employee.objects.get(user=request.user)
     employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
@@ -112,8 +112,9 @@ def valid_leave(user, req_startdate, req_enddate):
             return False
     return True
 
+# #############################################################################
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def list_leave(request):
     employee = Employee.objects.get(user=request.user)
     employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
@@ -127,7 +128,7 @@ def list_leave(request):
     return render(request, 'list_leave.html', {'leaves': list_leaves, 'is_manager': is_manager})
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def delete_leave_view(request, id):
     instance = get_object_or_404(Leave, id=id)
     instance.delete()
@@ -136,7 +137,7 @@ def delete_leave_view(request, id):
     return redirect('leave:list_leave')
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def edit_leave(request, id):
     instance = get_object_or_404(Leave, id=id)
     employee = Employee.objects.get(user=instance.user)
@@ -155,7 +156,7 @@ def edit_leave(request, id):
     return render(request, 'edit-leave.html', {'leave_form': leave_form, 'leave_id': id, 'employee': employee})
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def leave_approve(request, leave_id):
     instance = get_object_or_404(Leave, id=leave_id)
     instance.status = 'Approved'
@@ -169,7 +170,7 @@ def leave_approve(request, leave_id):
     return redirect('leave:list_leave')
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def leave_unapprove(request, leave_id):
     instance = get_object_or_404(Leave, id=leave_id)
     instance.status = 'Rejected'
@@ -184,25 +185,36 @@ def leave_unapprove(request, leave_id):
 
 
 # #############################################################################
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
+def list_leave_master(request):
+    leave_master_list = LeaveMaster.objects.filter(enterprise = request.user.company)
+    return render(request, 'list_leave_master.html', {'leave_master_list': leave_master_list})
+
+
+@login_required(login_url='home:user-login')
 def add_leave_master(request):
     leaves = LeaveMaster.objects.all()
     if request.method == "POST":
         leave_form = FormLeaveMaster(data=request.POST)
         if leave_form.is_valid():
-            leave = leave_form.save(commit=False)
-            leave.save()
+            leave_obj = leave_form.save(commit=False)
+            leave_obj.enterprise = request.user.company
+            leave_obj.created_by = request.user
+            leave_obj.save()
             messages.add_message(request, messages.SUCCESS,
-                                 'Leave master was created successfully')
-            return redirect('leave:add_leave_master')
+                                 _('Leave master was created successfully'))
+            if 'save_and_exit' in request.POST:
+                return redirect('leave:list-leave-master')
+            else:
+                return redirect('leave:add_leave_master')
         else:
             print(leave_form.errors)
     else:  # http request
         leave_form = FormLeaveMaster()
-    return render(request, 'add_leave_master.html', {'leave_form': leave_form, 'leaves': leaves})
+    return render(request, 'create_leave_master.html', {'leave_form': leave_form, 'leaves': leaves})
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def edit_leave_master(request, id):
     instance = get_object_or_404(LeaveMaster, id=id)
     if request.method == "POST":
@@ -218,10 +230,10 @@ def edit_leave_master(request, id):
             print(leave_form.errors)
     else:  # http request
         leave_form = FormLeaveMaster(instance=instance)
-    return render(request, 'edit_leave_master.html', {'leave_form': leave_form})
+    return render(request, 'create_leave_master.html', {'leave_form': leave_form})
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def del_leave_master(request, id):
     instance = get_object_or_404(LeaveMaster, id=id)
     instance.delete()
@@ -236,7 +248,7 @@ class Elmplyees_Leave_Balance(ListView):
     template_name = 'leave_balance_list.html'
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def create_employee_leave_balance(request):
     leave_balance_form = Leave_Balance_Form()
     if request.method == 'POST':
@@ -255,7 +267,7 @@ def create_employee_leave_balance(request):
     return render(request, 'leave_balance_create.html', leave_balance_context)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def view_employee_leaves_list(request, employee_id):
     employee = Employee.objects.get(id=employee_id)
     list_leaves = Leave.objects.filter(user=employee.user)

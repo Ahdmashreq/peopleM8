@@ -9,16 +9,16 @@
 <form method="POST">
     {% csrf_token %}
     <div class="jumbotron text-center">
-        <h1 class="display-3">Ohh you are leaving</h1>
-        <p class="lead"><strong>Thank you for your efforts today. See you soon &#128521;</strong>
-          <br>You Checked In : {{check_in_time}}
-          <br>Time Now Is : {{check_out_time}}</p>
+        <h1 class="display-3">{% trans "Ohh you are leaving" %}</h1>
+        <p class="lead"><strong>{% trans "Thank you for your efforts today. See you soon" %} &#128521;</strong>
+          <br>{% trans "You Checked In :" %} {{check_in_time}}
+          <br>{% trans "Time Now Is :" %} {{check_out_time}}</p>
 
         <hr>
         <p class="lead">
-            <button type="submit" name="button" class="btn btn-primary btn-md">Check out</button>
+            <button type="submit" name="button" class="btn btn-primary btn-md">{% trans "Check out" %}</button>
             <a class="btn btn-primary btn-md" href="{% url 'attendance:user-list-attendance' %}"
-               role="button">Cancel</a>
+               role="button">{% trans "Cancel" %}</a>
         </p>
     </div>
 </form>

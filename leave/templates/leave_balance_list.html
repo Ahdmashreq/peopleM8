@@ -66,9 +66,9 @@
                 <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-body">
-                      <p>You are about to delete a record {{i.leavetype}}. Do you want to continue?</p>
-                      <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-                      <a href="{% url 'leave:del_leave' i.id %}" class="btn btn-danger" type="button">Yes</a>
+                      <p>{% trans "You are about to delete a record " %} {{i.leavetype}}.{% trans "Do you want to continue?" %} </p>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
+                      <a href="{% url 'leave:del_leave' i.id %}" class="btn btn-danger" type="button">{% trans "Yes" %}</a>
                     </div>
                   </div>
                 </div>

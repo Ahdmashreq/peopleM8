@@ -5,7 +5,6 @@
     "fields": {
       "enterprise_user": 1,
       "name": "الشركة الرئيسية",
-      "business_unit_name": "رئيسي 1",
       "reg_tax_num":"رئيسي 1",
       "commercail_record": "رئيسي 1",
       "address1": "رئيسي 1",
@@ -14,7 +13,7 @@
       "fax": "0001",
       "email": "main@mashreq.com",
       "country": 1,
-
+      "slug":"mastercompany",
       "start_date": "2000-01-01",
       "created_by": 1,
       "creation_date": "2000-01-01",

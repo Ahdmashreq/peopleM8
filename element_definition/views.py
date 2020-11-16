@@ -28,10 +28,11 @@ def installElementMaster(request):
         element_name = 'الأساسي'
     else:
         element_name = 'Basic'
+    company_basic_db_name = str(request.user.company.id)+'00001'
     basic_element = Element_Master(
         enterprise=request.user.company,
         element_name=element_name,
-        db_name="001",
+        db_name= company_basic_db_name,
         element_type=element_type_obj,
         classification=element_class_obj,
         retro_flag=0,
@@ -46,11 +47,11 @@ def installElementMaster(request):
 ######################################## Element view functions ##################################################
 
 
-def getDBSec(n):
+def getDBSec(n,company_id):
     if n < 1:
-        return str(1).zfill(3)
+        return str(company_id)+str(1).zfill(5)
     else:
-        return str(n+1).zfill(3)
+        return str(company_id)+str(n+1).zfill(5)
 
 
 def createElementView(request):
@@ -63,7 +64,7 @@ def createElementView(request):
             element_obj.enterprise = request.user.company
             element_obj.created_by = request.user
             element_obj.last_update_by = request.user
-            element_obj.db_name = getDBSec(rows_number)
+            element_obj.db_name = getDBSec(rows_number,request.user.company.id)
             element_obj.save()
             return redirect('element_definition:list-element')
             user_lang = to_locale(get_language())
@@ -94,8 +95,9 @@ def listElementView(request):
         element_flag = False
         element_master = Element_Master.objects.filter(enterprise=request.user.company).filter(
             (Q(end_date__gte=date.today()) | Q(end_date__isnull=True)))
+        company_basic_db_name = str(request.user.company.id)+'00001'
         for x in element_master:
-            if x.db_name == '001' and x.enterprise == request.user.company:
+            if x.db_name == company_basic_db_name and x.enterprise == request.user.company:
                 element_flag = True
     myContext = {
         'page_title': _('elements'),

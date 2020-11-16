@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 {% load staticfiles %}
+{% load l10n %}
+{% load i18n %}
 <html>
 
 <head>
@@ -166,17 +168,17 @@
               <table border="0" cellpadding="0" cellspacing="0" class="brdBottomPadd-two" id="templateContainer" width="100%">
                 <tr>
                   <td class="bodyContent" valign="top" mc:edit="welcomeEdit-02">
-                    <p>Dear {{ team_leader }}</p>
-                    <h3><strong>{{requestor|capfirst}} wants to apply for a leave </strong></h3>
-                    <h4>Please find details below: <br><br></h4>
+                    <p>{% trans "Dear" %} {{ team_leader }}</p>
+                    <h3><strong>{{requestor|capfirst}} {% trans "wants to apply for a leave" %} </strong></h3>
+                    <h4>{% trans "Please find details below:" %} <br><br></h4>
                     <table border="1px" cellpadding="7">
                       <tbody>
                         <tr>
-                          <th>Date From</th>
-                          <th>Date To</th>
-                          <th>Number Days</th>
-                          <th>Resume Duty on</th>
-                          <th>Comment</th>
+                          <th>{% trans "Date From" %}</th>
+                          <th>{% trans "Date To" %}</th>
+                          <th>{% trans "Number Days" %}</th>
+                          <th>{% trans "Resume Duty on" %}</th>
+                          <th>{% trans "Comment" %}</th>
                         </tr>
                         <tr>
                           <td>{{ date_from }}</td>
@@ -191,14 +193,14 @@
                 </tr>
                 <tr>
                   <td class="bodyContent">
-                    <h4>Once the employee leave period has ended, the employee must fill out a Leave Report upon returning.<br>
-                      Regards.<br>
+                    <h4>{% trans "Once the employee leave period has ended, the employee must fill out a Leave Report upon returning.<br>
+                      Regards." %}<br>
                       <br>
                     </h4>
                   </td>
                 </tr>
               </table>
-              <h3><a href="http://127.0.0.1:8000{% url 'leave:edit_leave' id=leave_id %}" target="_blank">Respond to this leave</a></h3>
+              <h3><a href="http://165.22.19.247{% url 'leave:edit_leave' id=leave_id %}" target="_blank">{% trans "Respond to this leave" %}</a></h3>
             </td>
           </tr>
         </table>

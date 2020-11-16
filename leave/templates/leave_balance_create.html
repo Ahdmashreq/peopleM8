@@ -7,7 +7,7 @@
 
 <div class="container-fluid">
   {% include 'messages.html'%}
-  
+
   <form method="post">
     {% csrf_token %}
     <!--  -->
@@ -19,7 +19,7 @@
       <div class="col-md-4">
         <div class="gap-10 peers push-right">
           <div class="peer">
-            <button type="submit" class="btn cur-p btn-primary">Save</button>
+            <button type="submit" class="btn cur-p btn-primary">{% trans "Save" %}</button>
           </div>
           <div class="peer">
             <a href="{% url 'leave:leave-balance' %}" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>

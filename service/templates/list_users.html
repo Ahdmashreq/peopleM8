@@ -18,17 +18,17 @@
         <div class="col-lg-12">
             <section class="panel">
                 <header class="panel-heading">
-                    Users
+                    {% trans "Users" %}
                 </header>
                 <div class="panel-body">
                     <div class="form-group" style=padding-top:40px>
                         <div class="records">
                             <table class="table">
                                 <thead>
-                                <th scope="col">User</th>
-                                <th scope="col"> &nbsp Employee</th>
-                                <th scope="col"> &nbsp Department</th>
-                                <th scope="col"> &nbsp Status</th>
+                                <th scope="col">{% trans "User" %}</th>
+                                <th scope="col"> &nbsp {% trans "Employee" %}</th>
+                                <th scope="col"> &nbsp {% trans "Department" %}</th>
+                                <th scope="col"> &nbsp {% trans "Status" %}</th>
                                 </thead>
                                 {% for i in users %}{% for j in departments %}
                                 <tr>

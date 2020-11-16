@@ -26,12 +26,12 @@
                         <thead>
                         <tr>
                             <th>#</th>
-                            <th>Date</th>
-                            <th>Check in</th>
-                            <th>Check out</th>
-                            <th>work time</th>
-                            <th colspan="2" style="text-align:center">Tasks</th>
-                            <th>أجراءات</th>
+                            <th>{% trans "Date" %}</th>
+                            <th>{% trans "Check in" %}</th>
+                            <th>{% trans "Check out" %}</th>
+                            <th>{% trans "work time" %}</th>
+                            <th colspan="2" style="text-align:center">{% trans "Tasks" %}</th>
+                            <th>{% trans "Actions" %}</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -44,17 +44,17 @@
                             <td>{{i.work_hours}}</td>
                             <td>
                                 {% if i.check_out is None %}
-                                <a href="{% url 'attendance:edit-all-tasks' attendance_text=i.id %}">Add Tasks</a>
+                                <a href="{% url 'attendance:edit-all-tasks' attendance_text=i.id %}">{% trans "Add Tasks" %}</a>
                                     {% endif %}
                             </td>
                             <td>
-                                <a href="{% url 'attendance:list-tasks' attendance_slug=i.id %}">View your tasks
+                                <a href="{% url 'attendance:list-tasks' attendance_slug=i.id %}">{% trans "View your tasks" %}
                             </td>
                             <td>
                                 {% if i.check_out is None %}
                                 <a href="{% url 'attendance:check_out_time' %}">
                                     <button type="button" class="btn btn-success">
-                                        <i class="fa fa-car"></i> Check Out
+                                        <i class="fa fa-car"></i> {% trans "Check Out" %}
                                     </button>
                                 </a>
                                 {% endif %}

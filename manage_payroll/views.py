@@ -15,14 +15,14 @@ from manage_payroll.forms import (AssignmentBatchForm, BatchIncludeFormSet,
                                   PaymentMethodInline, Bank_MasterForm, PayrollMasterForm)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def listAssignmentBatchView(request):
     batch_list = Assignment_Batch.objects.all().filter((Q(end_date__gte=date.today())|Q(end_date__isnull=True)))
     batchContxt = {"page_title":_("Assignment Batchs") , 'batch_list': batch_list}
     return render(request, 'list-assignment-batch.html', batchContxt)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def createAssignmentBatchView(request):
     batch_form = AssignmentBatchForm()
     batch_include_form = BatchIncludeFormSet(
@@ -77,7 +77,7 @@ def createAssignmentBatchView(request):
     return render(request, 'create-assignment-batch.html', batchContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def updateAssignmentBatchView(request, pk):
     required_assignment_batch = Assignment_Batch.objects.get(pk=pk)
     batch_form = AssignmentBatchForm(instance=required_assignment_batch)
@@ -132,7 +132,7 @@ def updateAssignmentBatchView(request, pk):
     return render(request, 'create-assignment-batch.html', batchContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def deleteAssignmentBatchView(request, pk):
     required_assignment_batch = get_object_or_404(Assignment_Batch, pk=pk)
     try:
@@ -174,7 +174,7 @@ def deleteAssignmentBatchView(request, pk):
 ###############################################################################
 #               Payment type & method inline form
 ###############################################################################
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def createPaymentView(request):
     payment_type_form = Payment_Type_Form()
     payment_method_inline = PaymentMethodInline()
@@ -212,7 +212,7 @@ def createPaymentView(request):
     return render(request, 'payment-create.html', paymentContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def listPaymentView(request):
     payment_type_list = Payment_Type.objects.filter().exclude((Q(end_date__gte=date.today())|Q(end_date__isnull=False)))
     payment_method_list = Payment_Method.objects.filter().exclude((Q(end_date__gte=date.today())|Q(end_date__isnull=False)))
@@ -224,7 +224,7 @@ def listPaymentView(request):
     return render(request, 'payment-list.html', paymentContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def updatePaymentView(request, pk):
     payment_obj = Payment_Type.objects.get(pk=pk)
     payment_method_obj = Payment_Method.objects.filter(payment_type=pk)
@@ -286,7 +286,7 @@ def updatePaymentView(request, pk):
     return render(request, 'payment-create.html', paymentContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def correctPaymentView(request, pk):
     payment_obj = Payment_Type.objects.get(pk=pk)
     payment_type_form = Payment_Type_Form(instance=payment_obj)
@@ -319,7 +319,7 @@ def correctPaymentView(request, pk):
     return render(request, 'payment-create.html', paymentContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def deletePaymentView(request, pk):
     required_payment_type = get_object_or_404(Payment_Type, pk=pk)
     try:
@@ -355,7 +355,7 @@ def deletePaymentView(request, pk):
 ###############################################################################
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def createBankAccountView(request):
     bank_form = Bank_MasterForm()
     if request.method == 'POST':
@@ -377,7 +377,7 @@ def createBankAccountView(request):
     return render(request, 'create-bank-accounts.html', myContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def listBankAccountsView(request):
     if request.method == 'GET':
         bank_master = Bank_Master.objects.filter((Q(end_date__gte=date.today())|Q(end_date__isnull=True)))
@@ -385,7 +385,7 @@ def listBankAccountsView(request):
     return render(request, 'list-bank-branchs.html', myContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def updateBankAccountView(request, pk):
     required_bank = Bank_Master.objects.get(pk=pk)
     if request.method == 'POST':
@@ -405,7 +405,7 @@ def updateBankAccountView(request, pk):
     return render(request, 'create-bank-accounts.html', myContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def deleteBankAccountView(request, pk):
     required_bank = get_object_or_404(Bank_Master, pk=pk)
     try:
@@ -432,7 +432,7 @@ def deleteBankAccountView(request, pk):
     return redirect('manage_payroll:list-banks')
 
 ################################################################################
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def listPayrollView(request):
     list_payroll = Payroll_Master.objects.filter(enterprise=request.user.company).filter(Q(end_date__gte=date.today())|Q(end_date__isnull=True))
     payrollContext = {"page_title":_("payroll list") ,
@@ -440,7 +440,7 @@ def listPayrollView(request):
     return render(request, 'list-payrolls.html', payrollContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def createPayrollView(request):
     payroll_form = PayrollMasterForm()
     if request.method == 'POST':
@@ -461,7 +461,7 @@ def createPayrollView(request):
     return render(request, 'create-payroll.html', payContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def updatePayrollView(request, pk):
     required_payroll = get_object_or_404(Payroll_Master, pk=pk)
     pay_form = PayrollMasterForm(instance=required_payroll)
@@ -479,7 +479,7 @@ def updatePayrollView(request, pk):
     return render(request, 'create-payroll.html', payContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def deletePayrollView(request, pk):
     required_payroll = get_object_or_404(Payroll_Master, pk=pk)
     try:

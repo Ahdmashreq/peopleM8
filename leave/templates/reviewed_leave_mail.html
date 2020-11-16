@@ -166,17 +166,17 @@
               <table border="0" cellpadding="0" cellspacing="0" class="brdBottomPadd-two" id="templateContainer" width="100%">
                 <tr>
                   <td class="bodyContent" valign="top" mc:edit="welcomeEdit-02">
-                    <p>Dear {{ requestor }}</p>
-                    <h3><strong>{{team_leader|capfirst}} has {{result}} your leave request </strong></h3>
-                    <h4>Please find details below: <br><br></h4>
+                    <p>{% trans "Dear" %} {{ requestor }}</p>
+                    <h3><strong>{{team_leader|capfirst}} {% trans "has" %} {{result}} {% trans "your leave request" %} </strong></h3>
+                    <h4>{% trans "Please find details below:" %} <br><br></h4>
                     <table border="1px" cellpadding="7">
                       <tbody>
                         <tr>
-                          <th>Date From</th>
-                          <th>Date To</th>
-                          <th>Number Days</th>
-                          <th>Resume Duty on</th>
-                          <th>Comment</th>
+                          <th>{% trans "Date From" %}</th>
+                          <th>{% trans "Date To" %}</th>
+                          <th>{% trans "Number Days" %}</th>
+                          <th>{% trans "Resume Duty on" %}</th>
+                          <th>{% trans "Comment" %}</th>
                         </tr>
                         <tr>
                           <td>{{ date_from }}</td>
@@ -191,8 +191,8 @@
                 </tr>
                 <tr>
                   <td class="bodyContent">
-                    <h4>Once your leave period has ended, you must fill out a Leave Report upon returning.<br>
-                      Regards.<br>
+                    <h4>{% trans "Once your leave period has ended, you must fill out a Leave Report upon returning.<br>
+                      Regards." %}<br>
                       <br>
                     </h4>
                   </td>

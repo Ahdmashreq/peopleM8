@@ -5,73 +5,73 @@
 {% load i18n %}
 
 {% block body%}
-  <div class="row" style="margin-left:0px;">
-    <div class="col-md-8">
-      <h4 class="c-grey-900">{{page_title|title}}</h4>
-    </div>
-      <div class="col-md-4">
-        <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
-          <div class="peer">
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#yearModal">{% trans "Add Yearly Holidays" %}</button>
-          </div>
-          <div class="peer">
-          </div>
-      </div>
-      </div>
+<div class="row" style="margin-left:0px;">
+  <div class="col-md-8">
+    <h4 class="c-grey-900">{{page_title|title}}</h4>
   </div>
+  <div class="col-md-4">
+    <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
+      <div class="peer">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#yearModal">{% trans "Add Yearly Holidays" %}</button>
+      </div>
+      <div class="peer">
+      </div>
+    </div>
+  </div>
+</div>
 
 
-  <div class="row" style="margin-left:0px;">
-    <div class="col-md-12">
-      <div class="bgc-white bd bdrs-3 p-20 mB-20">
-        <table class="table table-striped table-bordered" id="dataTable"  width="100%">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>{% trans "Year" %}</th>
-              <th>{% trans "Number Of Holidays" %}</th>
-            </tr>
-          </thead>
-          <tbody>
+<div class="row" style="margin-left:0px;">
+  <div class="col-md-12">
+    <div class="bgc-white bd bdrs-3 p-20 mB-20">
+      <table class="table table-striped table-bordered" id="dataTable" width="100%">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>{% trans "Year" %}</th>
+            <th>{% trans "Number Of Holidays" %}</th>
+          </tr>
+        </thead>
+        <tbody>
           {% for year in years %}
-            <tr>
-              <td scope="row">{{forloop.counter}}</td>
-              <td><a href="{% url 'company:yearly-holiday-list' year_id=year.year %}">{{year}}</a></td>
-              {% for key,value in num_of_holidays.items %}
-                {% if key == year.year %}
-                  <td>{{ value }}</td>
-                {% endif %}
-              {% endfor %}
-            </tr>
+          <tr>
+            <td scope="row">{{forloop.counter}}</td>
+            <td><a href="{% url 'company:yearly-holiday-list' year_id=year.year %}">{{year}}</a></td>
+            {% for key,value in num_of_holidays.items %}
+            {% if key == year.year %}
+            <td>{{ value }}</td>
+            {% endif %}
+            {% endfor %}
+          </tr>
           {% endfor %}
 
-          </tbody>
-        </table>
-      </div>
+        </tbody>
+      </table>
     </div>
   </div>
-  <div class="mT-30">
-    <div class="modal fade" id="yearModal" tabindex="-1" role="dialog" aria-labelledby="yearModalLabel" aria-hidden="true" style="display: none;">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="yearModalLabel">Modal title</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-          </div>
-          <form method="post">
+</div>
+<div class="mT-30">
+  <div class="modal fade" id="yearModal" tabindex="-1" role="dialog" aria-labelledby="yearModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="yearModalLabel">{% trans "Modal title" %}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+        </div>
+        <form method="post">
           <div class="modal-body">
 
-              {% csrf_token %}
-              {{year_form}}
+            {% csrf_token %}
+            {{year_form}}
 
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "Close" %}</button>
+            <button type="submit" class="btn btn-primary">{% trans "Save" %}</button>
           </div>
-          </form>
-        </div>
+        </form>
       </div>
     </div>
   </div>
+</div>
 {% endblock body%}

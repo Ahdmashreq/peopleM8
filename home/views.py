@@ -12,7 +12,7 @@ from django.contrib.sessions.models import Session
 from .forms import CustomUserCreationForm, AddUserForm
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
-from custom_user.models import User
+from custom_user.models import User, UserCompany
 from employee.models import Employee, JobRoll
 from service.models import Bussiness_Travel
 from django.contrib.auth.decorators import login_required
@@ -80,7 +80,7 @@ def user_login(request):
         return render(request, 'login.html')
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def user_home_page(request):
     employee = Employee.objects.get(user=request.user)
     employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
@@ -109,9 +109,9 @@ def user_home_page(request):
     return render(request, 'index_user.html', context=context)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def admin_home_page(request):
-    user_companies_count = UserCompany.objects.filter(user=request.user).count()
+    user_companies_count = UserCompany.objects.filter(user__company=request.user.company).count()
     if user_companies_count == 0:
         return redirect('company:user-companies-list')
         pass
@@ -120,7 +120,7 @@ def admin_home_page(request):
         return render(request, 'index.html', context=None)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def homepage(request):
     if request.user.employee_type == "A":
         return admin_home_page(request)
@@ -128,7 +128,7 @@ def homepage(request):
         return user_home_page(request)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect(reverse('home:user-login'))
@@ -170,9 +170,17 @@ def addUserView(request):
     if request.method == 'POST':
         form = AddUserForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
-            user.company = request.user.company
-            user.save()
+            user_obj = form.save(commit=False)
+            user_obj.company = request.user.company
+            user_obj.save()
+            user_company = UserCompany(
+                                    user = user_obj,
+                                    company = request.user.company,
+                                    active = True,
+                                    created_by = request.user,
+                                    creation_date = date.today(),
+            )
+            user_company.save()
             user_lang = to_locale(get_language())
             if user_lang == 'ar':
                 success_msg = 'تم الانشاء بنجاح'

@@ -10,9 +10,8 @@ from string import Template
 from tablib import Dataset
 from django.utils.encoding import force_str
 from django.conf import settings
-from attendance.models import Attendance, Task, Employee_Attendance_History
-from attendance.forms import FormAttendance, Tasks_inline_formset, FormTasks, ConfirmImportForm, \
-    FormEmployeeAttendanceHistory
+from attendance.models import Attendance, Task, Employee_Attendance_History, Attendance_Interface
+from attendance.forms import (FormAttendance, Tasks_inline_formset, FormTasks, ConfirmImportForm, FormEmployeeAttendanceHistory)
 from attendance.resources import AttendanceResource
 from attendance.tmp_storage import TempFolderStorage
 from employee.models import Employee
@@ -22,6 +21,9 @@ from service.models import Bussiness_Travel
 from datetime import date, timedelta
 import datetime as mydatetime
 import calendar
+import pytz
+from zk import ZK, const
+from zk.exception import ZKErrorConnection, ZKErrorResponse, ZKNetworkError
 
 
 class DeltaTemplate(Template):
@@ -36,35 +38,66 @@ def strfdelta(tdelta, fmt):
     return t.substitute(**d)
 
 
-@login_required(login_url='/login')
+def connect_download_from_machine(company):
+    conn = None
+    zk = ZK('192.168.1.220', port=4370, timeout=5)
+    device_users = []
+    try:
+        print('Connecting to device ...')
+        conn = zk.connect()
+        # Get all users (will return list of User object)
+        users = conn.get_users()
+        for x in users:
+            device_users.append(x)
+        # Get attendances (will return list of Attendance object)
+        attendances_list = conn.get_attendance()
+        for att in attendances_list:
+            att_int = Attendance_Interface(
+                                       company = company,
+                                       user_name = [x.name for x in device_users if x.user_id == att.user_id][0],
+                                       user_id = att.user_id,
+                                       date = pytz.utc.localize(att.timestamp),
+                                       punch = att.punch,
+            )
+            att_int.save()
+    except Exception as e:
+        print("Process terminate : {}").format(e)
+    return "Device Connected Successfully"
+
+def disconnect_device():
+    conn = None
+    zk = ZK('192.168.1.220', port=4370, timeout=5)
+    try:
+        print('Disconnecting to device ...')
+        conn = zk.disconnect()
+    except ZKErrorConnection as e:
+        return "instance are not connected."
+    return "Disconnected"
+
+@login_required(login_url='home:user-login')
+def list_machine_logs(request):
+    machine_status = "Disconnected"
+    attendance_list = Attendance_Interface.objects.filter().order_by('-date')
+    if request.method == 'POST':
+        if 'connect' in request.POST:
+            connect_download_from_machine(request.user.company)
+            machine_status = "Device Connected Successfully"
+        else:
+            machine_status = disconnect_device()
+    att_context = {
+        'attendances': attendance_list,
+        'machine_status':machine_status,
+    }
+    return render(request, 'list-machine-log.html', att_context)
+
+
+@login_required(login_url='home:user-login')
 def list_attendance(request):
     employee = Employee.objects.get(user=request.user)
     attendance_list = Attendance.objects.filter(employee=employee)
     work_time = []
     att_form = FormAttendance(form_type='check_in')
     employee = Employee.objects.get(user=request.user)
-    # opened_attendance = False
-    # for att in attendance_list:
-    #     if att.check_out is None:
-    #         opened_attendance = True
-    # if request.method == "POST":
-    #     if not opened_attendance:
-    #         # att_form = FormAttendance(request.POST, form_type='check_in')
-    #         # if att_form.is_valid():
-    #         #     att_obj = att_form.save(commit=False)
-    #         #     att_obj.employee = employee
-    #         #     att_obj.created_by = request.user
-    #         #     att_obj.last_update_by = request.user
-    #         #     my_time = datetime.now().time()
-    #         #     att_obj.check_in = my_time.strftime("%H:%M:%S")
-    #         #     messages.success(request, 'You are now checked in')
-    #         #     att_obj.save()
-    #         #     return redirect('attendance:user-list-attendance')
-    #         #     messages.success(request, 'Please fill your daily tasks')
-    #         # else:
-    #         #     messages.error(request, att_form.errors)
-    #     else:
-    #         messages.error(request, _("You still have attendance opened. Please check out first"))
     att_context = {
         'attendances': attendance_list,
         'work_time': work_time,
@@ -73,7 +106,7 @@ def list_attendance(request):
     return render(request, 'attendance.html', att_context)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def check_in_time(request):
     company_policy = Working_Hours_Policy.objects.get(enterprise=request.user.company)
     current_employee = Employee.objects.get(user=request.user)
@@ -101,7 +134,7 @@ def check_in_time(request):
     return redirect('attendance:user-list-attendance')
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def check_out_time(request):
     employee = Employee.objects.get(user=request.user)
     attendance_obj = Attendance.objects.get(employee=employee, check_out__isnull=True)
@@ -129,7 +162,7 @@ def check_out_time(request):
         return redirect('attendance:create_task')
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def list_tasks_view(request, attendance_slug):
     attendance_obj = get_object_or_404(Attendance, id=attendance_slug)
     list_tasks = Task.objects.filter(attendance=attendance_obj)
@@ -140,7 +173,7 @@ def list_tasks_view(request, attendance_slug):
     return render(request, 'list_tasks.html', task_context)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def create_task(request):
     employee = Employee.objects.get(user=request.user)
     user_last_attendance = Attendance.objects.filter(employee=employee, check_out__isnull=True).latest('id')
@@ -163,7 +196,7 @@ def create_task(request):
     return render(request, 'create_task.html', task_context)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def edit_task_view(request, slug_text):
     instance = get_object_or_404(Task, id=slug_text)
     if request.method == "POST":
@@ -183,7 +216,7 @@ def edit_task_view(request, slug_text):
     return render(request, 'edit_task.html', task_context)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def edit_inline_tasks(request, attendance_text):
     required_att = Attendance.objects.get(id=attendance_text)
     req_tasks_formset = Tasks_inline_formset(instance=required_att)
@@ -200,7 +233,7 @@ def edit_inline_tasks(request, attendance_text):
     return render(request, 'create_task.html', {'tasks': req_tasks_formset})
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def delete_task(request, slug_text):
     instance = get_object_or_404(Task, id=slug_text)
     instance.delete()
@@ -222,7 +255,7 @@ def write_to_tmp_storage(import_file):
     return tmp_storage
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def upload_xls_file(request):
     attendance_resource = AttendanceResource()
     context = {}
@@ -250,7 +283,7 @@ def upload_xls_file(request):
     return render(request, 'upload-attendance.html', context=context)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def confirm_xls_upload(request):
     if request.method == "POST":
         confirm_form = ConfirmImportForm(request.POST)
@@ -277,7 +310,7 @@ def confirm_xls_upload(request):
             return redirect('attendance:upload-attendance')
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def list_all_attendance(request):
     attendance_list = Attendance.objects.filter(created_by__company=request.user.company).order_by('-date')
     att_context = {
@@ -288,7 +321,7 @@ def list_all_attendance(request):
     return render(request, 'list_attendance.html', att_context)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def list_employee_attendance_history_view(request):
     get_deductions_overtime_and_delay(employee_id=1, month=9, year=2020)
     emp_attendance_form = FormEmployeeAttendanceHistory()
@@ -312,7 +345,7 @@ def list_employee_attendance_history_view(request):
     return render(request, 'employee_attendance_history.html', att_context)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def fill_employee_attendance_days_employee_view(request, month_v, year_v):
     employees_list = Employee.objects.filter(enterprise=request.user.company)
     # Employee_Attendance_History.objects.bulk_create([ Employee_Attendance_History(employee=q, month=month_v, year=year_v,created_by=request.user) for q in employees_list ])
@@ -320,7 +353,7 @@ def fill_employee_attendance_days_employee_view(request, month_v, year_v):
     return True
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def fill_employee_attendance_days_attendance_view(request, month_v, year_v):
     employee_attendance = Attendance.objects.filter(created_by__company=request.user.company).values('employee',
                                                                                                      'date__month',
@@ -331,7 +364,7 @@ def fill_employee_attendance_days_attendance_view(request, month_v, year_v):
     return True
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def fill_employee_attendance_days_leaves_view(request, month_v, year_v):
     all_leave_list = Leave.objects.filter(employee__user=request.user).values('employee', 'startdate__month').annotate(
         leave_count=Count('startdate'))
@@ -339,7 +372,7 @@ def fill_employee_attendance_days_leaves_view(request, month_v, year_v):
     return True
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def update_attendance(request, att_update_slug):
     required_att = Attendance.objects.get(slug=att_update_slug)
     att_form = FormAttendance(form_type=None, instance=required_att)
@@ -361,7 +394,7 @@ def update_attendance(request, att_update_slug):
     return render(request, 'create-attendance.html', context)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def delete_attendance(request, att_delete_slug):
     required_att = Attendance.objects.get(slug=att_delete_slug)
     deleted = required_att.delete()

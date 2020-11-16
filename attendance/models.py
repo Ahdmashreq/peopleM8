@@ -7,7 +7,7 @@ from datetime import datetime, date
 from string import Template
 from home.slugify import unique_slug_generator
 from django.utils.translation import ugettext_lazy as _
-from company.models import Working_Days_Policy
+from company.models import Enterprise, Working_Days_Policy
 import datetime as mydatetime
 
 
@@ -24,10 +24,11 @@ def strfdelta(tdelta, fmt):
 
 
 class Attendance_Interface(models.Model):
-    employee = models.PositiveIntegerField()
-    date = models.DateField()
-    check_in = models.TimeField(blank=True, null=True)
-    check_out = models.TimeField(blank=True, null=True)
+    company =  models.ForeignKey(Enterprise, on_delete=models.CASCADE)
+    user_name = models.CharField(max_length=250)
+    user_id = models.PositiveIntegerField()
+    date = models.DateTimeField()
+    punch = models.CharField(max_length=3)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                                    blank=True, null=True, related_name='attendance_interface_created_by')
     creation_date = models.DateField(auto_now_add=True)
@@ -63,7 +64,6 @@ class Attendance(models.Model):
 
     @property
     def overtime(self):
-        print("$$$$$$$$$$$$", self.check_out)
         hrs_end_at = Working_Days_Policy.objects.filter(enterprise=self.employee.enterprise).values("hrs_end_at")[0][
             'hrs_end_at']
 
@@ -71,7 +71,6 @@ class Attendance(models.Model):
 
     @property
     def delay(self):
-        print("&&&&&&&&&&")
         hrs_start_from = \
             Working_Days_Policy.objects.filter(enterprise=self.employee.enterprise).values("hrs_start_from")[0][
                 'hrs_start_from']
@@ -86,7 +85,6 @@ class Attendance(models.Model):
     def how_much_overtime(self):
         hrs_end_at = Working_Days_Policy.objects.filter(enterprise=self.employee.enterprise).values("hrs_end_at")[0][
             'hrs_end_at']
-        print("&&&&&&&&&&", hrs_end_at)
         # first_delta = mydatetime.timedelta(hours=self.check_out.hour, minutes=self.check_out.minute,
         #                                    seconds=self.check_out.second)
         # second_delta = mydatetime.timedelta(hours=hrs_end_at.hour, minutes=hrs_end_at.minute,
@@ -169,17 +167,14 @@ def working_time(sender, instance, *args, **kwargs):
                                                                                              instance.check_in)
         instance.work_hours = strfdelta(difference, "%H:%M:%S")
         if instance.overtime:
-            print("%%%%%%%%overtime")
             overtime = instance.how_much_overtime
             instance.normal_overtime_hours = overtime
         else:
             instance.normal_overtime_hours = mydatetime.timedelta(hours=0, minutes=0, seconds=0)
         if instance.delay:
-            print("%%%%%%%%delay")
 
             delay = instance.how_much_delay
             instance.delay_hrs = delay
-            print("*********",delay)
         else:
             instance.delay_hrs = mydatetime.timedelta(hours=0, minutes=0, seconds=0)
     else:

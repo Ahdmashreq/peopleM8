@@ -115,7 +115,7 @@ def send_allowance_notification(request):
         NotificationInstance= Notification.objects.all()
         return
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def service_approve(request,service_id):
     instance = get_object_or_404(Bussiness_Travel, id=service_id)
     instance.status = 'Approved'
@@ -123,7 +123,7 @@ def service_approve(request,service_id):
     instance.save(update_fields=['status'])
     return redirect('service:services_list')
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def service_unapprove(request,service_id):
     instance = get_object_or_404(Bussiness_Travel, id=service_id)
     instance.status = 'Rejected'
@@ -147,7 +147,7 @@ def getOrderSec(n):
     else:
         return str(n+1).zfill(5)
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def purchase_request_create(request):
     purchase_form = PurchaseRequestForm()
     purchase_form.fields['department'].queryset = Department.objects.filter(
@@ -185,7 +185,7 @@ def purchase_request_create(request):
     }
     return render(request, 'create-purchase-order.html', purchaseContext)
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def purchase_request_update(request, pk):
     required_request = Purchase_Request.objects.get(pk=pk)
     purchase_form = PurchaseRequestForm(instance=required_request)
@@ -213,7 +213,7 @@ def purchase_request_update(request, pk):
     }
     return render(request, 'edit_purchase_request.html', purchaseContext)
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def purchase_request_approve(request,order_id):
     instance = Purchase_Request.objects.get(pk=order_id)
     instance.status = 'Approved'
@@ -221,7 +221,7 @@ def purchase_request_approve(request,order_id):
     instance.save(update_fields=['status'])
     return redirect('service:purchase-request-list')
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def purchase_request_unapprove(request,order_id):
     instance = Purchase_Request.objects.get(pk=order_id)
     instance.status = 'Rejected'

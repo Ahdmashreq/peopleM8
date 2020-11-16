@@ -248,14 +248,16 @@ class Enterprise_Policies(models.Model):
 
 
 class Working_Days_Policy(models.Model):
+    class Meta:
+        unique_together = ['enterprise','week_end_days']
     week_days = (
-        ("SATURDAY", "Saturday"),
-        ("SUNDAY", "Sunday"),
-        ("MONDAY", "Monday"),
-        ("TUESDAY", "Tuesday"),
-        ("WEDNESDAY", "Wednesday"),
-        ("THURSDAY", "Thursday"),
-        ("FRIDAY", "Friday"),
+        (5, "Saturday"),
+        (6, "Sunday"),
+        (0, "Monday"),
+        (1, "Tuesday"),
+        (2, "Wednesday"),
+        (3, "Thursday"),
+        (4, "Friday"),
     )
     #######################################################################################################
     enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name='enterprise_working_hrs_policy',

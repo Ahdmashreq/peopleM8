@@ -1,7 +1,7 @@
 from django.contrib import admin
 from import_export.forms import ImportForm, ConfirmImportForm
 
-from attendance.models import Attendance, Task
+from attendance.models import Attendance, Task, Attendance_Interface
 from import_export.admin import ImportExportModelAdmin, ImportMixin
 from django import forms
 from employee.models import Employee
@@ -27,6 +27,7 @@ from attendance.resources import AttendanceResource
 #         instance.save()
 #         form.save()
 #         return instance
+admin.site.register(Attendance_Interface)
 
 
 @admin.register(Task)
@@ -59,8 +60,7 @@ class AttendanceAdmin(ImportExportModelAdmin):
          'date',
          'check_in',
          'check_out',
-         'work_time',
+         'work_hours',
          'slug',
-
-
     )
+    list_display = ('employee', 'date', 'check_in',  'check_out', 'work_hours',)

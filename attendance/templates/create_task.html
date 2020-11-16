@@ -11,7 +11,7 @@
     {% csrf_token %}
     <div class="row">
       <div class="col-md-8">
-        <h4 class="c-grey-900">Fill in your tasks</h4>
+        <h4 class="c-grey-900">{% trans "Fill in your tasks" %}</h4>
       </div>
       <div class="col-md-4">
         <div class="gap-10 peers push-right">
@@ -19,7 +19,7 @@
             <button type="submit" class="btn cur-p btn-primary">{% trans "Save" %}</button>
           </div>
           <div class="peer">
-            <a href="{% url 'attendance:user-list-attendance' %}" class="btn cur-p btn-secondary">Back to attendance list</a>
+            <a href="{% url 'attendance:user-list-attendance' %}" class="btn cur-p btn-secondary">{% trans "Back to attendance list" %}</a>
           </div>
         </div>
       </div>

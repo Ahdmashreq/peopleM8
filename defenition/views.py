@@ -113,7 +113,7 @@ def copy_tax_rule(request):
     return redirect('defenition:tax-list')
 ###############################################################################
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def listLookupView(request):
     lookup_list = LookupType.objects.all(user=request.user)
     lookupContext = {
@@ -122,7 +122,7 @@ def listLookupView(request):
     return render(request, 'lookups-list.html', lookupContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def createLookupView(request):
     lookup_master_form = LookupTypeForm()
     lookup_det_form = LookupDetinlineFormSet()
@@ -154,7 +154,7 @@ def createLookupView(request):
     return render(request, 'lookup-create.html', lookupContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def updateLookupView(request, pk):
     required_lookupType = LookupType.objects.get_lookup(user=request.user, lookup_id=pk)
     lookup_master_form = LookupTypeForm(instance=required_lookupType)
@@ -182,7 +182,7 @@ def updateLookupView(request, pk):
     return render(request, 'lookup-create.html', lookupContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def deleteLookupView(request, pk):
     required_lookupType = LookupType.objects.get_lookup(user=request.user, lookup_id=pk)
     try:
@@ -214,7 +214,7 @@ def deleteLookupView(request, pk):
     return redirect('defenition:list-lookups')
 
 ################################################################################
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def create_insurance_rules(request):
     insurance_form = InsuranceRuleForm()
     if request.method == "POST":
@@ -244,7 +244,7 @@ def create_insurance_rules(request):
     return render(request, 'insurance_rules_create.html', context=context)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def list_insurance_rules(request):
     insurance_form = InsuranceRule.objects.all(user=request.user)
     egy_rule_flag = False
@@ -261,7 +261,7 @@ def list_insurance_rules(request):
     }
     return render(request, 'insurance_rules_list.html', insuranceContext)
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def update_insurance_rule(request, pk):
     try:
         insurance_rule = InsuranceRule.objects.get_insuracne(user=request.user, insuracne_id=pk)
@@ -298,7 +298,7 @@ def update_insurance_rule(request, pk):
     return redirect('defenition:insurance-list')
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def delete_insurance_rule(request, pk):
     insurance_rule =  InsuranceRule.objects.get_insuracne(user=request.user, insuracne_id=pk)
     try:
@@ -336,7 +336,7 @@ def runningManagementCommand(request):
 #                               Tax section
 ################################################################################
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def create_tax_rules(request):
     form = TaxRuleForm()
     formset = TaxSectionFormSet()
@@ -374,7 +374,7 @@ def create_tax_rules(request):
     return render(request, 'tax_rules_create.html', context=context)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def list_tax_rules(request):
     form = TaxRule.objects.all(user=request.user)
     formset = TaxSection.objects.all().exclude((Q(end_date__gte=date.today())|Q(end_date__isnull=True)))
@@ -392,7 +392,7 @@ def list_tax_rules(request):
     return render(request, 'tax_rules_list.html', taxContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def delete_tax_rule(request, pk):
     required_tax_rule =  TaxRule.objects.get_tax(user=request.user, tax_id=pk)
     try:
@@ -424,7 +424,7 @@ def delete_tax_rule(request, pk):
     return redirect('payroll:tax-list')
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def update_tax_rule(request, pk):
     tax_rule_obj = TaxRule.objects.get_tax(user=request.user, tax_id=pk)
     form = TaxRuleForm(instance=tax_rule_obj)
@@ -445,8 +445,7 @@ def update_tax_rule(request, pk):
                     uccess_msg = 'تم اضافة "{}" بنجاح'.format(tax_rule.name)
                 else:
                     success_msg = 'Record Created Sucessfully"{}" '.format(tax_rule.name)
-                # success_msg = 'تم اضافة "{}" بنجاح'.format(tax_rule.name)
-                messages.success(request, success_msg)
+                    messages.success(request, success_msg)
                 # Emptying the form and formset before rerendering them back
                 form = TaxRuleForm()
                 formset = TaxSectionFormSet()

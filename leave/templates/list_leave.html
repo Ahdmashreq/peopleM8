@@ -22,7 +22,7 @@
     <div class="col-md-12">
       <div class="bgc-white bd bdrs-3 p-20 mB-20">
         <table class="table table-striped table-bordered" id="dataTable" width="100%">
-          <h5><strong>Leave Requests</strong></h5>
+          <h5><strong>{% trans "Leave Requests" %}</strong></h5>
           <thead>
             <tr>
               <th>#</th>
@@ -62,9 +62,9 @@
                 <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-body">
-                      <p>You are about to delete a record {{i.leavetype}}. Do you want to continue?</p>
-                      <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-                      <a href="{% url 'leave:del_leave' i.id %}" class="btn btn-danger" type="button">Yes</a>
+                      <p>{% trans "You are about to delete a record" %} {{i.leavetype}}. {% trans "Do you want to continue?" %}</p>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
+                      <a href="{% url 'leave:del_leave' i.id %}" class="btn btn-danger" type="button">{% trans "Yes" %}</a>
                     </div>
                   </div>
                 </div>

@@ -11,23 +11,11 @@
   <div class="masonry-item col-md-12" style="position: absolute; left: 0%; top: 375.4px;">
     <div class="bgc-white p-20 bd">
       <h1 class="c-grey-900" style="text-align:center;">
-        <strong>Purchase Request Form</strong>
+        <strong>{% trans "Purchase Request Form" %}</strong>
       </h1>
       <div class="mT-30">
         <form method="POST">
           {% csrf_token %}
-          <!-- <div class="form-group row">
-            <label class="col-sm-2 col-form-label">{{purchase_form.order_number.label}}</label>
-            <div class="col-sm-4">
-              {{purchase_form.order_number}}
-            </div>
-          </div> -->
-          <!-- <div class="form-group row"">
-            <label class=" col-sm-2 col-form-label">{{purchase_form.ordered_by.label}}</label>
-            <div class="col-sm-4">
-              {{purchase_form.ordered_by}}
-            </div>
-          </div> -->
           <div class="form-group row">
             <label class="col-sm-2 col-form-label">{{purchase_form.department.label}}</label>
             <div class="col-sm-4">
@@ -139,15 +127,15 @@
           </div>
           <div class="form-group">
             <strong>
-              <h3>Total Cost: EGP <output id="result"></output></h3>
+              <h3>{% trans "Total Cost: EGP " %}<output id="result"></output></h3>
             </strong>
           </div>
 
           <div class="form-group row">
             <div class="col-sm-10">
-              <button type="submit" class="btn btn-primary">Submit</button>
+              <button type="submit" class="btn btn-primary">{% trans "Submit" %}</button>
               <button type="button" class="btn btn-default">
-                <a href="{% url 'service:purchase-request-list' %}">Cancel</a>
+                <a href="{% url 'service:purchase-request-list' %}">{% trans "Cancel" %}</a>
               </button>
             </div>
 

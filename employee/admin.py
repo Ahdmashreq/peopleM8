@@ -1,6 +1,6 @@
 from django.contrib import admin
 from import_export.forms import ImportForm, ConfirmImportForm
-from employee.models import Employee, Medical, JobRoll,Payment, Employee_Element
+from employee.models import Employee, Medical, JobRoll,Payment, Employee_Element, Employee_Element_History
 
 class JobRollInlineAdmin(admin.TabularInline):
     fields = (
@@ -90,3 +90,17 @@ class EmployeeElementAdmin(admin.ModelAdmin):
         'end_date'
     )
     list_display = ('emp_id','element_id', 'element_value',)
+
+
+@admin.register(Employee_Element_History)
+class Employee_Element_HistoryAdmin(admin.ModelAdmin):
+    fields = (
+        'employee',
+        'element',
+        'element_value' ,
+        'salary_month',
+        'salary_year',
+        'creation_date',
+    )
+    readonly_fields = ('creation_date',)
+    list_display = ('employee','element', 'salary_month','salary_year',)

@@ -34,6 +34,8 @@ class Bussiness_Travel(models.Model):
     duration_of_hotel_to=models.DateField(blank=True, null=True)
     hotel_name=models.CharField(max_length=100,blank=True, null=True)
     cost_per_night=models.PositiveIntegerField(default=0, blank=True, null=True)
+    status = models.CharField(max_length=20, default='pending')
+    is_approved = models.BooleanField(default=False)
 
     status = models.CharField(max_length=12, default='pending')
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,

@@ -49,14 +49,20 @@
       </a>
       <ul class="dropdown-menu fsz-sm">
         {% if request.user.employee_type == 'A'%}
+        {% if request.user == 'a.hozayen' %}
         <li><a href="{% url 'home:new-user' %}" class="d-b td-n pY-5 bgcH-grey-100 c-grey-700">
             <i class="ti-user mR-10"></i>
             <span>{% trans "Add User" %}</span></a>
         </li>
         {% endif %}
-        <li><a href="{% url 'home:password_change' %}" class="d-b td-n pY-5 bgcH-grey-100 c-grey-700">
+        {% endif %}
+        <li>
+          {% if user.is_authenticated %}
+          <a href="{% url 'home:password_change' %}" class="d-b td-n pY-5 bgcH-grey-100 c-grey-700">
             <i class="ti-user mR-10"></i>
-            <span>{% trans "Change Password" %}</span></a>
+            <span>{% trans "Change Password" %}</span>
+          </a>
+          {% endif %}
         </li>
         <li role="separator" class="divider"></li>
         {% if user.is_authenticated %}

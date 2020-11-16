@@ -18,7 +18,7 @@ from manage_payroll.models import Payment_Method
 from django.utils.translation import ugettext_lazy as _
 
 ############################Employee View #################################
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def createEmployeeView(request):
     emp_form = EmployeeForm()
     jobroll_form = JobRollForm(user_v = request.user)
@@ -94,7 +94,7 @@ def createEmployeeView(request):
     return render(request, 'create-employee.html', myContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def copy_element_values():
     element_master_obj = Element_Master.objects.filter().exclude(global_value=0)
     emp_element = Employee_Element.objects.filter()
@@ -105,17 +105,19 @@ def copy_element_values():
                 z.save()
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def listEmployeeView(request):
     emp_list = Employee.objects.filter(enterprise = request.user.company)
+    emp_job_roll_list = JobRoll.objects.filter(emp_id__enterprise = request.user.company, end_date__isnull=True)
     myContext = {
         "page_title": _("List employees"),
         "emp_list": emp_list,
+        'emp_job_roll_list':emp_job_roll_list,
     }
     return render(request, 'list-employees.html', myContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def listEmployeeCardView(request):
     emp_list = Employee.objects.filter(enterprise = request.user.company)
     myContext = {
@@ -125,7 +127,7 @@ def listEmployeeCardView(request):
     return render(request, 'list-employees-card.html', myContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def viewEmployeeView(request, pk):
     required_employee = get_object_or_404(Employee, pk=pk)
     required_jobRoll = JobRoll.objects.filter(Q(end_date__gte=date.today())|Q(end_date__isnull=True)).get(emp_id=pk)
@@ -143,7 +145,7 @@ def viewEmployeeView(request, pk):
     return render(request, 'view-employee.html', myContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def updateEmployeeView(request, pk):
     required_employee = get_object_or_404(Employee, pk=pk)
     required_jobRoll = JobRoll.objects.get(emp_id=required_employee)
@@ -219,7 +221,7 @@ def updateEmployeeView(request, pk):
     return render(request, 'create-employee.html', myContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def deleteEmployeeView(request, pk):
     required_employee = get_object_or_404(Employee, pk=pk)
     required_jobRoll = get_object_or_404(JobRoll, emp_id=pk)

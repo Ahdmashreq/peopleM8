@@ -1,0 +1,79 @@
+{% extends "master.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+
+{% block body %}
+<div class="container-fluid">
+  <div class="row" style="margin-left:0px;">
+    <div class="col-md-8">
+      <h4 class="c-grey-900">{{page_title|title}}</h4>
+    </div>
+  </div>
+  <div class="col-md-12">
+    <div class="row" style="margin-left:0px;">
+      <div class="col-md-12">
+        <div class="bgc-white bd bdrs-3 p-20 mB-20">
+          <form method="post">
+            {% csrf_token %}
+            <div class="peer">
+              <button type="submit" name="connect">Connect to machine</button>
+              <button type="submit" name="disconnect">Disconnect the machine</button>
+            </div>
+            <div class="col-md-8">
+              <h5><span>The machine is <strong>{{machine_status}}</strong></span></h5>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  <div class="col-md-12">
+    <div class="row" style="margin-left:0px;">
+      <div class="col-md-12">
+        <div class="bgc-white bd bdrs-3 p-20 mB-20">
+          <table class="table table-striped table-bordered" id="dataTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Employee</th>
+                <th>Employee ID</th>
+                <th>Date & Time</th>
+                <th>Punch</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for i in attendances %}
+              <tr>
+                <td>{{forloop.counter }}</td>
+                <td>{{i.user_name}}</td>
+                <td>{{i.user_id}}</td>
+                <td>{{i.date}}</td>
+                {% if i.punch == '0' %}
+                <td>Check in</td>
+                {% else %}
+                <td>Check out</td>
+                {% endif %}
+                <td class="Actions">
+                  <div class="w-100 gap-10 peers">
+                    <div class="peer">
+                      <a href="#">
+                        <button type="button" class="btn cur-p btn-outline-primary">{% trans "Update" %}</button>
+                      </a>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock body %}

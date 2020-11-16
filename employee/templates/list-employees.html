@@ -25,42 +25,50 @@
             <tr>
               <th>#</th>
               <th>{% trans "Employee Name" %}</th>
-              <th width="50%">{% trans "Actions" %}</th>
+              <th>{% trans "Username" %}</th>
+              <th>{% trans "Position" %}</th>
+              <th>{% trans "Contract Type" %}</th>
+              <th>{% trans "Hire Date" %}</th>
+              <th width="30%">{% trans "Actions" %}</th>
             </tr>
           </thead>
           <tbody>
-            {% for emp in emp_list %}
+            {% for emp in emp_job_roll_list %}
             <tr>
               <td scope="row">{{ forloop.counter }}</td>
-              <td>{{ emp.emp_name }}</td>
+              <td>{{ emp.emp_id.emp_name }}</td>
+              <td>{{ emp.emp_id.user }}</td>
+              <td>{{ emp.position }}</td>
+              <td>{{ emp.contract_type }}</td>
+              <td>{{ emp.emp_id.hiredate }}</td>
               <td class="Actions">
                 <div class="w-100 gap-10 peers">
                   <div class="peer">
-                    <a href="{% url 'employee:view-employee' pk=emp.id %}">
+                    <a href="{% url 'employee:view-employee' pk=emp.emp_id.id %}">
                       <button type="button" class="btn cur-p btn-outline-primary">{% trans "View" %}</button>
                     </a>
                   </div>
                   <div class="peer">
-                    <a href="{% url 'employee:update-employee' pk=emp.id %}">
+                    <a href="{% url 'employee:update-employee' pk=emp.emp_id.id %}">
                       <button type="button" class="btn cur-p btn-outline-success">{% trans "Update" %}</button>
                     </a>
                   </div>
                   <div class="peer">
                     <a href="#">
-                      <button type="button" class="btn cur-p btn-outline-danger" data-toggle="modal" data-target="#delete-modal{{emp.pk}}">{% trans "Delete" %}</button>
+                      <button type="button" class="btn cur-p btn-outline-danger" data-toggle="modal" data-target="#delete-modal{{emp.emp_id.pk}}">{% trans "Delete" %}</button>
                     </a>
                   </div>
                 </div>
               </td>
             </tr>
             <!-- Delete Modal -->
-            <div class="modal fade" id="delete-modal{{emp.pk}}" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+            <div class="modal fade" id="delete-modal{{emp.emp_id.pk}}" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-body">
                     <p>{% trans "Are you sure you want to delete this record?" %}</p>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
-                    <a href="{% url 'employee:delete-employee' pk=emp.pk %}" class="btn btn-danger" type="button">{% trans "Delete" %}</a>
+                    <a href="{% url 'employee:delete-employee' pk=emp.emp_id.pk %}" class="btn btn-danger" type="button">{% trans "Delete" %}</a>
                   </div>
                 </div>
               </div>

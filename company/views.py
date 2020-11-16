@@ -53,6 +53,7 @@ def deactivate_company(user_v, new_active_company):
         messages.error(request, _('Company Does Not Exist'))
 
 
+@login_required(login_url='home:user-login')
 def mark_as_active_view(request, company_id):
     success_flag = deactivate_company(request.user, company_id)
     required_company = UserCompany.objects.get(company=company_id)
@@ -66,7 +67,7 @@ def mark_as_active_view(request, company_id):
         return redirect('company:user-companies-list')
 
 
-
+@login_required(login_url='home:user-login')
 def create_user_companies_view(request):
     bgForm = EnterpriseForm()
     current_user_obj = User.objects.get(id=request.user.id)
@@ -114,7 +115,7 @@ def create_user_companies_view(request):
     }
     return render(request, 'user-companies-create.html', userCompanyContext)
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def companyCreateView(request):
     bgForm = EnterpriseForm()
     current_user_obj = User.objects.get(id=request.user.id)
@@ -152,7 +153,7 @@ def companyCreateView(request):
     return render(request, 'company-create.html', myContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def listCompanyInformation(request):
     if request.method == 'GET':
         bgList = Enterprise.objects.filter(enterprise_user=request.user).filter(Q(end_date__gt=date.today()) | Q(end_date__isnull=True))
@@ -164,7 +165,7 @@ def listCompanyInformation(request):
     return render(request, 'company-list.html', myContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def updateBusinessGroup(request, pk):
     required_enterprice = Enterprise.objects.get(pk=pk)
     bgForm = EnterpriseForm(instance=required_enterprice)
@@ -196,7 +197,7 @@ def updateBusinessGroup(request, pk):
     return render(request, 'company-create.html', context=myContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def deleteBusinessGroup(request, pk):
     required_enterprice = Enterprise.objects.get(pk=pk)
     try:
@@ -234,7 +235,7 @@ def viewHirarchy(request):
     return render(request, 'company-hierachy.html', myContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def viewDepartmentView(request, pk):
     required_obj = get_object_or_404(Department, pk=pk)
     dept_form = DepartmentForm(instance=required_obj)
@@ -245,7 +246,7 @@ def viewDepartmentView(request, pk):
     return render(request, 'department-view.html', viewContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def listDepartmentView(request):
     if request.method == 'GET':
         dept_list = Department.objects.all(request.user).order_by('tree_id')
@@ -256,7 +257,7 @@ def listDepartmentView(request):
     return render(request, 'department-list.html', myContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def createDepartmentView(request):
     dept_formset = DepartmentInline(queryset=Department.objects.none())
     for form in dept_formset:
@@ -288,13 +289,13 @@ def createDepartmentView(request):
             else:
                 success_msg = 'The form is not valid.'
             [messages.error(request, dept_formset.errors)]
-    myContext = {"page_title": "Create New Department",
+    myContext = {"page_title": _("Create New Department"),
                  'dept_formset': dept_formset,
                  }
     return render(request, 'department-create.html', myContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def correctDepartmentView(request, pk):
     required_dept = Department.objects.get_department(user=request.user, dept_id=pk)
     dept_form = DepartmentForm(instance=required_dept)
@@ -327,7 +328,7 @@ def correctDepartmentView(request, pk):
     return render(request, 'department-update.html', myContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def updateDepartmentView(request, pk):
     required_dept = Department.objects.get_department(user=request.user, dept_id=pk)
     dept_form = DepartmentForm(instance=required_dept)
@@ -369,7 +370,7 @@ def updateDepartmentView(request, pk):
     return render(request, 'department-update.html', myContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def deleteDepartmentView(request, pk):
     deleted_obj = Department.objects.get_department(user=request.user, dept_id=pk)
     try:
@@ -397,7 +398,7 @@ def deleteDepartmentView(request, pk):
 
 
 ########################################Job views###################################################################
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def listJobView(request):
     if request.method == 'GET':
         job_list = Job.objects.all(request.user)
@@ -406,7 +407,7 @@ def listJobView(request):
     return render(request, 'job-list.html', myContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def createJobView(request):
     job_formset = JobInline(queryset=Job.objects.none())
     user_lang = to_locale(get_language())
@@ -443,7 +444,7 @@ def createJobView(request):
     return render(request, 'job-create.html', context=myContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def updateJobView(request, pk):
     required_job = Job.objects.get_job(user=request.user, job_id=pk)
     job_form = JobForm(instance=required_job)
@@ -485,7 +486,7 @@ def updateJobView(request, pk):
     return render(request, 'job-update.html', context=myContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def correctJobView(request, pk):
     required_job = Job.objects.get_job(user=request.user, job_id=pk)
     job_form = JobForm(instance=required_job)
@@ -516,7 +517,7 @@ def correctJobView(request, pk):
     return render(request, 'job-update.html', context=myContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def deleteJobView(request, pk):
     deleted_obj = Job.objects.get_job(user=request.user, job_id=pk)
     try:
@@ -539,7 +540,7 @@ def deleteJobView(request, pk):
 
 
 ########################################Grade views###################################################################
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def listGradeView(request):
     if request.method == 'GET':
         grade_list = Grade.objects.all(request.user)
@@ -548,7 +549,7 @@ def listGradeView(request):
     return render(request, 'grade-list.html', myContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def createGradeView(request):
     grade_formset = GradeInline(queryset=Grade.objects.none())
     if request.method == 'POST':
@@ -585,7 +586,7 @@ def createGradeView(request):
     return render(request, 'grade-create.html', context=myContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def updateGradeView(request, pk):
     required_grade = Grade.objects.get_job(user=request.user, grade_id=pk)
     grade_form = GradeForm(instance=required_grade)
@@ -627,7 +628,7 @@ def updateGradeView(request, pk):
     return render(request, 'grade-update.html', context=myContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def correctGradeView(request, pk):
     required_grade = Grade.objects.get_job(user=request.user, grade_id=pk)
     grade_form = GradeForm(instance=required_grade)
@@ -657,7 +658,7 @@ def correctGradeView(request, pk):
     return render(request, 'grade-update.html', context=myContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def deleteGradeView(request, pk):
     deleted_obj = Grade.objects.get_job(user=request.user, grade_id=pk)
     try:
@@ -685,7 +686,7 @@ def deleteGradeView(request, pk):
 
 
 ########################################Position views###################################################################
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def listPositionView(request):
     if request.method == 'GET':
         position_list = Position.objects.all(request.user)
@@ -694,7 +695,7 @@ def listPositionView(request):
     return render(request, 'position-list.html', myContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def createPositionView(request):
     position_formset = PositionInline(queryset=Position.objects.none())
     for form in position_formset:
@@ -740,7 +741,7 @@ def createPositionView(request):
     return render(request, 'position-create.html', context=myContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def updatePositionView(request, pk):
     required_position = Position.objects.get_position(user=request.user, position_id=pk)
     position_form = PositionForm(instance=required_position)
@@ -783,7 +784,7 @@ def updatePositionView(request, pk):
     return render(request, 'position-update.html', context=myContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def correctPositionView(request, pk):
     required_position = Position.objects.get_position(user=request.user, position_id=pk)
     position_form = PositionForm(instance=required_position)
@@ -813,7 +814,7 @@ def correctPositionView(request, pk):
     return render(request, 'position-update.html', context=myContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def deletePositionView(request, pk):
     deleted_obj = Position.objects.get_position(user=request.user, position_id=pk)
     try:
@@ -841,7 +842,7 @@ def deletePositionView(request, pk):
 
 ########################################Company Policies views###################################################################
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def CreateWorkingPolicyView(request):
     working_policy_form = WorkingDaysForm()
     user_lang = to_locale(get_language())
@@ -874,7 +875,7 @@ def CreateWorkingPolicyView(request):
     return render(request, 'working-hrs-policy-create.html', context=my_context)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def listWorkingPolicyView(request):
     if request.method == 'GET':
         working_policy_list = Working_Days_Policy.objects.all(request.user)
@@ -884,7 +885,7 @@ def listWorkingPolicyView(request):
                  }
     return render(request, 'working-hrs-policy-list.html', myContext)
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def correctWorkingPolicyView(request, pk):
     required_policy = Working_Days_Policy.objects.get_policy(user=request.user, policy_id=pk)
     policy_form = WorkingDaysForm(instance=required_policy)
@@ -915,7 +916,7 @@ def correctWorkingPolicyView(request, pk):
     return render(request, 'working-hrs-policy-create.html', context=myContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def deleteWorkingPolicyView(request, pk):
     req_working_policy = Working_Days_Policy.objects.get_policy(user=request.user, policy_id=pk)
     deleted = req_working_policy.delete()
@@ -928,7 +929,7 @@ def deleteWorkingPolicyView(request, pk):
     return redirect('company:working-hrs-policy-list')
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def listYearlyHolidayView(request, year_id):
     yearly_holiday_list = []
     year = Year.objects.get_year(request.user, year_id)
@@ -943,7 +944,7 @@ def listYearlyHolidayView(request, year_id):
     return render(request, 'yearly-holiday-list.html', myContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def createYearlyHolidayView(request, year_id):
     year = Year.objects.get_year(user= request.user, year_id=year_id)
     yearly_holiday_formset = YearlyHolidayInline(queryset=YearlyHoliday.objects.none())
@@ -983,7 +984,7 @@ def createYearlyHolidayView(request, year_id):
     return render(request, 'yearly-holiday-create.html', context=my_context)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def correctYearlyHolidayView(request, pk):
     required_holiday = YearlyHoliday.objects.get_holiday(user=request.user, yearly_holiday_id=pk)
     holiday_form = YearlyHolidayForm(instance=required_holiday)
@@ -1020,7 +1021,7 @@ def correctYearlyHolidayView(request, pk):
     return render(request, 'yearly-holiday-update.html', context=myContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def deleteYearlyHolidayView(request, pk):
     req_holiday = YearlyHoliday.objects.get_holiday(user=request.user, yearly_holiday_id=pk)
     year_ID = req_holiday.year.id
@@ -1034,7 +1035,7 @@ def deleteYearlyHolidayView(request, pk):
     return redirect('company:yearly-holiday-list', year_id=year_ID)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def listYearsView(request):
     years = Year.objects.all(request.user)
     num_of_holidays = {}
@@ -1058,7 +1059,7 @@ def listYearsView(request):
     return render(request, 'years-list.html', context=context)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def list_working_hours_deductions_view(request):
     working_deductions_list = Working_Hours_Deductions_Policy.objects.filter(working_days_policy__enterprise = request.user.company)
     working_hrs_deduction_form = WorkingHoursDeductionForm()
@@ -1069,7 +1070,7 @@ def list_working_hours_deductions_view(request):
     return render(request, 'working-hrs-deductions-list.html', context=context)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def create_working_hours_deductions_view(request):
     working_deductions_formset = Working_Hours_Deduction_Form_Inline(queryset=Working_Hours_Deductions_Policy.objects.none())
     if request.method == 'POST':
@@ -1094,3 +1095,31 @@ def create_working_hours_deductions_view(request):
         'working_deductions_formset': working_deductions_formset,
     }
     return render(request, 'working-hrs-deductions-create.html', context=context)
+
+#
+# @login_required(login_url='home:user-login')
+# def update_working_hours_deductions_view(request, deduction_id):
+#     required_work_deduction = Working_Hours_Deductions_Policy.objects.get(id=deduction_id)
+#     working_deductions_form = WorkingHoursDeductionForm()
+#     if request.method == 'POST':
+#         company_working_policy = Working_Days_Policy.objects.get(enterprise=request.user.company)
+#         working_deductions_formset = Working_Hours_Deduction_Form_Inline(request.POST)
+#         if working_deductions_formset.is_valid():
+#             try:
+#                 formset_obj = working_deductions_formset.save(commit=False)
+#                 for form in formset_obj:
+#                     form.Working_Days_Policy_id = company_working_policy.id
+#                     form.created_by = request.user
+#                     form.save()
+#                 messages.success(request, _('Working Hours Deductions Created Successfully'))
+#             except IntegrityError as e:
+#                 messages.error(request, _('UNIQUE constraint failed'))
+#
+#         else:
+#             messages.error(request, working_deductions_formset.errors)
+#
+#     context = {
+#         "page_title": _("Work Hours Deduction Policy"),
+#         'working_deductions_formset': working_deductions_formset,
+#     }
+#     return render(request, 'working-hrs-deductions-create.html', context=context)

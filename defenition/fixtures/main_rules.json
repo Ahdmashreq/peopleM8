@@ -4,7 +4,7 @@
     "pk": 1,
     "fields": {
       "name": "قانون التأمينات المصري",
-      "enterprise_name": 4,
+      "enterprise_name": 1,
       "basic_deduction_percentage": 14,
       "variable_deduction_percentage": 11,
       "maximum_insurable_basic_salary": 1250,
@@ -17,108 +17,146 @@
     }
   },
   {
-    "model": "defenition.TaxRule",
+    "model": "defenition.taxrule",
     "pk": 1,
     "fields": {
-      "name": "قانون الضرائب المصري",
-      "enterprise": 4,
-      "personal_exemption": 7200.0,
-      "round_down_to_nearest_10": 1,
+      "enterprise": 1,
+      "name": "\u0642\u0627\u0646\u0648\u0646 \u0627\u0644\u0636\u0631\u0627\u0626\u0628 \u0627\u0644\u0645\u0635\u0631\u064a",
+      "personal_exemption": 9000.0,
+      "round_down_to_nearest_10": true,
       "start_date": "2000-01-01",
-      "created_by": 1,
-      "creation_date": "2000-01-01",
-      "last_update_by": 1,
+      "end_date": null,
+      "created_by": null,
+      "creation_date": "2020-10-06",
+      "last_update_by": null,
       "last_update_date": "2000-01-01"
     }
   },
   {
-    "model": "defenition.TaxSection",
+    "model": "defenition.tax_sections",
     "pk": 1,
     "fields": {
-      "name": "الشريحة الاولي",
+      "name": "\u0627\u0644\u0634\u0631\u064a\u062d\u0629 \u0627\u0644\u0627\u0648\u0644\u064a",
       "tax_rule_id": 1,
-      "salary_from": 0,
-      "salary_to": 7200,
-      "tax_percentage": 0,
-      "tax_discount_percentage": 0,
+      "salary_from": 1.0,
+      "salary_to": 15000.0,
+      "tax_percentage": 0.0,
+      "tax_difference": 15000.0,
       "section_execution_sequence": 1,
-      "start_date": "2000-01-01",
-      "created_by": 1,
-      "creation_date": "2000-01-01",
-      "last_update_by": 1,
-      "last_update_date": "2000-01-01"
+      "start_date": "2020-01-01",
+      "end_date": null,
+      "created_by": null,
+      "creation_date": "2020-10-06",
+      "last_update_by": null,
+      "last_update_date": "2020-10-06"
     }
-  },
-  {
-    "model": "defenition.TaxSection",
+  }, {
+    "model": "defenition.tax_sections",
     "pk": 2,
     "fields": {
-      "name": "الشريحة الثانية",
+      "name": "\u0627\u0644\u0634\u0631\u064a\u062d\u0629 \u0627\u0644\u062b\u0627\u0646\u064a\u0629",
       "tax_rule_id": 1,
-      "salary_from": 7201,
-      "salary_to": 30000,
-      "tax_percentage": 10,
-      "tax_discount_percentage": 80,
+      "salary_from": 15001.0,
+      "salary_to": 30000.0,
+      "tax_percentage": 2.5,
+      "tax_difference": 15000.0,
       "section_execution_sequence": 2,
-      "start_date": "2000-01-01",
-      "created_by": 1,
-      "creation_date": "2000-01-01",
-      "last_update_by": 1,
-      "last_update_date": "2000-01-01"
+      "start_date": "2020-01-01",
+      "end_date": null,
+      "created_by": null,
+      "creation_date": "2020-10-06",
+      "last_update_by": null,
+      "last_update_date": "2020-10-06"
     }
-  },
-  {
-    "model": "defenition.TaxSection",
+  }, {
+    "model": "defenition.tax_sections",
     "pk": 3,
     "fields": {
-      "name": "الشريحة الثالثة",
+      "name": "\u0627\u0644\u0634\u0631\u064a\u062d\u0629 \u0627\u0644\u062b\u0627\u0644\u062b\u0629",
       "tax_rule_id": 1,
-      "salary_from": 30001,
-      "salary_to": 45000,
-      "tax_percentage": 15,
-      "tax_discount_percentage": 40,
+      "salary_from": 30001.0,
+      "salary_to": 45000.0,
+      "tax_percentage": 10.0,
+      "tax_difference": 15000.0,
       "section_execution_sequence": 3,
-      "start_date": "2000-01-01",
-      "created_by": 1,
-      "creation_date": "2000-01-01",
-      "last_update_by": 1,
-      "last_update_date": "2000-01-01"
+      "start_date": "2020-01-01",
+      "end_date": null,
+      "created_by": null,
+      "creation_date": "2020-10-06",
+      "last_update_by": null,
+      "last_update_date": "2020-10-06"
     }
-  },
-  {
-    "model": "defenition.TaxSection",
+  }, {
+    "model": "defenition.tax_sections",
     "pk": 4,
     "fields": {
-      "name": "الشريحة الرابعة",
+      "name": "\u0627\u0644\u0634\u0631\u064a\u062d\u0629 \u0627\u0644\u0631\u0627\u0628\u0639\u0629",
       "tax_rule_id": 1,
-      "salary_from": 45001,
-      "salary_to": 200000,
-      "tax_percentage": 20,
-      "tax_discount_percentage": 5,
+      "salary_from": 45001.0,
+      "salary_to": 60000.0,
+      "tax_percentage": 15.0,
+      "tax_difference": 15000.0,
       "section_execution_sequence": 4,
-      "start_date": "2000-01-01",
-      "created_by": 1,
-      "creation_date": "2000-01-01",
-      "last_update_by": 1,
-      "last_update_date": "2000-01-01"
+      "start_date": "2020-01-01",
+      "end_date": null,
+      "created_by": null,
+      "creation_date": "2020-10-06",
+      "last_update_by": null,
+      "last_update_date": "2020-10-06"
     }
-  },
-  {
-    "model": "defenition.TaxSection",
+  }, {
+    "model": "defenition.tax_sections",
     "pk": 5,
     "fields": {
-      "name": "الشريحة الخامسة",
+      "name": "\u0627\u0644\u0634\u0631\u064a\u062d\u0629 \u0627\u0644\u062e\u0627\u0645\u0633\u0629",
       "tax_rule_id": 1,
-      "salary_from": 200001,
-      "salary_to": 10000000,
-      "tax_percentage": 22.5,
-      "tax_discount_percentage": 0,
+      "salary_from": 60001.0,
+      "salary_to": 200000.0,
+      "tax_percentage": 20.0,
+      "tax_difference": 140000.0,
       "section_execution_sequence": 5,
-      "start_date": "2000-01-01",
-      "created_by": 1,
-      "creation_date": "2000-01-01",
-      "last_update_by": 1,
-      "last_update_date": "2000-01-01"
+      "start_date": "2020-01-01",
+      "end_date": null,
+      "created_by": null,
+      "creation_date": "2020-10-06",
+      "last_update_by": null,
+      "last_update_date": "2020-10-06"
+    }
+  }, {
+    "model": "defenition.tax_sections",
+    "pk": 6,
+    "fields": {
+      "name": "\u0627\u0644\u0634\u0631\u064a\u062d\u0629 \u0627\u0644\u0633\u0627\u062f\u0633\u0629",
+      "tax_rule_id": 1,
+      "salary_from": 200001.0,
+      "salary_to": 400000.0,
+      "tax_percentage": 22.5,
+      "tax_difference": 200000.0,
+      "section_execution_sequence": 6,
+      "start_date": "2020-01-01",
+      "end_date": null,
+      "created_by": null,
+      "creation_date": "2020-10-06",
+      "last_update_by": null,
+      "last_update_date": "2020-10-06"
+    }
+  }, {
+    "model": "defenition.tax_sections",
+    "pk": 7,
+    "fields": {
+      "name": "\u0627\u0644\u0634\u0631\u064a\u062d\u0629 \u0627\u0644\u0633\u0627\u0628\u0639\u0629",
+      "tax_rule_id": 1,
+      "salary_from": 400001.0,
+      "salary_to": 1000000000.0,
+      "tax_percentage": 25.0,
+      "tax_difference": 999600000.0,
+      "section_execution_sequence": 7,
+      "start_date": "2020-01-01",
+      "end_date": null,
+      "created_by": null,
+      "creation_date": "2020-10-06",
+      "last_update_by": null,
+      "last_update_date": "2020-10-06"
     }
   }
 ]

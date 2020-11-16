@@ -14,7 +14,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import to_locale, get_language
 
 # Create your views here.
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def list_notification(request):
     employee = Employee.objects.get(user=request.user)
     employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
@@ -29,13 +29,13 @@ def list_notification(request):
 
     return render(request, 'list_notification.html',{'notifications':unread_notifications,})
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def clear_all(request):
     for x in Notification.objects.all():
         x.delete()
     return redirect('notification:list_notification')
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def change_status(request,id):
     notification = Notification.objects.get(id=id)
     notification.status = 'read'

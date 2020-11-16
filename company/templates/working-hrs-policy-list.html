@@ -21,7 +21,7 @@
       <table class="table table-striped table-bordered" id="dataTable" width="100%">
         <thead>
           <tr>
-            <th>ID</th>
+            <th>{% trans "ID" %}</th>
             <th>{% trans "Policy Name" %}</th>
             <th>{% trans "Actions" %}</th>
           </tr>
@@ -75,21 +75,21 @@
               </div>
               <div class="modal-body">
                 <div class="row">
-                  <label class="col-md-6 col-form-label"><strong>Daily working hours:</strong></label>
+                  <label class="col-md-6 col-form-label"><strong>{% trans "Daily working hours:" %}</strong></label>
                   <div class="col-sm-4">
                     {{policy.number_of_daily_working_hrs}}
                   </div>
                 </div>
 
                 <div class="row">
-                  <label class="col-md-6 col-form-label"><strong>Working Start time:</strong></label>
+                  <label class="col-md-6 col-form-label"><strong>{% trans "Working Start time:" %}</strong></label>
                   <div class="col-sm-4">
                     {{policy.hrs_start_from}}
                   </div>
                 </div>
                 <div class="row">
                   <label class="col-md-6 col-form-label">
-                    <strong>Normal overtime rate:</strong>
+                    <strong>{% trans "Normal overtime rate:" %}</strong>
                   </label>
                   <div class="col-sm-4">
                     {{policy.normal_over_time_hourly_rate}}
@@ -97,7 +97,7 @@
                 </div>
                 <div class="row">
                   <label class="col-md-6 col-form-label">
-                    <strong>Working End time:</strong>
+                    <strong>{% trans "Working End time:" %}</strong>
                   </label>
                   <div class="col-sm-4">
                     {{policy.hrs_end_at}}
@@ -105,7 +105,7 @@
                 </div>
                 <div class="row">
                   <label class="col-md-6 col-form-label">
-                    <strong>Daily working hours:</strong>
+                    <strong>{% trans "Daily working hours:" %}</strong>
                   </label>
                   <div class="col-sm-4">
                     {{policy.number_of_daily_working_hrs}}
@@ -113,7 +113,7 @@
                 </div>
                 <div class="row">
                   <label class="col-md-6 col-form-label">
-                    <strong>Exceptional overtime rate:</strong>
+                    <strong>{% trans "Exceptional overtime rate:" %}</strong>
                   </label>
                   <div class="col-sm-4">
                     {{policy.exceptional_over_time_hourly_rate}}
@@ -121,7 +121,7 @@
                 </div>
                 <div class="row">
                   <label class="col-md-6 col-form-label">
-                    <strong>Delay rate:</strong>
+                    <strong>{% trans "Delay rate:" %}</strong>
                   </label>
                   <div class="col-sm-4">
                     {{policy.delay_hours_rate}}
@@ -129,14 +129,14 @@
                 </div>
                 <div class="row">
                   <label class="col-md-6 col-form-label">
-                    <strong>Absence rate:</strong>
+                    <strong>{% trans "Absence rate:" %}</strong>
                   </label>
                   <div class="col-sm-4">
                     {{policy.absence_days_rate}}
                   </div>
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "Close" %}</button>
                 </div>
               </div>
             </div>

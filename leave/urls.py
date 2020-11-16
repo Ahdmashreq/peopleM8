@@ -9,6 +9,7 @@ urlpatterns = [
     path('add_leave/', views.add_leave, name='add_leave'),
     path('edit_leave/<int:id>', views.edit_leave, name='edit_leave'),
     path('add_leave_master/', views.add_leave_master, name='add_leave_master'),
+    path('list-leave-master/', views.list_leave_master, name='list-leave-master'),
     path('edit_leave_master/<int:id>', views.edit_leave_master, name='edit_leave_master'),
     path('del_leave_master/<int:id>', views.del_leave_master, name='del_leave_master'),
     path('leave-approve/<int:leave_id>', views.leave_approve, name='leave-approve'),

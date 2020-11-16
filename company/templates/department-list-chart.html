@@ -1,0 +1,210 @@
+{% extends 'master.html'%}
+{% load staticfiles%}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+{% load mptt_tags %}
+
+{% block style %}
+<style>
+  .container-fluid-tree {
+    padding: inherit;
+  }
+  .tree ul {
+      padding-top: 20px;
+      position: relative;
+      -transition: all 0.5s;
+      -webkit-transition: all 0.5s;
+      -moz-transition: all 0.5s;
+  }
+
+  .tree li {
+      float: left; text-align: center;
+      list-style-type: none;
+      position: relative;
+      padding: 20px 5px 0 5px;
+
+      -transition: all 0.5s;
+      -webkit-transition: all 0.5s;
+      -moz-transition: all 0.5s;
+  }
+
+  /*We will use ::before and ::after to draw the connectors*/
+
+  .tree li::before, .tree li::after{
+      content: '';
+      position: absolute; top: 0; right: 50%;
+      border-top: 2px solid #696969;
+      width: 50%; height: 20px;
+  }
+  .tree li::after{
+      right: auto; left: 50%;
+      border-left: 2px solid #696969;
+  }
+
+  /*We need to remove left-right connectors from elements without
+  any siblings*/
+  .tree li:only-child::after, .tree li:only-child::before {
+      display: none;
+  }
+
+  /*Remove space from the top of single children*/
+  .tree li:only-child{ padding-top: 0;}
+
+  /*Remove left connector from first child and
+  right connector from last child*/
+  .tree li:first-child::before, .tree li:last-child::after{
+      border: 0 none;
+  }
+  /*Adding back the vertical connector to the last nodes*/
+  .tree li:last-child::before{
+      border-right: 2px solid #696969;
+      border-radius: 0 5px 0 0;
+      -webkit-border-radius: 0 5px 0 0;
+      -moz-border-radius: 0 5px 0 0;
+  }
+  .tree li:first-child::after{
+      border-radius: 5px 0 0 0;
+      -webkit-border-radius: 5px 0 0 0;
+      -moz-border-radius: 5px 0 0 0;
+  }
+
+  /*Time to add downward connectors from parents*/
+  .tree ul ul::before{
+      content: '';
+      position: absolute; top: 0; left: 50%;
+      border-left: 2px solid #696969;
+      width: 0; height: 20px;
+  }
+
+  .tree li a{
+      height: auto;
+      width: auto;
+      padding: 5px 10px;
+      text-decoration: none;
+      background-color: white;
+      color: #000000;
+      font-family: Nunito, sans-serif;
+      font-size: 14px;
+      font-weight: bold;
+      display: inline-block;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+
+      -transition: all 0.5s;
+      -webkit-transition: all 0.5s;
+      -moz-transition: all 0.5s;
+  }
+
+  /*Time for some hover effects*/
+  /*We will apply the hover effect the the lineage of the element also*/
+  .tree li a:hover, .tree li a:hover+ul li a {
+      background: #cbcbcb; color: #000;
+  }
+  /*Connector styles on hover*/
+  .tree li a:hover+ul li::after,
+  .tree li a:hover+ul li::before,
+  .tree li a:hover+ul::before,
+  .tree li a:hover+ul ul::before{
+      border-color:  #94a0b4;
+  }
+</style>
+{% endblock style %}
+
+{% block body%}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <h1>Departments Chart</h1>
+      <div class="text-zero top-right-button-container">
+        <a href="{% url 'company:department-create' %}"><button type="button" class="btn btn-primary btn-lg top-right-button mr-1">{% trans "ADD NEW" %}</button></a>
+      </div>
+      <div class="separator mb-5"></div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="" style="margin-top:20px">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="tree">
+                  {% for node,structure in dept_list|tree_info %}
+                  {% if structure.new_level %}
+                  <ul>
+                    <li>{% else %}</li>
+                    <li>
+                      {% endif %}
+                      <a href="#" data-toggle="modal" data-target="#modal-{{ node.id }}">
+                        <div class="container-fluid-tree">
+                          <div class="row">
+                            {{ node.dept_name }}
+                          </div>
+                          <div class="row" style="margin-top: 35px;">
+                            <i class="fa fa-exclamation-circle fa-2x"></i>
+                          </div>
+                        </div>
+                      </a>
+                      {% for level in structure.closed_levels %}
+                    </li>
+                  </ul>
+                  {% endfor %}
+                  <div class="modal fade" id="modal-{{ node.id }}" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLabel">{% trans "Department Details" %}</h5>
+
+                        </div>
+                        <div class="modal-body">
+                          <div class="form-row">
+                            <h6><b>{% trans "Department Name" %} : </b></h6> {{node.dept_name}}
+                          </div>
+                          <div class="form-row">
+                            <h6><b>{% trans "Parent Department" %} : </b></h6> {{node.parent}}
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn cur-p btn-outline-secondary" data-dismiss="modal">{% trans "Close" %}</button>
+                          <a href="{% url 'company:department-update' pk=node.id %}">
+                            <button type="button" class="btn cur-p btn-outline-primary">{% trans "Update" %}</button>
+                          </a>
+                          <a href="{% url 'company:department-correct' pk=node.id %}">
+                            <button type="button" class="btn cur-p btn-outline-success">{% trans "Correction" %}</button>
+                          </a>
+                          <button type="button" class="btn cur-p btn-outline-danger" data-toggle="modal" data-target="#delete-modal-{{node.id}}">{% trans "Delete" %}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Delete part !-->
+                  <div class="modal fade" id="delete-modal-{{node.id}}" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-body">
+                          <p>{% trans "Are you sure you want to delete this record?" %}</p>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
+                          <a href="{% url 'company:department-delete' pk=node.id %}" class="btn btn-danger" type="button">{% trans "Delete" %}</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock body%}

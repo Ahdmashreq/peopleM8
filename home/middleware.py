@@ -34,7 +34,7 @@ class PreventConcurrentLoginsMiddleware(deprecation.MiddlewareMixin if DJANGO_VE
                     engine.SessionStore(old_session_key).delete()
                     request.user.visitor.session_key = new_logedin_session
                     request.user.visitor.save()
-                    messages.warning(request,'Your session has been expired.')
+                    # messages.warning(request,'Your session has been expired.')
             else:
                 django_session =Session.objects.get(session_key=new_logedin_session)
                 Visitor.objects.create(

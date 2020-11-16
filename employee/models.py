@@ -178,3 +178,16 @@ class Employee_Element(models.Model):
 
     def __str__(self):
         return self.element_id.element_name
+
+
+class Employee_Element_History(models.Model):
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE,)
+    element = models.ForeignKey(Element_Master, on_delete=models.CASCADE,)
+    element_value = models.FloatField(default=0)
+    salary_month = models.IntegerField(default=date.today().month)
+    salary_year = models.IntegerField(default=date.today().year)
+    creation_date = models.DateField(auto_now=True, auto_now_add=False)
+
+
+    def __str__(self):
+        return self.employee.emp_name +' / '+ self.element.element_name

@@ -6,10 +6,12 @@ from employee.models import JobRoll, Employee
 from datetime import date
 from django.utils.translation import ugettext_lazy as _
 from .manager import LeaveManager
-
+from company.models import Enterprise
 
 class LeaveMaster(models.Model):
-    type = models.CharField(max_length=100, verbose_name=_('Leave Type Name'))
+    enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name= 'leave_master_bank_master', verbose_name=_('Enterprise Name'))
+    type = models.CharField(max_length=200, verbose_name=_('Leave Type Name'))
+    leave_value = models.FloatField(default=0, verbose_name=_('Leave Value'))
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                                    blank=True, null=True, related_name='LeaveMaster_created_by')
     creation_date = models.DateField(auto_now_add=True)
@@ -18,7 +20,7 @@ class LeaveMaster(models.Model):
     last_update_date = models.DateField(auto_now=True)
 
     def __str__(self):
-        return str(self.type)
+        return self.type
 
 def path_and_rename(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
@@ -31,14 +33,17 @@ class Leave(models.Model):
                        ("U", _("Usual Leave")),
                        ("UP", _("Unpaid Leave")),
                        ("M", _("Maternity/Paternity")),
-                       ("O", _("Other")) ]
+                       ("O", _("Other")),
+                       ("W", _("Working From Home")),
+                       ("W", _("Excuse")), ]
     # ###########################################################################################
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE, default=1)
     startdate = models.DateField(verbose_name=_('Start Date'), null=True, blank=False)
     enddate = models.DateField(verbose_name=_('End Date'), null=True, blank=False)
     resume_date = models.DateField(verbose_name=_('Resume Date'), null=True, blank=False)
-    leavetype = models.CharField(max_length=3, choices=leave_type_list, verbose_name=_('Leave Type Name'))
+    # leavetype = models.CharField(max_length=3, choices=leave_type_list, verbose_name=_('Leave Type Name'))
+    leavetype = models.ForeignKey(LeaveMaster, on_delete=models.CASCADE, verbose_name=_('Leave Type Name'))
     reason = models.CharField(verbose_name=_('Reason for Leave'), max_length=255,
                               help_text='add additional information for leave', null=True, blank=True)
     attachment = models.ImageField(upload_to=path_and_rename, null=True, blank=True, verbose_name=_('Attachment'))

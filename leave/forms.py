@@ -47,22 +47,26 @@ class FormLeave(forms.ModelForm):
 
 
 class FormLeaveMaster(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(FormLeaveMaster, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+        for field in self.fields:
+            self.fields[field].widget.attrs['class'] = 'form-control parsley-validated'
+
     class Meta():
         model = LeaveMaster
-        exclude = ['created_by', 'creation_date', 'last_update_by', 'last_update_date']
+        exclude = ['enterprise','created_by', 'creation_date', 'last_update_by', 'last_update_date']
 
 
 class Leave_Balance_Form(forms.ModelForm):
-    class Meta():
-        model = Employee_Leave_balance
-        exclude = ['created_by', 'creation_date', 'last_update_by', 'last_update_date']
-
     def __init__(self, *args, **kwargs):
         super(Leave_Balance_Form, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_show_labels = True
-        self.fields['employee'].widget.attrs['class']   = 'form-control parsley-validated'
-        self.fields['casual'].widget.attrs['class']   = 'form-control parsley-validated'
-        self.fields['usual'].widget.attrs['class'] = 'form-control parsley-validated'
-        self.fields['carried_forward'].widget.attrs['class'] = 'form-control parsley-validated'
-        self.fields['absence'].widget.attrs['class']   = 'form-control parsley-validated'
+        for field in self.fields:
+            self.fields[field].widget.attrs['class'] = 'form-control parsley-validated'
+
+    class Meta():
+        model = Employee_Leave_balance
+        exclude = ['created_by', 'creation_date', 'last_update_by', 'last_update_date']

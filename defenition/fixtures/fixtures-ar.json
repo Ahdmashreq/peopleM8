@@ -2,7 +2,7 @@
     "model": "defenition.LookupType",
     "pk": 3,
     "fields": {
-      "enterprise": 4,
+      "enterprise": 1,
       "lookup_type_name": "PAYMENT_TYPE_CATEGORY",
       "lookup_type_description": "طرق السداد",
       "start_date": "2000-01-01",
@@ -16,7 +16,7 @@
     "model": "defenition.LookupType",
     "pk": 4,
     "fields": {
-      "enterprise": 4,
+      "enterprise": 1,
       "lookup_type_name": "ELEMENT_TYPE",
       "lookup_type_description": "نوع البند",
       "start_date": "2000-01-01",
@@ -30,7 +30,7 @@
     "model": "defenition.LookupType",
     "pk": 5,
     "fields": {
-      "enterprise": 4,
+      "enterprise": 1,
       "lookup_type_name": "ELEMENT_CLASSIFICATION",
       "lookup_type_description": "طبيعة البند",
       "start_date": "2000-01-01",
@@ -44,7 +44,7 @@
     "model": "defenition.LookupType",
     "pk": 10,
     "fields": {
-      "enterprise": 4,
+      "enterprise": 1,
       "lookup_type_name": "EMPLOYEE_TYPE",
       "lookup_type_description": "نوعية العقد",
       "start_date": "2000-01-01",
@@ -58,7 +58,7 @@
     "model": "defenition.LookupType",
     "pk": 11,
     "fields": {
-      "enterprise": 4,
+      "enterprise": 1,
       "lookup_type_name": "PAYMENT_TYPE",
       "lookup_type_description": "PAYMENT_TYPE",
       "start_date": "2000-01-01",
@@ -72,7 +72,7 @@
     "model": "defenition.LookupType",
     "pk": 12,
     "fields": {
-      "enterprise": 4,
+      "enterprise": 1,
       "lookup_type_name": "ACCOUNT_TYPE",
       "lookup_type_description": "ACCOUNT_TYPE",
       "start_date": "2000-01-01",
@@ -86,7 +86,7 @@
     "model": "defenition.LookupType",
     "pk": 13,
     "fields": {
-      "enterprise": 4,
+      "enterprise": 1,
       "lookup_type_name": "PERIOD_TYPE",
       "lookup_type_description": "PERIOD_TYPE",
       "start_date": "2000-01-01",

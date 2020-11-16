@@ -25,10 +25,14 @@ from weasyprint import HTML, CSS
 from weasyprint.fonts import FontConfiguration
 # ############################################################
 from .new_tax_rules import Tax_Deduction_Amount
+from payroll_run.salary_calculations import Salary_Calculator
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def listSalaryView(request):
-    
+    emp = Employee.objects.get(user=request.user)
+    sc = Salary_Calculator(company=request.user.company, employee=emp)
+    print(sc.workdays_weekends_number(10,2020))
+    print(sc.employee_absence_days(10,2020))
     salary_list = Salary_elements.objects.filter(
         (Q(end_date__gt=date.today()) | Q(end_date__isnull=True))).values(
             'salary_month', 'salary_year',
@@ -40,7 +44,7 @@ def listSalaryView(request):
     return render(request, 'list-salary.html', salaryContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def includeAssignmentEmployeeFunction(id):
     included_emps = set()
     include_query = Assignment_Batch_Include.objects.filter(
@@ -67,7 +71,7 @@ def includeAssignmentEmployeeFunction(id):
     return included_emps
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def excludeAssignmentEmployeeFunction(id):
     excluded_emps = set()
     exclude_query = Assignment_Batch_Exclude.objects.filter(
@@ -94,7 +98,7 @@ def excludeAssignmentEmployeeFunction(id):
     return excluded_emps
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def createSalaryView(request):
     sal_form = SalaryElementForm()
     if request.method == 'POST':
@@ -247,7 +251,7 @@ def month_name(month_number):
     return calendar.month_name[month_number]
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def listSalaryFromMonth(request, month, year):
     salaries_list = Salary_elements.objects.filter(
         salary_month=month, salary_year=year)
@@ -260,7 +264,7 @@ def listSalaryFromMonth(request, month, year):
     return render(request, 'list-salary-month.html', monthSalaryContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def changeSalaryToFinal(request, month, year):
     draft_salary = Salary_elements.objects.filter(
         salary_month=month, salary_year=year)
@@ -270,7 +274,7 @@ def changeSalaryToFinal(request, month, year):
     return redirect('payroll_run:list-salary')
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def userSalaryInformation(request, month_number, salary_year, salary_id,emp_id):
     salary_obj = get_object_or_404(
                                    Salary_elements,
@@ -300,7 +304,7 @@ def userSalaryInformation(request, month_number, salary_year, salary_id,emp_id):
     return render(request, 'emp-payslip.html', monthSalaryContext)
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def render_emp_payslip(request, month, year, salary_id, emp_id):
     template_path = 'payslip.html'
     salary_obj = get_object_or_404(
@@ -321,7 +325,7 @@ def render_emp_payslip(request, month, year, salary_id, emp_id):
     return response
 
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def render_all_payslip(request, month, year):
     template_path = 'all-payslip.html'
     all_salary_obj = get_list_or_404(
@@ -345,7 +349,7 @@ def render_all_payslip(request, month, year):
     HTML(string=html).write_pdf(response, font_config=font_config)
     return response
 
-@login_required(login_url='/login')
+@login_required(login_url='home:user-login')
 def delete_salary_view(request, month, year):
     required_salary = Salary_elements.objects.filter(salary_month=month, salary_year=year)
     for sal in required_salary:

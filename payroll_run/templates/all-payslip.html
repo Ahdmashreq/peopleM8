@@ -66,9 +66,9 @@
 
   <table class="tg" style={% if LANGUAGE_CODE == 'ar' %} "text-align:right;" {% else %} "text-align:left;" {% endif %}>
     <tr>
-      <th class="tg-73oq" colspan="3">Description</th>
-      <th class="tg-73oq">Earning Amount</th>
-      <th class="tg-73oq">Deduction Amount</th>
+      <th class="tg-73oq" colspan="3">{% trans "Description" %}</th>
+      <th class="tg-73oq">{% trans "Earning Amount" %}</th>
+      <th class="tg-73oq">{% trans "Deduction Amount" %}</th>
     </tr>
     {% for emp in emp_elements %}
     <tr>

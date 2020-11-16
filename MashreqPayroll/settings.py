@@ -1,4 +1,3 @@
-import django_heroku
 import os
 from django.utils.translation import ugettext_lazy as _
 
@@ -20,7 +19,9 @@ with open(KEY_PATH) as f:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ADMINS = [('ahd','ahd.hozayen@mashreqarabia.com')]
+
+ALLOWED_HOSTS = ['127.0.0.1','127.0.1.1','192.168.1.37']
 
 TIMEOUT = 900
 
@@ -53,6 +54,8 @@ INSTALLED_APPS = [
     'import_export',
     'mptt',
 ]
+
+
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 IMPORT_EXPORT_USE_TRANSACTIONS = True
 
@@ -111,12 +114,12 @@ SESSION_SAVE_EVERY_REQUEST = True
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
 
 # DATABASES = {
 #     'default': {
@@ -127,16 +130,17 @@ DATABASES = {
 #     }
 # }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'mortabat',
-#         'USER': 'mashreq',
-#         'PASSWORD': 'mashreq',
-#         'HOST': 'localhost',
-#         'PORT': '',
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'peoplem8',
+        'USER': 'mashreq_sysadmin',
+        'PASSWORD': 'M@$hreq123',
+        'HOST': '192.168.1.37',
+        'PORT': '',
+    }
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
@@ -199,12 +203,13 @@ DEFAULT_LANGUAGE = 1
 LOCALE_PATHS = (
     os.path.join(BASE_DIR, 'locale'),
 )
+
 # Languages using BiDi (right-to-left) layout
 LANGUAGES_BIDI = ["ar"]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
-STATIC_ROOT = '/peoplem8/site/public/static'
+STATIC_ROOT = '/mashreq_arabia/site/public/static'
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
@@ -217,8 +222,6 @@ MEDIA_ROOT = MEDIA_DIR
 
 AUTH_USER_MODEL = 'custom_user.User'
 
-# Activate Django-Heroku.
-django_heroku.settings(locals())
 
 # Simplified static file serving.
 # https://warehouse.python.org/project/whitenoise/
