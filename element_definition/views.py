@@ -33,6 +33,7 @@ def installElementMaster(request):
         enterprise=request.user.company,
         element_name=element_name,
         db_name= company_basic_db_name,
+        basic_flag = True,
         element_type=element_type_obj,
         classification=element_class_obj,
         retro_flag=0,
@@ -65,6 +66,7 @@ def createElementView(request):
             element_obj.created_by = request.user
             element_obj.last_update_by = request.user
             element_obj.db_name = getDBSec(rows_number,request.user.company.id)
+            element_obj.basic_flag = False
             element_obj.save()
             return redirect('element_definition:list-element')
             user_lang = to_locale(get_language())
