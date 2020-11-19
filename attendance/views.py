@@ -27,7 +27,7 @@ import calendar
 import pytz
 from zk import ZK, const
 from zk.exception import ZKErrorConnection, ZKErrorResponse, ZKNetworkError
-from dateutil.parser import parse
+#from dateutil.parser import parse
 
 
 class DeltaTemplate(Template):
@@ -117,22 +117,6 @@ def populate_attendance_table(date):
                 )
             attendance.save()
 
-
-# def process_attendance_of_employee(attendance1, attendance2):
-#     print("Helpppp[")
-#     if attendance1.check_in:
-#         attendance1.check_in = attendance1.check_in
-#     elif attendance1.check_out:
-#         attendance1.check_out = attendance1.check_out
-#     if attendance2.check_out:
-#         attendance1.check_out = attendance2.check_out
-#     return attendance1
-#
-#
-# data = {}
-# date = datetime(2020, 11, 16)
-# atts = Attendance.objects.filter(employee__emp_number=31, date=date.date())
-# reduce_result = reduce(process_attendance_of_employee, atts)
 
 
 @login_required(login_url='home:user-login')
