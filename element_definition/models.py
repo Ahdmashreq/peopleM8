@@ -29,6 +29,7 @@ class Element_Master(models.Model):
                                    verbose_name=_('Enterprise Name'))
     element_name = models.CharField(max_length=100, verbose_name=_('Name'))
     db_name = models.CharField(max_length=4, null=True, blank=True, verbose_name=_('db Name'))
+    basic_flag = models.BooleanField(default=False)
     element_type = models.ForeignKey(LookupDet, on_delete=models.CASCADE, null=True, blank=True,
                                      related_name='lookup_element', verbose_name=_('Element Type'))
     classification = models.ForeignKey(LookupDet, on_delete=models.CASCADE, null=True, blank=True,
@@ -96,7 +97,7 @@ class Element_Batch_Master(models.Model):
 class Element_Link(models.Model):
     class Meta:
         unique_together = ('element_master_fk', 'employee')
-        
+
     element_master_fk = models.ForeignKey(Element_Master, on_delete=models.CASCADE, null=True, blank=True,
                                           related_name='element_link_to_master', verbose_name=_('Element Name'))
     batch = models.ForeignKey(Element_Batch, on_delete=models.CASCADE, null=True, blank=True,
