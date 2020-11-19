@@ -1,3 +1,5 @@
+from functools import reduce
+
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
@@ -11,7 +13,8 @@ from tablib import Dataset
 from django.utils.encoding import force_str
 from django.conf import settings
 from attendance.models import Attendance, Task, Employee_Attendance_History, Attendance_Interface
-from attendance.forms import (FormAttendance, Tasks_inline_formset, FormTasks, ConfirmImportForm, FormEmployeeAttendanceHistory)
+from attendance.forms import (FormAttendance, Tasks_inline_formset, FormTasks, ConfirmImportForm,
+                              FormEmployeeAttendanceHistory)
 from attendance.resources import AttendanceResource
 from attendance.tmp_storage import TempFolderStorage
 from employee.models import Employee
@@ -24,6 +27,7 @@ import calendar
 import pytz
 from zk import ZK, const
 from zk.exception import ZKErrorConnection, ZKErrorResponse, ZKNetworkError
+from dateutil.parser import parse
 
 
 class DeltaTemplate(Template):
@@ -40,6 +44,7 @@ def strfdelta(tdelta, fmt):
 
 def connect_download_from_machine(company):
     conn = None
+    print('yes yu ')
     zk = ZK('192.168.1.220', port=4370, timeout=5)
     device_users = []
     try:
@@ -53,16 +58,20 @@ def connect_download_from_machine(company):
         attendances_list = conn.get_attendance()
         for att in attendances_list:
             att_int = Attendance_Interface(
-                                       company = company,
-                                       user_name = [x.name for x in device_users if x.user_id == att.user_id][0],
-                                       user_id = att.user_id,
-                                       date = pytz.utc.localize(att.timestamp),
-                                       punch = att.punch,
+
+                company=company,
+                user_name=[x.name for x in device_users if x.user_id == att.user_id][0],
+                user_id=att.user_id,
+
+                date=pytz.utc.localize(att.timestamp),
+                punch=att.punch,
             )
             att_int.save()
     except Exception as e:
-        print("Process terminate : {}").format(e)
+        print("Process terminate : {}".format(e))
+        print("ohnooooooooooooooooooo")
     return "Device Connected Successfully"
+
 
 def disconnect_device():
     conn = None
@@ -74,6 +83,58 @@ def disconnect_device():
         return "instance are not connected."
     return "Disconnected"
 
+
+def populate_attendance_table(date):
+    atts = Attendance_Interface.objects.filter(date__date=date)
+    if len(atts) == 0:
+        print("Attendance Interface table is empty")
+    else:
+        data = {}
+        for att in atts:
+            try:
+                emp = Employee.objects.get(emp_number=att.user_id)
+            except Employee.DoesNotExist:
+                continue
+            data[att.user_id] = ({} if data.get(att.user_id, None) is None else data[att.user_id])
+            if att.punch == '0':
+                data[att.user_id]['check_in'] = att.date.time()
+                data[att.user_id]["check_out"] = (
+                    None if data[att.user_id].get('check_out', None) is None else data[att.user_id]["check_out"])
+            elif att.punch == '1':
+                data[att.user_id]["check_out"] = att.date.time()
+        for key, value in data.items():
+            emp = Employee.objects.get(emp_number=key)
+            try:
+                attendance = Attendance.objects.filter(date=date).get(employee=emp)
+                attendance.check_in = value["check_in"]
+                attendance.check_out = value["check_out"]
+            except Attendance.DoesNotExist:
+                attendance = Attendance(
+                    employee=emp,
+                    date=date,
+                    check_in=value["check_in"],
+                    check_out=value["check_out"]
+                )
+            attendance.save()
+
+
+# def process_attendance_of_employee(attendance1, attendance2):
+#     print("Helpppp[")
+#     if attendance1.check_in:
+#         attendance1.check_in = attendance1.check_in
+#     elif attendance1.check_out:
+#         attendance1.check_out = attendance1.check_out
+#     if attendance2.check_out:
+#         attendance1.check_out = attendance2.check_out
+#     return attendance1
+#
+#
+# data = {}
+# date = datetime(2020, 11, 16)
+# atts = Attendance.objects.filter(employee__emp_number=31, date=date.date())
+# reduce_result = reduce(process_attendance_of_employee, atts)
+
+
 @login_required(login_url='home:user-login')
 def list_machine_logs(request):
     machine_status = "Disconnected"
@@ -81,12 +142,13 @@ def list_machine_logs(request):
     if request.method == 'POST':
         if 'connect' in request.POST:
             connect_download_from_machine(request.user.company)
+            populate_attendance_table()
             machine_status = "Device Connected Successfully"
         else:
             machine_status = disconnect_device()
     att_context = {
         'attendances': attendance_list,
-        'machine_status':machine_status,
+        'machine_status': machine_status,
     }
     return render(request, 'list-machine-log.html', att_context)
 
@@ -411,9 +473,9 @@ def get_deductions_overtime_and_delay(employee_id, month, year):
     deduction_days = calculate_deduction_days(month, year, employee_id)
     overtime_hrs = calculate_overtime(employee_id, month, year)
     delay_hrs = calculate_delay_hrs(employee_id, month, year)
-    print("mY calculated delays are ",delay_hrs)
-    print("mY calculated overtime are ",overtime_hrs)
-    return {"deduction_days": deduction_days,"overtime_hrs":overtime_hrs,"delay_hrs": delay_hrs}
+    print("mY calculated delays are ", delay_hrs)
+    print("mY calculated overtime are ", overtime_hrs)
+    return {"deduction_days": deduction_days, "overtime_hrs": overtime_hrs, "delay_hrs": delay_hrs}
 
 
 def is_day_a_leave(user_id, day):
