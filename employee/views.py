@@ -153,6 +153,9 @@ def updateEmployeeView(request, pk):
     jobroll_form = JobRollForm(user_v=request.user, instance=required_jobRoll)
     payment_form = Employee_Payment_formset(instance=required_employee)
     elements_form = Employee_Element_Inline(queryset=Employee_Element.objects.filter(end_date__isnull=True), instance=required_employee)
+    for form in elements_form:
+        form.fields['element_id'].queryset = Element_Master.objects.filter(
+                    enterprise=request.user.company).filter(Q(end_date__gte=date.today()) | Q(end_date__isnull=True))
 
     # elements = Element_Link.objects.filter(
     #                                       Q(payroll_fk=required_jobRoll.payroll) | Q(payroll_fk__isnull=True),
