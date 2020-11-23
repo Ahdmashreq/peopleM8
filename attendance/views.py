@@ -27,7 +27,9 @@ import calendar
 import pytz
 from zk import ZK, const
 from zk.exception import ZKErrorConnection, ZKErrorResponse, ZKNetworkError
-#from dateutil.parser import parse
+
+
+# from dateutil.parser import parse
 
 
 class DeltaTemplate(Template):
@@ -44,7 +46,6 @@ def strfdelta(tdelta, fmt):
 
 def connect_download_from_machine(company):
     conn = None
-    print('yes yu ')
     zk = ZK('192.168.1.220', port=4370, timeout=5)
     device_users = []
     try:
@@ -56,6 +57,8 @@ def connect_download_from_machine(company):
             device_users.append(x)
         # Get attendances (will return list of Attendance object)
         attendances_list = conn.get_attendance()
+        if Attendance_Interface.objects.all().exists():
+            Attendance_Interface.objects.all().delete()
         for att in attendances_list:
             att_int = Attendance_Interface(
 
@@ -69,7 +72,6 @@ def connect_download_from_machine(company):
             att_int.save()
     except Exception as e:
         print("Process terminate : {}".format(e))
-        print("ohnooooooooooooooooooo")
     return "Device Connected Successfully"
 
 
@@ -108,15 +110,49 @@ def populate_attendance_table(date):
                 attendance = Attendance.objects.filter(date=date).get(employee=emp)
                 attendance.check_in = value["check_in"]
                 attendance.check_out = value["check_out"]
+                attendance.status = ("P" if value["check_out"] is not None else "A")
             except Attendance.DoesNotExist:
                 attendance = Attendance(
                     employee=emp,
                     date=date,
                     check_in=value["check_in"],
-                    check_out=value["check_out"]
+                    check_out=value["check_out"],
+                    status = ("A" if value["check_out"] is None else "P")
                 )
             attendance.save()
-
+        att_employees = Attendance.objects.filter(date=date).values_list("employee", flat=True)
+        employees = Employee.objects.all().values_list("id", flat=True)
+        for employee in employees:
+            if employee not in att_employees:
+                employee = Employee.objects.get(id=employee)
+                if employee.user is not None and is_day_a_leave(employee.user.id, date):
+                    status = "L"
+                    check_in = \
+                    Working_Days_Policy.objects.filter(enterprise=employee.enterprise).values("hrs_start_from")[0][
+                        'hrs_start_from']
+                    check_out = \
+                        Working_Days_Policy.objects.filter(enterprise=employee.enterprise).values("hrs_end_at")[0][
+                            'hrs_end_at']
+                elif is_day_a_service(employee.id, date):
+                    status = "S"
+                    check_in = \
+                    Working_Days_Policy.objects.filter(enterprise=employee.enterprise).values("hrs_start_from")[0][
+                        'hrs_start_from']
+                    check_out = \
+                    Working_Days_Policy.objects.filter(enterprise=employee.enterprise).values("hrs_end_at")[0][
+                        'hrs_end_at']
+                else:
+                    status = "A"
+                    check_in = None
+                    check_out = None
+                attendance = Attendance(
+                    employee=employee,
+                    date=date,
+                    status=status,
+                    check_in=check_in,
+                    check_out=check_out
+                )
+                attendance.save()
 
 
 @login_required(login_url='home:user-login')
@@ -126,7 +162,7 @@ def list_machine_logs(request):
     if request.method == 'POST':
         if 'connect' in request.POST:
             connect_download_from_machine(request.user.company)
-            populate_attendance_table()
+            populate_attendance_table(datetime.now().date())
             machine_status = "Device Connected Successfully"
         else:
             machine_status = disconnect_device()
@@ -464,34 +500,34 @@ def get_deductions_overtime_and_delay(employee_id, month, year):
 
 def is_day_a_leave(user_id, day):
     leaves = Leave.objects.filter(
-        Q(user__id=user_id) and ((Q(startdate__month=day.month) and Q(startdate__year=day.year)) or (
-                Q(enddate__month=day.month) and Q(enddate__year=day.year))))
+        Q(user__id=user_id) & ((Q(startdate__month=day.month) and Q(startdate__year=day.year)) | (
+                Q(enddate__month=day.month) & Q(enddate__year=day.year))), status='Approved')
     for leave in leaves:
-        if leave['startdate'] <= day <= leave['enddate']:
+        if leave.startdate <= day <= leave.enddate:
             return True
     return False
 
 
 def is_day_a_service(employee_id, day):
     services = Bussiness_Travel.objects.filter(
-        Q(emp__id=employee_id) and (
-                (Q(estimated_date_of_travel_from__month=day.month) and Q(
-                    estimated_date_of_travel_from__year=day.year)) or (
-                        Q(estimated_date_of_travel_to__month=day.month) and Q(
-                    estimated_date_of_travel_from__year=day.year))))
+        Q(emp__id=employee_id) & (
+                (Q(estimated_date_of_travel_from__month=day.month) & Q(
+                    estimated_date_of_travel_from__year=day.year)) | (
+                        Q(estimated_date_of_travel_to__month=day.month) & Q(
+                    estimated_date_of_travel_from__year=day.year))),status='Approved')
     for service in services:
-        if service['estimated_date_of_travel_from'] <= day <= service['estimated_date_of_travel_to']:
+        if service.estimated_date_of_travel_from <= day <= service.estimated_date_of_travel_to:
             return True
     return False
 
 
 def is_day_a_holiday(day):
     month_holidays = YearlyHoliday.objects.filter(
-        Q(year=day.year) and (Q(start_date__month=day.month) or
-                              Q(end_date__month=day.month))).values('start_date',
-                                                                    'end_date')
+        Q(year=day.year) & (Q(start_date__month=day.month) |
+                            Q(end_date__month=day.month))).values('start_date',
+                                                                  'end_date')
     for x in month_holidays:
-        if x['start_date'] <= day <= x['end_date']:
+        if x.start_date <= day <= x.end_date:
             return True
     return False
 

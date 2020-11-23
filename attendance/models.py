@@ -43,6 +43,7 @@ class Attendance(models.Model):
     date = models.DateField(blank=True, null=True, )
     check_in = models.TimeField(blank=True, null=True, )
     check_out = models.TimeField(blank=True, null=True, )
+    status = models.CharField(max_length=100, blank=True, null=True)
     work_hours = models.CharField(max_length=100, blank=True, null=True)
     normal_hrs = models.DecimalField(decimal_places=2, max_digits=4, blank=True, null=True, default=0)
     normal_overtime_hours = models.DurationField(blank=True, null=True)

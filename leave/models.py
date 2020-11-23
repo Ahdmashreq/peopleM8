@@ -113,21 +113,21 @@ class Leave(models.Model):
         def is_rejected(self):
             return self.status == 'rejected'
 
-@receiver(pre_save, sender=Leave)
-def update_employee_leave_balance(sender, instance, *args, **kwargs):
-    required_employee = Employee.objects.get(user=instance.user)
-    employee_balance = Employee_Leave_balance.objects.get(employee=required_employee)
-    startdate = instance.startdate
-    enddate = instance.enddate
-    dates = (enddate - startdate)
-    if instance.is_approved and instance.leavetype == 'C':
-        employee_balance.casual = employee_balance.casual-  (dates.days + 1)
-        employee_balance.save()
-    elif instance.is_approved and instance.leavetype == 'U':
-        employee_balance.usual = employee_balance.usual- (dates.days + 1)
-        employee_balance.save()
-    else:
-        return
+# @receiver(pre_save, sender=Leave)
+# def update_employee_leave_balance(sender, instance, *args, **kwargs):
+#     required_employee = Employee.objects.get(user=instance.user)
+#     employee_balance = Employee_Leave_balance.objects.get(employee=required_employee)
+#     startdate = instance.startdate
+#     enddate = instance.enddate
+#     dates = (enddate - startdate)
+#     if instance.is_approved and instance.leavetype == 'C':
+#         employee_balance.casual = employee_balance.casual-  (dates.days + 1)
+#         employee_balance.save()
+#     elif instance.is_approved and instance.leavetype == 'U':
+#         employee_balance.usual = employee_balance.usual- (dates.days + 1)
+#         employee_balance.save()
+#     else:
+#         return
 
 
 class Employee_Leave_balance(models.Model):
