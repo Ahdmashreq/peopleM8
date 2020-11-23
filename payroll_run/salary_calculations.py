@@ -29,9 +29,9 @@ class Salary_Calculator:
                     workdays += 1
 
                 if calendar.day_name[i] in company_weekends and day != 0:
-                    weekends +=1
+                    weekends += 1
         yearly_holidays = YearlyHoliday.objects.filter(
-            enterprise=self.company, year__year=year).filter(Q(start_date__month=month)|Q(end_date__month=month))
+            enterprise=self.company, year__year=year).filter(Q(start_date__month=month) | Q(end_date__month=month))
         for x in yearly_holidays:
             if x.start_date.month != month or x.end_date.month != month:
                 holidays += x.end_date.day
@@ -43,7 +43,6 @@ class Salary_Calculator:
         output['holidays'] = holidays
         return output
 
-
     def company_weekends(self):
         company_policy = Working_Days_Policy.objects.get(
             enterprise=self.company)
@@ -53,7 +52,6 @@ class Salary_Calculator:
             weekend_days.append(calendar.day_name[int(x)])
         return weekend_days
 
-
     def is_day_a_weekend(self, day):
         day_name = calendar.day_name[day.weekday()]
         if day_name in self.company_weekends():
@@ -61,16 +59,14 @@ class Salary_Calculator:
         else:
             return False
 
-
     def holidays_of_the_month(self, year, month):
         holidays_list = []
         holidays = YearlyHoliday.objects.filter(
-            enterprise=self.company, year__year=month).filter(Q(start_date__month=month)|
-                                                                    Q(end_date__month=month))
+            enterprise=self.company, year__year=month).filter(Q(start_date__month=month) |
+                                                              Q(end_date__month=month))
         for x in holidays:
             holidays_list.append(x.start_date)
         return holidays_list
-
 
     def is_day_a_holiday(self, year, month, day):
         if day in self.holidays_of_the_month(year, month):
@@ -78,27 +74,25 @@ class Salary_Calculator:
         else:
             return False
 
-
     def is_day_a_leave(self, year, month, day):
         leave_list = Leave.objects.filter(
-            Q(user__id=self.employee.user) and ((Q(startdate__month=month) and Q(startdate__year=month)) or (
-                Q(enddate__month=month) and Q(enddate__year=month))))
+            Q(user__id=self.employee.user) & ((Q(startdate__month=month) & Q(startdate__year=month)) | (
+                    Q(enddate__month=month) & Q(enddate__year=month))))
         for leave in leave_list:
             if (leave.startdate <= date_v <= leave.enddate) and leave.is_approved:
                 return True
         return False
 
-
     def is_day_a_service(self, year, month, day):
         services_list = Bussiness_Travel.objects.filter(
-            Q(emp=self.employee) and (
-                (Q(estimated_date_of_travel_from__month=month) and Q(estimated_date_of_travel_from__year=month)) or (
-                    Q(estimated_date_of_travel_to__month=month) and Q(estimated_date_of_travel_from__year=month))))
+            Q(emp=self.employee) & (
+                    (Q(estimated_date_of_travel_from__month=month) & Q(estimated_date_of_travel_from__year=month)) | (
+                    Q(estimated_date_of_travel_to__month=month) & Q(estimated_date_of_travel_from__year=month))))
         for service in services_list:
-            if (service.estimated_date_of_travel_from <= day <= service.estimated_date_of_travel_to__month) and service.is_approved:
+            if (
+                    service.estimated_date_of_travel_from <= day <= service.estimated_date_of_travel_to__month) and service.is_approved:
                 return True
         return False
-
 
     def employee_absence_days(self, month, year):
         # return list of absence days that will deduct from the employee

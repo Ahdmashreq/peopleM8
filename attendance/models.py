@@ -1,7 +1,10 @@
 from django.db import models
 from django.conf import settings
+from django.db.models import Q
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
+
+from attendance.utils import is_day_a_leave, is_day_a_service
 from employee.models import Employee
 from datetime import datetime, date
 from string import Template
@@ -9,6 +12,9 @@ from home.slugify import unique_slug_generator
 from django.utils.translation import ugettext_lazy as _
 from company.models import Enterprise, Working_Days_Policy
 import datetime as mydatetime
+
+from leave.models import Leave
+from service.models import Bussiness_Travel
 
 
 class DeltaTemplate(Template):
@@ -24,7 +30,7 @@ def strfdelta(tdelta, fmt):
 
 
 class Attendance_Interface(models.Model):
-    company =  models.ForeignKey(Enterprise, on_delete=models.CASCADE)
+    company = models.ForeignKey(Enterprise, on_delete=models.CASCADE)
     user_name = models.CharField(max_length=250)
     user_id = models.PositiveIntegerField()
     date = models.DateTimeField()
@@ -98,8 +104,8 @@ class Attendance(models.Model):
     @property
     def how_much_delay(self):
         hrs_start_from = \
-        Working_Days_Policy.objects.filter(enterprise=self.employee.enterprise).values("hrs_start_from")[0][
-            'hrs_start_from']
+            Working_Days_Policy.objects.filter(enterprise=self.employee.enterprise).values("hrs_start_from")[0][
+                'hrs_start_from']
         # first_delta = mydatetime.timedelta(hours=self.check_in.hour, minutes=self.check_in.minute,
         #                                    seconds=self.check_in.second)
         # second_delta = mydatetime.timedelta(hours=hrs_start_from.hour, minutes=hrs_start_from.minute,
@@ -161,9 +167,13 @@ def slug_task_generator(sender, instance, *args, **kwargs):
         instance.slug = unique_slug_generator(instance)
 
 
+
+
+
 @receiver(pre_save, sender=Attendance)
 def working_time(sender, instance, *args, **kwargs):
-    if instance.check_out:
+    if instance.check_out and instance.check_in:
+        instance.status = "P"
         difference = datetime.combine(datetime.now(), instance.check_out) - datetime.combine(datetime.now(),
                                                                                              instance.check_in)
         instance.work_hours = strfdelta(difference, "%H:%M:%S")
@@ -173,10 +183,52 @@ def working_time(sender, instance, *args, **kwargs):
         else:
             instance.normal_overtime_hours = mydatetime.timedelta(hours=0, minutes=0, seconds=0)
         if instance.delay:
-
             delay = instance.how_much_delay
             instance.delay_hrs = delay
         else:
             instance.delay_hrs = mydatetime.timedelta(hours=0, minutes=0, seconds=0)
+    elif instance.check_in and not instance.check_out:
+        instance.status = "N"
+        instance.work_hours = 0
+        instance.normal_overtime_hours = mydatetime.timedelta(hours=0, minutes=0, seconds=0)
+        instance.delay_hrs = mydatetime.timedelta(hours=0, minutes=0, seconds=0)
+
+    elif not instance.check_in and not instance.check_out:
+        if instance.employee.user is not None and is_day_a_leave(instance.employee.user.id, instance.date):
+            instance.status = "L"
+            instance.check_in = \
+                Working_Days_Policy.objects.filter(enterprise=instance.employee.enterprise).values("hrs_start_from")[0][
+                    'hrs_start_from']
+            instance.check_out = \
+                Working_Days_Policy.objects.filter(enterprise=instance.employee.enterprise).values("hrs_end_at")[0][
+                    'hrs_end_at']
+            difference = datetime.combine(datetime.now(), instance.check_out) - datetime.combine(datetime.now(),
+                                                                                                 instance.check_in)
+            instance.work_hours = strfdelta(difference, "%H:%M:%S")
+            instance.normal_overtime_hours = mydatetime.timedelta(hours=0, minutes=0, seconds=0)
+            instance.delay_hrs = mydatetime.timedelta(hours=0, minutes=0, seconds=0)
+
+
+        elif is_day_a_service(instance.employee.id, instance.date):
+            instance.status = "S"
+            instance.check_in = \
+                Working_Days_Policy.objects.filter(enterprise=instance.employee.enterprise).values("hrs_start_from")[0][
+                    'hrs_start_from']
+            instance.check_out = \
+                Working_Days_Policy.objects.filter(enterprise=instance.employee.enterprise).values("hrs_end_at")[0][
+                    'hrs_end_at']
+            difference = datetime.combine(datetime.now(), instance.check_out) - datetime.combine(datetime.now(),
+                                                                                                 instance.check_in)
+            instance.work_hours = strfdelta(difference, "%H:%M:%S")
+            instance.normal_overtime_hours = mydatetime.timedelta(hours=0, minutes=0, seconds=0)
+            instance.delay_hrs = mydatetime.timedelta(hours=0, minutes=0, seconds=0)
+
+        else:
+            instance.status = "A"
+            instance.check_in = None
+            instance.check_out = None
+            instance.work_hours = 0
+
     else:
+        instance.status = "U"
         instance.work_hours = 0

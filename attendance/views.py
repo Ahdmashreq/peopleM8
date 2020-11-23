@@ -1,8 +1,5 @@
-from functools import reduce
-
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.utils import timezone
 from django.db.models import Count, Q
 from datetime import datetime, timedelta
 from django.contrib import messages
@@ -10,25 +7,21 @@ from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import get_object_or_404
 from string import Template
 from tablib import Dataset
-from django.utils.encoding import force_str
 from django.conf import settings
 from attendance.models import Attendance, Task, Employee_Attendance_History, Attendance_Interface
 from attendance.forms import (FormAttendance, Tasks_inline_formset, FormTasks, ConfirmImportForm,
                               FormEmployeeAttendanceHistory)
 from attendance.resources import AttendanceResource
 from attendance.tmp_storage import TempFolderStorage
+from attendance.utils import is_day_a_weekend, is_day_a_holiday, is_day_a_leave,is_day_a_service
 from employee.models import Employee
-from company.models import Working_Days_Policy, YearlyHoliday
 from leave.models import Leave
 from service.models import Bussiness_Travel
-from datetime import date, timedelta
-import datetime as mydatetime
-import calendar
 import pytz
 from zk import ZK, const
 from zk.exception import ZKErrorConnection, ZKErrorResponse, ZKNetworkError
-
-
+import datetime as mydatetime
+import calendar
 # from dateutil.parser import parse
 
 
@@ -76,11 +69,10 @@ def connect_download_from_machine(company):
 
 
 def disconnect_device():
-    conn = None
     zk = ZK('192.168.1.220', port=4370, timeout=5)
     try:
         print('Disconnecting to device ...')
-        conn = zk.disconnect()
+        zk.disconnect()
     except ZKErrorConnection as e:
         return "instance are not connected."
     return "Disconnected"
@@ -89,80 +81,61 @@ def disconnect_device():
 def populate_attendance_table(date):
     atts = Attendance_Interface.objects.filter(date__date=date)
     if len(atts) == 0:
-        print("Attendance Interface table is empty")
+        print("Attendance Interface table doesn't have data for date selected")
     else:
         data = {}
         for att in atts:
             try:
-                emp = Employee.objects.get(emp_number=att.user_id)
+                Employee.objects.get(emp_number=att.user_id)
             except Employee.DoesNotExist:
                 continue
+            # initialize the dictionary that hold attendance check in and check out
             data[att.user_id] = ({} if data.get(att.user_id, None) is None else data[att.user_id])
             if att.punch == '0':
                 data[att.user_id]['check_in'] = att.date.time()
-                data[att.user_id]["check_out"] = (
-                    None if data[att.user_id].get('check_out', None) is None else data[att.user_id]["check_out"])
             elif att.punch == '1':
                 data[att.user_id]["check_out"] = att.date.time()
         for key, value in data.items():
             emp = Employee.objects.get(emp_number=key)
             try:
                 attendance = Attendance.objects.filter(date=date).get(employee=emp)
-                attendance.check_in = value["check_in"]
-                attendance.check_out = value["check_out"]
-                attendance.status = ("P" if value["check_out"] is not None else "A")
+                attendance.check_in = value.get("check_in", None)
+                attendance.check_out = value.get("check_out", None)
             except Attendance.DoesNotExist:
                 attendance = Attendance(
                     employee=emp,
                     date=date,
-                    check_in=value["check_in"],
-                    check_out=value["check_out"],
-                    status = ("A" if value["check_out"] is None else "P")
+                    check_in=value.get("check_in", None),
+                    check_out=value.get("check_out", None),
                 )
             attendance.save()
+        # This part to get all employees who are absent this day
         att_employees = Attendance.objects.filter(date=date).values_list("employee", flat=True)
         employees = Employee.objects.all().values_list("id", flat=True)
         for employee in employees:
             if employee not in att_employees:
                 employee = Employee.objects.get(id=employee)
-                if employee.user is not None and is_day_a_leave(employee.user.id, date):
-                    status = "L"
-                    check_in = \
-                    Working_Days_Policy.objects.filter(enterprise=employee.enterprise).values("hrs_start_from")[0][
-                        'hrs_start_from']
-                    check_out = \
-                        Working_Days_Policy.objects.filter(enterprise=employee.enterprise).values("hrs_end_at")[0][
-                            'hrs_end_at']
-                elif is_day_a_service(employee.id, date):
-                    status = "S"
-                    check_in = \
-                    Working_Days_Policy.objects.filter(enterprise=employee.enterprise).values("hrs_start_from")[0][
-                        'hrs_start_from']
-                    check_out = \
-                    Working_Days_Policy.objects.filter(enterprise=employee.enterprise).values("hrs_end_at")[0][
-                        'hrs_end_at']
-                else:
-                    status = "A"
-                    check_in = None
-                    check_out = None
                 attendance = Attendance(
                     employee=employee,
                     date=date,
-                    status=status,
-                    check_in=check_in,
-                    check_out=check_out
                 )
                 attendance.save()
+
+
+def get_unsigned_days(month, company):
+    unsigned = Attendance.objects.filter(employee__enterprise=company, date__month=month, status="N")
+    absence = Attendance.objects.filter(employee__enterprise=company, date__month=month, status="A")
 
 
 @login_required(login_url='home:user-login')
 def list_machine_logs(request):
     machine_status = "Disconnected"
-    attendance_list = Attendance_Interface.objects.filter().order_by('-date')
+    attendance_list = Attendance.objects.filter().order_by('-date')
     if request.method == 'POST':
         if 'connect' in request.POST:
             connect_download_from_machine(request.user.company)
             populate_attendance_table(datetime.now().date())
+            attendance_list = Attendance.objects.filter().order_by('-date')
             machine_status = "Device Connected Successfully"
         else:
             machine_status = disconnect_device()
@@ -455,8 +428,8 @@ def fill_employee_attendance_days_leaves_view(request, month_v, year_v):
 
 
 @login_required(login_url='home:user-login')
-def update_attendance(request, att_update_slug):
-    required_att = Attendance.objects.get(slug=att_update_slug)
+def update_attendance(request, id):
+    required_att = Attendance.objects.get(id=id)
     att_form = FormAttendance(form_type=None, instance=required_att)
     if request.method == "POST":
         att_form = FormAttendance(request.POST, form_type=None, instance=required_att)
@@ -489,65 +462,13 @@ def delete_attendance(request, att_delete_slug):
     return redirect('attendance:emp-attendance')
 
 
-def get_deductions_overtime_and_delay(employee_id, month, year):
-    deduction_days = calculate_deduction_days(month, year, employee_id)
-    overtime_hrs = calculate_overtime(employee_id, month, year)
-    delay_hrs = calculate_delay_hrs(employee_id, month, year)
-    print("mY calculated delays are ", delay_hrs)
-    print("mY calculated overtime are ", overtime_hrs)
-    return {"deduction_days": deduction_days, "overtime_hrs": overtime_hrs, "delay_hrs": delay_hrs}
-
-
-def is_day_a_leave(user_id, day):
-    leaves = Leave.objects.filter(
-        Q(user__id=user_id) & ((Q(startdate__month=day.month) and Q(startdate__year=day.year)) | (
-                Q(enddate__month=day.month) & Q(enddate__year=day.year))), status='Approved')
-    for leave in leaves:
-        if leave.startdate <= day <= leave.enddate:
-            return True
-    return False
-
-
-def is_day_a_service(employee_id, day):
-    services = Bussiness_Travel.objects.filter(
-        Q(emp__id=employee_id) & (
-                (Q(estimated_date_of_travel_from__month=day.month) & Q(
-                    estimated_date_of_travel_from__year=day.year)) | (
-                        Q(estimated_date_of_travel_to__month=day.month) & Q(
-                    estimated_date_of_travel_from__year=day.year))),status='Approved')
-    for service in services:
-        if service.estimated_date_of_travel_from <= day <= service.estimated_date_of_travel_to:
-            return True
-    return False
-
-
-def is_day_a_holiday(day):
-    month_holidays = YearlyHoliday.objects.filter(
-        Q(year=day.year) & (Q(start_date__month=day.month) |
-                            Q(end_date__month=day.month))).values('start_date',
-                                                                  'end_date')
-    for x in month_holidays:
-        if x.start_date <= day <= x.end_date:
-            return True
-    return False
-
-
-def is_day_a_weekend(day):
-    weekends = Working_Hours_Policy.objects.values('week_end_days')
-    day_name = calendar.day_name[day.weekday()]
-    if day_name.upper() in weekends[0]['week_end_days']:
-        return True
-    else:
-        return False
-
-
 def calculate_deduction_days(month, year, employee_id):
     # return the number of days to be deducted from a given employee in a given month and year
     # days that are either weekends,holidays ,leaves or services are not deduced
     employee = Employee.objects.get(id=employee_id)
     attendances = Attendance.objects.filter(date__month=month, date__year=year, employee__id=employee_id)
     absence_day_rate = \
-        Working_Hours_Policy.objects.filter(enterprise=employee.enterprise).values('absence_days_rate')[0][
+        Working_Days_Policy.objects.filter(enterprise=employee.enterprise).values('absence_days_rate')[0][
             'absence_days_rate']
     absence_days = []
     number_of_days = calendar.monthrange(2020, month)[1]
@@ -607,3 +528,12 @@ def calculate_delay_hrs(employee_id, month, year):
                 print(e)
 
     return delay_hrs
+
+
+def get_deductions_overtime_and_delay(employee_id, month, year):
+    deduction_days = calculate_deduction_days(month, year, employee_id)
+    overtime_hrs = calculate_overtime(employee_id, month, year)
+    delay_hrs = calculate_delay_hrs(employee_id, month, year)
+    print("mY calculated delays are ", delay_hrs)
+    print("mY calculated overtime are ", overtime_hrs)
+    return {"deduction_days": deduction_days, "overtime_hrs": overtime_hrs, "delay_hrs": delay_hrs}

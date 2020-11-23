@@ -40,8 +40,10 @@
                 <th>#</th>
                 <th>Employee</th>
                 <th>Employee ID</th>
-                <th>Date & Time</th>
-                <th>Punch</th>
+                <th>Date </th>
+                <th>Check in</th>
+                <th>Check out</th>
+                <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -49,18 +51,16 @@
               {% for i in attendances %}
               <tr>
                 <td>{{forloop.counter }}</td>
-                <td>{{i.user_name}}</td>
-                <td>{{i.user_id}}</td>
+                <td>{{i.employee}}</td>
+                <td>{{i.employee.id}}</td>
                 <td>{{i.date}}</td>
-                {% if i.punch == '0' %}
-                <td>Check in</td>
-                {% else %}
-                <td>Check out</td>
-                {% endif %}
+                <td>{{i.check_in}}</td>
+                <td>{{i.check_out}}</td>
+                <td>{{i.status}}</td>
                 <td class="Actions">
                   <div class="w-100 gap-10 peers">
                     <div class="peer">
-                      <a href="#">
+                      <a href="{% url 'attendance:update-attendance' id=i.id %}">
                         <button type="button" class="btn cur-p btn-outline-primary">{% trans "Update" %}</button>
                       </a>
                     </div>

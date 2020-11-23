@@ -8,7 +8,9 @@ class FormAttendance(forms.ModelForm):
     class Meta:
         model = Attendance
         fields = '__all__'
-        exclude = [ 'slug', 'created_by', 'creation_date', 'last_update_by', 'last_update_date', 'employee']
+        exclude = ['absence_days','delay_hrs', 'day_of_week', 'status', 'work_hours', 'normal_hrs', 'normal_overtime_hours',
+                   'exceptional_hrs', 'exceptional_overtime', 'slug', 'created_by', 'creation_date', 'last_update_by',
+                   'last_update_date', 'employee']
 
     def __init__(self, *args, **kwargs):
         form_type = kwargs.pop('form_type')
