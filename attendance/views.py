@@ -13,7 +13,7 @@ from attendance.forms import (FormAttendance, Tasks_inline_formset, FormTasks, C
                               FormEmployeeAttendanceHistory)
 from attendance.resources import AttendanceResource
 from attendance.tmp_storage import TempFolderStorage
-from attendance.utils import is_day_a_weekend, is_day_a_holiday, is_day_a_leave,is_day_a_service
+from attendance.utils import is_day_a_weekend, is_day_a_holiday, is_day_a_leave, is_day_a_service
 from employee.models import Employee
 from leave.models import Leave
 from service.models import Bussiness_Travel
@@ -22,6 +22,8 @@ from zk import ZK, const
 from zk.exception import ZKErrorConnection, ZKErrorResponse, ZKNetworkError
 import datetime as mydatetime
 import calendar
+
+
 # from dateutil.parser import parse
 
 
@@ -122,9 +124,19 @@ def populate_attendance_table(date):
                 attendance.save()
 
 
-def get_unsigned_days(month, company):
-    unsigned = Attendance.objects.filter(employee__enterprise=company, date__month=month, status="N")
-    absence = Attendance.objects.filter(employee__enterprise=company, date__month=month, status="A")
+@login_required(login_url='home:user-login')
+def get_unsigned_and_absence_days(request):
+    att_context = {}
+    if request.method == "POST":
+        month = request.POST.get('month', None)
+        unsigned = Attendance.objects.filter(employee__enterprise=request.user.company, date__month=month, status="N")
+        absence = Attendance.objects.filter(employee__enterprise=request.user.company, date__month=month, status="A")
+        att_context = {
+            'unsigned': unsigned,
+            'absence': absence,
+            'month': month,
+        }
+    return render(request, 'list_attendance_with_deductions.html', att_context)
 
 
 @login_required(login_url='home:user-login')
@@ -428,7 +440,8 @@ def fill_employee_attendance_days_leaves_view(request, month_v, year_v):
 
 
 @login_required(login_url='home:user-login')
-def update_attendance(request, id):
+def update_attendance(request, id, flag):
+    # flag parameter to determine form where the request is issued so "back" button functions correctly
     required_att = Attendance.objects.get(id=id)
     att_form = FormAttendance(form_type=None, instance=required_att)
     if request.method == "POST":
@@ -444,7 +457,8 @@ def update_attendance(request, id):
     name = required_att.employee.emp_name
     context = {
         'attendance_form': att_form,
-        'page_title': f"Update {name} attendance"
+        'page_title': f"Update {name} attendance",
+        'flag': flag
     }
     return render(request, 'create-attendance.html', context)
 

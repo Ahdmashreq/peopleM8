@@ -19,7 +19,11 @@
             <button type="submit" class="btn cur-p btn-primary">{% trans "Save" %}</button>
           </div>
           <div class="peer">
+            {% if flag == 'False' %}
             <a href="{% url 'attendance:list-machine-log' %}" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
+            {% else %}
+            <a href="{% url 'attendance:list-attendance-deductions' %}" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
+            {% endif %}
           </div>
         </div>
       </div>
