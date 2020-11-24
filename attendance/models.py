@@ -167,11 +167,16 @@ def slug_task_generator(sender, instance, *args, **kwargs):
         instance.slug = unique_slug_generator(instance)
 
 
-
-
-
 @receiver(pre_save, sender=Attendance)
 def working_time(sender, instance, *args, **kwargs):
+    # This function sets attendance status and calculates work_hrs ,overtime and delays
+    # attendance statuses:
+    #   "P": Presence
+    #   "A": Absence
+    #   "S": Service(either business or travel)
+    #   "L": Leave form (approved)
+    #   "N": No signature in case of check_in exists and no check out
+    #   "U": In case of check_out exits and no check in
     if instance.check_out and instance.check_in:
         instance.status = "P"
         difference = datetime.combine(datetime.now(), instance.check_out) - datetime.combine(datetime.now(),
