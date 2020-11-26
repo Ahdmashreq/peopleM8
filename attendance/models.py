@@ -1,6 +1,5 @@
 from django.db import models
 from django.conf import settings
-from django.db.models import Q
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 
@@ -207,8 +206,6 @@ def working_time(sender, instance, *args, **kwargs):
             instance.work_hours = strfdelta(difference, "%H:%M:%S")
             instance.normal_overtime_hours = mydatetime.timedelta(hours=0, minutes=0, seconds=0)
             instance.delay_hrs = mydatetime.timedelta(hours=0, minutes=0, seconds=0)
-
-
         elif is_day_a_service(instance.employee.id, instance.date):
             instance.status = "S"
             instance.check_in = \
