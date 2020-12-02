@@ -188,6 +188,5 @@ class Employee_Element_History(models.Model):
     salary_year = models.IntegerField(default=date.today().year)
     creation_date = models.DateField(auto_now=True, auto_now_add=False)
 
-
     def __str__(self):
         return self.employee.emp_name +' / '+ self.element.element_name

@@ -66,16 +66,6 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='Employee_Element_History',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('element_value', models.FloatField(default=0)),
-                ('salary_month', models.IntegerField(default=11)),
-                ('salary_year', models.IntegerField(default=2020)),
-                ('creation_date', models.DateField(auto_now=True)),
-            ],
-        ),
-        migrations.CreateModel(
             name='JobRoll',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),

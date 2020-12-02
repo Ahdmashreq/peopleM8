@@ -118,7 +118,7 @@
                   <th scope="col">{% trans "Amount EGP" %}</th>
                 </tr>
               </thead>
-              <tbody class="ta-c">
+              <tbody class="ta-l">
                 {% for emp in emp_elements_incomes %}
                 <tr>
                   <td>{{ emp.element_id }}</td>
@@ -138,7 +138,7 @@
                       <th>{% trans "Amount EGP" %} </th>
                     </tr>
                   </thead>
-                <tbody class="ta-c">
+                <tbody class="ta-l">
                   {% for emp_d in emp_elements_deductions %}
                   <tr>
                     <td>{{ emp_d.element_id }}</td>
@@ -148,6 +148,14 @@
                   <tr>
                     <td> {% trans "Social Insurance" %}</td>
                     <td>{{salary_obj.insurance_amount}}</td>
+                  </tr>
+                  <tr>
+                    <td> {% trans "Penalties" %}</td>
+                    <td>{{salary_obj.penalties}}</td>
+                  </tr>
+                  <tr>
+                    <td> {% trans "Delays" %}</td>
+                    <td>{{salary_obj.delays}}</td>
                   </tr>
                   </tbody>
             </table></div>

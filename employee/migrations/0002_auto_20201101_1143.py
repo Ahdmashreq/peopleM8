@@ -75,16 +75,6 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='company.Position', verbose_name='Position'),
         ),
         migrations.AddField(
-            model_name='employee_element_history',
-            name='element',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='element_definition.Element_Master'),
-        ),
-        migrations.AddField(
-            model_name='employee_element_history',
-            name='employee',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='employee.Employee'),
-        ),
-        migrations.AddField(
             model_name='employee_element',
             name='created_by',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='emp_element_created_by', to=settings.AUTH_USER_MODEL),

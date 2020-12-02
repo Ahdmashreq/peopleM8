@@ -26,6 +26,7 @@ django-money==0.15.1
 django-mptt==0.11.0
 django-multiselectfield==0.1.12
 et-xmlfile==1.0.1
+future==0.18.2
 gunicorn==19.9.0
 html5lib==1.0.1
 idna==2.8
@@ -49,6 +50,7 @@ Pyphen==0.9.5
 python-utils==2.3.0
 pytz==2019.3
 PyYAML==5.3.1
+pyzk==0.9
 reportlab==3.5.32
 requests==2.22.0
 six==1.12.0

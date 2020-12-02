@@ -27,7 +27,7 @@ class Element_Batch(models.Model):
 class Element_Master(models.Model):
     enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name='enterprise_element_master',
                                    verbose_name=_('Enterprise Name'))
-    element_name = models.CharField(max_length=100, verbose_name=_('Name'))
+    element_name = models.CharField(max_length=100, verbose_name=_('Pay Name'))
     db_name = models.CharField(max_length=4, null=True, blank=True, verbose_name=_('db Name'))
     basic_flag = models.BooleanField(default=False)
     element_type = models.ForeignKey(LookupDet, on_delete=models.CASCADE, null=True, blank=True,
