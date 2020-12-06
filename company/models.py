@@ -60,7 +60,7 @@ class Department(MPTTModel):
     department_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     dept_name = models.CharField(max_length=150, verbose_name=_('Department'))
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True,
-                            verbose_name=_('Parent Department'))
+                            verbose_name=_('Reporting Department'))
 
     objects = DepartmentManager()
     start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start  Date'))

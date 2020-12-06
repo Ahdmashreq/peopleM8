@@ -29,10 +29,6 @@ from payroll_run.salary_calculations import Salary_Calculator
 
 @login_required(login_url='home:user-login')
 def listSalaryView(request):
-    emp = Employee.objects.get(user=request.user)
-    sc = Salary_Calculator(company=request.user.company, employee=emp)
-    print(sc.workdays_weekends_number(10,2020))
-    print(sc.employee_absence_days(10,2020))
     salary_list = Salary_elements.objects.filter(
         (Q(end_date__gt=date.today()) | Q(end_date__isnull=True))).values(
             'salary_month', 'salary_year',
@@ -44,12 +40,13 @@ def listSalaryView(request):
     return render(request, 'list-salary.html', salaryContext)
 
 
-@login_required(login_url='home:user-login')
-def includeAssignmentEmployeeFunction(id):
+# @login_required(login_url='home:user-login')
+def includeAssignmentEmployeeFunction(batch):
     included_emps = set()
-    include_query = Assignment_Batch_Include.objects.filter(
-        include_batch_id=id).exclude(
-            (Q(end_date__gte=date.today()) | Q(end_date__isnull=True)))
+    assignment_batch = Assignment_Batch.objects.get(id=batch.id)
+    include_query = Assignment_Batch_Include.objects.filter(include_batch_id=assignment_batch).exclude(Q(end_date__gte=date.today()) | Q(end_date__isnull=False))
+    print("include_query")
+    print(include_query)
     dept_set = set()
     job_set = set()
     position_set = set()
@@ -63,20 +60,24 @@ def includeAssignmentEmployeeFunction(id):
             job_set.add(x.job_id.id)
         if x.emp_id is not None:
             emp_set.add(x.emp_id.id)
+    print(emp_set)
     filtered_emps = JobRoll.objects.filter(
-        (Q(department__id__in=dept_set) | Q(position__id__in=position_set)
-         | Q(job_name__id__in=job_set) | Q(emp_id__id__in=emp_set)))
+                            (
+                             Q(position__department__id__in=dept_set) |
+                             Q(position__id__in=position_set)         |
+                             Q(position__job__id__in=job_set)         |
+                             Q(emp_id__id__in=emp_set))
+                            )
     for emp in filtered_emps:
-        included_emps.add(emp.emp_id)
+        included_emps.add(emp.emp_id.id)
     return included_emps
 
 
-@login_required(login_url='home:user-login')
-def excludeAssignmentEmployeeFunction(id):
+# @login_required(login_url='home:user-login')
+def excludeAssignmentEmployeeFunction(batch):
     excluded_emps = set()
-    exclude_query = Assignment_Batch_Exclude.objects.filter(
-        exclude_batch_id=id).exclude(
-            (Q(end_date__gte=date.today()) | Q(end_date__isnull=True)))
+    assignment_batch = Assignment_Batch.objects.get(id=batch.id)
+    exclude_query = Assignment_Batch_Exclude.objects.filter(exclude_batch_id=assignment_batch).exclude((Q(end_date__gte=date.today()) | Q(end_date__isnull=False)))
     dept_set = set()
     job_set = set()
     position_set = set()
@@ -91,38 +92,44 @@ def excludeAssignmentEmployeeFunction(id):
         if x.emp_id is not None:
             emp_set.add(x.emp_id.id)
     filtered_emps = JobRoll.objects.filter(
-        (Q(department__id__in=dept_set) | Q(position__id__in=position_set)
-         | Q(job_name__id__in=job_set) | Q(emp_id__id__in=emp_set)))
+                            (
+                             Q(position__department__id__in=dept_set) |
+                             Q(position__id__in=position_set)         |
+                             Q(position__job__id__in=job_set)         |
+                             Q(emp_id__id__in=emp_set))
+                            )
     for emp in filtered_emps:
-        excluded_emps.add(emp.emp_id)
+        excluded_emps.add(emp.emp_id.id)
     return excluded_emps
 
 
 @login_required(login_url='home:user-login')
 def createSalaryView(request):
     sal_form = SalaryElementForm()
+    all_current_employees =  Employee.objects.filter((Q(end_date__gte=date.today()) |Q(end_date__isnull=False)))
     if request.method == 'POST':
         sal_form = SalaryElementForm(request.POST)
         if sal_form.is_valid():
             sal_obj = sal_form.save(commit=False)
             # run employee on all emps.
             if sal_obj.element_batch == None and sal_obj.assignment_batch == None:
-                for x in Employee.objects.filter(
-                                                 (Q(end_date__gte=date.today())
-                                                  |Q(end_date__isnull=True))
-                                                        ):
+                for x in all_current_employees:
+                    sc = Salary_Calculator(company=request.user.company, employee=x)
                     # calculate all furmulas elements for 'x' employee
                     Employee_Element.set_formula_amount(x)
-                    # ################################################
                     s = Salary_elements(
                         emp=x,
                         salary_month=sal_obj.salary_month,
                         salary_year=sal_obj.salary_year,
                         run_date=sal_obj.run_date,
                         num_days=sal_obj.num_days,
-                        element_batch=sal_obj.element_batch,
                         created_by=request.user,
-                        last_update_by=request.user,
+                        incomes = sc.calc_emp_income(),
+                        insurance_amount = sc.calc_employee_insurance(),
+                        tax_amount = sc.calc_taxes_deduction(),
+                        deductions = sc.calc_emp_deductions_amount(),
+                        gross_salary = sc.calc_gross_salary(),
+                        net_salary = sc.calc_net_salary(),
                     )
                     s.save()
                 user_lang = to_locale(get_language())
@@ -143,6 +150,7 @@ def createSalaryView(request):
                 for x in emp_in_batch:
                     emps.add(x.emp_id)
                 for x in emps:
+                    sc = Salary_Calculator(company=request.user.company, employee=x)
                     # calculate all furmulas elements for 'x' employee
                     Employee_Element.set_formula_amount(x)
                     # # ################################################
@@ -153,9 +161,13 @@ def createSalaryView(request):
                         salary_year=sal_obj.salary_year,
                         run_date=sal_obj.run_date,
                         num_days=sal_obj.num_days,
-                        element_batch=sal_obj.element_batch,
                         created_by=request.user,
-                        last_update_by=request.user,
+                        incomes = sc.calc_emp_income(),
+                        insurance_amount = sc.calc_employee_insurance(),
+                        tax_amount = sc.calc_taxes_deduction(),
+                        deductions = sc.calc_emp_deductions_amount(),
+                        gross_salary = sc.calc_gross_salary(),
+                        net_salary = sc.calc_net_salary(),
                     )
                     s.save()
                 user_lang = to_locale(get_language())
@@ -170,13 +182,13 @@ def createSalaryView(request):
             elif sal_obj.assignment_batch and sal_obj.element_batch == None:
                 emps = Employee.objects.filter(
                     id__in=includeAssignmentEmployeeFunction(
-                        sal_obj.assignment_batch.id)).exclude(
+                        sal_obj.assignment_batch)).exclude(
                             id__in=excludeAssignmentEmployeeFunction(
-                                sal_obj.assignment_batch.id))
+                                sal_obj.assignment_batch))
                 for x in emps:
                     # calculate all furmulas elements for 'x' employee
                     Employee_Element.set_formula_amount(x)
-                    # # ################################################
+                    sc = Salary_Calculator(company=request.user.company, employee=x)
                     # # # getting informations for the salary
                     s = Salary_elements(
                         emp=x,
@@ -184,9 +196,13 @@ def createSalaryView(request):
                         salary_year=sal_obj.salary_year,
                         run_date=sal_obj.run_date,
                         num_days=sal_obj.num_days,
-                        element_batch=sal_obj.element_batch,
                         created_by=request.user,
-                        last_update_by=request.user,
+                        incomes = sc.calc_emp_income(),
+                        insurance_amount = sc.calc_employee_insurance(),
+                        tax_amount = sc.calc_taxes_deduction(),
+                        deductions = sc.calc_emp_deductions_amount(),
+                        gross_salary = sc.calc_gross_salary(),
+                        net_salary = sc.calc_net_salary(),
                     )
                     s.save()
                 user_lang = to_locale(get_language())
@@ -202,9 +218,9 @@ def createSalaryView(request):
                 all_emps = set()
                 emp_in_assignment = Employee.objects.filter(
                     id__in=includeAssignmentEmployeeFunction(
-                        sal_obj.assignment_batch.id)).exclude(
+                        sal_obj.assignment_batch)).exclude(
                             id__in=excludeAssignmentEmployeeFunction(
-                                sal_obj.assignment_batch.id))
+                                sal_obj.assignment_batch))
                 for emp in emp_in_assignment:
                     all_emps.add(emp)
                 elements_in_batch = get_list_or_404(
@@ -216,7 +232,7 @@ def createSalaryView(request):
                 for x in all_emps:
                     # calculate all furmulas elements for 'x' employee
                     Employee_Element.set_formula_amount(x)
-                    # # ################################################
+                    sc = Salary_Calculator(company=request.user.company, employee=x)
                     # # # getting informations for the salary
                     s = Salary_elements(
                         emp=x,
@@ -224,9 +240,13 @@ def createSalaryView(request):
                         salary_year=sal_obj.salary_year,
                         run_date=sal_obj.run_date,
                         num_days=sal_obj.num_days,
-                        element_batch=sal_obj.element_batch,
                         created_by=request.user,
-                        last_update_by=request.user,
+                        incomes = sc.calc_emp_income(),
+                        insurance_amount = sc.calc_employee_insurance(),
+                        tax_amount = sc.calc_taxes_deduction(),
+                        deductions = sc.calc_emp_deductions_amount(),
+                        gross_salary = sc.calc_gross_salary(),
+                        net_salary = sc.calc_net_salary(),
                     )
                     s.save()
                 user_lang = to_locale(get_language())
@@ -285,12 +305,10 @@ def userSalaryInformation(request, month_number, salary_year, salary_id,emp_id):
     emp_elements_incomes = Employee_Element.objects.filter(
                                                            emp_id=emp_id,
                                                            element_id__classification__code='earn',
-                                                           # start_date__month=month_number
                                                            end_date__isnull=True
                                                            )
     emp_elements_deductions = Employee_Element.objects.filter(emp_id=emp_id,
                                                               element_id__classification__code='deduct',
-                                                              # start_date__month=month_number
                                                               end_date__isnull=True
                                                               )
     emp_payment = Payment.objects.filter((Q(end_date__gte=date.today()) | Q(end_date__isnull=True)),emp_id=emp_id)

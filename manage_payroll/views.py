@@ -59,7 +59,7 @@ def createAssignmentBatchView(request):
                     success_msg ='Create Successfully'
             # success_msg = 'Assignment Batch {}, has been created successfully'.format(
                 # batch_form_obj.assignment_name)
-            messages.success(request, success_msg)
+                messages.success(request, success_msg)
             return redirect('manage_payroll:list-assignBatch')
         else:
             if batch_form.has_error:
@@ -114,7 +114,7 @@ def updateAssignmentBatchView(request, pk):
             # success_msg = 'Assignment Batch {}, has been created successfully'.format(
                 # batch_form_obj.assignment_name)
 
-            messages.success(request, success_msg)
+                messages.success(request, success_msg)
             return redirect('manage_payroll:list-assignBatch')
         else:
             if batch_form.has_error:
@@ -167,7 +167,7 @@ def deleteAssignmentBatchView(request, pk):
         else:
             error_msg = '{} cannot be deleted '.format(required_assignment_batch)
         # error_msg = '{} cannot be deleted '.format(required_assignment_batch)
-        messages.error(request, error_msg)
+            messages.error(request, error_msg)
         raise e
     return redirect('manage_payroll:list-assignBatch')
 
@@ -504,4 +504,3 @@ def deletePayrollView(request, pk):
         messages.error(request, error_msg)
         raise e
     return redirect('manage_payroll:list-payroll')
-

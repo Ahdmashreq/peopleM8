@@ -1,9 +1,16 @@
 from django.db.models import Count, Q
-from employee.models import Employee
+from datetime import date
+from django.db.models import Count, Sum
 from attendance.models import Attendance
 from company.models import Working_Days_Policy, YearlyHoliday
 from leave.models import Leave
 from service.models import Bussiness_Travel
+from employee.models import Employee, JobRoll, Employee_Element, Employee_Element_History
+from element_definition.models import Element_Batch
+from manage_payroll.models import Assignment_Batch, Payroll_Master
+from payroll_run.new_tax_rules import Tax_Deduction_Amount
+from django.utils.translation import ugettext_lazy as _
+
 import datetime
 import calendar
 
@@ -13,6 +20,7 @@ class Salary_Calculator:
     def __init__(self, company, employee):
         self.company = company
         self.employee = employee
+
 
     def workdays_weekends_number(self, month, year):
         output = dict()
@@ -43,14 +51,15 @@ class Salary_Calculator:
         output['holidays'] = holidays
         return output
 
+
     def company_weekends(self):
-        company_policy = Working_Days_Policy.objects.get(
-            enterprise=self.company)
+        company_policy = Working_Days_Policy.objects.get(enterprise=self.company)
         company_weekends = company_policy.week_end_days
         weekend_days = []
         for x in company_weekends:
             weekend_days.append(calendar.day_name[int(x)])
         return weekend_days
+
 
     def is_day_a_weekend(self, day):
         day_name = calendar.day_name[day.weekday()]
@@ -58,6 +67,7 @@ class Salary_Calculator:
             return True
         else:
             return False
+
 
     def holidays_of_the_month(self, year, month):
         holidays_list = []
@@ -68,11 +78,13 @@ class Salary_Calculator:
             holidays_list.append(x.start_date)
         return holidays_list
 
+
     def is_day_a_holiday(self, year, month, day):
         if day in self.holidays_of_the_month(year, month):
             return True
         else:
             return False
+
 
     def is_day_a_leave(self, year, month, day):
         leave_list = Leave.objects.filter(
@@ -82,6 +94,7 @@ class Salary_Calculator:
             if (leave.startdate <= date_v <= leave.enddate) and leave.is_approved:
                 return True
         return False
+
 
     def is_day_a_service(self, year, month, day):
         services_list = Bussiness_Travel.objects.filter(
@@ -94,42 +107,111 @@ class Salary_Calculator:
                 return True
         return False
 
-    def employee_absence_days(self, month, year):
-        # return list of absence days that will deduct from the employee
-        attendances = Attendance.objects.filter(date__month=month, date__year=year, employee=self.employee)
-        absence_days = []
-        number_of_days = calendar.monthrange(year, month)[1]
-        # list all the days in that month
-        days = [datetime.date(year, month, day) for day in range(1, number_of_days + 1)]
-        attendance_list = list()
-        for date in attendances:
-            attendance_list.append(date.date)
-        missing = sorted(set(days) - set(attendance_list))
 
-        for day in missing:
-            if self.is_day_a_weekend(day):
-                print("this day is weekend", day)
-                pass
-            elif self.is_day_a_holiday(day.year, day.month, day):
-                print("this day is Holiday", day)
-                pass
-            elif self.is_day_a_leave(day.year, day.month, day.day):
-                print("this day is a leave", day)
-                pass
-            elif self.is_day_a_service(day.year, day.month, day.day):
-                print("this day is a service", day)
-                pass
+    # def employee_absence_days(self, month, year):
+    #     # return list of absence days that will deduct from the employee
+    #     attendances = Attendance.objects.filter(date__month=month, date__year=year, employee=self.employee)
+    #     absence_days = []
+    #     number_of_days = calendar.monthrange(year, month)[1]
+    #     # list all the days in that month
+    #     days = [datetime.date(year, month, day) for day in range(1, number_of_days + 1)]
+    #     attendance_list = list()
+    #     for date in attendances:
+    #         attendance_list.append(date.date)
+    #     missing = sorted(set(days) - set(attendance_list))
+    #
+    #     for day in missing:
+    #         if self.is_day_a_weekend(day):
+    #             print("this day is weekend", day)
+    #             pass
+    #         elif self.is_day_a_holiday(day.year, day.month, day):
+    #             print("this day is Holiday", day)
+    #             pass
+    #         elif self.is_day_a_leave(day.year, day.month, day.day):
+    #             print("this day is a leave", day)
+    #             pass
+    #         elif self.is_day_a_service(day.year, day.month, day.day):
+    #             print("this day is a service", day)
+    #             pass
+    #         else:
+    #             absence_days.append(day)
+    #     return absence_days
+
+
+    # calculate total employee earnings
+    def calc_emp_income(self):
+        emp_allowance = Employee_Element.objects.filter(element_id__classification__code='earn', emp_id=self.employee).filter(
+            (Q(end_date__gte=date.today()) | Q(end_date__isnull=True)))
+        total_earnnings = 0
+        for x in emp_allowance:
+            if x.element_value:
+                total_earnnings += x.element_value
             else:
-                absence_days.append(day)
-        return absence_days
+                total_earnnings += 0.0
+        return total_earnnings
 
-    # 3- convert dayes from step 1 to hours >> ex: 2(days)*8(working hours policy)=16 hrs
-    # 4- get all employee elements and values
-    # 5- seperate the adding elements from deductions in []
-    # 6- check if element is recaruing or one time element
-    # 7- calculate social insurance
-    # 8- calculate the gross salary
-    # 9- calculate employee hour rate and calculate the deductions value based on step 3
-    # 10- recalculate gross salary
-    # 11- calculate the tax amount
-    # 12- return the net salary
+
+    # حساب اجر اليوم و سعر الساعة
+    def calc_daily_rate(self):
+        company_policy = Working_Days_Policy.objects.get(enterprise=self.company)
+        company_working_hrs = company_policy.number_of_daily_working_hrs      # عدد ساعات العمل للشركة
+        emp_allowance = Employee_Element.objects.filter(element_id__classification__code='earn', emp_id=self.employee).filter(
+            (Q(end_date__gte=date.today()) | Q(end_date__isnull=True))).get(element_id__basic_flag=True)
+        emp_basic = emp_allowance.element_value         # المرتب الاساسي للعامل
+        hour_rate = (emp_basic / 30) / company_working_hrs
+        return hour_rate
+
+
+    # calculate employee deductions without social insurance
+    def calc_emp_deductions_amount(self):
+        emp_deductions = Employee_Element.objects.filter(
+            element_id__classification__code='deduct', emp_id=self.employee).filter(
+                (Q(end_date__gte=date.today()) | Q(end_date__isnull=True)))
+        total_deductions = 0
+        for x in emp_deductions:
+            if x.element_value:
+                total_deductions += x.element_value
+            else:
+                total_deductions += 0.0
+        return total_deductions
+
+
+    # calculate social insurance
+    def calc_employee_insurance(self):
+        if self.employee.insured:
+            required_employee = Employee.objects.get(id = self.employee.id)
+            insurance_deduction = 0
+            if required_employee.insurance_salary:
+                insurance_deduction = required_employee.insurance_salary * 0.11
+            else:
+                insurance_deduction = 0.0
+            total_insurance_amount = insurance_deduction
+            return round(total_insurance_amount, 3)
+        else:
+            return 0.0
+
+
+    # calculate gross salary
+    def calc_gross_salary(self):
+        gross_salary = self.calc_emp_income() - (self.calc_emp_deductions_amount() + self.calc_employee_insurance())
+        return gross_salary
+
+
+    # calculate tax amount
+    def calc_taxes_deduction(self):
+        required_employee = Employee.objects.get(id = self.employee.id)
+        tax_rule_master = Payroll_Master.objects.get(enterprise=required_employee.user.company)
+        personal_exemption = tax_rule_master.tax_rule.personal_exemption
+        round_to_10 = tax_rule_master.tax_rule.round_down_to_nearest_10
+        tax_deduction_amount = Tax_Deduction_Amount(
+            personal_exemption, round_to_10)
+        taxable_salary = self.calc_gross_salary()
+        taxes = tax_deduction_amount.run_tax_calc(taxable_salary)
+        self.tax_amount = taxes
+        return round(taxes, 2)
+
+
+    # calculate net salary
+    def calc_net_salary(self):
+        net_salary = self.calc_gross_salary() - self.calc_taxes_deduction()
+        return net_salary

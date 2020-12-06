@@ -4,9 +4,9 @@ from django.contrib.auth.decorators import login_required
 from datetime import date, datetime
 from django.db.models import Q
 from django.views.generic import ListView
-from balanc_definition.models import Cost_Level, Cost_Detail
+from balanc_definition.models import Cost_Level, Cost_Detail, Cost_Center, Cost_Center_Link
+from balanc_definition.forms import CostLevelForm, CostDetailForm, Cost_detail_inline_form, Cost_Center_inline_form, Cost_Center_Form
 from django.utils.translation import to_locale, get_language
-from balanc_definition.forms import CostLevelForm, CostDetailForm, Cost_detail_inline_form
 from django.utils.translation import ugettext_lazy as _
 
 def costAccountList(request):
@@ -84,3 +84,36 @@ def costAccountdelete(request, pk):
         messages.error(request, error_msg)
         raise e
     return redirect('balanc_definition:list-costing')
+
+
+def createCostCenter(request):
+    cost_center_form = Cost_Center_Form()
+    cost_center_detail_formset = Cost_Center_inline_form(queryset= Cost_Center_Link.objects.none())
+    if request.method == 'POST':
+        cost_center_form = Cost_Center_Form(request.POST)
+        cost_center_detail_formset = Cost_Center_inline_form(request.POST)
+        if cost_center_form.is_valid() and cost_center_detail_formset.is_valid():
+            master_obj = cost_center_form.save(commit=False)
+            master_obj.enterprise = request.user.company
+            master_obj.created_by = request.user
+            master_obj.save()
+            cost_det_form = Cost_Center_inline_form(request.POST, instance= master_obj)
+            det_obj = cost_det_form.save(commit=False)
+            for obj in det_obj:
+                obj.created_by = request.user
+                obj.save()
+    costContext = {
+                   "page_title":_( "Create Cost Center"),
+                   "cost_center_form": cost_center_form,
+                   "cost_center_detail_formset": cost_center_detail_formset,
+                   }
+    return render(request, 'create-cost-center.html', costContext)
+
+
+def listCostCenter(request):
+    cost_centers_list = Cost_Center_Link.objects.filter(cost_center__enterprise=request.user.company)
+    cost_center_context = {
+                           'page_title': _('All Cost Centers'),
+                           'cost_centers_list':cost_centers_list,
+    }
+    return render(request, 'list-cost-center.html', cost_center_context)

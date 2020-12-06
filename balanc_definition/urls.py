@@ -10,4 +10,6 @@ urlpatterns = [
               path(iri_to_uri("account/screate/"), views.costAccountCreate, name= 'create-costing'),
               path('accounts/update/<int:pk>', views.costAccountupdate, name= 'update-costing'),
               path('accounts/delete/<int:pk>', views.costAccountdelete, name= 'delete-costing'),
+              path('costcenterlist/', views.listCostCenter, name= 'list-cost-center'),
+              path('createcostcenter/', views.createCostCenter, name= 'create-cost-center'),
 ]

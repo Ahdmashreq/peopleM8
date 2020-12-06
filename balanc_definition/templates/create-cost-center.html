@@ -1,0 +1,74 @@
+{% extends 'master.html'%}
+{% load staticfiles%}
+{% load l10n %}
+{% load i18n %}
+
+{% block body%}
+
+<div class="container-fluid">
+  <form method="post">
+    {% csrf_token %}
+    <!--  -->
+    <div class="row">
+      <div class="col-md-8">
+        <h4 class="c-grey-900">{{page_title|title}}</h4>
+      </div>
+      <div class="col-md-4">
+        <div class="gap-10 peers push-right">
+          <div class="peer">
+            <button type="submit" class="btn cur-p btn-primary">{% trans "Save" %}</button>
+          </div>
+          <div class="peer">
+            <a href="{% url 'balanc_definition:list-costing' %}" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-1">
+      <div class="bgc-white p-20 bd">
+        <div class="mT-30">
+          <div class="form-row">
+            <div class="form-group col-md-12">
+              <label>{{ cost_center_form.cost_center.label }}</label>
+              {{ cost_center_form.cost_center }}
+            </div>
+            <div class="form-group col-md-12">
+              <label>{{ cost_center_form.account_number.label }}</label>
+              {{ cost_center_form.account_number }}
+            </div>
+          </div>
+          <table class="table table-striped m-b-none text-sm">
+            {{ cost_center_detail_formset.management_form }}
+            {% for form in cost_center_detail_formset %}
+            {{ form.id }}
+            {% if forloop.first %}
+            <thead>
+              <tr>
+                {% for field in form.visible_fields %}
+                <th>{{ field.label|capfirst }}</th>
+                {% endfor %}
+              </tr>
+            </thead>
+            {% endif %}
+            <tr>
+              {% for field in form.visible_fields %}
+              <td>
+                {# exclude the hidden fields in the form #}
+                {% if forloop.first %}
+                {% for hidden in form.hidden_fields %}
+                {{ hidden }}
+                {% endfor %}
+                {% endif %}
+                {{ field.errors.as_ul }}
+                {{ field }}
+              </td>
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          </table>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock body %}
