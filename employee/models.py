@@ -21,10 +21,12 @@ class Employee(models.Model):
     social_status_list = [("M", _("Married")), ("S", _("Single"))]
     military_status_list = [("E", _("Exemption")), ("C", _("Complete the service")), ("P", _("Postponed"))]
     religion_list = [("M", _("Muslim")), ("C", _("Chrestin"))]
+    emp_type_list =  [("UP", _("Under Probation")), ("E", _("Employee")),("EX", _("Ex-Employee")),("C", _("Contractor"))]
     # ##########################################################################
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True, related_name='employee_user')
     enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE,related_name='enterprise_employee', verbose_name=_('Department'))
     emp_number = models.IntegerField(default=0, blank=True, null=True, verbose_name=_('Employee Number'))
+    emp_type =	models.CharField(max_length=30, choices=emp_type_list, null=True, blank=True, verbose_name=_('Employee Type'))
     emp_name = models.CharField(max_length=60, verbose_name=_('Employee Name'))
     address1 = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('address1'))
     address2 = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('address2'))
@@ -142,8 +144,8 @@ class Payment(models.Model):
 
 class Employee_Element(models.Model):
     emp_id = models.ForeignKey(Employee, on_delete=models.CASCADE, verbose_name=_('Employee'))
-    element_id = models.ForeignKey(Element_Master, on_delete=models.CASCADE, verbose_name=_('Element'))
-    element_value = models.FloatField(blank=True, null=True, verbose_name=_('Element Value'))
+    element_id = models.ForeignKey(Element_Master, on_delete=models.CASCADE, verbose_name=_('Pay'))
+    element_value = models.FloatField(blank=True, null=True, verbose_name=_('Pay Value'))
     start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
     end_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=_('End Date'))
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE, related_name="emp_element_created_by")

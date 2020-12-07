@@ -165,11 +165,15 @@ def updateLookupView(request, pk):
         lookup_det_form = LookupDetinlineFormSet(
             request.POST, instance=required_lookupType)
         if lookup_master_form.is_valid() and lookup_det_form.is_valid():
-            lookup_master_form.save()
-            lookup_det_obj = lookup_det_form.save(commit=False)
-            for obj in lookup_det_obj:
-                obj.last_update_by = request.user
-                obj.save()
+            master_obj = lookup_master_form.save()
+            lookup_det_form = LookupDetinlineFormSet(
+                request.POST, instance=master_obj)
+            if lookup_det_form.is_valid():
+                lookup_det_obj = lookup_det_form.save(commit=False)
+                for obj in lookup_det_obj:
+                    obj.created_by = request.user
+                    obj.last_update_by = request.user
+                    obj.save()
             return redirect('defenition:list-lookups')
         else:
             messages.error(request, lookup_master_form.errors)
