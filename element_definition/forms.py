@@ -27,7 +27,7 @@ class ElementMasterForm(forms.ModelForm):
         model = Element_Master
         fields = '__all__'
         labels = {
-            'element_name':_('Name'),
+            'element_name':_('Pay Name'),
              'db_name':_('db Name'),
              'element_type':_('Type'),
              'classification':_('classification'),

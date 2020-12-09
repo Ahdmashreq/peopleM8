@@ -156,7 +156,7 @@ def companyCreateView(request):
 @login_required(login_url='home:user-login')
 def listCompanyInformation(request):
     if request.method == 'GET':
-        bgList = Enterprise.objects.filter(enterprise_user=request.user).filter(Q(end_date__gt=date.today()) | Q(end_date__isnull=True))
+        bgList = Enterprise.objects.filter(enterprise_user__company=request.user.company).filter(Q(end_date__gt=date.today()) | Q(end_date__isnull=True))
 
     myContext = {
         'page_title': _('Enterprises'),

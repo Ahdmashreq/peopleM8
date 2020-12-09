@@ -143,5 +143,11 @@ class Employee_Leave_balance(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True, related_name='Leave_balance_last_updated_by')
     last_update_date = models.DateField(auto_now=True, blank=True, null=True,)
 
+    @property
+    def total_balance(self):
+        total_balance = self.casual+self.usual+self.carried_forward
+        return total_balance
+
+
     def __str__(self):
         return self.employee.emp_name

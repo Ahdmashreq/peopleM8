@@ -59,12 +59,12 @@ def message_composer(request, html_template, instance_name, result):
 def add_leave(request):
     employee = Employee.objects.get(user=request.user)
     employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
+    print(have_leave_balance(request.user))
     if request.method == "POST":
         leave_form = FormLeave(data=request.POST, form_type=None)
-        if eligible_user_leave(request.user):
+        if eligible_user_leave(request.user) and have_leave_balance(request.user):
             if leave_form.is_valid():
                 if valid_leave(request.user, leave_form.cleaned_data['startdate'], leave_form.cleaned_data['enddate']):
-
                     leave = leave_form.save(commit=False)
                     leave.user = request.user
                     leave.save()
@@ -74,8 +74,6 @@ def add_leave(request):
                     requestor_email = employee.email
                     team_leader_email = employee_job.manager.email
                     html_message = message_composer(request, html_template='leave_mail.html', instance_name=leave, result=None)
-
-
                     email_sender('Applying for a leave', 'Applying for a leave', requestor_email,
                                  team_leader_email, html_message)
 
@@ -103,6 +101,13 @@ def eligible_user_leave(user):
             continue
     return True
 
+def have_leave_balance(user):
+    required_user = Employee.objects.get(user=user)
+    employee_leave_balance = Employee_Leave_balance.objects.get(employee=required_user)
+    total_balance = employee_leave_balance.total_balance
+    if not total_balance >0:
+        return False
+    return True
 
 def valid_leave(user, req_startdate, req_enddate):
     leaves = Leave.objects.filter(user=user, status='Approved').order_by('-id')
@@ -162,6 +167,14 @@ def leave_approve(request, leave_id):
     instance.status = 'Approved'
     instance.is_approved = True
     instance.save(update_fields=['status', 'is_approved'])
+    startdate = instance.startdate
+    enddate = instance.enddate
+    dates = (enddate - startdate)
+    tottal_days =  dates.days + 1
+    required_user = Employee.objects.get(user=instance.user)
+    employee_leave_balance = Employee_Leave_balance.objects.get(employee=required_user)
+    employee_leave_balance.casual = employee_leave_balance.casual- tottal_days
+    employee_leave_balance.save(update_fields=['casual'])
     approved_by_email = Employee.objects.get(user=request.user).email
     employee_email = Employee.objects.get(user=instance.user).email
     html_message = message_composer(request, html_template='reviewed_leave_mail.html', instance_name=instance, result='approved')
@@ -250,12 +263,13 @@ class Elmplyees_Leave_Balance(ListView):
 
 @login_required(login_url='home:user-login')
 def create_employee_leave_balance(request):
-    leave_balance_form = Leave_Balance_Form()
+    leave_balance_form = Leave_Balance_Form(request.user)
     if request.method == 'POST':
-        leave_balance_form = Leave_Balance_Form(request.POST)
+        leave_balance_form = Leave_Balance_Form(request.user,request.POST)
         if leave_balance_form.is_valid():
             balance_obj = leave_balance_form.save(commit=False)
             balance_obj.created_by = request.user
+            balance_obj.absence = 0
             balance_obj.save()
             messages.success(request, _('Balance Saved Successfully'))
             return redirect('leave:leave-balance')
