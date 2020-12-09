@@ -198,7 +198,7 @@ LANGUAGES = (
     ('ar', _('Arabic')),
 )
 
-DEFAULT_LANGUAGE = 1
+# DEFAULT_LANGUAGE = 1
 
 LOCALE_PATHS = (
     os.path.join(BASE_DIR, 'locale'),

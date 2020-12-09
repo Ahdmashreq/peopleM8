@@ -145,7 +145,7 @@ class Payment(models.Model):
 class Employee_Element(models.Model):
     emp_id = models.ForeignKey(Employee, on_delete=models.CASCADE, verbose_name=_('Employee'))
     element_id = models.ForeignKey(Element_Master, on_delete=models.CASCADE, verbose_name=_('Pay'))
-    element_value = models.FloatField(blank=True, null=True, verbose_name=_('Pay Value'))
+    element_value = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_('Pay Value'))
     start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
     end_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=_('End Date'))
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE, related_name="emp_element_created_by")

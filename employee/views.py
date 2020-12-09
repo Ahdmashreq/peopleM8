@@ -15,12 +15,14 @@ from payroll_run.models import Salary_elements
 from payroll_run.forms import SalaryElementForm
 from employee.fast_formula import FastFormula
 from manage_payroll.models import Payment_Method
+from custom_user.models import User
 from django.utils.translation import ugettext_lazy as _
 
 ############################Employee View #################################
 @login_required(login_url='home:user-login')
 def createEmployeeView(request):
     emp_form = EmployeeForm()
+    emp_form.fields['user'].queryset = User.objects.filter(company=request.user.company)
     jobroll_form = JobRollForm(user_v = request.user)
     payment_form = Employee_Payment_formset(queryset=Payment.objects.none())
     for payment in payment_form:
@@ -150,6 +152,7 @@ def updateEmployeeView(request, pk):
     required_employee = get_object_or_404(Employee, pk=pk)
     required_jobRoll = JobRoll.objects.get(emp_id=required_employee)
     emp_form = EmployeeForm(instance=required_employee)
+    emp_form.fields['user'].queryset = User.objects.filter(company=request.user.company)
     jobroll_form = JobRollForm(user_v=request.user, instance=required_jobRoll)
     payment_form = Employee_Payment_formset(instance=required_employee)
     elements_form = Employee_Element_Inline(queryset=Employee_Element.objects.filter(end_date__isnull=True), instance=required_employee)
