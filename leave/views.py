@@ -131,7 +131,7 @@ def list_leave(request):
         else:
             list_leaves = Leave.objects.filter(user=request.user)
             is_manager = False
-    except JobRoll.DoesNotExit:
+    except JobRoll.DoesNotExist:
         list_leaves = []
     except Employee.DoesNotExist:
         list_leaves = []
