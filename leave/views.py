@@ -250,12 +250,13 @@ class Elmplyees_Leave_Balance(ListView):
 
 @login_required(login_url='home:user-login')
 def create_employee_leave_balance(request):
-    leave_balance_form = Leave_Balance_Form()
+    leave_balance_form = Leave_Balance_Form(request.user)
     if request.method == 'POST':
-        leave_balance_form = Leave_Balance_Form(request.POST)
+        leave_balance_form = Leave_Balance_Form(request.user,request.POST)
         if leave_balance_form.is_valid():
             balance_obj = leave_balance_form.save(commit=False)
             balance_obj.created_by = request.user
+            balance_obj.absence = 0
             balance_obj.save()
             messages.success(request, _('Balance Saved Successfully'))
             return redirect('leave:leave-balance')
