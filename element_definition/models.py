@@ -31,7 +31,7 @@ class Element_Master(models.Model):
     db_name = models.CharField(max_length=4, null=True, blank=True, verbose_name=_('db Name'))
     basic_flag = models.BooleanField(default=False)
     element_type = models.ForeignKey(LookupDet, on_delete=models.CASCADE, null=True, blank=True,
-                                     related_name='lookup_element', verbose_name=_('Element Type'))
+                                     related_name='lookup_element', verbose_name=_('Pay Type'))
     classification = models.ForeignKey(LookupDet, on_delete=models.CASCADE, null=True, blank=True,
                                        related_name='lookup_classification', verbose_name=_('classification'))
     effective_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, null=True, blank=True,
@@ -55,7 +55,7 @@ class Element_Master(models.Model):
 
 class Element_Detail(models.Model):
     element_detail_master_fk = models.ForeignKey(Element_Master, on_delete=models.CASCADE,
-                                                 related_name='element_detail_master_fk', verbose_name=_('Element'))
+                                                 related_name='element_detail_master_fk', verbose_name=_('Pay'))
     element_parameter_name = models.CharField(max_length=20, null=True, blank=True, verbose_name=_('Parameter Name'))
     parameter_type = models.ForeignKey(LookupDet, on_delete=models.CASCADE, null=True, blank=True,
                                        related_name='lookup_input_type', verbose_name=_('Parameter Type'))
@@ -77,10 +77,10 @@ class Element_Detail(models.Model):
 class Element_Batch_Master(models.Model):
     element_master_fk = models.ForeignKey(Element_Master, on_delete=models.CASCADE, null=True, blank=True,
                                           related_name='element_master_fk', related_query_name='elementMaster',
-                                          verbose_name=_('Element'))
+                                          verbose_name=_('Pay'))
     element_batch_fk = models.ForeignKey(Element_Batch, on_delete=models.CASCADE, null=True, blank=True,
                                          related_name='element_batch_fk', related_query_name='elementBatch',
-                                         verbose_name=_('Element Batch'))
+                                         verbose_name=_('Pay Batch'))
     start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
     end_date = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True, verbose_name=_('End Date'))
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
@@ -99,7 +99,7 @@ class Element_Link(models.Model):
         unique_together = ('element_master_fk', 'employee')
 
     element_master_fk = models.ForeignKey(Element_Master, on_delete=models.CASCADE, null=True, blank=True,
-                                          related_name='element_link_to_master', verbose_name=_('Element Name'))
+                                          related_name='element_link_to_master', verbose_name=_('Pay Name'))
     batch = models.ForeignKey(Element_Batch, on_delete=models.CASCADE, null=True, blank=True,
                               verbose_name=_('Batch Name'))
     payroll_fk = models.ForeignKey(Payroll_Master, on_delete=models.CASCADE, null=True, blank=True,
@@ -153,7 +153,7 @@ class Custom_Python_Rule(models.Model):
     '''
     name = models.CharField(max_length=255, verbose_name=_('Name'))
     element_master = models.ForeignKey(Element_Master, on_delete=models.CASCADE, null=True, blank=True,
-                                       related_name='custom_python_rule', verbose_name=_('Element Master'))
+                                       related_name='custom_python_rule', verbose_name=_('Pay Master'))
     help_text = models.TextField(default=default_string, verbose_name=_('Help Text'))
     rule_definition = models.TextField(verbose_name=_('Rule Definition'))
     taxable = models.BooleanField(default=False, verbose_name=_('Taxable'))

@@ -75,7 +75,7 @@
                 <li class="active"><a href="#nav-home" data-toggle="tab" id="nav-home-tab" role="tab" aria-controls="nav-home" aria-selected="true">{% trans "Personal" %}</a></li>
                 <li><a href="#nav-profile" id="nav-profile-tab" data-toggle="tab" role="tab" aria-controls="nav-profile" aria-selected="false">{% trans "Official" %}</a></li>
                 <li><a href="#nav-contact" id="nav-contact-tab" data-toggle="tab" role="tab" aria-controls="nav-contact" aria-selected="false">{% trans "Payments" %}</a></li>
-                <li><a href="#nav-elements" id="nav-elements-tab" data-toggle="tab" role="tab" aria-controls="nav-elements" aria-selected="false">{% trans "Elements" %}</a></li>
+                <li><a href="#nav-elements" id="nav-elements-tab" data-toggle="tab" role="tab" aria-controls="nav-elements" aria-selected="false">{% trans "Pays" %}</a></li>
               </ul>
             </header>
             <div class="panel-body">
@@ -239,10 +239,14 @@
                       {{ jobroll_form.position }}
                     </div>
                     <div class="col-sm-4">
+                      <label class="fw-500">Employee Type</label>
+                      {{ emp_form.emp_type }}
+                    </div>
+                    <div class="col-sm-4">
                       <label class="fw-500">Start Date</label>
                       {{ jobroll_form.start_date }}
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                       <label class="fw-500">End Date</label>
                       {{ jobroll_form.end_date }}
                     </div>

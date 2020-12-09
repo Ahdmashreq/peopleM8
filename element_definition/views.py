@@ -86,7 +86,7 @@ def createElementView(request):
                 success_msg = 'The form is not valid.'
             [messages.error(request, element_master_form.errors)]
     myContext = {
-        "page_title": _("Create new Element"),
+        "page_title": _("Create new Pay"),
         'element_master_form': element_master_form,
     }
     return render(request, 'create-elements.html', myContext)
@@ -102,7 +102,7 @@ def listElementView(request):
             if x.db_name == company_basic_db_name and x.enterprise == request.user.company:
                 element_flag = True
     myContext = {
-        'page_title': _('elements'),
+        'page_title': _('Pays'),
         'element_master': element_master,
         'basic_flag': element_flag,
     }
@@ -190,7 +190,7 @@ def createElementBatchView(request):
             messages.success(request, batch_form.errors)
             messages.success(request, batch_detail_form.errors)
     batchContext = {
-        "page_title": _("Create Element Batch"),
+        "page_title": _("Create Pay Batch"),
         'batch_form': batch_form,
         'batch_detail_form': batch_detail_form
     }
@@ -314,7 +314,7 @@ def listElementLinkView(request):
         Q(end_date__gte=date.today()) | Q(end_date__isnull=True)
     )
     linkContext = {
-        "page_title": _("link elements"),
+        "page_title": _("link Pays"),
         'list_links': list_links
     }
     return render(request, 'list-links.html', linkContext)
@@ -416,7 +416,7 @@ def createElementLinkView(request):
             [messages.error(request, error[0])
              for error in form.errors.values()]
     linkContext = {
-        "page_title": _("Create Element Link"),
+        "page_title": _("Create Pay Link"),
         'link_form': link_form}
     return render(request, 'create-element-link.html', linkContext)
 
@@ -449,7 +449,7 @@ def updateElementLinkView(request, pk):
             messages.success(request, success_msg)
             return redirect('element_definition:list-links')
     linkContext = {
-        "page_title": _("Update Element Link"),
+        "page_title": _("Update Pay Link"),
         'link_form': link_form}
     return render(request, 'create-element-link.html', linkContext)
 

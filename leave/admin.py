@@ -6,6 +6,7 @@ from leave import models
 class Leave_Master_Admin(admin.ModelAdmin):
     fields = (
         'type',
+        'leave_value',
     )
 
     def save_model(self, request, instance, form, change):

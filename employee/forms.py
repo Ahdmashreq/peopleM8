@@ -70,9 +70,10 @@ class JobRollForm(forms.ModelForm):
             self.fields[field].widget.attrs['class'] = 'form-control parsley-validated'
         self.helper = FormHelper()
         self.helper.form_show_labels = True
-        self.fields['contract_type'].queryset = LookupDet.objects.filter(lookup_type_fk__lookup_type_name='EMPLOYEE_TYPE')
-        self.fields['position'].queryset = Position.objects.filter((Q(department__enterprise = user_v.company)),(Q(end_date__gte=date.today())|Q(end_date__isnull=True)))
-        self.fields['payroll'].queryset = Payroll_Master.objects.filter((Q(enterprise = user_v.company)),(Q(end_date__gte=date.today())|Q(end_date__isnull=True)))
+        self.fields['contract_type'].queryset   = LookupDet.objects.filter(lookup_type_fk__lookup_type_name='EMPLOYEE_TYPE')
+        self.fields['position'].queryset        = Position.objects.filter((Q(department__enterprise = user_v.company)),(Q(end_date__gte=date.today())|Q(end_date__isnull=True)))
+        self.fields['payroll'].queryset         = Payroll_Master.objects.filter((Q(enterprise = user_v.company)),(Q(end_date__gte=date.today())|Q(end_date__isnull=True)))
+        self.fields['manager'].queryset         = Employee.objects.filter(enterprise=user_v.company)
 
 class PaymentForm(forms.ModelForm):
     class Meta:

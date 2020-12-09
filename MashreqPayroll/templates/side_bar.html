@@ -46,38 +46,29 @@
           </ul>
         </li>
         <li><a class="sidebar-link" href="{% url 'defenition:list-lookups' %}">{% trans 'Lookup Details'%}</a></li>
-        <li class="nav-item dropdown">
-          <a href="javascript:void(0);">
-          <span>{% trans 'Working Policies'%}</span>
-          <span class="arrow"><i class="ti-angle-right"></i></span>
-          </a>
-          <ul class="dropdown-menu" style="display: none;">
-            <li><a href="{% url 'company:working-hrs-policy-list' %}">{% trans "Working Hours Policy" %}</a></li>
-            <li><a href="{% url 'company:working-hrs-deductions-list' %}">{% trans "Deductions Policy" %}</a></li>
-            <li><a href="{% url 'company:list-years' %}">{% trans "Yearly Holidays" %}</a></li>
-          </ul>
-        </li>
+
       </ul>
     </li>
-    <li class="nav-item dropdown">
-      <a class="dropdown-toggle" href="javascript:void(0);">
-        <span class="icon-holder"><i class="c-deep-purple-500 ti-pencil"></i> </span>
-        <span class="title">{% trans 'Elements Definition'%}</span> <span class="arrow"><i class="ti-angle-right"></i></span>
-      </a>
-      <ul class="dropdown-menu">
-        <li><a class="sidebar-link" href="{% url 'element_definition:list-element' %}">{% trans 'Element Details'%}</a></li>
-        <li><a class="sidebar-link" href="{% url 'element_definition:list-batchs' %}">{% trans 'Element Batch'%}</a></li>
-        <li><a class="sidebar-link" href="{% url 'element_definition:list-links' %}">{% trans 'Link Elements'%}</a></li>
-      </ul>
-    </li>
+
     <li class="nav-item dropdown">
       <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-red-500 ti-files"></i> </span><span class="title">{% trans "Manage Payroll" %}</span> <span class="arrow"><i class="ti-angle-right"></i></span></a>
       <ul class="dropdown-menu">
+        <li class="nav-item dropdown">
+        <a class="dropdown-toggle" href="javascript:void(0);">
+          <span class="title">{% trans 'Wage Management'%}</span> <span class="arrow"><i class="ti-angle-right"></i></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li><a class="sidebar-link" href="{% url 'element_definition:list-element' %}">{% trans 'Pay Details'%}</a></li>
+          <li><a class="sidebar-link" href="{% url 'element_definition:list-batchs' %}">{% trans 'Pay Batch'%}</a></li>
+          <li><a class="sidebar-link" href="{% url 'element_definition:list-links' %}">{% trans 'Link Pays'%}</a></li>
+        </ul>
+        </li>
         <li><a class="sidebar-link" href="{% url 'manage_payroll:list-banks' %}">{% trans 'Bank and branchs'%}</a></li>
         <li><a class="sidebar-link" href="{% url 'manage_payroll:list-payments' %}">{% trans 'Payments'%}</a></li>
         <li><a class="sidebar-link" href="{% url 'manage_payroll:list-payroll' %}">{% trans 'Payroll Definition'%}</a></li>
         <li><a class="sidebar-link" href="{% url 'defenition:tax-list' %}">{% trans 'Tax Rules'%}</a></li>
         <li><a class="sidebar-link" href="{% url 'manage_payroll:list-assignBatch' %}">{% trans 'Assignment Batch'%}</a></li>
+
       </ul>
     </li>
     <li class="nav-item dropdown">
@@ -110,11 +101,27 @@
       <ul class="dropdown-menu">
         <li><a class="sidebar-link" href="{% url 'attendance:upload-attendance' %}">{% trans 'Upload Excel File' %}</a></li>
         <li><a class="sidebar-link" href="{% url 'attendance:user-list-attendance' %}">{% trans 'Manual Attendance' %}</a></li>
-        <li><a class="sidebar-link" href="{% url 'leave:list_leave' %}">{% trans 'Leave Requests'%}</a></li>
         <li><a class="sidebar-link" href="{% url 'attendance:list-machine-log' %}">{% trans 'Connect To Machine'%}</a></li>
         <li><a class="sidebar-link" href="{% url 'attendance:list-attendance-deductions' %}">{% trans 'List Absence'%}</a></li>
       </ul>
     </li> -->
+    <li class="nav-item dropdown">
+      <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-blue-500 ti-alarm-clock"></i> </span><span class="title">{% trans "Leave Management" %}</span> <span class="arrow"><i class="ti-angle-right"></i></span></a>
+      <ul class="dropdown-menu">
+        <li><a class="sidebar-link" href="{% url 'leave:list_leave' %}">{% trans 'Leave Requests'%}</a></li>
+                <li class="nav-item dropdown">
+          <a href="javascript:void(0);">
+          <span>{% trans 'Working Policies'%}</span>
+          <span class="arrow"><i class="ti-angle-right"></i></span>
+          </a>
+          <ul class="dropdown-menu" style="display: none;">
+            <li><a href="{% url 'company:working-hrs-policy-list' %}">{% trans "Working Hours Policy" %}</a></li>
+            <li><a href="{% url 'company:working-hrs-deductions-list' %}">{% trans "Deductions Policy" %}</a></li>
+            <li><a href="{% url 'company:list-years' %}">{% trans "Yearly Holidays" %}</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li> <li class="nav-item dropdown">
 
 
     <li class="nav-item dropdown">
