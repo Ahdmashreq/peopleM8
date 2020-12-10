@@ -121,15 +121,21 @@ def valid_leave(user, req_startdate, req_enddate):
 
 @login_required(login_url='home:user-login')
 def list_leave(request):
-    employee = Employee.objects.get(user=request.user)
-    employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
     is_manager = False
-    if employee_job.manager == None:  # check if the loged in user is a manager
-        list_leaves = Leave.objects.all_pending_leaves()
-        is_manager = True
-    else:
-        list_leaves = Leave.objects.filter(user=request.user)
-        is_manager = False
+    try:
+        employee = Employee.objects.get(user=request.user)
+        employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
+        if employee_job.manager == None:  # check if the loged in user is a manager
+            list_leaves = Leave.objects.all_pending_leaves()
+            is_manager = True
+        else:
+            list_leaves = Leave.objects.filter(user=request.user)
+            is_manager = False
+    except JobRoll.DoesNotExist:
+        list_leaves = []
+    except Employee.DoesNotExist:
+        list_leaves = []
+
     return render(request, 'list_leave.html', {'leaves': list_leaves, 'is_manager': is_manager})
 
 

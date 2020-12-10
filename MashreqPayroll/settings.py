@@ -17,11 +17,11 @@ with open(KEY_PATH) as f:
     SECRET_KEY = f.read().strip()
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ADMINS = [('ahd','ahd.hozayen@mashreqarabia.com')]
 
-ALLOWED_HOSTS = ['127.0.0.1','127.0.1.1','165.22.19.247']
+ALLOWED_HOSTS = ['127.0.0.1','127.0.1.1','165.22.19.247', '192.168.1.37']
 
 TIMEOUT = 900
 
@@ -136,7 +136,7 @@ DATABASES = {
         'NAME': 'peoplem8',
         'USER': 'mashreq_sysadmin',
         'PASSWORD': 'M@$hreq123',
-        'HOST': 'localhost',
+        'HOST': '192.168.1.37',
         'PORT': '',
     }
 }
