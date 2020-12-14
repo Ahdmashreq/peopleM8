@@ -7,7 +7,7 @@ from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.core.management import call_command
 from defenition.forms import LookupTypeForm, LookupDetinlineFormSet, InsuranceRuleForm, TaxRuleForm, TaxSectionFormSet
-from defenition.models import LookupType, LookupDet, TaxRule, InsuranceRule, TaxSection
+from defenition.models import LookupType, LookupDet, TaxRule, InsuranceRule, TaxSection, Tax_Sections
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import to_locale, get_language
 
@@ -15,110 +15,112 @@ from django.utils.translation import to_locale, get_language
 ###############################################################################
 def copy_insurance_rule(request):
     insurance_obj = InsuranceRule(
-                         enterprise_name = request.user.company,
-                         name = 'قانون التأمينات المصري',
-                         basic_deduction_percentage = 14,
-                         variable_deduction_percentage = 11,
-                         maximum_insurable_basic_salary = 1250,
-                         maximum_insurable_variable_salary = 1650,
-                         start_date =  date.today(),
-                         created_by =  request.user,
-                         creation_date =  date.today(),
-                         last_update_date = date.today()
+        enterprise_name=request.user.company,
+        name='قانون التأمينات المصري',
+        basic_deduction_percentage=14,
+        variable_deduction_percentage=11,
+        maximum_insurable_basic_salary=1250,
+        maximum_insurable_variable_salary=1650,
+        start_date=date.today(),
+        created_by=request.user,
+        creation_date=date.today(),
+        last_update_date=date.today()
     )
     insurance_obj.save()
     return redirect('defenition:insurance-list')
 
+
 def copy_tax_rule(request):
     tax_obj = TaxRule(
-                     enterprise = request.user.company,
-                     name = "قانون الضرائب المصري",
-                     personal_exemption = 7200.0,
-                     round_down_to_nearest_10 = True,
-                     start_date =  date.today(),
-                     created_by =  request.user,
-                     creation_date =  date.today(),
-                     last_update_date = date.today()
+        enterprise=request.user.company,
+        name="قانون الضرائب المصري",
+        personal_exemption=7200.0,
+        round_down_to_nearest_10=True,
+        start_date=date.today(),
+        created_by=request.user,
+        creation_date=date.today(),
+        last_update_date=date.today()
     )
     tax_obj.save()
-    tax_rule_id = TaxRule.objects.get(enterprise = request.user.company)
-    first_section  = TaxSection(
-                     name = "الشريحة الاولي",
-                     tax_rule_id = tax_rule_id,
-                     salary_from = 0,
-                     salary_to = 7200,
-                     tax_percentage =0,
-                     tax_discount_percentage = 0,
-                     section_execution_sequence = 1,
-                     start_date =  date.today(),
-                     created_by =  request.user,
-                     creation_date =  date.today(),
-                     last_update_date = date.today()
+    tax_rule_id = TaxRule.objects.get(enterprise=request.user.company)
+    first_section = TaxSection(
+        name="الشريحة الاولي",
+        tax_rule_id=tax_rule_id,
+        salary_from=0,
+        salary_to=7200,
+        tax_percentage=0,
+        tax_discount_percentage=0,
+        section_execution_sequence=1,
+        start_date=date.today(),
+        created_by=request.user,
+        creation_date=date.today(),
+        last_update_date=date.today()
     )
     second_section = TaxSection(
-                     name = "الشريحة الثانية",
-                     tax_rule_id = tax_rule_id,
-                     salary_from = 7201,
-                     salary_to = 30000,
-                     tax_percentage = 10,
-                     tax_discount_percentage = 80,
-                     section_execution_sequence = 2,
-                     start_date =  date.today(),
-                     created_by =  request.user,
-                     creation_date =  date.today(),
-                     last_update_date = date.today()
+        name="الشريحة الثانية",
+        tax_rule_id=tax_rule_id,
+        salary_from=7201,
+        salary_to=30000,
+        tax_percentage=10,
+        tax_discount_percentage=80,
+        section_execution_sequence=2,
+        start_date=date.today(),
+        created_by=request.user,
+        creation_date=date.today(),
+        last_update_date=date.today()
     )
     thired_section = TaxSection(
-                     name = "الشريحة الثالثة",
-                     tax_rule_id = tax_rule_id,
-                     salary_from = 30001,
-                     salary_to = 45000,
-                     tax_percentage = 15,
-                     tax_discount_percentage = 40,
-                     section_execution_sequence = 3,
-                     start_date =  date.today(),
-                     created_by =  request.user,
-                     creation_date =  date.today(),
-                     last_update_date = date.today()
+        name="الشريحة الثالثة",
+        tax_rule_id=tax_rule_id,
+        salary_from=30001,
+        salary_to=45000,
+        tax_percentage=15,
+        tax_discount_percentage=40,
+        section_execution_sequence=3,
+        start_date=date.today(),
+        created_by=request.user,
+        creation_date=date.today(),
+        last_update_date=date.today()
     )
-    forth_section  = TaxSection(
-                     name = "الشريحة الرابعة",
-                     tax_rule_id = tax_rule_id,
-                     salary_from = 45001,
-                     salary_to = 200000,
-                     tax_percentage = 20,
-                     tax_discount_percentage = 5,
-                     section_execution_sequence = 4,
-                     start_date =  date.today(),
-                     created_by =  request.user,
-                     creation_date =  date.today(),
-                     last_update_date = date.today()
+    forth_section = TaxSection(
+        name="الشريحة الرابعة",
+        tax_rule_id=tax_rule_id,
+        salary_from=45001,
+        salary_to=200000,
+        tax_percentage=20,
+        tax_discount_percentage=5,
+        section_execution_sequence=4,
+        start_date=date.today(),
+        created_by=request.user,
+        creation_date=date.today(),
+        last_update_date=date.today()
     )
-    fifth_section  = TaxSection(
-                     name = "الشريحة الخامسة",
-                     tax_rule_id = tax_rule_id,
-                     salary_from = 200001,
-                     salary_to = 10000000,
-                     tax_percentage =22.5,
-                     tax_discount_percentage = 0,
-                     section_execution_sequence = 5,
-                     start_date =  date.today(),
-                     created_by =  request.user,
-                     creation_date =  date.today(),
-                     last_update_date = date.today()
+    fifth_section = TaxSection(
+        name="الشريحة الخامسة",
+        tax_rule_id=tax_rule_id,
+        salary_from=200001,
+        salary_to=10000000,
+        tax_percentage=22.5,
+        tax_discount_percentage=0,
+        section_execution_sequence=5,
+        start_date=date.today(),
+        created_by=request.user,
+        creation_date=date.today(),
+        last_update_date=date.today()
     )
 
-
-    TaxSection.objects.bulk_create([first_section, second_section, thired_section, forth_section, fifth_section ])
+    TaxSection.objects.bulk_create([first_section, second_section, thired_section, forth_section, fifth_section])
     return redirect('defenition:tax-list')
+
+
 ###############################################################################
 
 @login_required(login_url='home:user-login')
 def listLookupView(request):
     lookup_list = LookupType.objects.all(user=request.user)
     lookupContext = {
-                     'page_title':_("Lookup list"),
-                     'lookup_list': lookup_list}
+        'page_title': _("Lookup list"),
+        'lookup_list': lookup_list}
     return render(request, 'lookups-list.html', lookupContext)
 
 
@@ -145,7 +147,7 @@ def createLookupView(request):
             return redirect('defenition:list-lookups')
         else:
             messages.error(request, lookup_master_form.errors)
-            messages.error(request, lookup_det_form.errors.value() )
+            messages.error(request, lookup_det_form.errors.value())
     lookupContext = {
         "page_title": _("Create new lookup"),
         'lookup_master_form': lookup_master_form,
@@ -199,16 +201,16 @@ def deleteLookupView(request, pk):
             x.end_date = date.today()
             x.save(update_fields=['end_date'])
         lookup_type_obj.save(update_fields=['end_date'])
-        user_lang=to_locale(get_language())
-        if user_lang=='ar':
+        user_lang = to_locale(get_language())
+        if user_lang == 'ar':
             success_msg = '{} تم حذف'.format(required_lookupType)
         else:
             success_msg = '{} was deleted successfully'.format(required_lookupType)
         # success_msg = '{} was deleted successfully'.format(required_lookupType)
         messages.success(request, success_msg)
     except Exception as e:
-        user_lang=to_locale(get_language())
-        if user_lang=='ar':
+        user_lang = to_locale(get_language())
+        if user_lang == 'ar':
             error_msg = '{} لم يتم حذف'.format(required_lookupType)
         else:
             error_msg = '{} was deleted successfully'.format(required_lookupType)
@@ -216,6 +218,7 @@ def deleteLookupView(request, pk):
         messages.error(request, error_msg)
         raise e
     return redirect('defenition:list-lookups')
+
 
 ################################################################################
 @login_required(login_url='home:user-login')
@@ -228,9 +231,9 @@ def create_insurance_rules(request):
             insurance_rule.created_by = request.user
             insurance_rule.last_update_by = request.user
             insurance_rule.save()
-            user_lang=to_locale(get_language())
-            if user_lang=='ar':
-                success_msg ='تم انشاء {} '.format(
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
+                success_msg = 'تم انشاء {} '.format(
                     insurance_rule.name)
             else:
                 success_msg = 'Rule {} created successfully'.format(
@@ -252,8 +255,8 @@ def create_insurance_rules(request):
 def list_insurance_rules(request):
     insurance_form = InsuranceRule.objects.all(user=request.user)
     egy_rule_flag = False
-    print(InsuranceRule.objects.filter(enterprise_name = request.user.company))
-    if InsuranceRule.objects.filter(enterprise_name = request.user.company):
+    print(InsuranceRule.objects.filter(enterprise_name=request.user.company))
+    if InsuranceRule.objects.filter(enterprise_name=request.user.company):
         egy_rule_flag = True
     else:
         egy_rule_flag = False
@@ -261,9 +264,10 @@ def list_insurance_rules(request):
     insuranceContext = {
         'page_title': _('Insurance Rules'),
         'insurance_form': insurance_form,
-        'egy_rule_flag':egy_rule_flag,
+        'egy_rule_flag': egy_rule_flag,
     }
     return render(request, 'insurance_rules_list.html', insuranceContext)
+
 
 @login_required(login_url='home:user-login')
 def update_insurance_rule(request, pk):
@@ -279,8 +283,8 @@ def update_insurance_rule(request, pk):
                 obj.save()
                 success_msg = 'تم تعديل "{}" بنجاح'.format(insurance_rule.name)
                 insurance_rule = insurance_form.save()
-                user_lang=to_locale(get_language())
-                if user_lang=='ar':
+                user_lang = to_locale(get_language())
+                if user_lang == 'ar':
                     success_msg = 'تم تعديل "{}" بنجاح'.format(insurance_rule.name)
                 else:
                     success_msg = 'Record is Updated"{}" '.format(insurance_rule.name)
@@ -304,22 +308,22 @@ def update_insurance_rule(request, pk):
 
 @login_required(login_url='home:user-login')
 def delete_insurance_rule(request, pk):
-    insurance_rule =  InsuranceRule.objects.get_insuracne(user=request.user, insuracne_id=pk)
+    insurance_rule = InsuranceRule.objects.get_insuracne(user=request.user, insuracne_id=pk)
     try:
         insurance_form = InsuranceRuleForm(instance=insurance_rule)
         insurance_obj = insurance_form.save(commit=False)
         insurance_obj.end_date = date.today()
         insurance_obj.save(update_fields=['end_date'])
-        user_lang=to_locale(get_language())
-        if user_lang=='ar':
+        user_lang = to_locale(get_language())
+        if user_lang == 'ar':
             success_msg = '{} تم حذف'.format(insurance_rule)
         else:
             success_msg = '{} was deleted successfully'.format(insurance_rule)
         # success_msg = '{} was deleted successfully'.format(insurance_rule)
         messages.success(request, success_msg)
     except Exception as e:
-        user_lang=user_lang=to_locale(get_language())
-        if user_lang=='ar':
+        user_lang = user_lang = to_locale(get_language())
+        if user_lang == 'ar':
             error_msg = '{} لم يتم حذف '.format(insurance_rule)
         else:
             error_msg = '{} cannot be deleted '.format(insurance_rule)
@@ -327,6 +331,7 @@ def delete_insurance_rule(request, pk):
         messages.error(request, error_msg)
         raise e
     return redirect('defenition:insurance-list')
+
 
 ################################################################################
 #     what if we want to run django command from html we use the next
@@ -336,6 +341,8 @@ def runningManagementCommand(request):
     call_command('cities_light')
     # call_command('migrate')
     return render(request, 'insurance_rules_create.html', context=None)
+
+
 ################################################################################
 #                               Tax section
 ################################################################################
@@ -355,11 +362,11 @@ def create_tax_rules(request):
             if formset.is_valid():
                 tax_rule.save()
                 formset.save()
-                user_lang=to_locale(get_language())
-                if user_lang=='ar':
+                user_lang = to_locale(get_language())
+                if user_lang == 'ar':
                     success_msg = 'تم اضافة "{}" بنجاح'.format(tax_rule.name)
                 else:
-                    success_msg ='Record Created successfully "{}" '.format(tax_rule.name)
+                    success_msg = 'Record Created successfully "{}" '.format(tax_rule.name)
                 # success_msg = 'تم اضافة "{}" بنجاح'.format(tax_rule.name)
                 messages.success(request, success_msg)
                 return redirect('defenition:tax-list')
@@ -381,24 +388,25 @@ def create_tax_rules(request):
 @login_required(login_url='home:user-login')
 def list_tax_rules(request):
     form = TaxRule.objects.all(user=request.user)
-    formset = TaxSection.objects.all().exclude((Q(end_date__gte=date.today())|Q(end_date__isnull=True)))
+    formset = TaxSection.objects.all().exclude((Q(end_date__gte=date.today()) | Q(end_date__isnull=True)))
     egy_rule_flag = False
-    if TaxRule.objects.filter(enterprise = request.user.company).exclude((Q(end_date__gte=date.today())|Q(end_date__isnull=True))):
+    if TaxRule.objects.filter(enterprise=request.user.company).exclude(
+            (Q(end_date__gte=date.today()) | Q(end_date__isnull=True))):
         egy_rule_flag = True
     else:
         egy_rule_flag = False
     taxContext = {
-                  'page_title':_( 'Tax Rules'),
-                  'form': form,
-                  'formset': formset,
-                  'egy_rule_flag':egy_rule_flag
-                  }
+        'page_title': _('Tax Rules'),
+        'form': form,
+        'formset': formset,
+        'egy_rule_flag': egy_rule_flag
+    }
     return render(request, 'tax_rules_list.html', taxContext)
 
 
 @login_required(login_url='home:user-login')
 def delete_tax_rule(request, pk):
-    required_tax_rule =  TaxRule.objects.get_tax(user=request.user, tax_id=pk)
+    required_tax_rule = TaxRule.objects.get_tax(user=request.user, tax_id=pk)
     try:
         tax_form = TaxRuleForm(instance=required_tax_rule)
         tax_obj = tax_form.save(commit=False)
@@ -409,16 +417,16 @@ def delete_tax_rule(request, pk):
             x.end_date = date.today()
             x.save(update_fields=['end_date'])
         tax_obj.save(update_fields=['end_date'])
-        user_lang=to_locale(get_language())
-        if user_lang=='ar':
+        user_lang = to_locale(get_language())
+        if user_lang == 'ar':
             success_msg = '{}تم حذف '.format(required_tax_rule)
         else:
             success_msg = '{} was deleted successfully'.format(required_tax_rule)
         # success_msg = '{} was deleted successfully'.format(required_tax_rule)
         messages.success(request, success_msg)
     except Exception as e:
-        user_lang=to_locale(get_language())
-        if user_lang=='ar':
+        user_lang = to_locale(get_language())
+        if user_lang == 'ar':
             error_msg = '{} لم يتم حذف'.format(required_tax_rule)
         else:
             error_msg = '{} Can not be delete'.format(required_tax_rule)
@@ -444,9 +452,9 @@ def update_tax_rule(request, pk):
             if formset.is_valid():
                 tax_rule.save()
                 formset.save()
-                user_lang=to_locale(get_language())
-                if user_lang=='ar':
-                    uccess_msg = 'تم اضافة "{}" بنجاح'.format(tax_rule.name)
+                user_lang = to_locale(get_language())
+                if user_lang == 'ar':
+                    success_msg = 'تم اضافة "{}" بنجاح'.format(tax_rule.name)
                 else:
                     success_msg = 'Record Created Sucessfully"{}" '.format(tax_rule.name)
                     messages.success(request, success_msg)
@@ -468,3 +476,4 @@ def update_tax_rule(request, pk):
                'page_title': _('New Tax Rule'),
                'formset_title': _('Tax sections')}
     return render(request, 'tax_rules_create.html', context=context)
+

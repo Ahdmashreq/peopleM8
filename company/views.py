@@ -14,15 +14,17 @@ from custom_user.models import User, UserCompany
 from company.forms import (EnterpriseForm, DepartmentInline, DepartmentForm, JobInline,
                            JobForm, GradeInline, GradeForm, PositionInline, PositionForm, WorkingDaysForm,
                            WorkingHoursDeductionForm, Working_Hours_Deduction_Form_Inline,
-                           YearlyHolidayInline, YearlyHolidayForm, YearForm)
+                           YearlyHolidayInline, YearlyHolidayForm, YearForm, CompanySetupForm)
 from company.models import (Enterprise, Department, Job, Grade, Position, YearlyHoliday,
                             Working_Days_Policy, Working_Hours_Deductions_Policy, Year)
 from django.utils.translation import ugettext_lazy as _
 from cities_light.models import City, Country
 from django.core.exceptions import ObjectDoesNotExist
 
-
 ########################################Enterprise views###################################################################
+from defenition.models import TaxRule, Tax_Sections, LookupType, LookupDet
+
+
 def load_cities(request):
     country_id = request.GET.get('country')
     cities = City.objects.filter(country_id=country_id).order_by('name')
@@ -59,7 +61,7 @@ def mark_as_active_view(request, company_id):
     required_company = UserCompany.objects.get(company=company_id)
     required_company.active = True
     required_company.last_update_by = request.user
-    required_company.save(update_fields=['active','last_update_by'])
+    required_company.save(update_fields=['active', 'last_update_by'])
     if success_flag:
         return redirect('home:homepage')
     else:
@@ -79,13 +81,13 @@ def create_user_companies_view(request):
             bg_obj.created_by = request.user
             bg_obj.save()
             current_user_obj.company = bg_obj
-            current_user_obj.save(update_fields=['company',])
+            current_user_obj.save(update_fields=['company', ])
             user_company_count = UserCompany.objects.filter(user=request.user).count()
             user_co = UserCompany(
-                    user = request.user,
-                    company = bg_obj,
-                    active = False if user_company_count >= 1 else True,
-                    created_by = request.user
+                user=request.user,
+                company=bg_obj,
+                active=False if user_company_count >= 1 else True,
+                created_by=request.user
             )
             user_co.save()
             user_lang = to_locale(get_language())
@@ -114,6 +116,7 @@ def create_user_companies_view(request):
         'bgForm': bgForm,
     }
     return render(request, 'user-companies-create.html', userCompanyContext)
+
 
 @login_required(login_url='home:user-login')
 def companyCreateView(request):
@@ -156,7 +159,8 @@ def companyCreateView(request):
 @login_required(login_url='home:user-login')
 def listCompanyInformation(request):
     if request.method == 'GET':
-        bgList = Enterprise.objects.filter(enterprise_user__company=request.user.company).filter(Q(end_date__gt=date.today()) | Q(end_date__isnull=True))
+        bgList = Enterprise.objects.filter(id=request.user.company.id).filter(
+            Q(end_date__gt=date.today()) | Q(end_date__isnull=True))
 
     myContext = {
         'page_title': _('Enterprises'),
@@ -840,6 +844,7 @@ def deletePositionView(request, pk):
         raise e
     return redirect('company:list-positions')
 
+
 ########################################Company Policies views###################################################################
 
 @login_required(login_url='home:user-login')
@@ -880,10 +885,11 @@ def listWorkingPolicyView(request):
     if request.method == 'GET':
         working_policy_list = Working_Days_Policy.objects.all(request.user)
     myContext = {
-                 "page_title": _("List working policies"),
-                 'policy_list': working_policy_list
-                 }
+        "page_title": _("List working policies"),
+        'policy_list': working_policy_list
+    }
     return render(request, 'working-hrs-policy-list.html', myContext)
+
 
 @login_required(login_url='home:user-login')
 def correctWorkingPolicyView(request, pk):
@@ -934,19 +940,19 @@ def listYearlyHolidayView(request, year_id):
     yearly_holiday_list = []
     year = Year.objects.get_year(request.user, year_id)
     if request.method == 'GET':
-        yearly_holiday_list = YearlyHoliday.objects.get_year_holiday(user=request.user, year_name = year_id)
+        yearly_holiday_list = YearlyHoliday.objects.get_year_holiday(user=request.user, year_name=year_id)
 
     myContext = {
-                 "page_title": f"List yearly holidays for {year}",
-                 'yearly_holiday_list': yearly_holiday_list,
-                 'year_id': year_id
-                 }
+        "page_title": f"List yearly holidays for {year}",
+        'yearly_holiday_list': yearly_holiday_list,
+        'year_id': year_id
+    }
     return render(request, 'yearly-holiday-list.html', myContext)
 
 
 @login_required(login_url='home:user-login')
 def createYearlyHolidayView(request, year_id):
-    year = Year.objects.get_year(user= request.user, year_id=year_id)
+    year = Year.objects.get_year(user=request.user, year_id=year_id)
     yearly_holiday_formset = YearlyHolidayInline(queryset=YearlyHoliday.objects.none())
     user_lang = to_locale(get_language())
     if request.method == 'POST':
@@ -1040,7 +1046,8 @@ def listYearsView(request):
     years = Year.objects.all(request.user)
     num_of_holidays = {}
     for year in years:
-        num_of_holidays[year.year] = YearlyHoliday.objects.get_year_holiday(user=request.user, year_name = year.year).count()
+        num_of_holidays[year.year] = YearlyHoliday.objects.get_year_holiday(user=request.user,
+                                                                            year_name=year.year).count()
     year_form = YearForm()
     if request.method == 'POST':
         year_form = YearForm(request.POST)
@@ -1049,19 +1056,20 @@ def listYearsView(request):
             year_obj.enterprise = request.user.company
             year_obj.created_by = request.user
             year_obj.save()
-            return redirect('company:yearly-holiday-create', year_id= year_obj.year)
+            return redirect('company:yearly-holiday-create', year_id=year_obj.year)
     context = {
         "page_title": _("Years"),
         'num_of_holidays': num_of_holidays,
         'years': years,
-        'year_form':year_form,
+        'year_form': year_form,
     }
     return render(request, 'years-list.html', context=context)
 
 
 @login_required(login_url='home:user-login')
 def list_working_hours_deductions_view(request):
-    working_deductions_list = Working_Hours_Deductions_Policy.objects.filter(working_days_policy__enterprise = request.user.company)
+    working_deductions_list = Working_Hours_Deductions_Policy.objects.filter(
+        working_days_policy__enterprise=request.user.company)
     working_hrs_deduction_form = WorkingHoursDeductionForm()
     context = {
         "page_title": _("Work Hours Deduction Policy"),
@@ -1072,7 +1080,8 @@ def list_working_hours_deductions_view(request):
 
 @login_required(login_url='home:user-login')
 def create_working_hours_deductions_view(request):
-    working_deductions_formset = Working_Hours_Deduction_Form_Inline(queryset=Working_Hours_Deductions_Policy.objects.none())
+    working_deductions_formset = Working_Hours_Deduction_Form_Inline(
+        queryset=Working_Hours_Deductions_Policy.objects.none())
     if request.method == 'POST':
         company_working_policy = Working_Days_Policy.objects.get(enterprise=request.user.company)
         working_deductions_formset = Working_Hours_Deduction_Form_Inline(request.POST)
@@ -1095,6 +1104,7 @@ def create_working_hours_deductions_view(request):
         'working_deductions_formset': working_deductions_formset,
     }
     return render(request, 'working-hrs-deductions-create.html', context=context)
+
 
 #
 # @login_required(login_url='home:user-login')
@@ -1123,3 +1133,89 @@ def create_working_hours_deductions_view(request):
 #         'working_deductions_formset': working_deductions_formset,
 #     }
 #     return render(request, 'working-hrs-deductions-create.html', context=context)
+
+def link_company_initial_data(company_id, model):
+    from defenition import models
+
+    dynamic_model = getattr(models, model)
+
+    all_data = dynamic_model.objects.filter(enterprise_id=1).values()
+    for record in all_data:
+        record.pop("enterprise_id")
+        record.pop("id")
+        record.pop("creation_date")
+        record.pop("created_by")
+        record.pop("last_update_by")
+        record.pop("last_update_date")
+        record.pop("start_date")
+        record.pop("end_date")
+
+        new_record = dynamic_model(**record, enterprise_id=company_id)
+        print(new_record)
+        new_record.save()
+
+
+def load_lookups(user, company_id):
+    all_lookups = LookupType.objects.filter(enterprise_id=1).values()
+    # Check if company already has the lookups
+    for item in all_lookups:
+        myid = item.pop('id')
+        new_item = LookupType(**item)
+        new_item.enterprise_id = company_id
+        new_item.start_date = date.today()
+        new_item.end_date = None
+        new_item.created_by = user
+        new_item.last_update_by = None
+        new_item.save()
+        print("&&&&&&&&&&&&&&&&&&&&&&&")
+        related_details = LookupDet.objects.filter(lookup_type_fk=myid).values()
+        for record in related_details:
+            new_record = LookupDet(**record)
+            new_record.id = None
+            new_record.lookup_type_fk = new_item
+            new_record.start_date = date.today()
+            new_record.end_date = None
+            new_record.last_update_by = None
+            new_record.save()
+
+
+def load_tax_rules(user, company_id):
+    all_taxes = TaxRule.objects.filter(enterprise_id=1).values()
+    for item in all_taxes:
+        myid = item.pop('id')
+        new_item = TaxRule(**item)
+        new_item.enterprise_id = company_id
+        new_item.start_date = date.today()
+        new_item.end_date = None
+        new_item.last_update_by = None
+        new_item.created_by = user
+        new_item.save()
+        related_details = Tax_Sections.objects.filter(tax_rule_id=myid).values()
+        for record in related_details:
+            record.pop('id')
+            new_record = Tax_Sections(**record)
+            new_record.tax_rule_id = new_item
+            new_record.start_date = date.today()
+            new_record.end_date = None
+            new_record.last_update_by = None
+            new_record.save()
+
+
+def load_modules(request):
+    company_form = CompanySetupForm()
+    if request.method == "POST":
+        company_form = CompanySetupForm(request.POST)
+        if company_form.is_valid():
+            company_id = company_form.cleaned_data['company']
+            module = company_form.cleaned_data['modules']
+            if "1" in module:
+                load_lookups(request.user, company_id)
+            if "2" in module:
+                load_tax_rules(request.user, company_id)
+            messages.success(request, "Modules uploaded Successfully")
+        else:
+            messages.error(request, "Modules failed to upload")
+
+    context = {"company_form": company_form}
+
+    return render(request, 'setup_new_company.html', context=context)
