@@ -16,26 +16,21 @@
   <form method="post">
     {% csrf_token %}
     <div class="row">
-      <div class="col-md-4">
-        <div class="gap-10 peers push-right">
-          <div class="peer">
-            <button type="submit" class="btn cur-p btn-primary">{% trans "Save" %}</button>
-          </div>
-            <div class="mT-30">
+      <div class="col-md-12">
+
+            <div class="mT-1 bgc-white p-20 bd">
                 <div class="form-row">
-                  <div class="form-group col-md-6">
-                    <label>Choose a Company</label>
-                            {{ company_form.company}}
-                  </div>
-                </div>
-                <div class="form-row">
-                  <div class="form-group col-md-6">
-                    <label>Select one or more Modules</label>
+                  <div class="form-group col-md-12">
+                      <label>Select one or more Modules to link with your company <span> <em>{{request.user.company}}</em></span></label>
                        {{ company_form.modules}}
                   </div>
                 </div>
-        </div>
       </div>
+                <div class="gap-10 peers push-left">
+          <div class="peer">
+            <button type="submit" class="btn cur-p btn-primary">{% trans "Save" %}</button>
+          </div>
+        </div>
     </div>
     </div>
   </form>

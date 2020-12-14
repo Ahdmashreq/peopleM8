@@ -228,5 +228,5 @@ YearlyHolidayInline = forms.modelformset_factory(YearlyHoliday, form=YearlyHolid
 class CompanySetupForm(forms.Form):
     COMPANY_CHOICES = [(enterprise.id, enterprise.name) for enterprise in Enterprise.objects.all()]
     MODULE_CHOICES = [("1", "Look Ups"), ("2", "Tax Rules")]
-    company = forms.ChoiceField(choices=COMPANY_CHOICES, label="", initial='1', widget=forms.Select(), required=True)
+    #company = forms.ChoiceField(choices=COMPANY_CHOICES, label="", initial='1', widget=forms.Select(), required=True)
     modules = forms.MultipleChoiceField(choices=MODULE_CHOICES, widget=forms.CheckboxSelectMultiple())

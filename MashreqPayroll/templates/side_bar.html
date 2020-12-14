@@ -33,7 +33,9 @@
       <ul class="dropdown-menu">
         <li><a class="sidebar-link" href="{% url 'company:list-company-information' %}">{% trans 'Enterprise'%}</a></li>
         <li><a class="sidebar-link" href="{% url 'balanc_definition:list-cost-center' %}">{% trans 'Cost Center'%}</a></li>
+        {% if request.user.is_superuser %}
         <li><a class="sidebar-link" href="{% url 'company:setup_company' %}">{% trans 'Upload Modules'%}</a></li>
+        {% endif %}
         <li class="nav-item dropdown">
           <a href="javascript:void(0);">
           <span>{% trans 'Enterprise structure'%}</span>

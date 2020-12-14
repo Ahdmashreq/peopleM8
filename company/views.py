@@ -1155,9 +1155,21 @@ def link_company_initial_data(company_id, model):
         new_record.save()
 
 
+# TODO: can we make a general function for module upload ?
 def load_lookups(user, company_id):
+    """
+        Copy the records from lookupType linked to the general company and create new ones for the requested company
+        including the related model LookupDet
+
+        :Params:
+         "user": the user requesting the view
+         "company_id" : the id of the company where the link is needed
+
+    """
+    # TODO: enterprise_id needs to be configurable
+    # Get all look_ups related to the general company
     all_lookups = LookupType.objects.filter(enterprise_id=1).values()
-    # Check if company already has the lookups
+    # TODO: Check if company already has the lookups
     for item in all_lookups:
         myid = item.pop('id')
         new_item = LookupType(**item)
@@ -1167,7 +1179,6 @@ def load_lookups(user, company_id):
         new_item.created_by = user
         new_item.last_update_by = None
         new_item.save()
-        print("&&&&&&&&&&&&&&&&&&&&&&&")
         related_details = LookupDet.objects.filter(lookup_type_fk=myid).values()
         for record in related_details:
             new_record = LookupDet(**record)
@@ -1180,7 +1191,19 @@ def load_lookups(user, company_id):
 
 
 def load_tax_rules(user, company_id):
+    """
+        Copy the records from Taxrules linked to the general company and create new ones for the requested company
+        including the related model Tax_Sections
+
+        :Params:
+         "user": the user requesting the view
+         "company_id" : the id of the company where the link is needed
+
+        """
+    # TODO: enterprise_id needs to be configurable
     all_taxes = TaxRule.objects.filter(enterprise_id=1).values()
+    # TODO: Check if company already has the tax rules
+
     for item in all_taxes:
         myid = item.pop('id')
         new_item = TaxRule(**item)
@@ -1202,11 +1225,26 @@ def load_tax_rules(user, company_id):
 
 
 def load_modules(request):
+    """
+     Link a module to a company :model:`Defenition.LookupType,Defenition.LookDet,'Defenition.TaxRules`.
+
+     **Context**
+
+     ``company_form``
+         An instance of :form:`Company.forms.CompanySetupForm`.
+     ``title``
+         A string representing the title of the rendered HTML page
+
+     **Template:**
+
+     :template:`company/templates/setup_new_company.html`
+
+     """
     company_form = CompanySetupForm()
     if request.method == "POST":
         company_form = CompanySetupForm(request.POST)
         if company_form.is_valid():
-            company_id = company_form.cleaned_data['company']
+            company_id = request.user.company.id
             module = company_form.cleaned_data['modules']
             if "1" in module:
                 load_lookups(request.user, company_id)
@@ -1216,6 +1254,6 @@ def load_modules(request):
         else:
             messages.error(request, "Modules failed to upload")
 
-    context = {"company_form": company_form}
+    context = {"company_form": company_form, "page_title": "Upload Modules"}
 
     return render(request, 'setup_new_company.html', context=context)
