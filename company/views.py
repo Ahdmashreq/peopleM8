@@ -1134,28 +1134,11 @@ def create_working_hours_deductions_view(request):
 #     }
 #     return render(request, 'working-hrs-deductions-create.html', context=context)
 
-def link_company_initial_data(company_id, model):
-    from defenition import models
-
-    dynamic_model = getattr(models, model)
-
-    all_data = dynamic_model.objects.filter(enterprise_id=1).values()
-    for record in all_data:
-        record.pop("enterprise_id")
-        record.pop("id")
-        record.pop("creation_date")
-        record.pop("created_by")
-        record.pop("last_update_by")
-        record.pop("last_update_date")
-        record.pop("start_date")
-        record.pop("end_date")
-
-        new_record = dynamic_model(**record, enterprise_id=company_id)
-        print(new_record)
-        new_record.save()
 
 
-# TODO: can we make a general function for module upload ?
+
+# TODO: can we make a general function for module upload ? that uses a general class like Module Loader
+
 def load_lookups(user, company_id):
     """
         Copy the records from lookupType linked to the general company and create new ones for the requested company
