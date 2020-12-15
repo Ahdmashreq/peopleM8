@@ -15,6 +15,7 @@ urlpatterns = [
         path('delete/<int:pk>/', views.deleteBusinessGroup, name='delete-enterprise'),
     ])),
     path('ajax/load-cities/', views.load_cities, name='ajax_load_cities'),
+    path('setup/', views.load_modules, name='setup_company'),
 
     path('assinment/', include([
         ######################### Department URLs ###################################

@@ -134,7 +134,7 @@ class WorkingDaysForm(forms.ModelForm):
     class Meta:
         model = Working_Days_Policy
         fields = '__all__'
-        exclude = common_items_to_execlude+('enterprise',)
+        exclude = common_items_to_execlude + ('enterprise',)
 
     def __init__(self, *args, **kwargs):
         super(WorkingDaysForm, self).__init__(*args, **kwargs)
@@ -170,14 +170,17 @@ class WorkingHoursDeductionForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_show_labels = False
 
-Working_Hours_Deduction_Form_Inline = forms.modelformset_factory(Working_Hours_Deductions_Policy, form=WorkingHoursDeductionForm, extra=1, can_delete=False)
+
+Working_Hours_Deduction_Form_Inline = forms.modelformset_factory(Working_Hours_Deductions_Policy,
+                                                                 form=WorkingHoursDeductionForm, extra=1,
+                                                                 can_delete=False)
 
 
 class YearForm(forms.ModelForm):
     class Meta:
         model = Year
         fields = '__all__'
-        exclude = common_items_to_execlude+('enterprise',)
+        exclude = common_items_to_execlude + ('enterprise',)
 
     def __init__(self, *args, **kwargs):
         super(YearForm, self).__init__(*args, **kwargs)
@@ -206,7 +209,7 @@ class YearlyHolidayForm(forms.ModelForm):
         super(YearlyHolidayForm, self).__init__(*args, **kwargs)
         self.fields['start_date'].widget.input_type = 'date'
         self.fields['end_date'].widget.input_type = 'date'
-        self.fields['year'].widget= forms.HiddenInput()
+        self.fields['year'].widget = forms.HiddenInput()
         for field in self.fields:
             if self.fields[field].widget.input_type == 'checkbox':
                 self.fields[field].widget.attrs['class'] = 'checkbox'
@@ -215,5 +218,15 @@ class YearlyHolidayForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_show_labels = False
 
+
 YearlyHolidayInline = forms.modelformset_factory(YearlyHoliday, form=YearlyHolidayForm, extra=1, can_delete=False)
+
+
 # YearlyHolidayInline = forms.inlineformset_factory(Year, YearlyHoliday, form=YearlyHolidayForm, extra=5, can_delete=False)
+
+
+class CompanySetupForm(forms.Form):
+    COMPANY_CHOICES = [(enterprise.id, enterprise.name) for enterprise in Enterprise.objects.all()]
+    MODULE_CHOICES = [("1", "Look Ups"), ("2", "Tax Rules")]
+    #company = forms.ChoiceField(choices=COMPANY_CHOICES, label="", initial='1', widget=forms.Select(), required=True)
+    modules = forms.MultipleChoiceField(choices=MODULE_CHOICES, widget=forms.CheckboxSelectMultiple())

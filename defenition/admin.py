@@ -71,18 +71,18 @@ class TaxRuleAdmin(admin.ModelAdmin):
         'round_down_to_nearest_10',
     )
 
-@admin.register(TaxSection)
-class TaxSectionAdmin(admin.ModelAdmin):
-    model = TaxSection
-    fields = (
-        'name',
-        'tax_rule_id',
-        'salary_from',
-        'salary_to',
-        'tax_percentage',
-        'tax_discount_percentage',
-        'section_execution_sequence',
-    )
+# @admin.register(TaxSection)
+# class TaxSectionAdmin(admin.ModelAdmin):
+#     model = TaxSection
+#     fields = (
+#         'name',
+#         'tax_rule_id',
+#         'salary_from',
+#         'salary_to',
+#         'tax_percentage',
+#         'tax_discount_percentage',
+#         'section_execution_sequence',
+#     )
 
 @admin.register(Tax_Sections)
 class NewTaxAdmin(admin.ModelAdmin):
