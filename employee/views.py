@@ -109,7 +109,7 @@ def copy_element_values():
 
 @login_required(login_url='home:user-login')
 def listEmployeeView(request):
-    emp_list = Employee.objects.filter(enterprise = request.user.company)
+    emp_list = Employee.objects.filter(enterprise = request.user.company).filter((Q(end_date__gt=date.today())|Q(end_date__isnull=True)))
     emp_job_roll_list = JobRoll.objects.filter(emp_id__enterprise = request.user.company, end_date__isnull=True)
     myContext = {
         "page_title": _("List employees"),
@@ -121,7 +121,7 @@ def listEmployeeView(request):
 
 @login_required(login_url='home:user-login')
 def listEmployeeCardView(request):
-    emp_list = Employee.objects.filter(enterprise = request.user.company)
+    emp_list = Employee.objects.filter(enterprise = request.user.company).filter((Q(end_date__gt=date.today())|Q(end_date__isnull=True)))
     myContext = {
         "page_title": _("List employees"),
         "emp_list": emp_list,
