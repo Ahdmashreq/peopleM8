@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'service',
     'import_export',
     'mptt',
+    'notifications',
 ]
 
 
@@ -233,3 +234,4 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = "dina.abdullah.intern@mashreqarabia.com"
 EMAIL_HOST_PASSWORD = "M@shreqxrqo062!"
 EMAIL_USE_TLS = True
+DJANGO_NOTIFICATIONS_CONFIG = { 'USE_JSONFIELD': True}

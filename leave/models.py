@@ -1,15 +1,19 @@
 from django.conf import settings
 from django.db import models
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
+from notifications.signals import notify
+
 from employee.models import JobRoll, Employee
 from datetime import date
 from django.utils.translation import ugettext_lazy as _
 from .manager import LeaveManager
 from company.models import Enterprise
 
+
 class LeaveMaster(models.Model):
-    enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name= 'leave_master_bank_master', verbose_name=_('Enterprise Name'))
+    enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name='leave_master_bank_master',
+                                   verbose_name=_('Enterprise Name'))
     type = models.CharField(max_length=200, verbose_name=_('Leave Type Name'))
     leave_value = models.FloatField(default=0, verbose_name=_('Leave Value'))
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
@@ -22,9 +26,11 @@ class LeaveMaster(models.Model):
     def __str__(self):
         return self.type
 
+
 def path_and_rename(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
     return 'user_{0}/{1}'.format(instance.user, filename)
+
 
 class Leave(models.Model):
     leave_type_list = [("A", _("Annual Leave")),
@@ -113,6 +119,7 @@ class Leave(models.Model):
         def is_rejected(self):
             return self.status == 'rejected'
 
+
 # @receiver(pre_save, sender=Leave)
 # def update_employee_leave_balance(sender, instance, *args, **kwargs):
 #     required_employee = Employee.objects.get(user=instance.user)
@@ -132,22 +139,31 @@ class Leave(models.Model):
 
 class Employee_Leave_balance(models.Model):
     employee = models.OneToOneField(Employee, on_delete=models.CASCADE)
-    casual = models.PositiveSmallIntegerField()     # رصيد الاجازات الاعتيادية
-    usual = models.PositiveSmallIntegerField()      # رصيد الاجازات العارضة
-    carried_forward = models.PositiveSmallIntegerField()        # رصيد الاجازات المرحلة
-    absence = models.PositiveSmallIntegerField()        # عدد ايايم الغياب
+    casual = models.PositiveSmallIntegerField()  # رصيد الاجازات الاعتيادية
+    usual = models.PositiveSmallIntegerField()  # رصيد الاجازات العارضة
+    carried_forward = models.PositiveSmallIntegerField()  # رصيد الاجازات المرحلة
+    absence = models.PositiveSmallIntegerField()  # عدد ايايم الغياب
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                                    blank=True, null=True, related_name='Leave_balance_created_by')
     creation_date = models.DateField(auto_now_add=True)
     last_update_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True, related_name='Leave_balance_last_updated_by')
-    last_update_date = models.DateField(auto_now=True, blank=True, null=True,)
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True,
+        related_name='Leave_balance_last_updated_by')
+    last_update_date = models.DateField(auto_now=True, blank=True, null=True, )
 
     @property
     def total_balance(self):
-        total_balance = self.casual+self.usual+self.carried_forward
+        total_balance = self.casual + self.usual + self.carried_forward
         return total_balance
-
 
     def __str__(self):
         return self.employee.emp_name
+
+
+@receiver(post_save, sender=Leave)
+def my_handler(sender, instance, created, **kwargs):
+    if created:
+        data = {"actions": [{"title": "View request"}]}
+        notify.send(sender=instance.user,
+                    recipient=instance.user.employee_user.all()[0].job_roll_emp_id.all()[0].manager.user,
+                    verb='requested', target=instance,data=data)
