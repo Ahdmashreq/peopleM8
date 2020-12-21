@@ -173,7 +173,7 @@ def purchase_request_create(request):
                     item.created_by = request.user
                     item.last_update_by = request.user
                     item.save()
-            NotificationHelper(request_employee,employee_job.manager,purchase_obj).send_notification()
+           # NotificationHelper(request_employee,employee_job.manager,purchase_obj).send_notification()
             messages.success(request, 'Purchase Request was created successfully')
         else:
             messages.error(request,'Purchase Request was not created')

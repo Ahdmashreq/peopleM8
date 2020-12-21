@@ -163,7 +163,7 @@ class Employee_Leave_balance(models.Model):
 @receiver(post_save, sender=Leave)
 def my_handler(sender, instance, created, **kwargs):
     if created:
-        data = {"actions": [{"title": "View request"}]}
+        data = {"title": "Leave request", "status": instance.status}
         notify.send(sender=instance.user,
                     recipient=instance.user.employee_user.all()[0].job_roll_emp_id.all()[0].manager.user,
-                    verb='requested', target=instance,data=data)
+                    verb='requested', action_object=instance, level='action', data=data)

@@ -117,7 +117,10 @@ def admin_home_page(request):
         pass
     else:
         # employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
-        return render(request, 'index.html', context=None)
+        my_notifications = request.user.notifications.all()
+        context = {'my_notifications': my_notifications, }
+
+        return render(request, 'index.html', context=context)
 
 
 @login_required(login_url='home:user-login')
@@ -174,11 +177,11 @@ def addUserView(request):
             user_obj.company = request.user.company
             user_obj.save()
             user_company = UserCompany(
-                                    user = user_obj,
-                                    company = request.user.company,
-                                    active = True,
-                                    created_by = request.user,
-                                    creation_date = date.today(),
+                user=user_obj,
+                company=request.user.company,
+                active=True,
+                created_by=request.user,
+                creation_date=date.today(),
             )
             user_company.save()
             user_lang = to_locale(get_language())
