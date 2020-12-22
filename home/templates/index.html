@@ -126,7 +126,7 @@
                 {% for notice in my_notifications %}
                    <tr>
                       <th scope="row">{{ notice.data.data.title }}</th>
-                      <td>{{ notice.actor}} {{notice.verb}} {{notice.action_object }}</td>
+                      <td>{{ notice.description}}</td>
                       <td>{{ notice.level }}</td>
                       <td><span class="badge bgc-red-50 c-red-700 p-10 lh-0 tt-c badge-pill">{{ notice.timestamp }}</span></td>
                       <td><span class="badge bgc-green-50 c-green-700 p-10 lh-0 tt-c badge-pill">{{ notice.data.data.status }}</span></td>

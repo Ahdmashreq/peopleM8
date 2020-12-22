@@ -15,7 +15,6 @@ from datetime import datetime
 from django.utils.translation import ugettext_lazy as _
 
 
-
 def email_sender(subject, message, from_email, recipient_list, html_message):
     try:
         send_mail(subject=subject,
@@ -41,7 +40,7 @@ def message_composer(request, html_template, instance_name, result):
         {
             'leave_id': instance_name.id,
             'result': result,
-            'requestor':employee,
+            'requestor': employee,
             'user_name': instance_name.user,
             'team_leader': reviewed_by,
             'subject': 'Mashreq Arabia approval Form',
@@ -73,7 +72,8 @@ def add_leave(request):
                         NotificationHelper(employee, employee_job.manager, leave).send_notification()
                     requestor_email = employee.email
                     team_leader_email = employee_job.manager.email
-                    html_message = message_composer(request, html_template='leave_mail.html', instance_name=leave, result=None)
+                    html_message = message_composer(request, html_template='leave_mail.html', instance_name=leave,
+                                                    result=None)
                     email_sender('Applying for a leave', 'Applying for a leave', requestor_email,
                                  team_leader_email, html_message)
 
@@ -101,13 +101,15 @@ def eligible_user_leave(user):
             continue
     return True
 
+
 def have_leave_balance(user):
     required_user = Employee.objects.get(user=user)
     employee_leave_balance = Employee_Leave_balance.objects.get(employee=required_user)
     total_balance = employee_leave_balance.total_balance
-    if not total_balance >0:
+    if not total_balance > 0:
         return False
     return True
+
 
 def valid_leave(user, req_startdate, req_enddate):
     leaves = Leave.objects.filter(user=user, status='Approved').order_by('-id')
@@ -116,6 +118,7 @@ def valid_leave(user, req_startdate, req_enddate):
                 req_enddate >= leave.startdate >= req_startdate:
             return False
     return True
+
 
 # #############################################################################
 
@@ -176,14 +179,15 @@ def leave_approve(request, leave_id):
     startdate = instance.startdate
     enddate = instance.enddate
     dates = (enddate - startdate)
-    tottal_days =  dates.days + 1
+    tottal_days = dates.days + 1
     required_user = Employee.objects.get(user=instance.user)
     employee_leave_balance = Employee_Leave_balance.objects.get(employee=required_user)
-    employee_leave_balance.casual = employee_leave_balance.casual- tottal_days
+    employee_leave_balance.casual = employee_leave_balance.casual - tottal_days
     employee_leave_balance.save(update_fields=['casual'])
     approved_by_email = Employee.objects.get(user=request.user).email
     employee_email = Employee.objects.get(user=instance.user).email
-    html_message = message_composer(request, html_template='reviewed_leave_mail.html', instance_name=instance, result='approved')
+    html_message = message_composer(request, html_template='reviewed_leave_mail.html', instance_name=instance,
+                                    result='approved')
     email_sender('Submitted leave reviewed', 'Submitted leave reviewed', approved_by_email, employee_email,
                  html_message)
     return redirect('leave:list_leave')
@@ -197,7 +201,8 @@ def leave_unapprove(request, leave_id):
     instance.save(update_fields=['status', 'is_approved'])
     approved_by_email = Employee.objects.get(user=request.user).email
     employee_email = Employee.objects.get(user=instance.user).email
-    html_message = message_composer(request, html_template='reviewed_leave_mail.html', instance_name=instance, result='rejected')
+    html_message = message_composer(request, html_template='reviewed_leave_mail.html', instance_name=instance,
+                                    result='rejected')
     email_sender('Submitted leave reviewed', 'Submitted leave reviewed', approved_by_email, employee_email,
                  html_message)
     return redirect('leave:list_leave')
@@ -206,7 +211,7 @@ def leave_unapprove(request, leave_id):
 # #############################################################################
 @login_required(login_url='home:user-login')
 def list_leave_master(request):
-    leave_master_list = LeaveMaster.objects.filter(enterprise = request.user.company)
+    leave_master_list = LeaveMaster.objects.filter(enterprise=request.user.company)
     return render(request, 'list_leave_master.html', {'leave_master_list': leave_master_list})
 
 
@@ -271,7 +276,7 @@ class Elmplyees_Leave_Balance(ListView):
 def create_employee_leave_balance(request):
     leave_balance_form = Leave_Balance_Form(request.user)
     if request.method == 'POST':
-        leave_balance_form = Leave_Balance_Form(request.user,request.POST)
+        leave_balance_form = Leave_Balance_Form(request.user, request.POST)
         if leave_balance_form.is_valid():
             balance_obj = leave_balance_form.save(commit=False)
             balance_obj.created_by = request.user
@@ -282,7 +287,7 @@ def create_employee_leave_balance(request):
         else:
             messages.error(request, leave_balance_form.errors)
     leave_balance_context = {
-                    'leave_balance_form':leave_balance_form,
+        'leave_balance_form': leave_balance_form,
     }
     return render(request, 'leave_balance_create.html', leave_balance_context)
 
@@ -292,7 +297,7 @@ def view_employee_leaves_list(request, employee_id):
     employee = Employee.objects.get(id=employee_id)
     list_leaves = Leave.objects.filter(user=employee.user)
     leave_balance_context = {
-                    'list_leaves':list_leaves,
-                    'employee':employee,
+        'list_leaves': list_leaves,
+        'employee': employee,
     }
     return render(request, 'list_leave_by_employee.html', leave_balance_context)

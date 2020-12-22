@@ -1,6 +1,7 @@
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.db.models.signals import pre_save, post_save
+from django.db.models.signals import pre_save, post_save, post_init
 from django.dispatch import receiver
 from notifications.signals import notify
 
@@ -66,58 +67,58 @@ class Leave(models.Model):
     def __str__(self):
         return ('{0} - {1}'.format(self.leavetype, self.user))
 
-        @property
-        def pretty_leave(self):
-            leave = self.leavetype
-            user = self.user
-            employee = user.employee_set.first().get_full_name
-            return ('{0} - {1}'.format(employee, leave))
+    @property
+    def pretty_leave(self):
+        leave = self.leavetype
+        user = self.user
+        employee = user.employee_set.first().get_full_name
+        return ('{0} - {1}'.format(employee, leave))
 
-        @property
-        def leave_days(self):
-            days_count = ''
-            startdate = self.startdate
-            enddate = self.enddate
-            if startdate > enddate:
-                return
-            dates = (enddate - startdate)
-            return dates.days + 1
+    @property
+    def leave_days(self):
+        days_count = ''
+        startdate = self.startdate
+        enddate = self.enddate
+        if startdate > enddate:
+            return
+        dates = (enddate - startdate)
+        return dates.days + 1
 
-        @property
-        def leave_approved(self):
-            return self.is_approved == True
+    @property
+    def leave_approved(self):
+        return self.is_approved == True
 
-        @property
-        def approve_leave(self):
-            if not self.is_approved:
-                self.is_approved = True
-                self.status = 'approved'
-                self.save()
+    @property
+    def approve_leave(self):
+        if not self.is_approved:
+            self.is_approved = True
+            self.status = 'approved'
+            self.save()
 
-        @property
-        def unapprove_leave(self):
-            if self.is_approved:
-                self.is_approved = False
-                self.status = 'pending'
-                self.save()
+    @property
+    def unapprove_leave(self):
+        if self.is_approved:
+            self.is_approved = False
+            self.status = 'pending'
+            self.save()
 
-        @property
-        def leaves_cancel(self):
-            if self.is_approved or not self.is_approved:
-                self.is_approved = False
-                self.status = 'cancelled'
-                self.save()
+    @property
+    def leaves_cancel(self):
+        if self.is_approved or not self.is_approved:
+            self.is_approved = False
+            self.status = 'cancelled'
+            self.save()
 
-        @property
-        def reject_leave(self):
-            if self.is_approved or not self.is_approved:
-                self.is_approved = False
-                self.status = 'rejected'
-                self.save()
+    @property
+    def reject_leave(self):
+        if self.is_approved or not self.is_approved:
+            self.is_approved = False
+            self.status = 'rejected'
+            self.save()
 
-        @property
-        def is_rejected(self):
-            return self.status == 'rejected'
+    @property
+    def is_rejected(self):
+        return self.status == 'rejected'
 
 
 # @receiver(pre_save, sender=Leave)
@@ -161,9 +162,30 @@ class Employee_Leave_balance(models.Model):
 
 
 @receiver(post_save, sender=Leave)
-def my_handler(sender, instance, created, **kwargs):
+def leave_creation(sender, instance, created, update_fields, **kwargs):
     if created:
+        requestor_emp = instance.user.employee_user.all()[0]
         data = {"title": "Leave request", "status": instance.status}
         notify.send(sender=instance.user,
                     recipient=instance.user.employee_user.all()[0].job_roll_emp_id.all()[0].manager.user,
-                    verb='requested', action_object=instance, level='action', data=data)
+                    verb='requested', description="{employee} requested a leave".format(employee=requestor_emp),
+                    action_object=instance, level='action', data=data)
+    elif 'status' in update_fields:
+        manager_emp = instance.user.employee_user.all()[0].job_roll_emp_id.all()[0].manager
+        data = {"title": "Leave request", "status": instance.status}
+        notify.send(sender=manager_emp.user,
+                    recipient=instance.user,
+                    verb=instance.status,
+                    description="{employee} {verb} your {leave}".format(employee=manager_emp, verb=instance.status,
+                                                                        leave=instance.leavetype.type),
+                    action_object=instance, level='info', data=data)
+        content_type = ContentType.objects.get_for_model(Leave)
+
+        old_notification = instance.user.employee_user.all()[0].job_roll_emp_id.all()[
+            0].manager.user.notifications.filter(action_object_content_type=content_type,
+                                                 action_object_object_id=instance.id)
+        if len(old_notification) >0:
+            old_notification[0].data['data']['status'] = instance.status
+            old_notification[0].save()
+
+

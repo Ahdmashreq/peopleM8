@@ -103,21 +103,31 @@ class Purchase_Item(models.Model):
 
 
 @receiver(post_save, sender=Bussiness_Travel)
-def business_request_handler(sender, instance, created, **kwargs):
+def business_request_handler(sender, instance, created,update_fields, **kwargs):
     if created:
         data =  {"title": "Business Travel Request","status": instance.status }
         notify.send(sender=instance.emp.user,
                     recipient=instance.manager.user,
                     verb='requested', action_object=instance,level='action', data=data)
+    elif 'status' in update_fields:
+        data = {"title": "Business Travel Request", "status": instance.status}
+        notify.send(sender=instance.manager.user,
+                    recipient=instance.emp.user,
+                    verb=instance.status, action_object=instance, level='info', data=data)
 
 
 @receiver(post_save, sender=Purchase_Request)
-def purchase_request_handler(sender, instance, created, **kwargs):
+def purchase_request_handler(sender, instance, created,update_fields, **kwargs):
     if created:
         data = {"title": "Purchase Request","status": instance.status }
         notify.send(sender=instance.ordered_by.user,
                     recipient=instance.ordered_by.user.employee_user.all()[0].job_roll_emp_id.all()[0].manager.user,
                     verb='created a', action_object=instance, level='action',data=data)
+    elif 'status' in update_fields:
+        data = {"title": "Purchase Request", "status": instance.status}
+        notify.send(sender=instance.ordered_by.user.employee_user.all()[0].job_roll_emp_id.all()[0].manager.user,
+                    recipient=instance.ordered_by.user,
+                    verb=instance.status, action_object=instance, level='info', data=data)
 
 
 
