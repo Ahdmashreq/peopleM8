@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -103,32 +104,64 @@ class Purchase_Item(models.Model):
 
 
 @receiver(post_save, sender=Bussiness_Travel)
-def business_request_handler(sender, instance, created,update_fields, **kwargs):
+def business_request_handler(sender, instance, created, update_fields, **kwargs):
     if created:
-        data =  {"title": "Business Travel Request","status": instance.status }
-        notify.send(sender=instance.emp.user,
+        requestor_emp = instance.emp
+        data = {"title": "Business Travel Request", "status": instance.status,"href": "service:services_edit"}
+        notify.send(sender=requestor_emp.user,
                     recipient=instance.manager.user,
-                    verb='requested', action_object=instance,level='action', data=data)
+                    verb='requested', action_object=instance,
+                    description="{employee} requested a Business Travel".format(employee=requestor_emp), level='action',
+                    data=data)
     elif 'status' in update_fields:
         data = {"title": "Business Travel Request", "status": instance.status}
-        notify.send(sender=instance.manager.user,
+        requestor_emp = instance.manager
+        notify.send(sender=requestor_emp.user,
                     recipient=instance.emp.user,
-                    verb=instance.status, action_object=instance, level='info', data=data)
+                    verb=instance.status, action_object=instance,
+                    description="{employee} {status} your Business Travel request".format(employee=requestor_emp,
+                                                                                          status=instance.status),
+                    level='info',
+                    data=data)
+        content_type = ContentType.objects.get_for_model(Bussiness_Travel)
+
+        old_notification = requestor_emp.user.notifications.filter(action_object_content_type=content_type,
+                                                                   action_object_object_id=instance.id)
+        if len(old_notification) > 0:
+            old_notification[0].data['data']['status'] = instance.status
+            old_notification[0].data['data']['href'] = ""
+            old_notification[0].unread = False
+
+            old_notification[0].save()
 
 
 @receiver(post_save, sender=Purchase_Request)
-def purchase_request_handler(sender, instance, created,update_fields, **kwargs):
+def purchase_request_handler(sender, instance, created, update_fields, **kwargs):
     if created:
-        data = {"title": "Purchase Request","status": instance.status }
-        notify.send(sender=instance.ordered_by.user,
+        requestor_emp = instance.ordered_by
+        data = {"title": "Purchase Request", "status": instance.status, "href": "service:purchase-request-update"}
+        notify.send(sender=requestor_emp.user,
                     recipient=instance.ordered_by.user.employee_user.all()[0].job_roll_emp_id.all()[0].manager.user,
-                    verb='created a', action_object=instance, level='action',data=data)
+                    verb='created a', action_object=instance,
+                    description="{employee} created a purchase request".format(employee=requestor_emp), level='action',
+                    data=data)
     elif 'status' in update_fields:
         data = {"title": "Purchase Request", "status": instance.status}
-        notify.send(sender=instance.ordered_by.user.employee_user.all()[0].job_roll_emp_id.all()[0].manager.user,
+        requestor_emp = instance.ordered_by.user.employee_user.all()[0].job_roll_emp_id.all()[0].manager
+
+        notify.send(sender=requestor_emp.user,
                     recipient=instance.ordered_by.user,
-                    verb=instance.status, action_object=instance, level='info', data=data)
+                    verb=instance.status, action_object=instance,
+                    description="{employee} has {status} your purchase request".format(employee=requestor_emp,
+                                                                                       status=instance.status),
+                    level='info', data=data)
 
+        content_type = ContentType.objects.get_for_model(Purchase_Request)
 
-
-
+        old_notification = requestor_emp.user.notifications.filter(action_object_content_type=content_type,
+                                                                   action_object_object_id=instance.id)
+        if len(old_notification) > 0:
+            old_notification[0].data['data']['status'] = instance.status
+            old_notification[0].data['data']['href'] = ""
+            old_notification[0].unread = False
+            old_notification[0].save()

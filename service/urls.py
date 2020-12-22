@@ -17,7 +17,7 @@ urlpatterns = [
 
                    path('purchase/list/', views.purchase_request_list, name='purchase-request-list'),
                    path('purchase/order/create/', views.purchase_request_create, name='purchase-request-create'),
-                   path('purchase/order/update/<int:pk>/', views.purchase_request_update, name='purchase-request-update'),
+                   path('purchase/order/update/<int:id>/', views.purchase_request_update, name='purchase-request-update'),
                    path('purchase/approve/<int:order_id>', views.purchase_request_approve, name='purchase-approve'),
                    path('purchase/unapprove/<int:order_id>', views.purchase_request_unapprove, name='purchase-unapprove'),
    ]

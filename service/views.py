@@ -186,8 +186,8 @@ def purchase_request_create(request):
     return render(request, 'create-purchase-order.html', purchaseContext)
 
 @login_required(login_url='home:user-login')
-def purchase_request_update(request, pk):
-    required_request = Purchase_Request.objects.get(pk=pk)
+def purchase_request_update(request, id):
+    required_request = Purchase_Request.objects.get(pk=id)
     purchase_form = PurchaseRequestForm(instance=required_request)
     purchase_items_form = Purchase_Item_formset(instance=required_request)
     employee = Employee.objects.get(user=request.user)
@@ -209,7 +209,7 @@ def purchase_request_update(request, pk):
     purchaseContext = {
                       'purchase_form':purchase_form,
                       'purchase_items_form':purchase_items_form,
-                      'order_id':pk
+                      'order_id':id
     }
     return render(request, 'edit_purchase_request.html', purchaseContext)
 

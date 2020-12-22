@@ -165,7 +165,8 @@ class Employee_Leave_balance(models.Model):
 def leave_creation(sender, instance, created, update_fields, **kwargs):
     if created:
         requestor_emp = instance.user.employee_user.all()[0]
-        data = {"title": "Leave request", "status": instance.status}
+        data = {"title": "Leave request", "status": instance.status,
+                "href": "leave:edit_leave"}
         notify.send(sender=instance.user,
                     recipient=instance.user.employee_user.all()[0].job_roll_emp_id.all()[0].manager.user,
                     verb='requested', description="{employee} requested a leave".format(employee=requestor_emp),
@@ -184,8 +185,8 @@ def leave_creation(sender, instance, created, update_fields, **kwargs):
         old_notification = instance.user.employee_user.all()[0].job_roll_emp_id.all()[
             0].manager.user.notifications.filter(action_object_content_type=content_type,
                                                  action_object_object_id=instance.id)
-        if len(old_notification) >0:
+        if len(old_notification) > 0:
             old_notification[0].data['data']['status'] = instance.status
+            old_notification[0].data['data']['href'] = ""
+            old_notification[0].unread = False
             old_notification[0].save()
-
-

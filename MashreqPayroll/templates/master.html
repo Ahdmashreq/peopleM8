@@ -3,6 +3,7 @@
 {% load staticfiles %}
 {% load i18n %}
 {% load l10n %}
+{% load tz %}
 {% get_current_language as LANGUAGE_CODE %}
 {% get_current_language_bidi as LANGUAGE_BIDI %}
 {% load notifications_tags %}
@@ -79,38 +80,26 @@
   function list_notification_list(data) {
     var menus = document.getElementsByClassName(notify_menu_class);
     var mymenu = document.getElementsByClassName('mymenu');
-    console.log(mymenu[0])
     if (menus) {
       // Create the text node for anchor element.
 
 
-     mymenu[0].href = notify_mark_all_unread_url;
-      mymenu[0].innerHTML ="Mark all as read";
-      mymenu[0].classList.add("peers","fxw-nw","td-n", "p-3", "bdB", "c-grey-800", "cH-blue", "bgcH-grey-100");
-
+     // mymenu[0].href = notify_mark_all_unread_url;
+      // mymenu[0].innerHTML ="Mark all as read";
+     // mymenu[0].classList.add("peers","fxw-nw","td-n", "p-3", "bdB", "c-grey-800", "cH-blue", "bgcH-grey-100");
+        if (data.unread_list.length == 0){
+        var messages = "No Notifications to Show"
+        }
+        else{
         var messages = data.unread_list.map(function (item) {
               console.log(item)
 
             var message = "";
-            if(typeof item.actor !== 'undefined'){
-                message = item.actor;
-            }
-            if(typeof item.verb !== 'undefined'){
-                message = message + " " + item.verb;
-            }
-            if(typeof item.target !== 'undefined'){
-                message = message + " " + item.target ;
-
-            }
-             if(typeof item.action_object !== 'undefined'){
-                message = message + " " + item.action_object ;
-
-            }
-
+            message=item.description
 
             return '<li><a href="#" class="peers fxw-nw td-n p-20 bdB c-grey-800 cH-blue bgcH-grey-100">' + message + '</a></li>';
         }).join('')
-
+}
         for (var i = 0; i < menus.length; i++){
             menus[i].innerHTML = messages;
         }
