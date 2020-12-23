@@ -23,6 +23,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 ########################################Enterprise views###################################################################
 from defenition.models import TaxRule, Tax_Sections, LookupType, LookupDet
+from company.utils import DatabaseLoader
 
 
 def load_cities(request):
@@ -1135,10 +1136,6 @@ def create_working_hours_deductions_view(request):
 #     return render(request, 'working-hrs-deductions-create.html', context=context)
 
 
-
-
-# TODO: can we make a general function for module upload ? that uses a general class like Module Loader
-
 def load_lookups(user, company_id):
     """
         Copy the records from lookupType linked to the general company and create new ones for the requested company
@@ -1149,10 +1146,8 @@ def load_lookups(user, company_id):
          "company_id" : the id of the company where the link is needed
 
     """
-    # TODO: enterprise_id needs to be configurable
     # Get all look_ups related to the general company
     all_lookups = LookupType.objects.filter(enterprise_id=1).values()
-    # TODO: Check if company already has the lookups
     for item in all_lookups:
         myid = item.pop('id')
         new_item = LookupType(**item)
@@ -1183,10 +1178,7 @@ def load_tax_rules(user, company_id):
          "company_id" : the id of the company where the link is needed
 
         """
-    # TODO: enterprise_id needs to be configurable
     all_taxes = TaxRule.objects.filter(enterprise_id=1).values()
-    # TODO: Check if company already has the tax rules
-
     for item in all_taxes:
         myid = item.pop('id')
         new_item = TaxRule(**item)
@@ -1223,16 +1215,24 @@ def load_modules(request):
      :template:`company/templates/setup_new_company.html`
 
      """
+
     company_form = CompanySetupForm()
     if request.method == "POST":
         company_form = CompanySetupForm(request.POST)
         if company_form.is_valid():
             company_id = request.user.company.id
             module = company_form.cleaned_data['modules']
+            # TODO: enterprise_id to copy from needs to be configurable
+            # TODO: Check if company already has the module
+
             if "1" in module:
-                load_lookups(request.user, company_id)
+                loader = DatabaseLoader('LookupType', 1, company_id, 'enterprise_id')
+                loader.duplicate_data()
+                # load_lookups(request.user, company_id)
             if "2" in module:
-                load_tax_rules(request.user, company_id)
+                loader = DatabaseLoader('TaxRule', 1, company_id, 'enterprise_id')
+                loader.duplicate_data()
+                # load_tax_rules(request.user, company_id)
             messages.success(request, "Modules uploaded Successfully")
         else:
             messages.error(request, "Modules failed to upload")
