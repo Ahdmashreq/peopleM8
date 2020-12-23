@@ -1,5 +1,7 @@
 import os
 from django.shortcuts import render, redirect
+from django.urls import reverse
+
 from employee.models import JobRoll, Employee
 from employee.notification_helper import NotificationHelper
 from leave.models import LeaveMaster, Leave, Employee_Leave_balance
@@ -155,6 +157,7 @@ def delete_leave_view(request, id):
 def edit_leave(request, id):
     instance = get_object_or_404(Leave, id=id)
     employee = Employee.objects.get(user=instance.user)
+    home = False  # a variable indicating whether the request is from homepage or other link
     if request.method == "POST":
         leave_form = FormLeave(data=request.POST, form_type='respond', instance=instance)
         if leave_form.is_valid():
@@ -167,11 +170,18 @@ def edit_leave(request, id):
             print(leave_form.errors)
     else:  # http request
         leave_form = FormLeave(form_type='respond', instance=instance)
-    return render(request, 'edit-leave.html', {'leave_form': leave_form, 'leave_id': id, 'employee': employee})
+        home = True  # only person who will approve could see the leave after its creation,and this is only avalaible
+        # from homepage
+    return render(request, 'edit-leave.html',
+                  context={'leave_form': leave_form, 'leave_id': id, 'employee': employee, 'home': home, })
 
 
 @login_required(login_url='home:user-login')
-def leave_approve(request, leave_id):
+def leave_approve(request, leave_id, redirect_to):
+    """
+     :params:
+         redirect_to : a string representing the redirection link name ex:'home:homepage'
+     """
     instance = get_object_or_404(Leave, id=leave_id)
     instance.status = 'Approved'
     instance.is_approved = True
@@ -190,11 +200,15 @@ def leave_approve(request, leave_id):
                                     result='approved')
     email_sender('Submitted leave reviewed', 'Submitted leave reviewed', approved_by_email, employee_email,
                  html_message)
-    return redirect('leave:list_leave')
+    return redirect(redirect_to)
 
 
 @login_required(login_url='home:user-login')
-def leave_unapprove(request, leave_id):
+def leave_unapprove(request, leave_id, redirect_to):
+    """
+    :params:
+        redirect_to : a string representing the redirection link name ex:'home:homepage'
+    """
     instance = get_object_or_404(Leave, id=leave_id)
     instance.status = 'Rejected'
     instance.is_approved = False
@@ -205,7 +219,7 @@ def leave_unapprove(request, leave_id):
                                     result='rejected')
     email_sender('Submitted leave reviewed', 'Submitted leave reviewed', approved_by_email, employee_email,
                  html_message)
-    return redirect('leave:list_leave')
+    return redirect(redirect_to)
 
 
 # #############################################################################

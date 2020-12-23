@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
@@ -105,61 +106,77 @@ class Purchase_Item(models.Model):
 
 @receiver(post_save, sender=Bussiness_Travel)
 def business_request_handler(sender, instance, created, update_fields, **kwargs):
-    if created:
-        requestor_emp = instance.emp
-        data = {"title": "Business Travel Request", "status": instance.status,"href": "service:services_edit"}
+    """
+           This function is a receiver, it listens to any save hit on Business_Travel model, and send
+           a notification to the manager that someone created a Business_Travel request,
+           or send a notification to the person who created the Travel, if his request is processed .
+    """
+    requestor_emp = instance.emp
+    manager_emp = instance.manager
+    if created:  # check if this is a new Business_travel instance
+        data = {"title": "Business Travel Request", "status": instance.status, "href": "service:services_edit"}
         notify.send(sender=requestor_emp.user,
-                    recipient=instance.manager.user,
+                    recipient=manager_emp.user,
                     verb='requested', action_object=instance,
                     description="{employee} requested a Business Travel".format(employee=requestor_emp), level='action',
                     data=data)
-    elif 'status' in update_fields:
+    elif 'status' in update_fields:  # check if Business travel status is updated
         data = {"title": "Business Travel Request", "status": instance.status}
-        requestor_emp = instance.manager
-        notify.send(sender=requestor_emp.user,
-                    recipient=instance.emp.user,
+
+        # send notification to the requestor employee that his request status is updated
+        notify.send(sender=manager_emp.user,
+                    recipient=requestor_emp.user,
                     verb=instance.status, action_object=instance,
-                    description="{employee} {status} your Business Travel request".format(employee=requestor_emp,
-                                                                                          status=instance.status),
+                    description="{employee} has {status} your Business Travel request".format(employee=manager_emp,
+                                                                                              status=instance.status),
                     level='info',
                     data=data)
-        content_type = ContentType.objects.get_for_model(Bussiness_Travel)
 
-        old_notification = requestor_emp.user.notifications.filter(action_object_content_type=content_type,
-                                                                   action_object_object_id=instance.id)
+        #  update the old notification for the manager with the new status
+        content_type = ContentType.objects.get_for_model(Bussiness_Travel)
+        old_notification = manager_emp.user.notifications.filter(action_object_content_type=content_type,
+                                                                 action_object_object_id=instance.id)
         if len(old_notification) > 0:
             old_notification[0].data['data']['status'] = instance.status
             old_notification[0].data['data']['href'] = ""
             old_notification[0].unread = False
-
             old_notification[0].save()
 
 
 @receiver(post_save, sender=Purchase_Request)
 def purchase_request_handler(sender, instance, created, update_fields, **kwargs):
-    if created:
-        requestor_emp = instance.ordered_by
+    """
+       This function is a receiver, it listens to any save hit on Purchase_Request model, and send
+       a notification to the manager that someone created a Purchase_Request request,
+       or send a notification to the person who created the request, if his request is processed .
+    """
+    requestor_emp = instance.ordered_by
+    manager_emp = instance.ordered_by.user.employee_user.all()[0].job_roll_emp_id.filter(
+        Q(end_date__gt=date.today()) | Q(end_date__isnull=True))[0].manager
+    if created:  # check if this is a new Purchase_Request instance
         data = {"title": "Purchase Request", "status": instance.status, "href": "service:purchase-request-update"}
-        notify.send(sender=requestor_emp.user,
-                    recipient=instance.ordered_by.user.employee_user.all()[0].job_roll_emp_id.all()[0].manager.user,
-                    verb='created a', action_object=instance,
-                    description="{employee} created a purchase request".format(employee=requestor_emp), level='action',
-                    data=data)
-    elif 'status' in update_fields:
-        data = {"title": "Purchase Request", "status": instance.status}
-        requestor_emp = instance.ordered_by.user.employee_user.all()[0].job_roll_emp_id.all()[0].manager
 
         notify.send(sender=requestor_emp.user,
+                    recipient=manager_emp.user,
+                    verb='created a', action_object=instance,
+                    description="{employee} has created a purchase request".format(employee=requestor_emp),
+                    level='action',
+                    data=data)
+    elif 'status' in update_fields:  # check if Purchase_Request status is updated
+        data = {"title": "Purchase Request", "status": instance.status}
+
+        # send notification to the requestor employee that his request status is updated
+        notify.send(sender=manager_emp.user,
                     recipient=instance.ordered_by.user,
                     verb=instance.status, action_object=instance,
-                    description="{employee} has {status} your purchase request".format(employee=requestor_emp,
+                    description="{employee} has {status} your purchase request".format(employee=manager_emp,
                                                                                        status=instance.status),
                     level='info', data=data)
 
+        #  update the old notification for the manager with the new status
         content_type = ContentType.objects.get_for_model(Purchase_Request)
-
-        old_notification = requestor_emp.user.notifications.filter(action_object_content_type=content_type,
-                                                                   action_object_object_id=instance.id)
+        old_notification = manager_emp.user.notifications.filter(action_object_content_type=content_type,
+                                                                 action_object_object_id=instance.id)
         if len(old_notification) > 0:
             old_notification[0].data['data']['status'] = instance.status
             old_notification[0].data['data']['href'] = ""

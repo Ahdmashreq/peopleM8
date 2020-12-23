@@ -96,6 +96,7 @@ def user_home_page(request):
 
     # List MY Bussiness_Travel/services
     bussiness_travel_service = Bussiness_Travel.objects.filter(Q(emp=employee) | Q(manager=employee), status='pending')
+    # get a list of all notifications related to the current user within the current month
     my_notifications = request.user.notifications.filter(timestamp__year=datetime.now().year,
                                                          timestamp__month=datetime.now().month)
 
@@ -120,6 +121,8 @@ def admin_home_page(request):
         pass
     else:
         # employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
+        # get a list of all notifications related to the current user within the current month
+
         my_notifications = request.user.notifications.filter(timestamp__year=datetime.now().year,
                                                              timestamp__month=datetime.now().month)
         context = {'my_notifications': my_notifications, }
