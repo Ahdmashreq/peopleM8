@@ -178,7 +178,7 @@ def leave_creation(sender, instance, created, update_fields, **kwargs):
                 "href": "leave:edit_leave"}
         notify.send(sender=instance.user,
                     recipient=manager_emp.user,
-                    verb='requested', description="{employee} requested {leave}".format(employee=requestor_emp,
+                    verb='requested', description="{employee} has requested {leave}".format(employee=requestor_emp,
                                                                                           leave=instance.leavetype.type),
                     action_object=instance, level='action', data=data)
     elif 'status' in update_fields:  # check if leave status is updated
@@ -188,7 +188,7 @@ def leave_creation(sender, instance, created, update_fields, **kwargs):
         notify.send(sender=manager_emp.user,
                     recipient=instance.user,
                     verb=instance.status,
-                    description="{employee} {verb} your {leave}".format(employee=manager_emp, verb=instance.status,
+                    description="{employee} has {verb} your {leave}".format(employee=manager_emp, verb=instance.status,
                                                                         leave=instance.leavetype.type),
                     action_object=instance, level='info', data=data)
 
