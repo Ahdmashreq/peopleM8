@@ -39,7 +39,7 @@ MarkupPy==1.14
 mccabe==0.6.1
 odfpy==1.4.1
 openpyxl==3.0.5
-Pillow==6.2.0
+Pillow>=7.1.0
 pkg-resources==0.0.0
 progressbar2==3.47.0
 psycopg2-binary==2.8.4
