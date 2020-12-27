@@ -35,7 +35,7 @@
           {% for i in purchase_request_list %}
           <tr>
             <td>{{ forloop.counter }}</td>
-            <td><a href="{% url 'service:purchase-request-update' pk=i.id %}">{{i.order_number}}</a></td>
+            <td><a href="{% url 'service:purchase-request-update' id=i.id %}">{{i.order_number}}</a></td>
             <td>{{i.department}}</td>
             <td>{{i.date_of_purchase}}</td>
             <td>{{i.status}}</td>
@@ -43,7 +43,7 @@
               <div class="w-100 gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
                 {% if i.ordered_by.user != request.user %}
                 <div class="peer">
-                  <a href="{% url 'service:purchase-request-update' pk=i.id %}">
+                  <a href="{% url 'service:purchase-request-update' id=i.id %}">
                     <button type="button" class="btn cur-p btn-outline-primary">{% trans "Respond" %}</button>
                   </a>
                 </div>

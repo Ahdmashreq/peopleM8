@@ -96,6 +96,9 @@ def user_home_page(request):
 
     # List MY Bussiness_Travel/services
     bussiness_travel_service = Bussiness_Travel.objects.filter(Q(emp=employee) | Q(manager=employee), status='pending')
+    # get a list of all notifications related to the current user within the current month
+    my_notifications = request.user.notifications.filter(timestamp__year=datetime.now().year,
+                                                         timestamp__month=datetime.now().month)
 
     context = {
         'birthdays': emps_birthdays,
@@ -105,6 +108,7 @@ def user_home_page(request):
         'count_notifications': notification_count,
         'bussiness_travel_service': bussiness_travel_service,
         'notifications': unread_notifications,
+        'my_notifications': my_notifications,
     }
     return render(request, 'index_user.html', context=context)
 
@@ -117,7 +121,13 @@ def admin_home_page(request):
         pass
     else:
         # employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
-        return render(request, 'index.html', context=None)
+        # get a list of all notifications related to the current user within the current month
+
+        my_notifications = request.user.notifications.filter(timestamp__year=datetime.now().year,
+                                                             timestamp__month=datetime.now().month)
+        context = {'my_notifications': my_notifications, }
+
+        return render(request, 'index.html', context=context)
 
 
 @login_required(login_url='home:user-login')
@@ -174,11 +184,11 @@ def addUserView(request):
             user_obj.company = request.user.company
             user_obj.save()
             user_company = UserCompany(
-                                    user = user_obj,
-                                    company = request.user.company,
-                                    active = True,
-                                    created_by = request.user,
-                                    creation_date = date.today(),
+                user=user_obj,
+                company=request.user.company,
+                active=True,
+                created_by=request.user,
+                creation_date=date.today(),
             )
             user_company.save()
             user_lang = to_locale(get_language())
