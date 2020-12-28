@@ -11,8 +11,6 @@ import os
 from django.core.wsgi import get_wsgi_application
 import sys
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'MashreqPayroll.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'MashreqPayroll.settings.production')
 
 application = get_wsgi_application()
-
-sys.path.append('/home/mashreq/mashreq_arabia/django_project/peopleM8/MashreqPayroll')
