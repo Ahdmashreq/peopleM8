@@ -1,6 +1,7 @@
 from django.contrib import admin
 from element_definition.models import (Element_Batch, Element_Detail,
-                                       Element_Master, Element_Batch_Master, Element_Link)
+                                       Element_Master, Element_Batch_Master, Element_Link, SalaryStructure, Element,
+                                       EmployeeElementValue)
 
 
 ####################################### Inlines Goes Here #############################################
@@ -19,6 +20,7 @@ class ElementBatchMasterInline(admin.TabularInline):
 class ElementMasterAdmin(admin.ModelAdmin):
     class Meta:
         model = Element_Master
+
     fields = (
         'enterprise',
         'element_name',
@@ -40,10 +42,12 @@ class ElementMasterAdmin(admin.ModelAdmin):
         'effective_date',
     )
 
+
 @admin.register(Element_Batch)
 class ElementBatchAdmin(admin.ModelAdmin):
     class Meta:
         model = Element_Batch
+
     fields = (
         'payroll_fk',
         'batch_name',
@@ -51,13 +55,15 @@ class ElementBatchAdmin(admin.ModelAdmin):
         'end_date',
     )
     inlines = [
-       ElementBatchMasterInline
+        ElementBatchMasterInline
     ]
+
 
 @admin.register(Element_Link)
 class Element_Link_Admin(admin.ModelAdmin):
     class Meta:
         model = Element_Link
+
     fields = (
         'element_master_fk',
         'payroll_fk',
@@ -71,3 +77,21 @@ class Element_Link_Admin(admin.ModelAdmin):
         'start_date',
         'end_date',
     )
+
+
+@admin.register(SalaryStructure)
+class SalaryStructureAdmin(admin.ModelAdmin):
+    class Meta:
+        model = SalaryStructure
+
+
+@admin.register(Element)
+class ElementAdmin(admin.ModelAdmin):
+    class Meta:
+        model = Element
+
+
+@admin.register(EmployeeElementValue)
+class EmployeeElementValueAdmin(admin.ModelAdmin):
+    class Meta:
+        model = EmployeeElementValue

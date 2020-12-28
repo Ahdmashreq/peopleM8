@@ -24,6 +24,79 @@ class Element_Batch(models.Model):
         return self.batch_name
 
 
+class SalaryStructure(models.Model):
+    enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name='enterprise_salary_structures',
+                                   verbose_name=_('Enterprise Name'))
+    structure_name = models.CharField(max_length=255, verbose_name=_('Structure Name'))
+    start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
+    end_date = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True, verbose_name=_('End Date'))
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
+                                   related_name="salary_structure_created_by")
+    creation_date = models.DateField(auto_now=False, auto_now_add=True)
+    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
+                                       related_name="salary_structure_last_update_by")
+    last_update_date = models.DateField(auto_now=True, auto_now_add=False)
+
+    def __str__(self):
+        return self.structure_name
+
+
+class Element(models.Model):
+    amount_type_choices = [('fixed amount', 'fixed amount'), ('percentage', 'percentage'), ('days', 'days'),
+                           ('hrs', 'hrs'), ('months', 'months')]
+    element_type_choices = [('payslip based', 'payslip based'), ('global value', 'global value'),
+                            ('formula', 'formula')]
+    scheduled_pay_choices = [('yearly', 'yearly'), ('monthly', 'monthly'), ('weekly', 'weekly')]
+
+    enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name='enterprise_salary_elements',
+                                   verbose_name=_('Enterprise Name'))
+    element_name = models.CharField(max_length=100, verbose_name=_('Pay Name'))
+    code = models.CharField(max_length=4, null=True, blank=True, verbose_name=_('code'))
+    salary_structure = models.ForeignKey(SalaryStructure, on_delete=models.CASCADE,
+                                         related_name='structure_elements',null=True, blank=True )
+    element_type = models.CharField(max_length=100, choices=element_type_choices)
+    amount_type = models.CharField(max_length=100, choices=amount_type_choices)
+    fixed_amount = models.IntegerField(default=0, verbose_name=_('Amount'))
+    element_formula = models.TextField(max_length=255, null=True, blank=True, verbose_name=_('Formula'))
+    based_on = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, )
+    appears_on_payslip = models.BooleanField(verbose_name=_('Appears on payslip'))
+    sequence = models.IntegerField(null=True, blank=True, )
+    tax_flag = models.BooleanField(verbose_name=_('Tax Flag'))
+    scheduled_pay = models.CharField(max_length=100, choices=scheduled_pay_choices)
+    start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
+    end_date = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True, verbose_name=_('End Date'))
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
+                                   related_name="element_is_created_by")
+    creation_date = models.DateField(auto_now=False, auto_now_add=True)
+    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
+                                       related_name="element_is_last_update_by")
+    last_update_date = models.DateField(auto_now=True, auto_now_add=False)
+
+    def __str__(self):
+        return self.element_name
+
+
+
+
+
+class EmployeeElementValue(models.Model):
+    employee = models.ForeignKey('employee.Employee', on_delete=models.CASCADE, null=True, blank=True,
+                                 verbose_name=_('Employee Name'))
+    element = models.ForeignKey(Element, on_delete=models.CASCADE, )
+    value = models.DecimalField(max_digits=10, decimal_places=2)
+    start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
+    end_date = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True, verbose_name=_('End Date'))
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
+                                   related_name="value_created_by")
+    creation_date = models.DateField(auto_now=False, auto_now_add=True)
+    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
+                                       related_name="value_last_update_by")
+    last_update_date = models.DateField(auto_now=True, auto_now_add=False)
+
+    def __str__(self):
+        return self.employee.emp_name + ' ' + self.element.element_name
+
+
 class Element_Master(models.Model):
     enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name='enterprise_element_master',
                                    verbose_name=_('Enterprise Name'))

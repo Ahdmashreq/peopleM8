@@ -7,7 +7,7 @@ urlpatterns=[
     path('command/run/', views.installElementMaster, name= 'command-run'),
     path('element/', include([
                 ######################### Element URLs #####################################
-                path('new/', views.createElementView, name='element-create'),
+                path('new/', views.create_new_element, name='element-create'),
                 path('list/', views.listElementView, name='list-element'),
                 path('update/<int:pk>/', views.updateElementView, name='update-element'),
                 path('delete/<int:pk>/', views.deleteElementView, name='delete-element'),

@@ -18,7 +18,7 @@ class Bank_Master(models.Model):
     branch_name = models.CharField(max_length=150,verbose_name=_('Branch Name'))
     country	=	models.ForeignKey(Country, on_delete=models.CASCADE, null=True, blank=True,verbose_name=_('Country'))
     address = models.CharField(max_length=150, blank=True, null=True,verbose_name=_('Address'))
-    currency = models.ForeignKey(Currency,on_delete=models.CASCADE,verbose_name=_('Currency'))
+    #currency = models.ForeignKey(Currency,on_delete=models.CASCADE,verbose_name=_('Currency'))
     start_date	=	models.DateField(auto_now=False, auto_now_add=False, default=date.today,verbose_name=_('Start Date'))
     end_date	=	models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True,verbose_name=_('End Date'))
     created_by	=	models.ForeignKey(settings.AUTH_USER_MODEL, blank=False,on_delete=models.CASCADE, related_name='bank_created_by')
@@ -27,7 +27,7 @@ class Bank_Master(models.Model):
     last_update_date	=	models.DateField(auto_now=False, auto_now_add=True)
 
     def __str__(self):
-        bank_name = self.bank_name+" "+self.branch_name+" - "+self.currency.code
+        bank_name = self.bank_name+" "+self.branch_name+" - "#+self.currency.code
         return bank_name
 
 class Payment_Type(models.Model):
