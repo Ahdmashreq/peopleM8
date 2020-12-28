@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.sessions.models import Session
-from MashreqPayroll import settings
+from MashreqPayroll.settings import base
 from company.models import Enterprise
 from django.utils.translation import ugettext_lazy as _
 
@@ -18,16 +18,16 @@ class User(AbstractUser):
 
 
 class UserCompany(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE,
+    user = models.ForeignKey(base.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE,
                              related_name='user_fk',
                              verbose_name=_('User'))
     company = models.ForeignKey(Enterprise, null=True, blank=True, on_delete=models.CASCADE,
                                 related_name='company', verbose_name=_('Company'))
     active = models.BooleanField(default=False)
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+    created_by = models.ForeignKey(base.AUTH_USER_MODEL, on_delete=models.CASCADE,
                                    blank=True, null=True, related_name='user_company_created_by')
     creation_date = models.DateField(auto_now_add=True)
-    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+    last_update_by = models.ForeignKey(base.AUTH_USER_MODEL, on_delete=models.CASCADE,
                                        blank=True, null=True, related_name='user_company_last_updated_by')
     last_update_date = models.DateField(auto_now=True)
 
@@ -35,7 +35,7 @@ class UserCompany(models.Model):
         return self.user.username + ' ' + self.company.name
 
 
-AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', User)
+AUTH_USER_MODEL = getattr(base, 'AUTH_USER_MODEL', User)
 
 
 class Visitor(models.Model):
