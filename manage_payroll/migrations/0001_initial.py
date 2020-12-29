@@ -47,7 +47,7 @@ class Migration(migrations.Migration):
                 ('last_update_date', models.DateField(auto_now_add=True)),
                 ('country', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='cities_light.Country', verbose_name='Country')),
                 ('created_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='bank_created_by', to=settings.AUTH_USER_MODEL)),
-                ('currency', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='currencies.Currency', verbose_name='Currency')),
+                # ('currency', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='currencies.Currency', verbose_name='Currency')),
                 ('enterprise', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='enterprise_bank_master', to='company.Enterprise', verbose_name='Enterprise Name')),
                 ('last_update_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],

@@ -6,7 +6,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from defenition.models import LookupType, LookupDet
 from company.models import (Enterprise, Department, Grade, Position, Job)
 from manage_payroll.models import (Bank_Master, Payroll_Master)
-from element_definition.models import Element_Master, Element_Link, SalaryStructure
+from element_definition.models import Element_Master, Element_Link, SalaryStructure, Element
 from employee.fast_formula import FastFormula
 from django.utils.translation import ugettext_lazy as _
 
@@ -162,7 +162,7 @@ class Payment(models.Model):
 
 class Employee_Element(models.Model):
     emp_id = models.ForeignKey(Employee, on_delete=models.CASCADE, verbose_name=_('Employee'))
-    element_id = models.ForeignKey(Element_Master, on_delete=models.CASCADE, verbose_name=_('Pay'))
+    element_id = models.ForeignKey(Element, on_delete=models.CASCADE, verbose_name=_('Pay'))
     element_value = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_('Pay Value'))
     start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
     end_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=_('End Date'))

@@ -284,59 +284,35 @@
                   </table>
                 </div>
                 <div class="tab-pane" id="nav-elements" role="tabpanel" aria-labelledby="nav-elements-tab">
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="bgc-white bd bdrs-3 p-20 mB-20">
-                        <table class="table">
-                          <thead class="thead-light ta-c">
-                            <tr>
-                              <th scope="col">{% trans "Earning" %}</th>
-                              <th scope="col">{% trans "Amount EGP" %}</th>
-                            </tr>
-                          </thead>
-                          <tbody class="ta-l">
-                            {% for emp in employee_element_qs %}
-                            {% if emp.classification == 'earn' %}
-                            <tr>
-                              <td>{{ emp.element_id }}</td>
-                              <td>{{ emp.element_value}}</td>
-                            </tr>
-                            {% endif %}
-                            {% endfor %}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-
-                    <div class="col-md-6">
-                      <div class="bgc-white bd bdrs-3 p-20 mB-20">
-                        <!-- <h4 class="c-grey-900 mB-20">Table head options</h4> -->
-                        <table class="table">
-                          <thead class="thead-light ta-c">
-                            <tr>
-                              <th>{% trans "Deductions" %} </th>
-                              <th>{% trans "Amount EGP" %} </th>
-                            </tr>
-                          </thead>
-                          <tbody class="ta-l">
-                            {% for emp_d in employee_element_qs %}
-                            {% if emp_d.classification == 'deduct' %}
-                            <tr>
-                              <td>{{ emp_d.element_id }}</td>
-                              <td>{{ emp_d.element_value}}</td>
-                            </tr>
-                            {% endif %}
-                            {% endfor %}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
-                    <div class="peer">
-                      <a href="{% url 'employee:employee-create' %}" class="btn cur-p btn-primary">{% trans "Add New Salary Structure" %}</a>
-                    </div>
-                  </div>
+                  <table class="table table-striped m-b-none text-sm">
+                    {{ emp_element_form.management_form }}
+                    {% for form in emp_element_form %}
+                    {{ form.id }}
+                    {% if forloop.first %}
+                    <thead>
+                      <tr>
+                        {% for field in form.visible_fields %}
+                        <th>{{ field.label|capfirst }}</th>
+                        {% endfor %}
+                      </tr>
+                    </thead>
+                    {% endif %}
+                    <tr>
+                      {% for field in form.visible_fields %}
+                      <td>
+                        {# exclude the hidden fields in the form #}
+                        {% if forloop.first %}
+                        {% for hidden in form.hidden_fields %}
+                        {{ hidden }}
+                        {% endfor %}
+                        {% endif %}
+                        {{ field.errors.as_ul }}
+                        {{ field }}
+                      </td>
+                      {% endfor %}
+                    </tr>
+                    {% endfor %}
+                  </table>
                 </div>
               </div>
             </div>

@@ -11,8 +11,10 @@ class Element_Batch(models.Model):
     payroll_fk = models.ForeignKey(Payroll_Master, on_delete=models.CASCADE, null=True, blank=True,
                                    verbose_name=_('Payroll'))
     batch_name = models.CharField(max_length=255, verbose_name=_('Batch Name'))
-    start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
-    end_date = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True, verbose_name=_('End Date'))
+    start_date = models.DateField(
+        auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
+    end_date = models.DateField(
+        auto_now=False, auto_now_add=False, null=True, blank=True, verbose_name=_('End Date'))
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
                                    related_name="element_batch_created_by")
     creation_date = models.DateField(auto_now=True, auto_now_add=False)
@@ -27,9 +29,12 @@ class Element_Batch(models.Model):
 class SalaryStructure(models.Model):
     enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name='enterprise_salary_structures',
                                    verbose_name=_('Enterprise Name'))
-    structure_name = models.CharField(max_length=255, verbose_name=_('Structure Name'))
-    start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
-    end_date = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True, verbose_name=_('End Date'))
+    structure_name = models.CharField(
+        max_length=255, verbose_name=_('Structure Name'))
+    start_date = models.DateField(
+        auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
+    end_date = models.DateField(
+        auto_now=False, auto_now_add=False, null=True, blank=True, verbose_name=_('End Date'))
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
                                    related_name="salary_structure_created_by")
     creation_date = models.DateField(auto_now=False, auto_now_add=True)
@@ -46,23 +51,35 @@ class Element(models.Model):
                            ('hrs', 'hrs'), ('months', 'months')]
     element_type_choices = [('payslip based', 'payslip based'), ('global value', 'global value'),
                             ('formula', 'formula')]
-    scheduled_pay_choices = [('yearly', 'yearly'), ('monthly', 'monthly'), ('weekly', 'weekly')]
+    scheduled_pay_choices = [('yearly', 'yearly'),
+                             ('monthly', 'monthly'), ('weekly', 'weekly')]
 
     enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name='enterprise_salary_elements',
                                    verbose_name=_('Enterprise Name'))
+    classification = models.ForeignKey(LookupDet, on_delete=models.CASCADE,
+                                       related_name='element_lookup_classification', verbose_name=_('classification'))
     element_name = models.CharField(max_length=100, verbose_name=_('Pay Name'))
-    code = models.CharField(max_length=4, null=True, blank=True, verbose_name=_('code'))
-    element_type = models.CharField(max_length=100, choices=element_type_choices)
+    code = models.CharField(max_length=4, null=True,
+                            blank=True, verbose_name=_('code'))
+    element_type = models.CharField(
+        max_length=100, choices=element_type_choices)
     amount_type = models.CharField(max_length=100, choices=amount_type_choices)
-    fixed_amount = models.IntegerField(default=0, verbose_name=_('Amount'), null=True, blank=True, )
-    element_formula = models.TextField(max_length=255, null=True, blank=True, verbose_name=_('Formula'))
-    based_on = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, )
-    appears_on_payslip = models.BooleanField(verbose_name=_('Appears on payslip'), default=True)
+    fixed_amount = models.IntegerField(
+        default=0, verbose_name=_('Amount'), null=True, blank=True, )
+    element_formula = models.TextField(
+        max_length=255, null=True, blank=True, verbose_name=_('Formula'))
+    based_on = models.ForeignKey(
+        'self', on_delete=models.CASCADE, null=True, blank=True, )
+    appears_on_payslip = models.BooleanField(
+        verbose_name=_('Appears on payslip'), default=True)
     sequence = models.IntegerField(null=True, blank=True, )
     tax_flag = models.BooleanField(verbose_name=_('Tax Flag'), default=False)
-    scheduled_pay = models.CharField(max_length=100, choices=scheduled_pay_choices)
-    start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
-    end_date = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True, verbose_name=_('End Date'))
+    scheduled_pay = models.CharField(
+        max_length=100, choices=scheduled_pay_choices)
+    start_date = models.DateField(
+        auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
+    end_date = models.DateField(
+        auto_now=False, auto_now_add=False, null=True, blank=True, verbose_name=_('End Date'))
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
                                    related_name="element_is_created_by")
     creation_date = models.DateField(auto_now=False, auto_now_add=True)
@@ -75,10 +92,14 @@ class Element(models.Model):
 
 
 class StructureElementLink(models.Model):
-    salary_structure = models.ForeignKey(SalaryStructure, on_delete=models.CASCADE, related_name='element_link', )
-    element = models.ForeignKey(Element, on_delete=models.CASCADE, related_name='structure_link', )
-    start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
-    end_date = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True, verbose_name=_('End Date'))
+    salary_structure = models.ForeignKey(
+        SalaryStructure, on_delete=models.CASCADE, related_name='element_link', )
+    element = models.ForeignKey(
+        Element, on_delete=models.CASCADE, related_name='structure_link', )
+    start_date = models.DateField(
+        auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
+    end_date = models.DateField(
+        auto_now=False, auto_now_add=False, null=True, blank=True, verbose_name=_('End Date'))
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
                                    related_name="link_is_created_by")
     creation_date = models.DateField(auto_now=False, auto_now_add=True)
@@ -94,7 +115,8 @@ class Element_Master(models.Model):
     enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name='enterprise_element_master',
                                    verbose_name=_('Enterprise Name'))
     element_name = models.CharField(max_length=100, verbose_name=_('Pay Name'))
-    db_name = models.CharField(max_length=4, null=True, blank=True, verbose_name=_('db Name'))
+    db_name = models.CharField(
+        max_length=4, null=True, blank=True, verbose_name=_('db Name'))
     basic_flag = models.BooleanField(default=False)
     element_type = models.ForeignKey(LookupDet, on_delete=models.CASCADE, null=True, blank=True,
                                      related_name='lookup_element', verbose_name=_('Pay Type'))
@@ -104,10 +126,14 @@ class Element_Master(models.Model):
                                       verbose_name=_('Effective Date'))
     retro_flag = models.BooleanField(verbose_name=_('Retro Flag'))
     tax_flag = models.BooleanField(verbose_name=_('Tax Flag'))
-    fixed_amount = models.IntegerField(default=0, verbose_name=_('Fixed Amount'))
-    element_formula = models.TextField(max_length=255, null=True, blank=True, verbose_name=_('Formula'))
-    start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
-    end_date = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True, verbose_name=_('End Date'))
+    fixed_amount = models.IntegerField(
+        default=0, verbose_name=_('Fixed Amount'))
+    element_formula = models.TextField(
+        max_length=255, null=True, blank=True, verbose_name=_('Formula'))
+    start_date = models.DateField(
+        auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
+    end_date = models.DateField(
+        auto_now=False, auto_now_add=False, null=True, blank=True, verbose_name=_('End Date'))
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
                                    related_name="element_master_created_by")
     creation_date = models.DateField(auto_now=True, auto_now_add=False)
@@ -126,8 +152,10 @@ class Element_Batch_Master(models.Model):
     element_batch_fk = models.ForeignKey(Element_Batch, on_delete=models.CASCADE, null=True, blank=True,
                                          related_name='element_batch_fk', related_query_name='elementBatch',
                                          verbose_name=_('Pay Batch'))
-    start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
-    end_date = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True, verbose_name=_('End Date'))
+    start_date = models.DateField(
+        auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
+    end_date = models.DateField(
+        auto_now=False, auto_now_add=False, null=True, blank=True, verbose_name=_('End Date'))
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
                                    related_name="element_created_by")
     creation_date = models.DateField(auto_now=True, auto_now_add=False)
@@ -151,17 +179,22 @@ class Element_Link(models.Model):
                                    verbose_name=_('Payroll'))
     element_dept_id_fk = models.ForeignKey(Department, on_delete=models.CASCADE, null=True, blank=True,
                                            verbose_name=_('Department'))
-    element_job_id_fk = models.ForeignKey(Job, on_delete=models.CASCADE, null=True, blank=True, verbose_name=_('Job'))
+    element_job_id_fk = models.ForeignKey(
+        Job, on_delete=models.CASCADE, null=True, blank=True, verbose_name=_('Job'))
     element_grade_fk = models.ForeignKey(Grade, on_delete=models.CASCADE, null=True, blank=True,
                                          verbose_name=_('Grade'))
     element_position_id_fk = models.ForeignKey(Position, on_delete=models.CASCADE, null=True, blank=True,
                                                verbose_name=_('Position'))
     employee = models.ForeignKey('employee.Employee', on_delete=models.CASCADE, null=True, blank=True,
                                  verbose_name=_('Employee Name'))
-    standard_flag = models.BooleanField(default=False, blank=True, verbose_name=_('Standard Flag'))
-    link_to_all_payroll_flag = models.BooleanField(default=False, blank=True, verbose_name=_('Link All'))
-    start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
-    end_date = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True, verbose_name=_('End Date'))
+    standard_flag = models.BooleanField(
+        default=False, blank=True, verbose_name=_('Standard Flag'))
+    link_to_all_payroll_flag = models.BooleanField(
+        default=False, blank=True, verbose_name=_('Link All'))
+    start_date = models.DateField(
+        auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
+    end_date = models.DateField(
+        auto_now=False, auto_now_add=False, null=True, blank=True, verbose_name=_('End Date'))
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
                                    related_name="element_link_created_by")
     creation_date = models.DateField(auto_now=True, auto_now_add=False)
@@ -199,7 +232,8 @@ class Custom_Python_Rule(models.Model):
     name = models.CharField(max_length=255, verbose_name=_('Name'))
     element_master = models.ForeignKey(Element_Master, on_delete=models.CASCADE, null=True, blank=True,
                                        related_name='custom_python_rule', verbose_name=_('Pay Master'))
-    help_text = models.TextField(default=default_string, verbose_name=_('Help Text'))
+    help_text = models.TextField(
+        default=default_string, verbose_name=_('Help Text'))
     rule_definition = models.TextField(verbose_name=_('Rule Definition'))
     taxable = models.BooleanField(default=False, verbose_name=_('Taxable'))
 
@@ -212,7 +246,8 @@ class Custom_Python_Rule(models.Model):
         try:
             exec(self.rule_definition)
         except Exception as e:
-            msg = 'The code You have wrote produced the following error:\n "{}"'.format(e)
+            msg = 'The code You have wrote produced the following error:\n "{}"'.format(
+                e)
             raise ValidationError(msg)
 
     def _validate_custom_rule_security(self):
@@ -227,7 +262,8 @@ class Custom_Python_Rule(models.Model):
         ]
         for word in danger:
             if word in self.rule_definition:
-                msg = 'FOR SECURITY REASONS, YOU ARE NOT ALLOWED TO USE "{}" IN YOUR CODE!!'.format(word)
+                msg = 'FOR SECURITY REASONS, YOU ARE NOT ALLOWED TO USE "{}" IN YOUR CODE!!'.format(
+                    word)
                 raise ValidationError(msg)
 
     def clean(self):
