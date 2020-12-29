@@ -33,7 +33,7 @@ class SalaryStructure(models.Model):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
                                    related_name="salary_structure_created_by")
     creation_date = models.DateField(auto_now=False, auto_now_add=True)
-    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
+    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE,
                                        related_name="salary_structure_last_update_by")
     last_update_date = models.DateField(auto_now=True, auto_now_add=False)
 
@@ -66,8 +66,8 @@ class Element(models.Model):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
                                    related_name="element_is_created_by")
     creation_date = models.DateField(auto_now=False, auto_now_add=True)
-    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
-                                       related_name="element_is_last_update_by")
+    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                                       related_name="element_is_last_update_by", null=True, blank=True)
     last_update_date = models.DateField(auto_now=True, auto_now_add=False)
 
     def __str__(self):
@@ -82,7 +82,7 @@ class StructureElementLink(models.Model):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
                                    related_name="link_is_created_by")
     creation_date = models.DateField(auto_now=False, auto_now_add=True)
-    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
+    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE,
                                        related_name="link_is_last_update_by")
     last_update_date = models.DateField(auto_now=True, auto_now_add=False)
 

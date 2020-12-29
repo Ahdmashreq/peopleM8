@@ -10,7 +10,7 @@ from company.models import Department, Grade, Position, Job
 from element_definition.forms import (ElementMasterForm, ElementMasterInlineFormset, ElementBatchForm,
                                       ElementLinkForm, CustomPythonRuleForm, ElementForm)
 from element_definition.models import (
-    Element_Batch, Element_Master, Element_Batch_Master, Element_Link)
+    Element_Batch, Element_Master, Element_Batch_Master, Element_Link, Element)
 from employee.models import Employee, Employee_Element, JobRoll
 from manage_payroll.models import Payroll_Master
 from defenition.models import LookupDet
@@ -124,12 +124,26 @@ def create_new_element(request):
         else:
             failure_msg = make_message(user_lang, False)
             messages.error(request, failure_msg)
+            print(element_form.errors)
 
     myContext = {
         "page_title": _("Create new Pay"),
         'element_master_form': element_form,
     }
     return render(request, 'create-element2.html', myContext)
+
+
+def list_elements_view(request):
+    if request.method == 'GET':
+        element_master = Element.objects.filter(enterprise=request.user.company).filter(
+            (Q(end_date__gte=date.today()) | Q(end_date__isnull=True)))
+        company_basic_db_name = str(request.user.company.id) + '00001'
+
+    myContext = {
+        'page_title': _('Pays'),
+        'element_master': element_master,
+    }
+    return render(request, 'backup_list-elements.html', myContext)
 
 
 def listElementView(request):
