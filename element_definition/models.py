@@ -57,7 +57,7 @@ class Element(models.Model):
     enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name='enterprise_salary_elements',
                                    verbose_name=_('Enterprise Name'))
     classification = models.ForeignKey(LookupDet, on_delete=models.CASCADE,
-                                       related_name='element_lookup_classification', verbose_name=_('classification'))
+                                       related_name='element_lookup_classification', verbose_name=_('classification'),blank=True,null=True)
     element_name = models.CharField(max_length=100, verbose_name=_('Pay Name'))
     code = models.CharField(max_length=4, null=True,
                             blank=True, verbose_name=_('code'))
