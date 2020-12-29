@@ -32,35 +32,39 @@
               <label>{{ element_master_form.element_name.label }}</label>
               {{ element_master_form.element_name }}
             </div>
-            <div class="form-group col-md-6">
+            <div class="form-group col-md-4">
               <label>{{ element_master_form.code.label }}</label>
               {{ element_master_form.code }}
             </div>
-            <div class="form-group col-md-6">
+            <div class="form-group col-md-4">
               <label>{{ element_master_form.sequence.label }}</label>
               {{ element_master_form.sequence }}
             </div>
-            <div class="form-group col-md-6">
-              <label>{{ element_master_form.salary_structure.label }}</label>
-              {{ element_master_form.salary_structure }}
+            <div class="form-group col-md-4">
+              <label>{{ element_master_form.scheduled_pay.label }}</label>
+              {{ element_master_form.scheduled_pay }}
             </div>
-             <div class="form-group col-md-6" id="element_type">
+             <div class="form-group col-md-4" id="element_type">
               <label>{{ element_master_form.element_type.label }}</label>
               {{ element_master_form.element_type }}
             </div>
-              <div class="form-group col-md-6">
+              <div class="form-group col-md-4">
                 <label>{{ element_master_form.appears_on_payslip.label }}</label>
               {{ element_master_form.appears_on_payslip}}
             </div>
-            <div class="form-group col-md-6" id="amount_type">
+            <div class="form-group col-md-4">
+              <label>{{ element_master_form.tax_flag.label }}</label>
+              {{ element_master_form.tax_flag}}
+            </div>
+            <div class="form-group col-md-4" id="amount_type">
               <label>{{ element_master_form.amount_type.label }}</label>
               {{ element_master_form.amount_type }}
             </div>
-            <div class="form-group col-md-3" id="fixed_amount">
+            <div class="form-group col-md-4" id="fixed_amount">
               <label>{{ element_master_form.fixed_amount.label }} </label>
               {{ element_master_form.fixed_amount }}
             </div>
-            <div class="form-group col-md-6" id="based_on">
+            <div class="form-group col-md-4" id="based_on">
               <label>{{ element_master_form.based_on.label }}</label>
               {{ element_master_form.based_on }}
             </div>
@@ -75,15 +79,12 @@
           001 * 40%">{% trans "Hint" %}</button>
             </div>
 
-            <div class="form-group col-md-4">
-              <label>{{ element_master_form.tax_flag.label }}</label>
-              {{ element_master_form.tax_flag}}
-            </div>
-            <div class="form-group col-md-4">
+
+            <div class="form-group col-md-6">
               <label>{{ element_master_form.start_date.label }}</label>
               {{ element_master_form.start_date }}
             </div>
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-6">
               <label>{{ element_master_form.end_date.label }}</label>
               {{ element_master_form.end_date }}
             </div>
@@ -97,15 +98,26 @@
 
 {% block js %}
 <script>
-console.log("********************");
-console.log(document.getElementById('element_type').value);
-if(document.getElementById('element_type').value === 'formula') {
+if(document.getElementById('id_element_type').value === 'formula') {
     document.getElementById('based_on').style.display = 'none';
     document.getElementById('fixed_amount').style.display = 'none';
     document.getElementById('amount_type').style.display = 'none';
 
 }
-else if(document.getElementById('element_type').value == null) {
+else if (document.getElementById('id_element_type').value == 'global'){
+
+    document.getElementById('formula').style.display = 'none';
+    document.getElementById('fixed_amount').style.display = 'block';
+    document.getElementById('amount_type').style.display = 'block';
+    if (document.getElementById('amount_type') == 'percentage'){
+      document.getElementById('based_on').style.display = 'block';
+    }
+    else{
+      document.getElementById('based_on').style.display = 'none';
+
+     };
+
+}else {
     document.getElementById('formula').style.display = 'none';
     document.getElementById('fixed_amount').style.display = 'none';
     document.getElementById('amount_type').style.display = 'none';
@@ -127,6 +139,7 @@ function myFunction(object) {
   document.getElementById('based_on').style.display = 'none';
   }
   else{
+
     document.getElementById('amount_type').style.display = 'block';
   document.getElementById('fixed_amount').style.display = 'none';
   document.getElementById('formula').style.display = 'none';
@@ -138,7 +151,20 @@ function myFunction(object) {
 
 <script>
 function check_amount_type(object) {
-  if(object.value === 'percentage') {
+  if (document.getElementById('id_element_type').value == 'payslip based'){
+        document.getElementById('fixed_amount').style.display = 'none';
+        document.getElementById('formula').style.display = 'none';
+        document.getElementById('based_on').style.display = 'none';
+        document.getElementById('amount_type').style.display = 'block';
+         }
+  else if (document.getElementById('id_element_type').value == 'formula'){
+        document.getElementById('fixed_amount').style.display = 'none';
+        document.getElementById('formula').style.display = 'block';
+        document.getElementById('based_on').style.display = 'none';
+        document.getElementById('amount_type').style.display = 'none';
+        }
+
+  else if(object.value === 'percentage') {
     document.getElementById('fixed_amount').style.display = 'block';
     document.getElementById('formula').style.display = 'none';
     document.getElementById('based_on').style.display = 'block';

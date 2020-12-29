@@ -8,7 +8,7 @@ urlpatterns=[
     path('element/', include([
                 ######################### Element URLs #####################################
                 path('new/', views.create_new_element, name='element-create'),
-                path('list/', views.listElementView, name='list-element'),
+                path('list/', views.list_elements_view, name='list-element'),
                 path('update/<int:pk>/', views.updateElementView, name='update-element'),
                 path('delete/<int:pk>/', views.deleteElementView, name='delete-element'),
     ])),
