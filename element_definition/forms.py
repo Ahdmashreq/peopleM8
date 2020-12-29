@@ -4,7 +4,8 @@ from django.core.exceptions import NON_FIELD_ERRORS
 from crispy_forms.helper import FormHelper
 from datetime import date
 from element_definition.models import (Element_Master,
-                                       Element_Batch, Element_Batch_Master, Element_Link, Custom_Python_Rule, Element)
+                                       Element_Batch, Element_Batch_Master, Element_Link, Custom_Python_Rule, Element,
+                                       SalaryStructure, StructureElementLink)
 from company.models import Department, Job, Grade, Position
 from manage_payroll.models import Payroll_Master
 from defenition.models import LookupType, LookupDet
@@ -36,6 +37,36 @@ class ElementForm(forms.ModelForm):
 
         for field in self.fields:
             self.fields[field].widget.attrs['class'] = 'form-control'
+
+
+class SalaryStructureForm(forms.ModelForm):
+    class Meta:
+        model = SalaryStructure
+        exclude = common_items_to_execlude
+
+    def __init__(self, *args, **kwargs):
+        super(SalaryStructureForm, self).__init__(*args, **kwargs)
+        self.fields['start_date'].widget.input_type = 'date'
+        self.fields['end_date'].widget.input_type = 'date'
+        for field in self.fields:
+            self.fields[field].widget.attrs['class'] = 'form-control'
+
+
+class StructureElementLinkForm(forms.ModelForm):
+    class Meta:
+        model = StructureElementLink
+        exclude = common_items_to_execlude
+
+    def __init__(self, *args, **kwargs):
+        super(StructureElementLinkForm, self).__init__(*args, **kwargs)
+        self.fields['start_date'].widget.input_type = 'date'
+        self.fields['end_date'].widget.input_type = 'date'
+        for field in self.fields:
+            self.fields[field].widget.attrs['class'] = 'form-control'
+
+
+ElementInlineFormset = forms.inlineformset_factory(SalaryStructure, StructureElementLink,
+                                                   form=StructureElementLinkForm, can_delete=True)
 
 
 class ElementMasterForm(forms.ModelForm):

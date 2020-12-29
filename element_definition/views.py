@@ -8,9 +8,10 @@ from django.utils.translation import to_locale, get_language
 from django.core.management.commands import loaddata
 from company.models import Department, Grade, Position, Job
 from element_definition.forms import (ElementMasterForm, ElementMasterInlineFormset, ElementBatchForm,
-                                      ElementLinkForm, CustomPythonRuleForm, ElementForm)
+                                      ElementLinkForm, CustomPythonRuleForm, ElementForm, SalaryStructureForm,
+                                      ElementInlineFormset)
 from element_definition.models import (
-    Element_Batch, Element_Master, Element_Batch_Master, Element_Link, Element)
+    Element_Batch, Element_Master, Element_Batch_Master, Element_Link, Element, SalaryStructure)
 from employee.models import Employee, Employee_Element, JobRoll
 from manage_payroll.models import Payroll_Master
 from defenition.models import LookupDet
@@ -144,6 +145,42 @@ def list_elements_view(request):
         'element_master': element_master,
     }
     return render(request, 'backup_list-elements.html', myContext)
+
+
+def create_salary_structure_with_elements_view(request):
+    structure_form = SalaryStructureForm()
+    elements_inlines = ElementInlineFormset()
+    if request.method == 'POST':
+        structure_form = SalaryStructureForm(request.POST)
+        elements_inlines = ElementInlineFormset(request.POST)
+        if structure_form.is_valid():
+            structure_obj = structure_form.save(commit=False)
+            structure_obj.created_by = request.user
+            structure_obj.enterprise = request.user.company
+            structure_obj.save()
+            elements_inlines = ElementInlineFormset(request.POST, instance=structure_obj)
+            if elements_inlines.is_valid():
+                elements_objs = elements_inlines.save(commit=False)
+                for elements_obj in elements_objs:
+                    elements_obj.created_by = request.user
+                    elements_obj.save()
+            else:
+                print(elements_inlines.errors)
+        else:
+            print(structure_form.errors)
+    context = {'page_title': "New Salary Structure", 'structure_form': structure_form,
+               'elements_inlines': elements_inlines}
+    return render(request, 'backup_create-salary-structure.html', context=context)
+
+
+def list_salary_structures(request):
+    structure_list = SalaryStructure.objects.all().filter(
+        (Q(end_date__gte=date.today()) | Q(end_date__isnull=True)))
+    context = {
+        "page_title": _("Salary Structures"),
+        'structure_list': structure_list,
+    }
+    return render(request, 'backup_list-salary-structures.html', context)
 
 
 def listElementView(request):

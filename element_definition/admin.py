@@ -16,6 +16,10 @@ class ElementBatchMasterInline(admin.TabularInline):
     )
 
 
+class StructureElementLinkInline(admin.TabularInline):
+    model = StructureElementLink
+
+
 ####################################### Admin Forms #############################################
 @admin.register(Element_Master)
 class ElementMasterAdmin(admin.ModelAdmin):
@@ -42,6 +46,16 @@ class ElementMasterAdmin(admin.ModelAdmin):
         'classification',
         'effective_date',
     )
+
+
+@admin.register(SalaryStructure)
+class SalaryStructureAdmin(admin.ModelAdmin):
+    class Meta:
+        model = SalaryStructure
+
+    inlines = [
+        StructureElementLinkInline
+    ]
 
 
 @admin.register(Element_Batch)
@@ -80,10 +94,7 @@ class Element_Link_Admin(admin.ModelAdmin):
     )
 
 
-@admin.register(SalaryStructure)
-class SalaryStructureAdmin(admin.ModelAdmin):
-    class Meta:
-        model = SalaryStructure
+
 
 
 @admin.register(Element)
