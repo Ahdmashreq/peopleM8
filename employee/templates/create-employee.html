@@ -334,7 +334,8 @@
                   </div>
                   <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
                     <div class="peer">
-                      <a href="{% url 'employee:employee-create' %}" class="btn cur-p btn-primary">{% trans "Add New Salary Structure" %}</a>
+                      <a href="#" class="btn cur-p btn-primary" data-toggle="modal" data-target="#structure-modal">{% trans "Assign Salary Structure" %}</a>
+                      <a href="#" class="btn cur-p btn-primary" data-toggle="modal" data-target="#element-modal">{% trans "Assign Other Element" %}</a>
                     </div>
                   </div>
                 </div>
@@ -347,7 +348,35 @@
   </div>
 
 </form>
-
+<div class="modal fade" id="structure-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <p>{% trans "Which Salary Structure You Want To Assign?" %}</p>
+        <form method="post">
+          {% csrf_token %}
+          {{emp_link_structure_form.as_p}}
+          <button type="submit" class="btn btn-success" data-dismiss="modal">{% trans "Save" %}</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="element-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <p>{% trans "Which Other Element You Want To Assign?" %}</p>
+        <form method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-success" data-dismiss="modal">{% trans "Save" %}</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock body%}
 {% block js %}
 <script>

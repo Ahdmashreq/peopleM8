@@ -8,9 +8,9 @@ from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.utils.translation import to_locale, get_language
 from element_definition.models import Element_Master, Element_Link
-from employee.models import (Employee, JobRoll, Payment, Employee_Element)
+from employee.models import (Employee, JobRoll, Payment, Employee_Element, EmployeeStructureLink)
 from employee.forms import (EmployeeForm, JobRollForm, Employee_Payment_formset,
-                            EmployeeElementForm, Employee_Element_Inline)
+                            EmployeeElementForm, Employee_Element_Inline, EmployeeStructureLinkForm)
 from payroll_run.models import Salary_elements
 from payroll_run.forms import SalaryElementForm
 from employee.fast_formula import FastFormula
@@ -173,6 +173,9 @@ def updateEmployeeView(request, pk):
     '''
     employee_element_qs = Employee_Element.objects.filter(
         emp_id=required_employee, end_date__isnull=True)
+    emp_link_structure_form = EmployeeStructureLinkForm(instance=EmployeeStructureLink.objects.get(employee=required_employee))
+
+
     elements_form = Employee_Element_Inline(queryset=Employee_Element.objects.filter(
         end_date__isnull=True), instance=required_employee)
     for form in elements_form:
@@ -192,6 +195,10 @@ def updateEmployeeView(request, pk):
             request.user, request.POST, instance=required_jobRoll)
         payment_form = Employee_Payment_formset(
             request.POST, instance=required_employee)
+
+        emp_link_structure_form = EmployeeStructureLinkForm(request.POST,)
+
+
         elements_form = Employee_Element_Inline(
             request.POST, instance=required_employee)
         if emp_form.is_valid():
@@ -248,6 +255,7 @@ def updateEmployeeView(request, pk):
         "jobroll_form": jobroll_form,
         "payment_form": payment_form,
         "emp_element_form": elements_form,
+        "emp_link_structure_form":emp_link_structure_form,
         "employee_element_qs":employee_element_qs
     }
     return render(request, 'create-employee.html', myContext)
