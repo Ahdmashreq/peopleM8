@@ -35,7 +35,6 @@ class Migration(migrations.Migration):
                 ('creation_date', models.DateField(auto_now_add=True)),
                 ('last_update_date', models.DateField(auto_now=True)),
                 ('based_on', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='element_definition.Element')),
-                ('classification', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='element_lookup_classification', to='defenition.LookupDet', verbose_name='classification')),
                 ('created_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='element_is_created_by', to=settings.AUTH_USER_MODEL)),
                 ('enterprise', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='enterprise_salary_elements', to='company.Enterprise', verbose_name='Enterprise Name')),
                 ('last_update_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='element_is_last_update_by', to=settings.AUTH_USER_MODEL)),
