@@ -11,7 +11,7 @@ import calendar
 from django.db.models import Avg, Count
 from payroll_run.models import Salary_elements
 from payroll_run.forms import SalaryElementForm, Salary_Element_Inline
-from element_definition.models import Element_Master, Element_Detail, Element_Batch, Element_Batch_Master
+from element_definition.models import Element_Master, Element_Batch, Element_Batch_Master
 from manage_payroll.models import Assignment_Batch, Assignment_Batch_Include, Assignment_Batch_Exclude
 from employee.models import Employee_Element, Employee, JobRoll, Payment
 from employee.forms import Employee_Element_Inline

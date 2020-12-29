@@ -1,6 +1,8 @@
 from django.contrib import admin
 from import_export.forms import ImportForm, ConfirmImportForm
-from employee.models import Employee, Medical, JobRoll,Payment, Employee_Element, Employee_Element_History
+from employee.models import Employee, Medical, JobRoll, Payment, Employee_Element, Employee_Element_History, \
+    EmployeeStructureLink
+
 
 class JobRollInlineAdmin(admin.TabularInline):
     fields = (
@@ -15,9 +17,10 @@ class JobRollInlineAdmin(admin.TabularInline):
     model = JobRoll
     fk_name = 'emp_id'
 
+
 @admin.register(Employee)
 class EmployeeAdmin(admin.ModelAdmin):
-    fields =(
+    fields = (
         'user',
         'enterprise',
         'emp_number',
@@ -46,9 +49,10 @@ class EmployeeAdmin(admin.ModelAdmin):
         'start_date',
         'end_date',
     )
-    inlines =[
+    inlines = [
         JobRollInlineAdmin
     ]
+
     def save_formset(self, request, form, formset, change):
         instances = formset.save(commit=False)
         for instance in instances:
@@ -56,6 +60,7 @@ class EmployeeAdmin(admin.ModelAdmin):
             instance.last_update_by = request.user
             instance.save()
         formset.save_m2m()
+
     def save_model(self, request, instance, form, change):
         user = request.user
         instance = form.save(commit=False)
@@ -66,30 +71,32 @@ class EmployeeAdmin(admin.ModelAdmin):
         form.save()
         return instance
 
+
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
     fields = (
-          'emp_id',
-          'payment_method',
-          'account_number',
-          'percentage',
-          'bank_name',
-          'swift_code',
-          'start_date',
-          'end_date',
+        'emp_id',
+        'payment_method',
+        'account_number',
+        'percentage',
+        'bank_name',
+        'swift_code',
+        'start_date',
+        'end_date',
     )
-    list_display = ('emp_id','payment_method', 'percentage',)
+    list_display = ('emp_id', 'payment_method', 'percentage',)
+
 
 @admin.register(Employee_Element)
 class EmployeeElementAdmin(admin.ModelAdmin):
     fields = (
         'emp_id',
         'element_id',
-        'element_value' ,
+        'element_value',
         'start_date',
         'end_date'
     )
-    list_display = ('emp_id','element_id', 'element_value',)
+    list_display = ('emp_id', 'element_id', 'element_value',)
 
 
 @admin.register(Employee_Element_History)
@@ -97,10 +104,16 @@ class Employee_Element_HistoryAdmin(admin.ModelAdmin):
     fields = (
         'employee',
         'element',
-        'element_value' ,
+        'element_value',
         'salary_month',
         'salary_year',
         'creation_date',
     )
     readonly_fields = ('creation_date',)
-    list_display = ('employee','element', 'salary_month','salary_year',)
+    list_display = ('employee', 'element', 'salary_month', 'salary_year',)
+
+
+@admin.register(EmployeeStructureLink)
+class EmployeeElementValueAdmin(admin.ModelAdmin):
+    class Meta:
+        model = EmployeeStructureLink

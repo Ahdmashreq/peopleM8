@@ -5,7 +5,7 @@ from company.models import Department, Job, Grade, Position
 from manage_payroll.models import Payroll_Master
 from employee.models import Employee, JobRoll, Payment, Employee_Element
 from defenition.models import LookupType, LookupDet
-from element_definition.models import Element_Master, Element_Detail, Element_Link
+from element_definition.models import Element_Master, Element_Link
 from django.shortcuts import  get_object_or_404, get_list_or_404
 from datetime import date
 from django.forms import BaseInlineFormSet

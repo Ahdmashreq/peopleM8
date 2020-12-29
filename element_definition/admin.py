@@ -1,7 +1,8 @@
 from django.contrib import admin
-from element_definition.models import (Element_Batch, Element_Detail,
+from element_definition.models import (Element_Batch,
                                        Element_Master, Element_Batch_Master, Element_Link, SalaryStructure, Element,
-                                       EmployeeElementValue)
+                                       StructureElementLink,
+                                       )
 
 
 ####################################### Inlines Goes Here #############################################
@@ -91,7 +92,7 @@ class ElementAdmin(admin.ModelAdmin):
         model = Element
 
 
-@admin.register(EmployeeElementValue)
-class EmployeeElementValueAdmin(admin.ModelAdmin):
+@admin.register(StructureElementLink)
+class StructureElementAdmin(admin.ModelAdmin):
     class Meta:
-        model = EmployeeElementValue
+        model = StructureElementLink

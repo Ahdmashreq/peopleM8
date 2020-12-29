@@ -120,10 +120,17 @@ function myFunction(object) {
     document.getElementById('formula').style.display = 'block';
     document.getElementById('based_on').style.display = 'none';
     }
-  else  {
+  else if (object.value === 'payslip based')  {
   document.getElementById('amount_type').style.display = 'block';
   document.getElementById('fixed_amount').style.display = 'none';
   document.getElementById('formula').style.display = 'none';
+  document.getElementById('based_on').style.display = 'none';
+  }
+  else{
+    document.getElementById('amount_type').style.display = 'block';
+  document.getElementById('fixed_amount').style.display = 'none';
+  document.getElementById('formula').style.display = 'none';
+  document.getElementById('based_on').style.display = 'none';
   }
 
     }
