@@ -1,12 +1,14 @@
 from django.conf import settings
 from django.db import models
+from django.db.models.signals import pre_save, post_save
+from django.dispatch import receiver
 from django.urls import reverse
 from datetime import date
 from django.core.validators import MaxValueValidator, MinValueValidator
 from defenition.models import LookupType, LookupDet
 from company.models import (Enterprise, Department, Grade, Position, Job)
 from manage_payroll.models import (Bank_Master, Payroll_Master)
-from element_definition.models import Element_Master, Element_Link, SalaryStructure, Element
+from element_definition.models import Element_Master, Element_Link, SalaryStructure, Element, StructureElementLink
 from employee.fast_formula import FastFormula
 from django.utils.translation import ugettext_lazy as _
 
@@ -218,6 +220,21 @@ class EmployeeStructureLink(models.Model):
     def __str__(self):
         return self.employee.emp_name + ' ' + self.salary_structure.structure_name
 
+    @receiver(post_save, sender='employee.EmployeeStructureLink')
+    def insert_employee_elements(sender, instance, *args, **kwargs):
+        required_salary_structure = instance.salary_structure
+        elements_in_structure = StructureElementLink.objects.filter(salary_structure=required_salary_structure, end_date__isnull=True)
+        for element in elements_in_structure:
+            employee_element_obj = Employee_Element(
+                             emp_id = instance.employee,
+                             element_id = element.element,
+                             element_value = element.element.fixed_amount,
+                             start_date = instance.start_date,
+                             end_date = instance.end_date,
+                             created_by = instance.created_by,
+                             last_update_by = instance.last_update_by,
+            )
+            employee_element_obj.save()
 
 class Employee_Element_History(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, )

@@ -47,19 +47,19 @@ class SalaryStructure(models.Model):
 
 
 class Element(models.Model):
-    amount_type_choices = [('fixed amount', 'fixed amount'), ('percentage', 'percentage'), ('days', 'days'),
-                           ('hrs', 'hrs'), ('months', 'months')]
-    element_type_choices = [('payslip based', 'payslip based'), ('global value', 'global value'),
-                            ('formula', 'formula')]
-    scheduled_pay_choices = [('yearly', 'yearly'),
-                             ('monthly', 'monthly'), ('weekly', 'weekly')]
+    amount_type_choices = [('fixed amount', 'Amount'), ('percentage', 'Percentage'), ('days', 'Days'),
+                           ('hrs', 'Hrs'), ('months', 'Months')]
+    element_type_choices = [('payslip based', 'Payslip based'), ('global value', 'Global value'),
+                            ('formula', 'Formula')]
+    scheduled_pay_choices = [('yearly', 'Yearly'),
+                             ('monthly', 'Monthly'), ('weekly', 'Weekly')]
 
     enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name='enterprise_salary_elements',
                                    verbose_name=_('Enterprise Name'))
     classification = models.ForeignKey(LookupDet, on_delete=models.CASCADE,
                                        related_name='element_lookup_classification', verbose_name=_('classification'))
     element_name = models.CharField(max_length=100, verbose_name=_('Pay Name'))
-    code = models.CharField(max_length=4, null=True,
+    code = models.CharField(max_length=50, null=True,
                             blank=True, verbose_name=_('code'))
     element_type = models.CharField(
         max_length=100, choices=element_type_choices)

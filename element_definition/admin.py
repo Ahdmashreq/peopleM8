@@ -90,6 +90,27 @@ class SalaryStructureAdmin(admin.ModelAdmin):
 class ElementAdmin(admin.ModelAdmin):
     class Meta:
         model = Element
+        fields = (
+            'enterprise',
+            'classification',
+            'element_name',
+            'code',
+            'element_type',
+            'amount_type',
+            'fixed_amount',
+            'element_formula',
+            'based_on',
+            'appears_on_payslip',
+            'sequence',
+            'tax_flag',
+            'scheduled_pay',
+            'start_date',
+            'end_date',
+            'created_by',
+            'creation_date',
+            'last_update_by',
+            'last_update_date',
+        )
 
 
 @admin.register(StructureElementLink)
