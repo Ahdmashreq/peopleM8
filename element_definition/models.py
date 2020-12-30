@@ -57,7 +57,8 @@ class Element(models.Model):
     enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name='enterprise_salary_elements',
                                    verbose_name=_('Enterprise Name'))
     classification = models.ForeignKey(LookupDet, on_delete=models.CASCADE,
-                                       related_name='element_lookup_classification', verbose_name=_('classification'),blank=True,null=True)
+                                       related_name='element_lookup_classification', verbose_name=_('classification'),
+                                       blank=True, null=True)
     element_name = models.CharField(max_length=100, verbose_name=_('Pay Name'))
     code = models.CharField(max_length=50, null=True,
                             blank=True, verbose_name=_('code'))
@@ -86,6 +87,53 @@ class Element(models.Model):
     last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                                        related_name="element_is_last_update_by", null=True, blank=True)
     last_update_date = models.DateField(auto_now=True, auto_now_add=False)
+
+    def __str__(self):
+        return self.element_name
+
+
+class ElementHistory(models.Model):
+    amount_type_choices = [('fixed amount', 'Amount'), ('percentage', 'Percentage'), ('days', 'Days'),
+                           ('hrs', 'Hrs'), ('months', 'Months')]
+    element_type_choices = [('payslip based', 'Payslip based'), ('global value', 'Global value'),
+                            ('formula', 'Formula')]
+    scheduled_pay_choices = [('yearly', 'Yearly'),
+                             ('monthly', 'Monthly'), ('weekly', 'Weekly')]
+
+    enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE,
+                                   related_name='enterprise_salary_elements_history',
+                                   verbose_name=_('Enterprise Name'), null=True, blank=True)
+    classification = models.ForeignKey(LookupDet, on_delete=models.CASCADE,
+                                       verbose_name=_('classification'),
+                                       blank=True, null=True)
+    element_name = models.CharField(max_length=100, verbose_name=_('Pay Name'), null=True, blank=True)
+    code = models.CharField(max_length=50, null=True,
+                            blank=True, verbose_name=_('code'))
+    element_type = models.CharField(
+        max_length=100, choices=element_type_choices, null=True, blank=True)
+    amount_type = models.CharField(max_length=100, choices=amount_type_choices, null=True, blank=True)
+    fixed_amount = models.IntegerField(
+        default=0, verbose_name=_('Amount'), null=True, blank=True, )
+    element_formula = models.TextField(
+        max_length=255, null=True, blank=True, verbose_name=_('Formula'))
+    based_on = models.ForeignKey(
+        'self', on_delete=models.CASCADE, null=True, blank=True, )
+    appears_on_payslip = models.BooleanField(
+        verbose_name=_('Appears on payslip'), default=True, null=True, blank=True)
+    sequence = models.IntegerField(null=True, blank=True, )
+    tax_flag = models.BooleanField(verbose_name=_('Tax Flag'), default=False, null=True, blank=True)
+    scheduled_pay = models.CharField(
+        max_length=100, choices=scheduled_pay_choices, null=True, blank=True)
+    start_date = models.DateField(
+        auto_now=False, auto_now_add=False, verbose_name=_('Start Date'), null=True, blank=True)
+    end_date = models.DateField(
+        auto_now=False, auto_now_add=False, null=True, blank=True, verbose_name=_('End Date'))
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE,
+                                   related_name="element_history_is_created_by")
+    creation_date = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True, )
+    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                                       related_name="element_history_is_last_update_by", null=True, blank=True)
+    last_update_date = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True, )
 
     def __str__(self):
         return self.element_name

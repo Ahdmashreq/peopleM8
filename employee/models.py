@@ -223,26 +223,34 @@ class EmployeeStructureLink(models.Model):
     @receiver(post_save, sender='employee.EmployeeStructureLink')
     def insert_employee_elements(sender, instance, *args, **kwargs):
         required_salary_structure = instance.salary_structure
-        elements_in_structure = StructureElementLink.objects.filter(salary_structure=required_salary_structure, end_date__isnull=True)
+        elements_in_structure = StructureElementLink.objects.filter(salary_structure=required_salary_structure,
+                                                                    end_date__isnull=True)
         for element in elements_in_structure:
             employee_element_obj = Employee_Element(
-                             emp_id = instance.employee,
-                             element_id = element.element,
-                             element_value = element.element.fixed_amount,
-                             start_date = instance.start_date,
-                             end_date = instance.end_date,
-                             created_by = instance.created_by,
-                             last_update_by = instance.last_update_by,
+                emp_id=instance.employee,
+                element_id=element.element,
+                element_value=element.element.fixed_amount,
+                start_date=instance.start_date,
+                end_date=instance.end_date,
+                created_by=instance.created_by,
+                last_update_by=instance.last_update_by,
             )
             employee_element_obj.save()
 
+
 class Employee_Element_History(models.Model):
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, )
-    element = models.ForeignKey(Element_Master, on_delete=models.CASCADE, )
+    emp_id = models.ForeignKey(Employee, on_delete=models.CASCADE, )
+    element_id = models.ForeignKey(Element_Master, on_delete=models.CASCADE, )
     element_value = models.FloatField(default=0)
-    salary_month = models.IntegerField(default=date.today().month)
-    salary_year = models.IntegerField(default=date.today().year)
-    creation_date = models.DateField(auto_now=True, auto_now_add=False)
+    start_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True,
+                                  verbose_name=_('Start Date'))
+    end_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=_('End Date'))
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE,
+                                   related_name="emp_element_history_created_by")
+    creation_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, )
+    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE,
+                                       related_name="emp_element_history_last_update_by")
+    last_update_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, )
 
     def __str__(self):
         return self.employee.emp_name + ' / ' + self.element.element_name

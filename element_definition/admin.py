@@ -1,7 +1,7 @@
 from django.contrib import admin
 from element_definition.models import (Element_Batch,
                                        Element_Master, Element_Batch_Master, Element_Link, SalaryStructure, Element,
-                                       StructureElementLink,
+                                       StructureElementLink, ElementHistory,
                                        )
 
 
@@ -94,37 +94,18 @@ class Element_Link_Admin(admin.ModelAdmin):
     )
 
 
-
-
-
 @admin.register(Element)
 class ElementAdmin(admin.ModelAdmin):
     class Meta:
         model = Element
-        fields = (
-            'enterprise',
-            'classification',
-            'element_name',
-            'code',
-            'element_type',
-            'amount_type',
-            'fixed_amount',
-            'element_formula',
-            'based_on',
-            'appears_on_payslip',
-            'sequence',
-            'tax_flag',
-            'scheduled_pay',
-            'start_date',
-            'end_date',
-            'created_by',
-            'creation_date',
-            'last_update_by',
-            'last_update_date',
-        )
-
 
 @admin.register(StructureElementLink)
 class StructureElementAdmin(admin.ModelAdmin):
     class Meta:
         model = StructureElementLink
+
+
+@admin.register(ElementHistory)
+class ElementHistoryAdmin(admin.ModelAdmin):
+    class Meta:
+        model = ElementHistory

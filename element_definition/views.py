@@ -134,6 +134,24 @@ def create_new_element(request):
     return render(request, 'create-element2.html', myContext)
 
 
+def update_element_view(request, pk):
+    element = get_object_or_404(Element, pk=pk)
+    element_master_form = ElementForm(instance=element)
+    if request.method == 'POST':
+        element_master_form = ElementMasterForm(
+            request.POST, instance=element)
+        if element_master_form.is_valid():
+            element_master_form.save()
+            success_msg = 'Element Updated Successfully'
+            messages.success(request, success_msg)
+            return redirect('element_definition:list-element')
+    myContext = {
+        "page_title": _("Update lookup"),
+        'element_master_form': element_master_form,
+    }
+    return render(request, 'create-elements.html', myContext)
+
+
 def list_elements_view(request):
     if request.method == 'GET':
         element_master = Element.objects.filter(enterprise=request.user.company).filter(

@@ -100,20 +100,12 @@ class EmployeeElementAdmin(admin.ModelAdmin):
 
 
 @admin.register(Employee_Element_History)
-class Employee_Element_HistoryAdmin(admin.ModelAdmin):
-    fields = (
-        'employee',
-        'element',
-        'element_value',
-        'salary_month',
-        'salary_year',
-        'creation_date',
-    )
-    readonly_fields = ('creation_date',)
-    list_display = ('employee', 'element', 'salary_month', 'salary_year',)
+class EmployeeElementHistoryAdmin(admin.ModelAdmin):
+    class Meta:
+        model = Employee_Element_History
 
 
 @admin.register(EmployeeStructureLink)
-class EmployeeElementValueAdmin(admin.ModelAdmin):
+class EmployeeStructureLinkAdmin(admin.ModelAdmin):
     class Meta:
         model = EmployeeStructureLink
