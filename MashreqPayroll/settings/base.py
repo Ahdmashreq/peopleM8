@@ -6,15 +6,15 @@ BASE_DIR = os.path.dirname(
         os.path.dirname(
             os.path.abspath(__file__)))
 )
-TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
-STATIC_DIR = os.path.join(BASE_DIR, "static")
-MEDIA_DIR = os.path.join(BASE_DIR, "media")
+TEMPLATES_DIR = os.path.join(BASE_DIR, "MashreqPayroll", 'templates')
+STATIC_DIR = os.path.join(BASE_DIR, "MashreqPayroll", "static")
+MEDIA_DIR = os.path.join(BASE_DIR, "MashreqPayroll", "media")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-KEY_PATH = os.path.join(BASE_DIR, 'django_key.txt')
+KEY_PATH = os.path.join(BASE_DIR, 'MashreqPayroll', 'django_key.txt')
 with open(KEY_PATH) as f:
     SECRET_KEY = f.read().strip()
 
