@@ -144,7 +144,6 @@ LOGIN_URL = '/home/login/'
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
-LANGUAGE_CODE = 'ar'
 
 TIME_ZONE = 'UTC'
 
@@ -165,7 +164,8 @@ LOCALE_PATHS = (
 )
 
 # Languages using BiDi (right-to-left) layout
-LANGUAGES_BIDI = ["en"]
+LANGUAGES_BIDI = ["ar"]
+LANGUAGE_CODE = 'en'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
