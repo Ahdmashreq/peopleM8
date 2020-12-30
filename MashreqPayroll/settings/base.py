@@ -2,9 +2,9 @@ import os
 from django.utils.translation import ugettext_lazy as _
 
 BASE_DIR = os.path.dirname(
-    # os.path.dirname(
+    os.path.dirname(
         os.path.dirname(
-            os.path.abspath(__file__))
+            os.path.abspath(__file__)))
 )
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'MashreqPayroll', 'templates')
 STATIC_DIR = os.path.join(BASE_DIR, "MashreqPayroll", "static")

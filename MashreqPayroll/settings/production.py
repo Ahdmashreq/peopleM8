@@ -1,5 +1,5 @@
 import os
-from MashreqPayroll.settings import base
+from MashreqPayroll.settings.base import *
 
 
 DEBUG = False
