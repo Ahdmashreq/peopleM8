@@ -6,7 +6,7 @@ DEBUG = True
 
 ADMINS = [('ahd','ahd.hozayen@mashreqarabia.com')]
 
-ALLOWED_HOSTS = ['127.0.0.1','127.0.1.1','165.22.19.247']
+ALLOWED_HOSTS = ['127.0.0.1','127.0.1.1','165.22.19.247', '192.168.1.37']
 
 TIMEOUT = 900
 
