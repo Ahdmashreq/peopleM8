@@ -2,7 +2,7 @@ import os
 from MashreqPayroll.settings.base import *
 
 
-DEBUG = False
+DEBUG = True
 
 ADMINS = [('ahd','ahd.hozayen@mashreqarabia.com')]
 
