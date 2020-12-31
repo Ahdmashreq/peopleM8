@@ -1,10 +1,18 @@
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from datetime import date
+
+from django.forms import model_to_dict
+
+import employee
+# from employee.models import Employee_Element_History
 from manage_payroll.models import Payroll_Master
 from company.models import (Enterprise, Department, Grade, Job, Position)
 from defenition.models import LookupType, LookupDet
 from django.utils.translation import ugettext_lazy as _
+from django.dispatch import receiver
+from django.db.models.signals import pre_save
 
 
 class Element_Batch(models.Model):
@@ -90,6 +98,38 @@ class Element(models.Model):
 
     def __str__(self):
         return self.element_name
+
+
+@receiver(pre_save, sender='element_definition.Element')
+def backup_elements(sender, instance, **kwargs):
+    if instance.pk is not None:
+        old_element = Element.objects.get(id=instance.id)
+        backup_element = ElementHistory(enterprise=old_element.enterprise, classification=old_element.classification,
+                                        element_name=old_element.element_name, code=old_element.code,
+                                        element_type=old_element.element_type, amount_type=old_element.amount_type,
+                                        fixed_amount=old_element.fixed_amount,
+                                        element_formula=old_element.element_formula, based_on=old_element.based_on,
+                                        appears_on_payslip=old_element.appears_on_payslip,
+                                        sequence=old_element.sequence, tax_flag=old_element.tax_flag,
+                                        scheduled_pay=old_element.scheduled_pay, start_date=old_element.start_date,
+                                        end_date=old_element.end_date, created_by=old_element.created_by,
+                                        last_update_by=old_element.last_update_by,
+                                        creation_date=old_element.creation_date,
+                                        last_update_date=old_element.last_update_date)
+        backup_element.save()
+        content_type = ContentType.objects.get_for_model(Element)
+        emp_element_list_old = employee.models.Employee_Element_History.objects.filter(
+            content_type=content_type,
+            object_id=instance.id)
+        for emp_element in emp_element_list_old:
+            emp_element.element_id = backup_element
+            emp_element.save()
+        emp_element_list_current = employee.models.Employee_Element.objects.filter(element_id=instance)
+        for emp_element_curr in emp_element_list_current:
+            emp_element_curr.element_value = instance.fixed_amount
+            emp_element_curr.last_update_by = instance.last_update_by
+            emp_element_curr.end_date = instance.end_date
+            emp_element_curr.save()
 
 
 class ElementHistory(models.Model):

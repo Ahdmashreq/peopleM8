@@ -1,16 +1,20 @@
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from django.urls import reverse
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.utils.translation import ugettext_lazy as _
+
 from datetime import date
 from django.core.validators import MaxValueValidator, MinValueValidator
 from defenition.models import LookupType, LookupDet
 from company.models import (Enterprise, Department, Grade, Position, Job)
 from manage_payroll.models import (Bank_Master, Payroll_Master)
-from element_definition.models import Element_Master, Element_Link, SalaryStructure, Element, StructureElementLink
-from employee.fast_formula import FastFormula
-from django.utils.translation import ugettext_lazy as _
+import element_definition.models
+
+# from django.utils.translation import ugettext_lazy as _
 
 payment_type_list = [("c", _("Cash")), ("k", _("Check")),
                      ("b", _("Bank transfer")), ]
@@ -164,8 +168,9 @@ class Payment(models.Model):
 
 class Employee_Element(models.Model):
     emp_id = models.ForeignKey(Employee, on_delete=models.CASCADE, verbose_name=_('Employee'))
-    element_id = models.ForeignKey(Element, on_delete=models.CASCADE, verbose_name=_('Pay'))
-    element_value = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_('Pay Value'))
+    element_id = models.ForeignKey(element_definition.models.Element, on_delete=models.CASCADE, verbose_name=_('Pay'))
+    element_value = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True,
+                                        verbose_name=_('Pay Value'))
     start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
     end_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=_('End Date'))
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
@@ -206,7 +211,7 @@ class Employee_Element(models.Model):
 
 class EmployeeStructureLink(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, )
-    salary_structure = models.ForeignKey(SalaryStructure, on_delete=models.CASCADE,
+    salary_structure = models.ForeignKey(element_definition.models.SalaryStructure, on_delete=models.CASCADE,
                                          related_name='employee_structure_link', )
     start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
     end_date = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True, verbose_name=_('End Date'))
@@ -223,8 +228,9 @@ class EmployeeStructureLink(models.Model):
     @receiver(post_save, sender='employee.EmployeeStructureLink')
     def insert_employee_elements(sender, instance, *args, **kwargs):
         required_salary_structure = instance.salary_structure
-        elements_in_structure = StructureElementLink.objects.filter(salary_structure=required_salary_structure,
-                                                                    end_date__isnull=True)
+        elements_in_structure = element_definition.models.StructureElementLink.objects.filter(
+            salary_structure=required_salary_structure,
+            end_date__isnull=True)
         for element in elements_in_structure:
             employee_element_obj = Employee_Element(
                 emp_id=instance.employee,
@@ -240,8 +246,11 @@ class EmployeeStructureLink(models.Model):
 
 class Employee_Element_History(models.Model):
     emp_id = models.ForeignKey(Employee, on_delete=models.CASCADE, )
-    element_id = models.ForeignKey(Element_Master, on_delete=models.CASCADE, )
-    element_value = models.FloatField(default=0)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, blank=True, null=True)
+    object_id = models.PositiveIntegerField(blank=True, null=True)
+    element_id = GenericForeignKey()
+    element_value = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    element_computed_value = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     start_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True,
                                   verbose_name=_('Start Date'))
     end_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=_('End Date'))
@@ -253,4 +262,4 @@ class Employee_Element_History(models.Model):
     last_update_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, )
 
     def __str__(self):
-        return self.employee.emp_name + ' / ' + self.element.element_name
+        return self.emp_id.emp_name + ' / ' + self.element_id.element_name

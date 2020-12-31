@@ -138,24 +138,41 @@ def update_element_view(request, pk):
     element = get_object_or_404(Element, pk=pk)
     element_master_form = ElementForm(instance=element)
     if request.method == 'POST':
-        element_master_form = ElementMasterForm(
+        user_lang = to_locale(get_language())
+        element_master_form = ElementForm(
             request.POST, instance=element)
         if element_master_form.is_valid():
-            element_master_form.save()
-            success_msg = 'Element Updated Successfully'
+            element_obj = element_master_form.save(commit=False)
+            element_obj.last_update_by = request.user
+            element_obj.save()
+            success_msg = make_message(user_lang, True)
             messages.success(request, success_msg)
             return redirect('element_definition:list-element')
+        else:
+            failure_msg = make_message(user_lang, False)
+            messages.error(request, failure_msg)
+            print(element_master_form.errors)
+
     myContext = {
-        "page_title": _("Update lookup"),
+        "page_title": _("Update Element"),
         'element_master_form': element_master_form,
     }
-    return render(request, 'create-elements.html', myContext)
+    return render(request, 'create-element2.html', myContext)
+
+
+def delete_element_view(request, pk):
+    required_element = get_object_or_404(Element, pk=pk)
+    required_element.end_date = date.today()
+    required_element.save(update_fields=['end_date'])
+    success_msg = '{} was deleted successfully'.format(required_element)
+    messages.success(request, success_msg)
+    return redirect('element_definition:list-element')
 
 
 def list_elements_view(request):
     if request.method == 'GET':
         element_master = Element.objects.filter(enterprise=request.user.company).filter(
-            (Q(end_date__gte=date.today()) | Q(end_date__isnull=True)))
+            (Q(end_date__gt=date.today()) | Q(end_date__isnull=True)))
         company_basic_db_name = str(request.user.company.id) + '00001'
 
     myContext = {
@@ -182,6 +199,7 @@ def create_salary_structure_with_elements_view(request):
                 for elements_obj in elements_objs:
                     elements_obj.created_by = request.user
                     elements_obj.save()
+                return redirect('element_definition:list-batchs')
             else:
                 print(elements_inlines.errors)
         else:

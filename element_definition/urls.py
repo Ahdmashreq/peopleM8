@@ -9,8 +9,8 @@ urlpatterns=[
                 ######################### Element URLs #####################################
                 path('new/', views.create_new_element, name='element-create'),
                 path('list/', views.list_elements_view, name='list-element'),
-                path('update/<int:pk>/', views.updateElementView, name='update-element'),
-                path('delete/<int:pk>/', views.deleteElementView, name='delete-element'),
+                path('update/<int:pk>/', views.update_element_view, name='update-element'),
+                path('delete/<int:pk>/', views.delete_element_view, name='delete-element'),
     ])),
     path('batch/', include([
                 ######################### ElementBatch URLs ################################
