@@ -6,6 +6,7 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.utils.translation import ugettext_lazy as _
+from django.db.models import Q
 
 from datetime import date
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -231,8 +232,19 @@ class EmployeeStructureLink(models.Model):
     def __str__(self):
         return self.employee.emp_name + ' ' + self.salary_structure.structure_name
 
-    @receiver(post_save, sender='employee.EmployeeStructureLink')
+    @receiver(pre_save, sender='employee.EmployeeStructureLink')
     def insert_employee_elements(sender, instance, *args, **kwargs):
+        if instance.id is not None:  # if record is being updated
+            # delete elements related to old structure in emp-elements
+            old_salary_structure_link = EmployeeStructureLink.objects.get(id=instance.id)
+            linked_elements = element_definition.models.StructureElementLink.objects.filter(
+                salary_structure=old_salary_structure_link.salary_structure).filter(
+                Q(end_date__isnull=True) | Q(end_date__gt=date.today())).values('element')
+            employee_elements = Employee_Element.objects.filter(emp_id=instance.employee,
+                                                                element_id__in=linked_elements)
+            for emp_el in employee_elements:
+                emp_el.delete()
+
         required_salary_structure = instance.salary_structure
         elements_in_structure = element_definition.models.StructureElementLink.objects.filter(
             salary_structure=required_salary_structure,
