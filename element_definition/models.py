@@ -201,7 +201,7 @@ class StructureElementLink(models.Model):
 
 
 @receiver(post_save, sender='element_definition.StructureElementLink')
-def update_emp_element(sender, instance, created, **kwargs):
+def update_emp_element(sender, instance, created,update_fields, **kwargs):
     # if element is added to existing structure, add it to employee
     # if element is removed from existing structure, add end date to emp-value TODO
     linked_employees = employee.models.EmployeeStructureLink.objects.filter(
@@ -225,11 +225,13 @@ def update_emp_element(sender, instance, created, **kwargs):
                                                                        emp_id__in=linked_employees).filter(
             Q(end_date__gt=date.today()) | Q(end_date__isnull=True))
         for linked_emp in emp_elements:
-            if element in updated_fields:
-            linked_emp.start_date = instance.start_date
-            linked_emp.end_date = instance.end_date
-            linked_emp.last_update_by = instance.last_update_by
-            linked_emp.save()
+            if 'element' in update_fields:
+                pass
+            else:
+                linked_emp.start_date = instance.start_date
+                linked_emp.end_date = instance.end_date
+                linked_emp.last_update_by = instance.last_update_by
+                linked_emp.save()
 
 
 class Element_Master(models.Model):
