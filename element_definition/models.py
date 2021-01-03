@@ -200,14 +200,14 @@ class StructureElementLink(models.Model):
         return self.salary_structure.structure_name + '.' + self.element.element_name
 
 
-@receiver(post_save, sender='element_definition.StructureElementLink')
-def update_emp_element(sender, instance, created,update_fields, **kwargs):
+@receiver(pre_save, sender='element_definition.StructureElementLink')
+def update_emp_element(sender, instance, **kwargs):
     # if element is added to existing structure, add it to employee
     # if element is removed from existing structure, add end date to emp-value TODO
     linked_employees = employee.models.EmployeeStructureLink.objects.filter(
         salary_structure=instance.salary_structure).filter(
         Q(end_date__gt=date.today()) | Q(end_date__isnull=True)).values('employee')
-    if created:
+    if instance.pk is None:
         for linked_emp in linked_employees:
             employee_inst = employee.models.Employee.objects.get(id=linked_emp['employee'])
             employee_element_obj = employee.models.Employee_Element(
@@ -221,12 +221,23 @@ def update_emp_element(sender, instance, created,update_fields, **kwargs):
             )
             employee_element_obj.save()
     else:
-        emp_elements = employee.models.Employee_Element.objects.filter(element_id=instance.element,
+        structure_element = StructureElementLink.objects.get(id=instance.id)
+        emp_elements = employee.models.Employee_Element.objects.filter(element_id=structure_element.element,
                                                                        emp_id__in=linked_employees).filter(
             Q(end_date__gt=date.today()) | Q(end_date__isnull=True))
         for linked_emp in emp_elements:
-            if 'element' in update_fields:
-                pass
+            if structure_element.element != instance.element:  # check if element in updated
+                linked_emp.delete()
+                employee_element_obj = employee.models.Employee_Element(
+                    emp_id=linked_emp.emp_id,
+                    element_id=instance.element,
+                    element_value=instance.element.fixed_amount,
+                    start_date=instance.start_date,
+                    end_date=instance.end_date,
+                    created_by=instance.created_by,
+                    last_update_by=instance.last_update_by,
+                )
+                employee_element_obj.save()
             else:
                 linked_emp.start_date = instance.start_date
                 linked_emp.end_date = instance.end_date

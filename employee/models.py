@@ -183,6 +183,12 @@ class Employee_Element(models.Model):
     def __str__(self):
         return self.element_id.element_name
 
+    @receiver(post_save, sender='employee.Employee_Element')
+    # this receiver is used to delete all records with end dates have come so they are not put in history
+    def delete_links_with_due_end_date(sender, instance, **kwargs):
+        if instance.end_date is not None and instance.end_date <= date.today():
+            instance.delete()
+
     # def set_formula_amount(emp):
     #     formula_element = Employee_Element.objects.filter(emp_id=emp.id,element_id__element_formula__isnull=False)
     #     for x in formula_element:

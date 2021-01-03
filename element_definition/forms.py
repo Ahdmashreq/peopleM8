@@ -134,6 +134,7 @@ class ElementBatchForm(forms.ModelForm):
         self.helper.form_show_labels = True
         self.fields['start_date'].widget.input_type = 'date'
         self.fields['end_date'].widget.input_type = 'date'
+        
         for field in self.fields:
             if self.fields[field].widget.input_type == 'checkbox':
                 self.fields[field].widget.attrs['class'] = 'checkbox'

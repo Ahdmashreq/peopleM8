@@ -184,7 +184,7 @@ def list_elements_view(request):
 
 def list_salary_structures(request):
     structure_list = SalaryStructure.objects.all().filter(
-        (Q(end_date__gte=date.today()) | Q(end_date__isnull=True)))
+        (Q(end_date__gt=date.today()) | Q(end_date__isnull=True)))
     context = {
         "page_title": _("Salary Structures"),
         'structure_list': structure_list,
@@ -328,7 +328,9 @@ def create_salary_structure_with_elements_view(request):
 def update_salary_structure_with_elements_view(request, pk):
     structure_instance = SalaryStructure.objects.get(pk=pk)
     structure_form = SalaryStructureForm(instance=structure_instance)
-    elements_inlines = ElementInlineFormset(instance=structure_instance)
+    list_of_active_links = StructureElementLink.objects.filter(salary_structure=structure_instance).filter(
+        Q(end_date__gt=date.today()) | Q(end_date__isnull=True))
+    elements_inlines = ElementInlineFormset(instance=structure_instance,queryset=list_of_active_links)
     if request.method == 'POST':
         structure_form = SalaryStructureForm(request.POST, instance=structure_instance)
         elements_inlines = ElementInlineFormset(
