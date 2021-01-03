@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.contrib.contenttypes.fields import GenericForeignKey
+
 from datetime import date
 
 from django.db.models import Q
@@ -73,7 +75,7 @@ class Element(models.Model):
                             blank=True, verbose_name=_('code'))
     element_type = models.CharField(
         max_length=100, choices=element_type_choices)
-    amount_type = models.CharField(max_length=100, choices=amount_type_choices)
+    amount_type = models.CharField(max_length=100, choices=amount_type_choices, null=True, blank=True)
     fixed_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Amount'), null=True,
                                        blank=True, )
     element_formula = models.TextField(
@@ -103,7 +105,8 @@ class Element(models.Model):
 
 @receiver(pre_save, sender='element_definition.Element')
 def backup_elements(sender, instance, **kwargs):
-    if instance.pk is not None:
+    if instance.pk is not None:  # if element is being updated
+
         old_element = Element.objects.get(id=instance.id)
         backup_element = ElementHistory(enterprise=old_element.enterprise, classification=old_element.classification,
                                         element_name=old_element.element_name, code=old_element.code,
@@ -125,6 +128,22 @@ def backup_elements(sender, instance, **kwargs):
         for emp_element in emp_element_list_old:
             emp_element.element_id = backup_element
             emp_element.save()
+        if instance.element_type == 'payslip based':
+            instance.fixed_amount = None
+            instance.element_formula = None
+        elif instance.element_type == 'formula':
+            instance.fixed_amount = None
+            instance.amount_type = None
+        elif instance.element_type == 'global value':
+            instance.element_formula = None
+        # updated based on fields in element history
+        elements_history = ElementHistory.objects.filter(content_type=content_type,
+                                                         object_id=instance.id)
+        for el in elements_history:
+            el.based_on = backup_element
+            el.save()
+
+        # update the values for emp elements
         emp_element_list_current = employee.models.Employee_Element.objects.filter(element_id=instance)
         for emp_element_curr in emp_element_list_current:
             emp_element_curr.element_value = instance.fixed_amount
@@ -157,8 +176,9 @@ class ElementHistory(models.Model):
                                        blank=True, )
     element_formula = models.TextField(
         max_length=255, null=True, blank=True, verbose_name=_('Formula'))
-    based_on = models.ForeignKey(
-        'self', on_delete=models.CASCADE, null=True, blank=True, )
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, blank=True, null=True)
+    object_id = models.PositiveIntegerField(blank=True, null=True)
+    based_on = GenericForeignKey()
     appears_on_payslip = models.BooleanField(
         verbose_name=_('Appears on payslip'), default=True, null=True, blank=True)
     sequence = models.IntegerField(null=True, blank=True, )

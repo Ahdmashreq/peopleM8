@@ -107,18 +107,36 @@ if(document.getElementById('id_element_type').value === 'formula') {
     document.getElementById('amount_type').style.display = 'none';
 
 }
-else if (document.getElementById('id_element_type').value == 'global'){
+else if (document.getElementById('id_element_type').value == 'global value'){
 
     document.getElementById('formula').style.display = 'none';
     document.getElementById('fixed_amount').style.display = 'block';
     document.getElementById('amount_type').style.display = 'block';
-    if (document.getElementById('amount_type') == 'percentage'){
+    if (document.getElementById('id_amount_type').value == 'percentage'){
+      document.getElementById('based_on').style.display = 'block';
+    }
+    else{
+
+      document.getElementById('based_on').style.display = 'none';
+
+     };
+
+     }
+else if (document.getElementById('id_element_type').value == 'payslip based'){
+
+
+    document.getElementById('fixed_amount').style.display = 'none';
+    document.getElementById('formula').style.display = 'none';
+    document.getElementById('amount_type').style.display = 'block';
+    if (document.getElementById('id_amount_type').value == 'percentage'){
+
       document.getElementById('based_on').style.display = 'block';
     }
     else{
       document.getElementById('based_on').style.display = 'none';
 
      };
+
 
 }else {
     document.getElementById('formula').style.display = 'none';
@@ -154,12 +172,12 @@ function myFunction(object) {
 
 <script>
 function check_amount_type(object) {
-  if (document.getElementById('id_element_type').value == 'payslip based'){
-        document.getElementById('fixed_amount').style.display = 'none';
-        document.getElementById('formula').style.display = 'none';
-        document.getElementById('based_on').style.display = 'none';
-        document.getElementById('amount_type').style.display = 'block';
-         }
+ if(object.value === 'percentage') {
+    document.getElementById('fixed_amount').style.display = 'block';
+    document.getElementById('formula').style.display = 'none';
+    document.getElementById('based_on').style.display = 'block';
+    }
+
   else if (document.getElementById('id_element_type').value == 'formula'){
         document.getElementById('fixed_amount').style.display = 'none';
         document.getElementById('formula').style.display = 'block';
@@ -167,11 +185,12 @@ function check_amount_type(object) {
         document.getElementById('amount_type').style.display = 'none';
         }
 
-  else if(object.value === 'percentage') {
-    document.getElementById('fixed_amount').style.display = 'block';
-    document.getElementById('formula').style.display = 'none';
-    document.getElementById('based_on').style.display = 'block';
-    }
+  else  if (document.getElementById('id_element_type').value == 'payslip based'){
+        document.getElementById('fixed_amount').style.display = 'none';
+        document.getElementById('formula').style.display = 'none';
+        document.getElementById('based_on').style.display = 'none';
+        document.getElementById('amount_type').style.display = 'block';
+         }
    else {
    document.getElementById('fixed_amount').style.display = 'block';
     document.getElementById('formula').style.display = 'none';
