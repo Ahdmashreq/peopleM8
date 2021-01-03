@@ -3,8 +3,8 @@ from datetime import date
 from django.db.models import Q
 
 class DepartmentManager(models.Manager):
-    def all(self, user, *args, **kwargs):
-        return super(DepartmentManager, self).filter(enterprise=user.company).filter(Q(end_date__gt=date.today()) | Q(end_date__isnull=True))
+    # def all(self, *args, **kwargs):
+    #     return super(DepartmentManager, self).filter(enterprise=user.company).filter(Q(end_date__gt=date.today()) | Q(end_date__isnull=True))
 
     def get_department(self, user, dept_id, *args, **kwargs):
         return super(DepartmentManager, self).filter(department_user__company=user.company).filter(

@@ -53,6 +53,8 @@ INSTALLED_APPS = [
     'service',
     'import_export',
     'mptt',
+'rest_framework',
+    'django_filters',
 ]
 
 

@@ -22,8 +22,9 @@ urlpatterns = [
         path('report/', include('report.urls')),
         path('recruitment/', include('recruitment.urls')),
         path('service/', include('service.urls')),
+        path('api/company/', include('company.api.urls')),
 
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+              ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
 # urlpatterns += i18n_patterns (
