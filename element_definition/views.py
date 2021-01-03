@@ -11,7 +11,7 @@ from element_definition.forms import (ElementMasterForm, ElementMasterInlineForm
                                       ElementLinkForm, CustomPythonRuleForm, ElementForm, SalaryStructureForm,
                                       ElementInlineFormset)
 from element_definition.models import (
-    Element_Batch, Element_Master, Element_Batch_Master, Element_Link, Element, SalaryStructure)
+    Element_Batch, Element_Master, Element_Batch_Master, Element_Link, Element, SalaryStructure, StructureElementLink)
 from employee.models import Employee, Employee_Element, JobRoll
 from manage_payroll.models import Payroll_Master
 from defenition.models import LookupDet
@@ -182,33 +182,6 @@ def list_elements_view(request):
     return render(request, 'backup_list-elements.html', myContext)
 
 
-def create_salary_structure_with_elements_view(request):
-    structure_form = SalaryStructureForm()
-    elements_inlines = ElementInlineFormset()
-    if request.method == 'POST':
-        structure_form = SalaryStructureForm(request.POST)
-        elements_inlines = ElementInlineFormset(request.POST)
-        if structure_form.is_valid():
-            structure_obj = structure_form.save(commit=False)
-            structure_obj.created_by = request.user
-            structure_obj.enterprise = request.user.company
-            structure_obj.save()
-            elements_inlines = ElementInlineFormset(request.POST, instance=structure_obj)
-            if elements_inlines.is_valid():
-                elements_objs = elements_inlines.save(commit=False)
-                for elements_obj in elements_objs:
-                    elements_obj.created_by = request.user
-                    elements_obj.save()
-                return redirect('element_definition:list-batchs')
-            else:
-                print(elements_inlines.errors)
-        else:
-            print(structure_form.errors)
-    context = {'page_title': "New Salary Structure", 'structure_form': structure_form,
-               'elements_inlines': elements_inlines}
-    return render(request, 'backup_create-salary-structure.html', context=context)
-
-
 def list_salary_structures(request):
     structure_list = SalaryStructure.objects.all().filter(
         (Q(end_date__gte=date.today()) | Q(end_date__isnull=True)))
@@ -323,6 +296,68 @@ def createElementBatchView(request):
         'batch_detail_form': batch_detail_form
     }
     return render(request, 'create-batch.html', batchContext)
+
+
+def create_salary_structure_with_elements_view(request):
+    structure_form = SalaryStructureForm()
+    elements_inlines = ElementInlineFormset()
+    if request.method == 'POST':
+        structure_form = SalaryStructureForm(request.POST)
+        elements_inlines = ElementInlineFormset(request.POST)
+        if structure_form.is_valid():
+            structure_obj = structure_form.save(commit=False)
+            structure_obj.created_by = request.user
+            structure_obj.enterprise = request.user.company
+            structure_obj.save()
+            elements_inlines = ElementInlineFormset(request.POST, instance=structure_obj)
+            if elements_inlines.is_valid():
+                elements_objs = elements_inlines.save(commit=False)
+                for elements_obj in elements_objs:
+                    elements_obj.created_by = request.user
+                    elements_obj.save()
+                return redirect('element_definition:list-batchs')
+            else:
+                print(elements_inlines.errors)
+        else:
+            print(structure_form.errors)
+    context = {'page_title': "New Salary Structure", 'structure_form': structure_form,
+               'elements_inlines': elements_inlines}
+    return render(request, 'backup_create-salary-structure.html', context=context)
+
+
+def update_salary_structure_with_elements_view(request, pk):
+    structure_instance = SalaryStructure.objects.get(pk=pk)
+    structure_form = SalaryStructureForm(instance=structure_instance)
+    elements_inlines = ElementInlineFormset(instance=structure_instance)
+    if request.method == 'POST':
+        structure_form = SalaryStructureForm(request.POST, instance=structure_instance)
+        elements_inlines = ElementInlineFormset(
+            request.POST, instance=structure_instance)
+        if structure_form.is_valid() and elements_inlines.is_valid():
+            structure_obj = structure_form.save(commit=False)
+            structure_obj.last_update_by = request.user
+            structure_obj.save()
+            elements_inlines = ElementInlineFormset(
+                request.POST, instance=structure_obj)
+            if elements_inlines.is_valid():
+                obj_det = elements_inlines.save(commit=False)
+                for obj in obj_det:
+                    obj.created_by = (request.user if obj.pk is None else obj.created_by)
+                    obj.last_update_by = request.user
+                    obj.save()
+                success_msg = 'Salary structure {} updated Successfully'.format(
+                    structure_obj.structure_name)
+            messages.success(request, success_msg)
+            return redirect('element_definition:list-batchs')
+        else:
+            messages.error(request, structure_form.errors)
+            messages.error(request, elements_inlines.errors)
+    context = {
+        "page_title": _("Update Salary Structure"),
+        'structure_form': structure_form,
+        'elements_inlines': elements_inlines
+    }
+    return render(request, 'backup_create-salary-structure.html', context=context)
 
 
 def updateElementBatchView(request, pk):

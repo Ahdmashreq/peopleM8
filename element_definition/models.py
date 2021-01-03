@@ -3,6 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from datetime import date
 
+from django.db.models import Q
 from django.forms import model_to_dict
 
 import employee
@@ -12,7 +13,7 @@ from company.models import (Enterprise, Department, Grade, Job, Position)
 from defenition.models import LookupType, LookupDet
 from django.utils.translation import ugettext_lazy as _
 from django.dispatch import receiver
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_save, post_save
 
 
 class Element_Batch(models.Model):
@@ -73,8 +74,8 @@ class Element(models.Model):
     element_type = models.CharField(
         max_length=100, choices=element_type_choices)
     amount_type = models.CharField(max_length=100, choices=amount_type_choices)
-    fixed_amount = models.IntegerField(
-        default=0, verbose_name=_('Amount'), null=True, blank=True, )
+    fixed_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Amount'), null=True,
+                                       blank=True, )
     element_formula = models.TextField(
         max_length=255, null=True, blank=True, verbose_name=_('Formula'))
     based_on = models.ForeignKey(
@@ -152,8 +153,8 @@ class ElementHistory(models.Model):
     element_type = models.CharField(
         max_length=100, choices=element_type_choices, null=True, blank=True)
     amount_type = models.CharField(max_length=100, choices=amount_type_choices, null=True, blank=True)
-    fixed_amount = models.IntegerField(
-        default=0, verbose_name=_('Amount'), null=True, blank=True, )
+    fixed_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Amount'), null=True,
+                                       blank=True, )
     element_formula = models.TextField(
         max_length=255, null=True, blank=True, verbose_name=_('Formula'))
     based_on = models.ForeignKey(
@@ -197,6 +198,38 @@ class StructureElementLink(models.Model):
 
     def __str__(self):
         return self.salary_structure.structure_name + '.' + self.element.element_name
+
+
+@receiver(post_save, sender='element_definition.StructureElementLink')
+def update_emp_element(sender, instance, created, **kwargs):
+    # if element is added to existing structure, add it to employee
+    # if element is removed from existing structure, add end date to emp-value TODO
+    linked_employees = employee.models.EmployeeStructureLink.objects.filter(
+        salary_structure=instance.salary_structure).filter(
+        Q(end_date__gt=date.today()) | Q(end_date__isnull=True)).values('employee')
+    if created:
+        for linked_emp in linked_employees:
+            employee_inst = employee.models.Employee.objects.get(id=linked_emp['employee'])
+            employee_element_obj = employee.models.Employee_Element(
+                emp_id=employee_inst,
+                element_id=instance.element,
+                element_value=instance.element.fixed_amount,
+                start_date=instance.start_date,
+                end_date=instance.end_date,
+                created_by=instance.created_by,
+                last_update_by=instance.last_update_by,
+            )
+            employee_element_obj.save()
+    else:
+        emp_elements = employee.models.Employee_Element.objects.filter(element_id=instance.element,
+                                                                       emp_id__in=linked_employees).filter(
+            Q(end_date__gt=date.today()) | Q(end_date__isnull=True))
+        for linked_emp in emp_elements:
+            if element in updated_fields:
+            linked_emp.start_date = instance.start_date
+            linked_emp.end_date = instance.end_date
+            linked_emp.last_update_by = instance.last_update_by
+            linked_emp.save()
 
 
 class Element_Master(models.Model):
