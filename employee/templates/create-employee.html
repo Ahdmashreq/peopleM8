@@ -334,8 +334,14 @@
                   </div>
                   <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
                     <div class="peer">
-                      <a href="#" class="btn cur-p btn-primary" data-toggle="modal" data-target="#structure-modal">{% trans "Assign Salary Structure" %}</a>
-                      <a href="#" class="btn cur-p btn-primary" data-toggle="modal" data-target="#element-modal">{% trans "Assign Other Element" %}</a>
+                      {% if not create_employee %}
+                        {% if employee_has_structure %}
+                          <a href="{% url 'employee:link-structure-update' pk=required_employee.id %}" class="btn cur-p btn-primary">{% trans "Assign Salary Structure" %}</a>
+                          <a href="#" class="btn cur-p btn-primary" data-toggle="modal" data-target="#element-modal">{% trans "Assign Other Element" %}</a>
+                          {% else %}
+                          <a href="{% url 'employee:link-structure-create' pk=required_employee.id %}" class="btn cur-p btn-primary" >{% trans "Assign Salary Structure" %}</a>
+                          {% endif %}
+                      {% endif %}
                     </div>
                   </div>
                 </div>
@@ -346,23 +352,21 @@
       </div>
     </div>
   </div>
-
-</form>
-<div class="modal fade" id="structure-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-        <p>{% trans "Which Salary Structure You Want To Assign?" %}</p>
-        <form method="post">
-          {% csrf_token %}
+  <div class="modal fade" id="structure-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+          <p>{% trans "Which Salary Structure You Want To Assign?" %}</p>
           {{emp_link_structure_form.as_p}}
-          <button type="submit" class="btn btn-success" data-dismiss="modal">{% trans "Save" %}</button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
-        </form>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "Done" %}</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "Cancel" %}</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
+</form>
+
+
 <div class="modal fade" id="element-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
   <div class="modal-dialog" role="document">
     <div class="modal-content">

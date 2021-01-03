@@ -8,7 +8,8 @@ from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.utils.translation import to_locale, get_language
 from element_definition.models import Element_Master, Element_Link
-from employee.models import (Employee, JobRoll, Payment, Employee_Element, EmployeeStructureLink)
+from employee.models import (
+    Employee, JobRoll, Payment, Employee_Element, EmployeeStructureLink)
 from employee.forms import (EmployeeForm, JobRollForm, Employee_Payment_formset,
                             EmployeeElementForm, Employee_Element_Inline, EmployeeStructureLinkForm)
 from payroll_run.models import Salary_elements
@@ -37,8 +38,8 @@ def createEmployeeView(request):
         emp_form = EmployeeForm(request.POST)
         jobroll_form = JobRollForm(request.user, request.POST)
         payment_form = Employee_Payment_formset(request.POST)
-        emp_element_form = Employee_Element_Inline(request.POST)
-        if emp_form.is_valid() and jobroll_form.is_valid() and payment_form.is_valid() and emp_element_form.is_valid():
+
+        if emp_form.is_valid() and jobroll_form.is_valid() and payment_form.is_valid():
             emp_obj = emp_form.save(commit=False)
             emp_obj.enterprise = request.user.company
             emp_obj.created_by = request.user
@@ -65,15 +66,7 @@ def createEmployeeView(request):
                     error_msg = '{}, has somthig wrong'.format(emp_payment_obj)
                 # error_msg = '{}, has somthig wrong'.format(emp_payment_obj)
                 messages.success(request, success_msg)
-            emp_element_form = Employee_Element_Inline(
-                request.POST, instance=emp_obj)
-            if emp_element_form.is_valid():
-                element_obj = emp_element_form.save(commit=False)
-                for x in element_obj:
-                    x.created_by = request.user
-                    x.last_update_by = request.user
-                    x.save()
-            else:
+
 
                 user_lang = to_locale(get_language())
                 if user_lang == 'ar':
@@ -86,7 +79,7 @@ def createEmployeeView(request):
                         emp_obj.emp_name)
 
                     messages.success(request, success_msg)
-            return redirect('employee:list-employee')
+            return redirect('employee:update-employee', pk=emp_obj.id)
         else:
             messages.error(request, emp_form.errors)
             messages.error(request, jobroll_form.errors)
@@ -95,7 +88,7 @@ def createEmployeeView(request):
         "emp_form": emp_form,
         "jobroll_form": jobroll_form,
         "payment_form": payment_form,
-        "emp_element_form": emp_element_form,
+        "create_employee":True,
     }
     return render(request, 'create-employee.html', myContext)
 
@@ -161,6 +154,7 @@ def updateEmployeeView(request, pk):
     required_employee = get_object_or_404(Employee, pk=pk)
     required_jobRoll = JobRoll.objects.get(emp_id=required_employee)
     emp_form = EmployeeForm(instance=required_employee)
+    # filter the user fk list to show the company users only.
     emp_form.fields['user'].queryset = User.objects.filter(
         company=request.user.company)
     jobroll_form = JobRollForm(user_v=request.user, instance=required_jobRoll)
@@ -173,21 +167,14 @@ def updateEmployeeView(request, pk):
     '''
     employee_element_qs = Employee_Element.objects.filter(
         emp_id=required_employee, end_date__isnull=True)
-    emp_link_structure_form = EmployeeStructureLinkForm(instance=EmployeeStructureLink.objects.get(employee=required_employee))
+    employee_has_structure = False
+    try:
+        employee_salary_structure = EmployeeStructureLink.objects.get(
+            employee=required_employee)
+        employee_has_structure=True
+    except EmployeeStructureLink.DoesNotExist:
+        employee_has_structure = False
 
-
-    elements_form = Employee_Element_Inline(queryset=Employee_Element.objects.filter(
-        end_date__isnull=True), instance=required_employee)
-    for form in elements_form:
-        form.fields['element_id'].queryset = Element_Master.objects.filter(
-            enterprise=request.user.company).filter(Q(end_date__gte=date.today()) | Q(end_date__isnull=True))
-
-    # elements = Element_Link.objects.filter(
-    #                                       Q(payroll_fk=required_jobRoll.payroll) | Q(payroll_fk__isnull=True),
-    #                                       Q(element_position_id_fk=required_jobRoll.position) | Q(element_position_id_fk__isnull=True)
-    #                                       )
-    # for element in elements_form:
-    #     element.fields['element_id'].queryset = elements
 
     if request.method == 'POST':
         emp_form = EmployeeForm(request.POST, instance=required_employee)
@@ -196,11 +183,12 @@ def updateEmployeeView(request, pk):
         payment_form = Employee_Payment_formset(
             request.POST, instance=required_employee)
 
-        emp_link_structure_form = EmployeeStructureLinkForm(request.POST,)
+        if EmployeeStructureLink.DoesNotExist:
+            emp_link_structure_form = EmployeeStructureLinkForm(request.POST)
+        else:
+            emp_link_structure_form = EmployeeStructureLinkForm(
+                request.POST, instance=employee_salary_structure)
 
-
-        elements_form = Employee_Element_Inline(
-            request.POST, instance=required_employee)
         if emp_form.is_valid():
             emp_obj = emp_form.save(commit=False)
             emp_obj.created_by = request.user
@@ -208,6 +196,7 @@ def updateEmployeeView(request, pk):
             emp_obj.save()
         else:
             messages.error(request, emp_form.errors)
+
         if jobroll_form.is_valid():
             job_obj = jobroll_form.save(commit=False)
             job_obj.emp_id_id = emp_obj.id
@@ -217,6 +206,7 @@ def updateEmployeeView(request, pk):
         else:
             messages.error(request, jobroll_form.errors)
         payment_form = Employee_Payment_formset(request.POST, instance=emp_obj)
+
         if payment_form.is_valid():
             emp_payment_obj = payment_form.save(commit=False)
             for x in emp_payment_obj:
@@ -225,40 +215,75 @@ def updateEmployeeView(request, pk):
                 x.save()
         else:
             messages.error(request, payment_form.errors)
-        emp_element_form = Employee_Element_Inline(
-            request.POST, instance=emp_obj)
-        if emp_element_form.is_valid():
-            emp_element_obj = emp_element_form.save(commit=False)
-            for x in emp_element_obj:
-                x.created_by = request.user
-                x.last_update_by = request.user
-                x.save()
-        else:
-            messages.error(request, emp_element_form.errors)
-        # Employee_Element.set_formula_amount(required_employee)
 
         user_lang = to_locale(get_language())
+
         if user_lang == 'ar':
             success_msg = ' {},تم تسجيل الموظف'.format(emp_obj.emp_name)
         else:
             success_msg = 'Employee {}, has been created successfully'.format(
                 emp_obj.emp_name)
-
-        success_msg = 'Employee {} updated successfully'.format(
-            emp_obj.emp_name)
-        # messages.success(request, success_msg)
         return redirect('employee:list-employee')
-
+    print(employee_has_structure)
     myContext = {
         "page_title": _("update employee"),
         "emp_form": emp_form,
         "jobroll_form": jobroll_form,
         "payment_form": payment_form,
-        "emp_element_form": elements_form,
-        "emp_link_structure_form":emp_link_structure_form,
-        "employee_element_qs":employee_element_qs
+        "required_employee":required_employee,
+        "employee_element_qs": employee_element_qs,
+        "employee_has_structure":employee_has_structure
     }
     return render(request, 'create-employee.html', myContext)
+
+
+@login_required(login_url='home:user-login')
+def create_link_employee_structure(request, pk):
+    required_employee = get_object_or_404(Employee, pk=pk)
+    emp_link_structure_form = EmployeeStructureLinkForm()
+    if request.method == 'POST':
+        emp_link_structure_form = EmployeeStructureLinkForm(request.POST)
+        if emp_link_structure_form.is_valid():
+            emp_structure_obj = emp_link_structure_form.save(commit=False)
+            emp_structure_obj.employee = required_employee
+            emp_structure_obj.created_by = request.user
+            emp_structure_obj.last_update_by = request.user
+            emp_structure_obj.save()
+            return redirect('employee:update-employee', pk=pk)
+        else:
+            print('Form is not valid')
+    my_context = {
+        "page_title": _("Link Employee Structure"),
+        "required_employee":required_employee,
+        "emp_link_structure_form": emp_link_structure_form,
+    }
+    return render(request, 'link-structure.html', my_context)
+
+
+@login_required(login_url='home:user-login')
+def update_link_employee_structure(request, pk):
+    required_employee = get_object_or_404(Employee, pk=pk)
+    employee_salary_structure = EmployeeStructureLink.objects.get(
+        employee=required_employee)
+    emp_link_structure_form = EmployeeStructureLinkForm(
+        instance=employee_salary_structure)
+    if request.method == 'POST':
+        emp_link_structure_form = EmployeeStructureLinkForm(request.POST, instance=employee_salary_structure)
+        if emp_link_structure_form.is_valid():
+            emp_structure_obj = emp_link_structure_form.save(commit=False)
+            emp_structure_obj.employee = required_employee
+            emp_structure_obj.created_by = request.user
+            emp_structure_obj.last_update_by = request.user
+            emp_structure_obj.save()
+            return redirect('employee:update-employee', pk=pk)
+        else:
+            print('Form is not valid')
+    my_context = {
+        "page_title": _("Link Employee Structure"),
+        "required_employee":required_employee,
+        "emp_link_structure_form": emp_link_structure_form,
+    }
+    return render(request, 'link-structure.html', my_context)
 
 
 @login_required(login_url='home:user-login')
