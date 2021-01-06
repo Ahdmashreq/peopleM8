@@ -12,7 +12,7 @@ from element_definition.forms import (ElementMasterForm, ElementMasterInlineForm
                                       ElementInlineFormset)
 from element_definition.models import (
     Element_Batch, Element_Master, Element_Batch_Master, Element_Link, Element, SalaryStructure, StructureElementLink)
-from employee.models import Employee, Employee_Element, JobRoll
+from employee.models import Employee, Employee_Element, JobRoll, EmployeeStructureLink
 from manage_payroll.models import Payroll_Master
 from defenition.models import LookupDet
 from django.utils.translation import ugettext_lazy as _
@@ -330,7 +330,7 @@ def update_salary_structure_with_elements_view(request, pk):
     structure_form = SalaryStructureForm(instance=structure_instance)
     list_of_active_links = StructureElementLink.objects.filter(salary_structure=structure_instance).filter(
         Q(end_date__gt=date.today()) | Q(end_date__isnull=True))
-    elements_inlines = ElementInlineFormset(instance=structure_instance,queryset=list_of_active_links)
+    elements_inlines = ElementInlineFormset(instance=structure_instance, queryset=list_of_active_links)
     if request.method == 'POST':
         structure_form = SalaryStructureForm(request.POST, instance=structure_instance)
         elements_inlines = ElementInlineFormset(
@@ -360,6 +360,39 @@ def update_salary_structure_with_elements_view(request, pk):
         'elements_inlines': elements_inlines
     }
     return render(request, 'backup_create-salary-structure.html', context=context)
+
+
+def delete_salary_structure_with_elements_view(request, pk):
+    required_salary_structure = get_object_or_404(SalaryStructure, pk=pk)
+    try:
+
+        required_salary_structure.end_date = date.today()
+        required_salary_structure.save(update_fields=['end_date'])
+        required_linked_elements = StructureElementLink.objects.filter(
+            salary_structure=required_salary_structure).filter(
+            Q(end_date__isnull=True) | Q(end_date__gt=date.today()))
+        required_employee_elements = Employee_Element.objects.filter(
+            element_id__in=required_linked_elements.values('element')).filter(
+            Q(end_date__isnull=True) | Q(end_date__gt=date.today()))
+        required_employee_structure = EmployeeStructureLink.objects.filter(
+            salary_structure=required_salary_structure).filter(Q(end_date__isnull=True) | Q(end_date__gt=date.today()))
+
+        for x in required_linked_elements:
+            x.end_date = date.today()
+            x.save(update_fields=['end_date'])
+        for z in required_employee_structure:
+            z.end_date = date.today()
+            z.save(update_fields=['end_date'])
+        for y in required_employee_elements:
+            y.delete()
+
+        success_msg = '{} was deleted successfully'.format(required_salary_structure)
+        messages.success(request, success_msg)
+    except Exception as e:
+        error_msg = '{} cannot be deleted '.format(required_salary_structure)
+        messages.error(request, error_msg)
+        raise e
+    return redirect('element_definition:list-batchs')
 
 
 def updateElementBatchView(request, pk):
