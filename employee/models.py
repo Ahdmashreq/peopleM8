@@ -190,16 +190,16 @@ class Employee_Element(models.Model):
         if instance.end_date is not None and instance.end_date <= date.today():
             instance.delete()
 
-    def set_formula_amount(emp):
-        formula_element = Employee_Element.objects.filter(emp_id=emp.id, element_id__element_formula__isnull=False)
-        for x in formula_element:
-            if x.element_value is None:
-                x.element_value = 0
-                x.save()
-            if x.element_value == 0:
-                value = FastFormula(emp.id, x.element_id, Employee_Element)
-                x.element_value = value.get_formula_amount()
-                x.save()
+    # def set_formula_amount(emp):
+    #     formula_element = Employee_Element.objects.filter(emp_id=emp.id, element_id__element_formula__isnull=False)
+    #     for x in formula_element:
+    #         if x.element_value is None:
+    #             x.element_value = 0
+    #             x.save()
+    #         if x.element_value == 0:
+    #             value = FastFormula(emp.id, x.element_id, Employee_Element)
+    #             x.element_value = value.get_formula_amount()
+    #             x.save()
 
     def get_element_value(self):
         element_dic = {}
@@ -212,7 +212,7 @@ class Employee_Element(models.Model):
                 self.element_value = element_dic[element]
 
     def save(self):
-        self.get_element_value()
+        # self.get_element_value()
         super().save()
 
 

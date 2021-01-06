@@ -117,7 +117,7 @@ def createSalaryView(request):
                 for x in all_current_employees:
                     sc = Salary_Calculator(company=request.user.company, employee=x)
                     # calculate all furmulas elements for 'x' employee
-                    Employee_Element.set_formula_amount(x)
+                    # Employee_Element.set_formula_amount(x)
                     s = Salary_elements(
                         emp=x,
                         salary_month=sal_obj.salary_month,

@@ -190,7 +190,7 @@ class Salary_Calculator:
     # calculate tax amount
     def calc_taxes_deduction(self):
         required_employee = Employee.objects.get(id=self.employee.id)
-        tax_rule_master = Payroll_Master.objects.get(enterprise=required_employee.user.company)
+        tax_rule_master = Payroll_Master.objects.get(enterprise=required_employee.enterprise)
         personal_exemption = tax_rule_master.tax_rule.personal_exemption
         round_to_10 = tax_rule_master.tax_rule.round_down_to_nearest_10
         tax_deduction_amount = Tax_Deduction_Amount(
