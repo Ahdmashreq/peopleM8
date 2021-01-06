@@ -12,6 +12,7 @@ from datetime import date
 from django.core.validators import MaxValueValidator, MinValueValidator
 from defenition.models import LookupType, LookupDet
 from company.models import (Enterprise, Department, Grade, Position, Job)
+from employee.fast_formula import FastFormula
 from manage_payroll.models import (Bank_Master, Payroll_Master)
 import element_definition.models
 
@@ -170,8 +171,7 @@ class Payment(models.Model):
 class Employee_Element(models.Model):
     emp_id = models.ForeignKey(Employee, on_delete=models.CASCADE, verbose_name=_('Employee'))
     element_id = models.ForeignKey(element_definition.models.Element, on_delete=models.CASCADE, verbose_name=_('Pay'))
-    element_value = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True,
-                                        verbose_name=_('Pay Value'))
+    element_value =  models.FloatField(default=0.0, null=True, blank=True,verbose_name=_('Pay Value'))
     start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
     end_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=_('End Date'))
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
@@ -190,30 +190,30 @@ class Employee_Element(models.Model):
         if instance.end_date is not None and instance.end_date <= date.today():
             instance.delete()
 
-    # def set_formula_amount(emp):
-    #     formula_element = Employee_Element.objects.filter(emp_id=emp.id,element_id__element_formula__isnull=False)
-    #     for x in formula_element:
-    #         if x.element_value is None:
-    #             x.element_value = 0
-    #             x.save()
-    #         if x.element_value == 0:
-    #             value = FastFormula(emp.id, x.element_id, Employee_Element)
-    #             x.element_value = value.get_formula_amount()
-    #             x.save()
-    #
-    # def get_element_value(self):
-    #     element_dic = {}
-    #     element_master_obj = Element_Master.objects.filter().exclude(fixed_amount=0)
-    #     for element in element_master_obj:
-    #         element_dic[element.id]=(element.fixed_amount)
-    #     emp_elements = Employee_Element.objects.filter(emp_id=self.emp_id)
-    #     for element in element_dic:
-    #         if self.element_id.id == element:
-    #             self.element_value = element_dic[element]
-    #
-    # def save(self):
-    #     self.get_element_value()
-    #     super().save()
+    def set_formula_amount(emp):
+        formula_element = Employee_Element.objects.filter(emp_id=emp.id, element_id__element_formula__isnull=False)
+        for x in formula_element:
+            if x.element_value is None:
+                x.element_value = 0
+                x.save()
+            if x.element_value == 0:
+                value = FastFormula(emp.id, x.element_id, Employee_Element)
+                x.element_value = value.get_formula_amount()
+                x.save()
+
+    def get_element_value(self):
+        element_dic = {}
+        element_master_obj = element_definition.models.Element.objects.filter().exclude(fixed_amount=0)
+        for element in element_master_obj:
+            element_dic[element.id] = (element.fixed_amount)
+        emp_elements = Employee_Element.objects.filter(emp_id=self.emp_id)
+        for element in element_dic:
+            if self.element_id.id == element:
+                self.element_value = element_dic[element]
+
+    def save(self):
+        self.get_element_value()
+        super().save()
 
 
 class EmployeeStructureLink(models.Model):
@@ -262,12 +262,23 @@ class EmployeeStructureLink(models.Model):
             employee_element_obj.save()
 
 
+month_name_choises = [
+    (1, _('January')), (2, _('February')), (3, _('March')), (4, _('April')),
+    (5, _('May')), (6, _('June')), (7, _('July')), (8, _('August')),
+    (9, _('September')), (10, _('October')
+                          ), (11, _('November')), (12, _('December')),
+]
+
+
 class Employee_Element_History(models.Model):
     emp_id = models.ForeignKey(Employee, on_delete=models.CASCADE, )
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, blank=True, null=True)
     object_id = models.PositiveIntegerField(blank=True, null=True)
     element_id = GenericForeignKey()
-    element_value = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    salary_month = models.IntegerField(choices=month_name_choises, validators=[
+        MaxValueValidator(12), MinValueValidator(1)], verbose_name=_('Salary Month'), default=date.today().month)
+    salary_year = models.IntegerField(verbose_name=_('Salary Year'), default=date.today().year)
+    element_value = models.FloatField(default=0.0, null=True, blank=True)
     element_computed_value = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     start_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True,
                                   verbose_name=_('Start Date'))

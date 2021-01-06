@@ -106,7 +106,8 @@ def excludeAssignmentEmployeeFunction(batch):
 @login_required(login_url='home:user-login')
 def createSalaryView(request):
     sal_form = SalaryElementForm()
-    all_current_employees =  Employee.objects.filter((Q(end_date__gte=date.today()) |Q(end_date__isnull=False)))
+    all_current_employees =  Employee.objects.filter((Q(end_date__gte=date.today()) |Q(end_date__isnull=True)))
+    print(all_current_employees)
     if request.method == 'POST':
         sal_form = SalaryElementForm(request.POST)
         if sal_form.is_valid():
@@ -152,7 +153,7 @@ def createSalaryView(request):
                 for x in emps:
                     sc = Salary_Calculator(company=request.user.company, employee=x)
                     # calculate all furmulas elements for 'x' employee
-                    Employee_Element.set_formula_amount(x)
+                   # Employee_Element.set_formula_amount(x)
                     # # ################################################
                     # # # getting informations for the salary
                     s = Salary_elements(

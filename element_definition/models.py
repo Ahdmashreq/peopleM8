@@ -71,6 +71,8 @@ class Element(models.Model):
                                        related_name='element_lookup_classification', verbose_name=_('classification'),
                                        blank=True, null=True)
     element_name = models.CharField(max_length=100, verbose_name=_('Pay Name'))
+    db_name = models.CharField(
+        max_length=4, null=True, blank=True, verbose_name=_('db Name'))
     code = models.CharField(max_length=50, null=True,
                             blank=True, verbose_name=_('code'))
     element_type = models.CharField(
