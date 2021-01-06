@@ -1,0 +1,131 @@
+{% extends 'master.html'%}
+{% load staticfiles%}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+{% block body%}
+
+<div class="container-fluid">
+  <form method="post">
+    {% csrf_token %}
+    <div class="row">
+      <div class="col-md-8">
+        <h4 class="c-grey-900">{{page_title|title}}</h4>
+      </div>
+      <div class="col-md-4">
+        <div class="gap-10 peers push-right">
+          <div class="peer">
+            <button type="submit" class="btn cur-p btn-primary">Save</button>
+          </div>
+          <div class="peer">
+            <a href="{% url 'element_definition:list-batchs' %}" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-1">
+      <div class="bgc-white p-20 bd">
+        <div class="mT-30">
+          <div class="form-row">
+            <div class="form-group col-md-12">
+              <label class="fw-500">{{ structure_form.structure_name.label}}</label>
+              {{ structure_form.structure_name }}
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label class="fw-500">{{ structure_form.start_date.label }}</label>
+              <div class="timepicker-input input-icon form-group">
+                <div class="input-group">
+                  <div class="input-group-addon bgc-white bd bdwR-0"><i class="ti-calendar"></i></div>
+                  {{ structure_form.start_date }}
+                </div>
+              </div>
+            </div>
+            <div class="form-group col-md-6">
+              <label class="fw-500">{{ structure_form.end_date.label }}</label>
+              <div class="timepicker-input input-icon form-group">
+                <div class="input-group">
+                  <div class="input-group-addon bgc-white bd bdwR-0"><i class="ti-calendar"></i></div>
+                  {{ structure_form.end_date }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mT-30">
+            {{ elements_inlines.management_form }}
+            <div id="batch_form_set">
+              <div class="form-row">
+                <div class="form-group col-md-4">
+                  <label>{% trans "Pay Name" %}</label>
+                </div>
+                <div class="form-group col-md-3">
+                  <label>{% trans "Pay Start Date" %}</label>
+                </div>
+                <div class="form-group col-md-3">
+                  <label>{% trans "Pay End Date" %}</label>
+                </div>
+                <div class="form-group col-md-2">
+                  <label>{% trans "Delete" %}</label>
+                </div>
+              </div>
+              {% for form in elements_inlines.forms %}
+              {{form.non_field_errors}}
+              {{form.errors}}
+              {% for hidden in form.hidden_fields %}
+                  {{ hidden }}
+              {% endfor %}
+              <div class="form-row">
+                <div class="form-group col-md-4">
+                  {{ form.element}}
+                </div>
+                <div class="form-group col-md-3">
+                  {{ form.start_date }}
+                </div>
+                <div class="form-group col-md-3">
+                  {{ form.end_date }}
+                </div>
+                <div class="form-group col-md-2">
+                  {{ form.DELETE }}
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+            <button type="button" id="add_more" class="btn cur-p btn-success">{% trans "Add New Line"%}</button>
+            <div id="empty_form" style="display:none">
+              <table class='no_error'>
+                <div class="form-row">
+                  <div class="form-group col-md-4">
+                    {{ elements_inlines.empty_form.element }}
+                  </div>
+                  <div class="form-group col-md-3">
+                    {{ elements_inlines.empty_form.start_date }}
+                  </div>
+                  <div class="form-group col-md-3">
+                    {{ elements_inlines.empty_form.end_date }}
+                  </div>
+                  <div class="form-group col-md-2">
+                    {{ elements_inlines.empty_form.DELETE }}
+                  </div>
+                </div>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+
+{% endblock body%}
+{% block js %}
+<script>
+  $('#add_more').click(function() {
+    var form_idx = $('#id_element_link-TOTAL_FORMS').val();
+    $('#batch_form_set').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
+    $('#id_element_link-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+  });
+</script>
+{% endblock js %}

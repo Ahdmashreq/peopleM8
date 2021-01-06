@@ -8,9 +8,10 @@ from django.utils.translation import to_locale, get_language
 from django.core.management.commands import loaddata
 from company.models import Department, Grade, Position, Job
 from element_definition.forms import (ElementMasterForm, ElementMasterInlineFormset, ElementBatchForm,
-                                      ElementLinkForm, CustomPythonRuleForm)
+                                      ElementLinkForm, CustomPythonRuleForm, ElementForm, SalaryStructureForm,
+                                      ElementInlineFormset)
 from element_definition.models import (
-    Element_Batch, Element_Master, Element_Batch_Master, Element_Link)
+    Element_Batch, Element_Master, Element_Batch_Master, Element_Link, Element, SalaryStructure, StructureElementLink)
 from employee.models import Employee, Employee_Element, JobRoll
 from manage_payroll.models import Payroll_Master
 from defenition.models import LookupDet
@@ -28,12 +29,12 @@ def installElementMaster(request):
         element_name = 'الأساسي'
     else:
         element_name = 'Basic'
-    company_basic_db_name = str(request.user.company.id)+'00001'
+    company_basic_db_name = str(request.user.company.id) + '00001'
     basic_element = Element_Master(
         enterprise=request.user.company,
         element_name=element_name,
-        db_name= company_basic_db_name,
-        basic_flag = True,
+        db_name=company_basic_db_name,
+        basic_flag=True,
         element_type=element_type_obj,
         classification=element_class_obj,
         retro_flag=0,
@@ -45,14 +46,16 @@ def installElementMaster(request):
     )
     basic_element.save()
     return redirect('element_definition:list-element')
+
+
 ######################################## Element view functions ##################################################
 
 
-def getDBSec(n,company_id):
+def getDBSec(n, company_id):
     if n < 1:
-        return str(company_id)+str(1).zfill(5)
+        return str(company_id) + str(1).zfill(5)
     else:
-        return str(company_id)+str(n+1).zfill(5)
+        return str(company_id) + str(n + 1).zfill(5)
 
 
 def createElementView(request):
@@ -65,7 +68,7 @@ def createElementView(request):
             element_obj.enterprise = request.user.company
             element_obj.created_by = request.user
             element_obj.last_update_by = request.user
-            element_obj.db_name = getDBSec(rows_number,request.user.company.id)
+            element_obj.db_name = getDBSec(rows_number, request.user.company.id)
             element_obj.basic_flag = False
             element_obj.save()
             return redirect('element_definition:list-element')
@@ -92,12 +95,109 @@ def createElementView(request):
     return render(request, 'create-elements.html', myContext)
 
 
+def make_message(user_lang, success):
+    if success:
+        if user_lang == 'ar':
+            msg = 'تمت العملية بنجاح'
+        else:
+            msg = 'Create Successfully'
+    else:
+        if user_lang == 'ar':
+            msg = 'لم يتم الانشاء بنجاح'
+        else:
+            msg = 'The form is not valid.'
+    return msg
+
+
+def create_new_element(request):
+    element_form = ElementForm()
+    if request.method == "POST":
+        user_lang = to_locale(get_language())
+        element_form = ElementForm(request.POST)
+        if element_form.is_valid():
+            elem_obj = element_form.save(commit=False)
+            elem_obj.created_by = request.user
+            elem_obj.enterprise = request.user.company
+            elem_obj.save()
+            success_msg = make_message(user_lang, True)
+            messages.success(request, success_msg)
+            return redirect('element_definition:list-element')
+        else:
+            failure_msg = make_message(user_lang, False)
+            messages.error(request, failure_msg)
+            print(element_form.errors)
+
+    myContext = {
+        "page_title": _("Create new Pay"),
+        'element_master_form': element_form,
+    }
+    return render(request, 'create-element2.html', myContext)
+
+
+def update_element_view(request, pk):
+    element = get_object_or_404(Element, pk=pk)
+    element_master_form = ElementForm(instance=element)
+    if request.method == 'POST':
+        user_lang = to_locale(get_language())
+        element_master_form = ElementForm(
+            request.POST, instance=element)
+        if element_master_form.is_valid():
+            element_obj = element_master_form.save(commit=False)
+            element_obj.last_update_by = request.user
+            element_obj.save()
+            success_msg = make_message(user_lang, True)
+            messages.success(request, success_msg)
+            return redirect('element_definition:list-element')
+        else:
+            failure_msg = make_message(user_lang, False)
+            messages.error(request, failure_msg)
+            print(element_master_form.errors)
+
+    myContext = {
+        "page_title": _("Update Element"),
+        'element_master_form': element_master_form,
+    }
+    return render(request, 'create-element2.html', myContext)
+
+
+def delete_element_view(request, pk):
+    required_element = get_object_or_404(Element, pk=pk)
+    required_element.end_date = date.today()
+    required_element.save(update_fields=['end_date'])
+    success_msg = '{} was deleted successfully'.format(required_element)
+    messages.success(request, success_msg)
+    return redirect('element_definition:list-element')
+
+
+def list_elements_view(request):
+    if request.method == 'GET':
+        element_master = Element.objects.filter(enterprise=request.user.company).filter(
+            (Q(end_date__gt=date.today()) | Q(end_date__isnull=True)))
+        company_basic_db_name = str(request.user.company.id) + '00001'
+
+    myContext = {
+        'page_title': _('Pays'),
+        'element_master': element_master,
+    }
+    return render(request, 'backup_list-elements.html', myContext)
+
+
+def list_salary_structures(request):
+    structure_list = SalaryStructure.objects.all().filter(
+        (Q(end_date__gt=date.today()) | Q(end_date__isnull=True)))
+    context = {
+        "page_title": _("Salary Structures"),
+        'structure_list': structure_list,
+    }
+    return render(request, 'backup_list-salary-structures.html', context)
+
+
 def listElementView(request):
     if request.method == 'GET':
         element_flag = False
         element_master = Element_Master.objects.filter(enterprise=request.user.company).filter(
             (Q(end_date__gte=date.today()) | Q(end_date__isnull=True)))
-        company_basic_db_name = str(request.user.company.id)+'00001'
+        company_basic_db_name = str(request.user.company.id) + '00001'
         for x in element_master:
             if x.db_name == company_basic_db_name and x.enterprise == request.user.company:
                 element_flag = True
@@ -141,6 +241,7 @@ def deleteElementView(request, pk):
         messages.error(request, error_msg)
         raise e
     return redirect('element_definition:list-element')
+
 
 ######################################## ElementBatch view functions ##################################################
 
@@ -195,6 +296,70 @@ def createElementBatchView(request):
         'batch_detail_form': batch_detail_form
     }
     return render(request, 'create-batch.html', batchContext)
+
+
+def create_salary_structure_with_elements_view(request):
+    structure_form = SalaryStructureForm()
+    elements_inlines = ElementInlineFormset()
+    if request.method == 'POST':
+        structure_form = SalaryStructureForm(request.POST)
+        elements_inlines = ElementInlineFormset(request.POST)
+        if structure_form.is_valid():
+            structure_obj = structure_form.save(commit=False)
+            structure_obj.created_by = request.user
+            structure_obj.enterprise = request.user.company
+            structure_obj.save()
+            elements_inlines = ElementInlineFormset(request.POST, instance=structure_obj)
+            if elements_inlines.is_valid():
+                elements_objs = elements_inlines.save(commit=False)
+                for elements_obj in elements_objs:
+                    elements_obj.created_by = request.user
+                    elements_obj.save()
+                return redirect('element_definition:list-batchs')
+            else:
+                print(elements_inlines.errors)
+        else:
+            print(structure_form.errors)
+    context = {'page_title': "New Salary Structure", 'structure_form': structure_form,
+               'elements_inlines': elements_inlines}
+    return render(request, 'backup_create-salary-structure.html', context=context)
+
+
+def update_salary_structure_with_elements_view(request, pk):
+    structure_instance = SalaryStructure.objects.get(pk=pk)
+    structure_form = SalaryStructureForm(instance=structure_instance)
+    list_of_active_links = StructureElementLink.objects.filter(salary_structure=structure_instance).filter(
+        Q(end_date__gt=date.today()) | Q(end_date__isnull=True))
+    elements_inlines = ElementInlineFormset(instance=structure_instance,queryset=list_of_active_links)
+    if request.method == 'POST':
+        structure_form = SalaryStructureForm(request.POST, instance=structure_instance)
+        elements_inlines = ElementInlineFormset(
+            request.POST, instance=structure_instance)
+        if structure_form.is_valid() and elements_inlines.is_valid():
+            structure_obj = structure_form.save(commit=False)
+            structure_obj.last_update_by = request.user
+            structure_obj.save()
+            elements_inlines = ElementInlineFormset(
+                request.POST, instance=structure_obj)
+            if elements_inlines.is_valid():
+                obj_det = elements_inlines.save(commit=False)
+                for obj in obj_det:
+                    obj.created_by = (request.user if obj.pk is None else obj.created_by)
+                    obj.last_update_by = request.user
+                    obj.save()
+                success_msg = 'Salary structure {} updated Successfully'.format(
+                    structure_obj.structure_name)
+            messages.success(request, success_msg)
+            return redirect('element_definition:list-batchs')
+        else:
+            messages.error(request, structure_form.errors)
+            messages.error(request, elements_inlines.errors)
+    context = {
+        "page_title": _("Update Salary Structure"),
+        'structure_form': structure_form,
+        'elements_inlines': elements_inlines
+    }
+    return render(request, 'backup_create-salary-structure.html', context=context)
 
 
 def updateElementBatchView(request, pk):
@@ -259,6 +424,7 @@ def deleteElementBatchView(request, pk):
         messages.error(request, error_msg)
         raise e
     return redirect('element_definition:list-batchs')
+
 
 ######################################## ElementLink view functions ##################################################
 
@@ -376,7 +542,7 @@ def createElementLinkView(request):
                                       element_id=element_link_obj.element_master_fk,
                                       global_v=element_link_obj.element_master_fk.fixed_amount,
                                       user_id=request.user)
-            else:                 # select batch not one element to link
+            else:  # select batch not one element to link
                 if element_link_obj.link_to_all_payroll_flag:
                     linkElementsInBatchToTmps(link_to_all=True,
                                               batch_v=element_link_obj.batch,
@@ -472,6 +638,8 @@ def deleteElementLinkView(request, pk):
     #     raise e
     required_link.delete()
     return redirect('element_definition:list-links')
+
+
 #######################################Custom Rule###################################################
 
 
@@ -489,7 +657,7 @@ def customRulesView(request):
             # Spitting the errors coming from the form
             [messages.error(request, error[0])
              for error in form.errors.values()]
-    else:   # Request is GET
+    else:  # Request is GET
         # Just passing an empty form to be rendered in case of GET
         custom_rule_form = CustomPythonRuleForm()
     context = {'table_title': 'قواعد الاحتساب المخصصة',

@@ -1,6 +1,8 @@
 from django.contrib import admin
-from element_definition.models import (Element_Batch, Element_Detail,
-                                       Element_Master, Element_Batch_Master, Element_Link)
+from element_definition.models import (Element_Batch,
+                                       Element_Master, Element_Batch_Master, Element_Link, SalaryStructure, Element,
+                                       StructureElementLink, ElementHistory,
+                                       )
 
 
 ####################################### Inlines Goes Here #############################################
@@ -14,11 +16,16 @@ class ElementBatchMasterInline(admin.TabularInline):
     )
 
 
+class StructureElementLinkInline(admin.TabularInline):
+    model = StructureElementLink
+
+
 ####################################### Admin Forms #############################################
 @admin.register(Element_Master)
 class ElementMasterAdmin(admin.ModelAdmin):
     class Meta:
         model = Element_Master
+
     fields = (
         'enterprise',
         'element_name',
@@ -40,10 +47,22 @@ class ElementMasterAdmin(admin.ModelAdmin):
         'effective_date',
     )
 
+
+@admin.register(SalaryStructure)
+class SalaryStructureAdmin(admin.ModelAdmin):
+    class Meta:
+        model = SalaryStructure
+
+    inlines = [
+        StructureElementLinkInline
+    ]
+
+
 @admin.register(Element_Batch)
 class ElementBatchAdmin(admin.ModelAdmin):
     class Meta:
         model = Element_Batch
+
     fields = (
         'payroll_fk',
         'batch_name',
@@ -51,13 +70,15 @@ class ElementBatchAdmin(admin.ModelAdmin):
         'end_date',
     )
     inlines = [
-       ElementBatchMasterInline
+        ElementBatchMasterInline
     ]
+
 
 @admin.register(Element_Link)
 class Element_Link_Admin(admin.ModelAdmin):
     class Meta:
         model = Element_Link
+
     fields = (
         'element_master_fk',
         'payroll_fk',
@@ -71,3 +92,20 @@ class Element_Link_Admin(admin.ModelAdmin):
         'start_date',
         'end_date',
     )
+
+
+@admin.register(Element)
+class ElementAdmin(admin.ModelAdmin):
+    class Meta:
+        model = Element
+
+@admin.register(StructureElementLink)
+class StructureElementAdmin(admin.ModelAdmin):
+    class Meta:
+        model = StructureElementLink
+
+
+@admin.register(ElementHistory)
+class ElementHistoryAdmin(admin.ModelAdmin):
+    class Meta:
+        model = ElementHistory

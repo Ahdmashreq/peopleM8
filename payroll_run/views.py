@@ -11,7 +11,7 @@ import calendar
 from django.db.models import Avg, Count
 from payroll_run.models import Salary_elements
 from payroll_run.forms import SalaryElementForm, Salary_Element_Inline
-from element_definition.models import Element_Master, Element_Detail, Element_Batch, Element_Batch_Master
+from element_definition.models import Element_Master, Element_Batch, Element_Batch_Master
 from manage_payroll.models import Assignment_Batch, Assignment_Batch_Include, Assignment_Batch_Exclude
 from employee.models import Employee_Element, Employee, JobRoll, Payment
 from employee.forms import Employee_Element_Inline
@@ -106,7 +106,8 @@ def excludeAssignmentEmployeeFunction(batch):
 @login_required(login_url='home:user-login')
 def createSalaryView(request):
     sal_form = SalaryElementForm()
-    all_current_employees =  Employee.objects.filter((Q(end_date__gte=date.today()) |Q(end_date__isnull=False)))
+    all_current_employees =  Employee.objects.filter((Q(end_date__gte=date.today()) |Q(end_date__isnull=True)))
+    print(all_current_employees)
     if request.method == 'POST':
         sal_form = SalaryElementForm(request.POST)
         if sal_form.is_valid():
@@ -116,7 +117,7 @@ def createSalaryView(request):
                 for x in all_current_employees:
                     sc = Salary_Calculator(company=request.user.company, employee=x)
                     # calculate all furmulas elements for 'x' employee
-                    Employee_Element.set_formula_amount(x)
+                    # Employee_Element.set_formula_amount(x)
                     s = Salary_elements(
                         emp=x,
                         salary_month=sal_obj.salary_month,
@@ -152,7 +153,7 @@ def createSalaryView(request):
                 for x in emps:
                     sc = Salary_Calculator(company=request.user.company, employee=x)
                     # calculate all furmulas elements for 'x' employee
-                    Employee_Element.set_formula_amount(x)
+                   # Employee_Element.set_formula_amount(x)
                     # # ################################################
                     # # # getting informations for the salary
                     s = Salary_elements(
