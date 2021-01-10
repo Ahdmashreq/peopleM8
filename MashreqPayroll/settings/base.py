@@ -164,7 +164,7 @@ LOCALE_PATHS = (
 )
 
 # Languages using BiDi (right-to-left) layout
-LANGUAGES_BIDI = ["en"]
+LANGUAGES_BIDI = ["ar"]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
