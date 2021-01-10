@@ -175,7 +175,7 @@ def updateEmployeeView(request, pk):
     except EmployeeStructureLink.DoesNotExist:
         employee_has_structure = False
 
-
+    employee_element_form = EmployeeElementForm()
     if request.method == 'POST':
         emp_form = EmployeeForm(request.POST, instance=required_employee)
         jobroll_form = JobRollForm(
@@ -188,6 +188,8 @@ def updateEmployeeView(request, pk):
         else:
             emp_link_structure_form = EmployeeStructureLinkForm(
                 request.POST, instance=employee_salary_structure)
+
+        employee_element_form = EmployeeElementForm(request.POST,)
 
         if emp_form.is_valid():
             emp_obj = emp_form.save(commit=False)
@@ -215,6 +217,12 @@ def updateEmployeeView(request, pk):
                 x.save()
         else:
             messages.error(request, payment_form.errors)
+        if employee_element_form.is_valid():
+            emp_element_obj = employee_element_form.save(commit=False)
+            emp_element_obj.emp_id = required_employee
+            emp_element_obj.created_by = request.user
+            emp_element_obj.last_update_by = request.user
+            emp_element_obj.save()
 
         user_lang = to_locale(get_language())
 
@@ -232,7 +240,8 @@ def updateEmployeeView(request, pk):
         "payment_form": payment_form,
         "required_employee":required_employee,
         "employee_element_qs": employee_element_qs,
-        "employee_has_structure":employee_has_structure
+        "employee_has_structure":employee_has_structure,
+        "employee_element_form":employee_element_form
     }
     return render(request, 'create-employee.html', myContext)
 
