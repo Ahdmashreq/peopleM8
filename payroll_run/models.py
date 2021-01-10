@@ -23,10 +23,11 @@ month_name_choises = [
 class Salary_elements(models.Model):
     class Meta:
         unique_together = [['emp', 'salary_month', 'salary_year', 'is_final']]
+
     emp = models.ForeignKey(Employee, on_delete=models.CASCADE,
                             null=True, blank=True, verbose_name=_('Employee'))
     salary_month = models.IntegerField(choices=month_name_choises, validators=[
-                                       MaxValueValidator(12), MinValueValidator(1)], verbose_name=_('Salary Month'))
+        MaxValueValidator(12), MinValueValidator(1)], verbose_name=_('Salary Month'))
     salary_year = models.IntegerField(verbose_name=_('Salary Year'))
     run_date = models.DateField(auto_now=False, auto_now_add=False,
                                 default=date.today, blank=True, null=True, verbose_name=_('Run Date'))
@@ -76,18 +77,20 @@ class Salary_elements(models.Model):
 @receiver(pre_save, sender=Salary_elements)
 def employee_elements_history(sender, instance, *args, **kwargs):
     employee_old_elements = Employee_Element.objects.filter(emp_id=instance.emp)
-    check_for_same_element = Employee_Element_History.objects.filter(employee=instance.emp_id, salary_month=instance.salary_month, salary_year=instance.salary_year)
+    check_for_same_element = Employee_Element_History.objects.filter(emp_id=instance.emp_id,
+                                                                     salary_month=instance.salary_month,
+                                                                     salary_year=instance.salary_year)
     if check_for_same_element:
-        for record in check_for_element:
+        for record in check_for_same_element:
             record.delete()
     else:
         for element in employee_old_elements:
             element_history = Employee_Element_History(
-                                     employee = element.emp_id,
-                                     element = element.element_id,
-                                     element_value = element.element_value,
-                                     salary_month = instance.salary_month,
-                                     salary_year = instance.salary_year,
-                                     creation_date = date.today(),
+                emp_id=element.emp_id,
+                element_id=element.element_id,
+                element_value=element.element_value,
+                salary_month=instance.salary_month,
+                salary_year=instance.salary_year,
+                creation_date=date.today(),
             )
             element_history.save()

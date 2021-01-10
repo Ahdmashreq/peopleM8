@@ -16,5 +16,8 @@ urlpatterns =[
             path('update/<int:pk>/', views.updateEmployeeView, name='update-employee'),
             path('view/<int:pk>/', views.viewEmployeeView, name='view-employee'),
             path('delete/<int:pk>/', views.deleteEmployeeView, name='delete-employee'),
+
+            path('link/employee/<int:pk>/structure/', views.create_link_employee_structure, name='link-structure-create'),
+            path('update/link/employee/<int:pk>/structure/', views.update_link_employee_structure, name='link-structure-update'),
     ])),
 ]

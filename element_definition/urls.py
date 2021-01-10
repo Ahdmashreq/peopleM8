@@ -7,16 +7,16 @@ urlpatterns=[
     path('command/run/', views.installElementMaster, name= 'command-run'),
     path('element/', include([
                 ######################### Element URLs #####################################
-                path('new/', views.createElementView, name='element-create'),
-                path('list/', views.listElementView, name='list-element'),
-                path('update/<int:pk>/', views.updateElementView, name='update-element'),
-                path('delete/<int:pk>/', views.deleteElementView, name='delete-element'),
+                path('new/', views.create_new_element, name='element-create'),
+                path('list/', views.list_elements_view, name='list-element'),
+                path('update/<int:pk>/', views.update_element_view, name='update-element'),
+                path('delete/<int:pk>/', views.delete_element_view, name='delete-element'),
     ])),
     path('batch/', include([
                 ######################### ElementBatch URLs ################################
-                path('new/', views.createElementBatchView, name='batch-create'),
-                path('list/', views.listElementBatchView, name='list-batchs'),
-                path('update/<int:pk>/', views.updateElementBatchView, name='update-batch'),
+                path('new/', views.create_salary_structure_with_elements_view, name='batch-create'),
+                path('list/', views.list_salary_structures, name='list-batchs'),
+                path('update/<int:pk>/', views.update_salary_structure_with_elements_view, name='update-batch'),
                 path('delete/<int:pk>/', views.deleteElementBatchView, name='delete-batch'),
     ])),
     path('link/', include([

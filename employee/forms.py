@@ -3,9 +3,9 @@ from crispy_forms.helper import FormHelper
 from django.db.models import Q
 from company.models import Department, Job, Grade, Position
 from manage_payroll.models import Payroll_Master
-from employee.models import Employee, JobRoll, Payment, Employee_Element
+from employee.models import Employee, JobRoll, Payment, Employee_Element, EmployeeStructureLink
 from defenition.models import LookupType, LookupDet
-from element_definition.models import Element_Master, Element_Detail, Element_Link
+from element_definition.models import Element_Master, Element_Link
 from django.shortcuts import  get_object_or_404, get_list_or_404
 from datetime import date
 from django.forms import BaseInlineFormSet
@@ -103,7 +103,7 @@ class EmployeeElementForm(forms.ModelForm):
     class Meta:
         model = Employee_Element
         fields = "__all__"
-        exclude = common_items_to_execlude
+        exclude = ('emp_id',)+common_items_to_execlude
 
     def __init__(self, *args, **kwargs):
         super(EmployeeElementForm, self).__init__(*args, **kwargs)
@@ -115,3 +115,19 @@ class EmployeeElementForm(forms.ModelForm):
         self.helper.form_show_labels = True
 
 Employee_Element_Inline = forms.inlineformset_factory(Employee,Employee_Element,form=EmployeeElementForm,can_delete=False,extra=8)
+
+
+class EmployeeStructureLinkForm(forms.ModelForm):
+    class Meta:
+        model = EmployeeStructureLink
+        fields = "__all__"
+        exclude = common_items_to_execlude+('employee',)
+
+    def __init__(self, *args, **kwargs):
+        super(EmployeeStructureLinkForm, self).__init__(*args, **kwargs)
+        self.fields['start_date'].widget.input_type = 'date'
+        self.fields['end_date'].widget.input_type = 'date'
+        for field in self.fields:
+            self.fields[field].widget.attrs['class'] = 'form-control parsley-validated'
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True

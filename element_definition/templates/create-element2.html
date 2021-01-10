@@ -1,0 +1,203 @@
+{% extends 'master.html'%}
+{% load staticfiles%}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+{% block body%}
+
+<div class="container-fluid">
+  <form method="post">
+    {% csrf_token %}
+    <div class="row">
+      <div class="col-md-8">
+        <h4 class="c-grey-900">{{page_title|title}}</h4>
+      </div>
+      <div class="col-md-4">
+        <div class="gap-10 peers push-right">
+          <div class="peer">
+            <button type="submit" class="btn cur-p btn-primary">Save</button>
+          </div>
+          <div class="peer">
+            <a href="{% url 'element_definition:list-element' %}" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-1">
+      <div class="bgc-white p-20 bd">
+        <div class="mT-30">
+          <div class="form-row">
+            <div class="form-group col-md-12">
+              <label>{{ element_master_form.element_name.label }}</label>
+              {{ element_master_form.element_name }}
+            </div>
+            <div class="form-group col-md-4">
+              <label>{{ element_master_form.code.label }}</label>
+              {{ element_master_form.code }}
+            </div>
+            <div class="form-group col-md-4">
+              <label>{{ element_master_form.sequence.label }}</label>
+              {{ element_master_form.sequence }}
+            </div>
+            <div class="form-group col-md-4">
+              <label>{{ element_master_form.scheduled_pay.label }}</label>
+              {{ element_master_form.scheduled_pay }}
+            </div>
+             <div class="form-group col-md-4" id="element_type">
+              <label>{{ element_master_form.element_type.label }}</label>
+              {{ element_master_form.element_type }}
+            </div>
+              <div class="form-group col-md-4">
+                <label>{{ element_master_form.appears_on_payslip.label }}</label>
+              {{ element_master_form.appears_on_payslip}}
+            </div>
+            <div class="form-group col-md-4">
+              <label>{{ element_master_form.tax_flag.label }}</label>
+              {{ element_master_form.tax_flag}}
+            </div>
+            <div class="form-group col-md-4" id="amount_type">
+              <label>{{ element_master_form.amount_type.label }}</label>
+              {{ element_master_form.amount_type }}
+            </div>
+            <div class="form-group col-md-4" id="fixed_amount">
+              <label>{{ element_master_form.fixed_amount.label }} </label>
+              {{ element_master_form.fixed_amount }}
+            </div>
+            <div class="form-group col-md-4" id="based_on">
+              <label>{{ element_master_form.based_on.label }}</label>
+              {{ element_master_form.based_on }}
+            </div>
+
+            <div class="form-group col-md-12" id="formula">
+              <label>{{ element_master_form.element_formula.label }}</label>
+              {{ element_master_form.element_formula }}
+              <hr>
+              <button type="button" class="btn btn-primary push-right" data-toggle="tooltip" data-placement="top" title="" data-original-title="To write the formula correctly, it must be as following:
+          1-Use the name of the item in the database (db Name) with a value or other item in the database in addition to the mathematical operators (+, -, *, / or %).
+          ** Example of calculating a specific allowance equal to 40% of the basic salary:
+          001 * 40%">{% trans "Hint" %}</button>
+            </div>
+            <div class="form-group col-md-4">
+              <label>{{ element_master_form.classification.label }}</label>
+              {{ element_master_form.classification }}
+            </div>
+
+            <div class="form-group col-md-4">
+              <label>{{ element_master_form.start_date.label }}</label>
+              {{ element_master_form.start_date }}
+            </div>
+            <div class="form-group col-md-4">
+              <label>{{ element_master_form.end_date.label }}</label>
+              {{ element_master_form.end_date }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock body %}
+
+{% block js %}
+<script>
+if(document.getElementById('id_element_type').value === 'formula') {
+    document.getElementById('based_on').style.display = 'none';
+    document.getElementById('fixed_amount').style.display = 'none';
+    document.getElementById('amount_type').style.display = 'none';
+
+}
+else if (document.getElementById('id_element_type').value == 'global value'){
+
+    document.getElementById('formula').style.display = 'none';
+    document.getElementById('fixed_amount').style.display = 'block';
+    document.getElementById('amount_type').style.display = 'block';
+    if (document.getElementById('id_amount_type').value == 'percentage'){
+      document.getElementById('based_on').style.display = 'block';
+    }
+    else{
+
+      document.getElementById('based_on').style.display = 'none';
+
+     };
+
+     }
+else if (document.getElementById('id_element_type').value == 'payslip based'){
+
+
+    document.getElementById('fixed_amount').style.display = 'none';
+    document.getElementById('formula').style.display = 'none';
+    document.getElementById('amount_type').style.display = 'block';
+    if (document.getElementById('id_amount_type').value == 'percentage'){
+
+      document.getElementById('based_on').style.display = 'block';
+    }
+    else{
+      document.getElementById('based_on').style.display = 'none';
+
+     };
+
+
+}else {
+    document.getElementById('formula').style.display = 'none';
+    document.getElementById('fixed_amount').style.display = 'none';
+    document.getElementById('amount_type').style.display = 'none';
+    document.getElementById('based_on').style.display = 'none';
+
+}
+
+function myFunction(object) {
+  if(object.value === 'formula') {
+    document.getElementById('amount_type').style.display = 'none';
+    document.getElementById('fixed_amount').style.display = 'none';
+    document.getElementById('formula').style.display = 'block';
+    document.getElementById('based_on').style.display = 'none';
+    }
+  else if (object.value === 'payslip based')  {
+  document.getElementById('amount_type').style.display = 'block';
+  document.getElementById('fixed_amount').style.display = 'none';
+  document.getElementById('formula').style.display = 'none';
+  document.getElementById('based_on').style.display = 'none';
+  }
+  else{
+
+    document.getElementById('amount_type').style.display = 'block';
+  document.getElementById('fixed_amount').style.display = 'none';
+  document.getElementById('formula').style.display = 'none';
+  document.getElementById('based_on').style.display = 'none';
+  }
+
+    }
+</script>
+
+<script>
+function check_amount_type(object) {
+ if(object.value === 'percentage') {
+    document.getElementById('fixed_amount').style.display = 'block';
+    document.getElementById('formula').style.display = 'none';
+    document.getElementById('based_on').style.display = 'block';
+    }
+
+  else if (document.getElementById('id_element_type').value == 'formula'){
+        document.getElementById('fixed_amount').style.display = 'none';
+        document.getElementById('formula').style.display = 'block';
+        document.getElementById('based_on').style.display = 'none';
+        document.getElementById('amount_type').style.display = 'none';
+        }
+
+  else  if (document.getElementById('id_element_type').value == 'payslip based'){
+        document.getElementById('fixed_amount').style.display = 'none';
+        document.getElementById('formula').style.display = 'none';
+        document.getElementById('based_on').style.display = 'none';
+        document.getElementById('amount_type').style.display = 'block';
+         }
+   else {
+   document.getElementById('fixed_amount').style.display = 'block';
+    document.getElementById('formula').style.display = 'none';
+    document.getElementById('based_on').style.display = 'none';
+   }
+    }
+
+</script>
+{% endblock js %}
+

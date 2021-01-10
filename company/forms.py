@@ -1,4 +1,5 @@
 from django import forms
+from django.db.utils import OperationalError
 from crispy_forms.helper import FormHelper
 from company.models import (Enterprise, Department, Grade, Job,
                             Position, Working_Days_Policy, Working_Hours_Deductions_Policy, YearlyHoliday, Year)
@@ -226,7 +227,10 @@ YearlyHolidayInline = forms.modelformset_factory(YearlyHoliday, form=YearlyHolid
 
 
 class CompanySetupForm(forms.Form):
-    COMPANY_CHOICES = [(enterprise.id, enterprise.name) for enterprise in Enterprise.objects.all()]
-    MODULE_CHOICES = [("1", "Look Ups"), ("2", "Tax Rules")]
-    #company = forms.ChoiceField(choices=COMPANY_CHOICES, label="", initial='1', widget=forms.Select(), required=True)
-    modules = forms.MultipleChoiceField(choices=MODULE_CHOICES, widget=forms.CheckboxSelectMultiple())
+    try:
+        COMPANY_CHOICES = [(enterprise.id, enterprise.name) for enterprise in Enterprise.objects.all()]
+        MODULE_CHOICES = [("1", "Look Ups"), ("2", "Tax Rules")]
+        #company = forms.ChoiceField(choices=COMPANY_CHOICES, label="", initial='1', widget=forms.Select(), required=True)
+        modules = forms.MultipleChoiceField(choices=MODULE_CHOICES, widget=forms.CheckboxSelectMultiple())
+    except OperationalError:
+        pass
