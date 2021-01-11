@@ -42,6 +42,7 @@
           <span class="arrow"><i class="ti-angle-right"></i></span>
           </a>
           <ul class="dropdown-menu" style="display: none;">
+            <li><a href="{% url 'home:group_list' %}">groups</a></li>
             <li><a href="{% url 'company:list-department' %}">{% trans "Departments" %}</a></li>
             <li><a href="{% url 'company:list-jobs' %}">{% trans "Jobs" %}</a></li>
             <li><a href="{% url 'company:list-grades' %}">{% trans "Grades" %}</a></li>
