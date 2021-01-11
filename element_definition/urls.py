@@ -17,7 +17,7 @@ urlpatterns=[
                 path('new/', views.create_salary_structure_with_elements_view, name='batch-create'),
                 path('list/', views.list_salary_structures, name='list-batchs'),
                 path('update/<int:pk>/', views.update_salary_structure_with_elements_view, name='update-batch'),
-                path('delete/<int:pk>/', views.deleteElementBatchView, name='delete-batch'),
+                path('delete/<int:pk>/', views.delete_salary_structure_with_elements_view, name='delete-batch'),
     ])),
     path('link/', include([
                 ######################### ElementLink URLs #################################
