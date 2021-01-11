@@ -28,4 +28,11 @@ urlpatterns=[
 
         path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete.html'),
         name='password_reset_complete'),
+        #groups
+        path('groups/',include([
+            path('',views.group_list,name='group_list'),
+            path('new/',views.create_groups,name='create_group'),
+            path('update/<int:pk>',views.edit_groups,name='update_group')
+
+        ])),
 ]

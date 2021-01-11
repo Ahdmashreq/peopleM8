@@ -3,7 +3,8 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from custom_user.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
-
+from django.contrib.auth.models import Group, Permission
+from django.contrib.admin.widgets import FilteredSelectMultiple
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -34,3 +35,20 @@ class CustomUserChangeForm(UserChangeForm):
     class Meta:
         model = User
         fields = ('username', 'employee_type', 'email')
+
+#group forms
+class GroupForm(forms.ModelForm):
+    class Meta:
+        model = Group
+        fields = '__all__'
+        widgets = {
+            'permissions': FilteredSelectMultiple("Permission", False, attrs={'rows': '3'}),
+        }
+        def __init__(self, *args, **kwargs):
+            super(EmployeeStructureLinkForm, self).__init__(*args, **kwargs)
+            for field in self.fields:
+                self.fields[field].widget.attrs['class'] = 'form-control parsley-validated'
+            self.helper = FormHelper()
+            self.helper.form_show_labels = True
+
+

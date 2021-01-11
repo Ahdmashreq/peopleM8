@@ -26,6 +26,10 @@ from company.models import Enterprise
 from notification.models import Notification
 from leave.models import Leave
 from custom_user.models import UserCompany, Visitor
+from django.contrib.auth.models import Group
+from .forms import GroupForm
+from django.contrib.auth.models import Group, Permission
+from django.shortcuts import get_object_or_404
 
 
 def viewAR(request):
@@ -282,3 +286,33 @@ class PasswordChangeDoneView(PasswordContextMixin, TemplateView):
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
+
+def group_list(request):
+    groups=Group.objects.all()
+    return render(request,'groups_list.html',{'groups':groups})
+
+def create_groups(request):
+    form = GroupForm()
+    if request.method == "POST":
+        form = GroupForm(request.POST)
+        if form.is_valid():
+            form.save()
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
+                success_msg = 'تم الانشاء بنجاح'
+            else:
+                success_msg = 'Create Successfully'
+            messages.success(request, success_msg)
+            return redirect('home:new-user')
+    return render(request, 'group-create.html', {'form': form})
+
+def edit_groups(request, pk):
+    group = get_object_or_404(Group, id=pk)
+    if request.method == "POST":
+        form = GroupForm(request.POST, instance=group)
+        if form.is_valid():
+            form.save()
+            # return HttpResponseRedirect('/contracts')
+    else:
+        form = GroupForm(instance=group)
+    return render(request, 'group-create.html', {'form': form})
