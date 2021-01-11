@@ -29,12 +29,17 @@ class ElementForm(forms.ModelForm):
         exclude = common_items_to_execlude
 
     def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
         super(ElementForm, self).__init__(*args, **kwargs)
-        # self.fields['start_date'].widget.input_type = 'date'
-        # self.fields['end_date'].widget.input_type = 'date'
+        self.fields['start_date'].widget.input_type = 'date'
+        self.fields['end_date'].widget.input_type = 'date'
+        self.fields['based_on'].queryset = Element.objects.filter(enterprise=user.company).filter(
+            Q(end_date__gt=date.today()) | Q(end_date__isnull=True))
         self.fields['element_type'].widget.attrs['onchange'] = 'myFunction(this)'
         self.fields['amount_type'].widget.attrs['onchange'] = 'check_amount_type(this)'
-
+        self.fields['classification'].queryset = LookupDet.objects.filter(
+            lookup_type_fk__lookup_type_name='ELEMENT_CLASSIFICATION').filter(
+            Q(end_date__gt=date.today()) | Q(end_date__isnull=True))
         for field in self.fields:
             self.fields[field].widget.attrs['class'] = 'form-control'
 
@@ -134,7 +139,7 @@ class ElementBatchForm(forms.ModelForm):
         self.helper.form_show_labels = True
         self.fields['start_date'].widget.input_type = 'date'
         self.fields['end_date'].widget.input_type = 'date'
-        
+
         for field in self.fields:
             if self.fields[field].widget.input_type == 'checkbox':
                 self.fields[field].widget.attrs['class'] = 'checkbox'

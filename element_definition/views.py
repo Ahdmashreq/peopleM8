@@ -110,10 +110,10 @@ def make_message(user_lang, success):
 
 
 def create_new_element(request):
-    element_form = ElementForm()
+    element_form = ElementForm(user=request.user)
     if request.method == "POST":
         user_lang = to_locale(get_language())
-        element_form = ElementForm(request.POST)
+        element_form = ElementForm(request.POST,user=request.user)
         if element_form.is_valid():
             elem_obj = element_form.save(commit=False)
             elem_obj.created_by = request.user
@@ -136,11 +136,11 @@ def create_new_element(request):
 
 def update_element_view(request, pk):
     element = get_object_or_404(Element, pk=pk)
-    element_master_form = ElementForm(instance=element)
+    element_master_form = ElementForm(instance=element,user=request.user)
     if request.method == 'POST':
         user_lang = to_locale(get_language())
         element_master_form = ElementForm(
-            request.POST, instance=element)
+            request.POST, instance=element,user=request.user)
         if element_master_form.is_valid():
             element_obj = element_master_form.save(commit=False)
             element_obj.last_update_by = request.user
