@@ -84,7 +84,7 @@ class TaxRuleForm(forms.ModelForm):
                                                      'style': 'padding: 25px; margin:25px;'
             }),
         }
-        exclude = common_items_to_execlude , 'start_date'
+        exclude = common_items_to_execlude , 'start_date','enterprise'
 
     def __init__(self, *args, **kwargs):
         super(TaxRuleForm, self).__init__(*args, **kwargs)
