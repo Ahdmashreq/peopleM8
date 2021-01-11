@@ -36,7 +36,7 @@
               <td class="Actions">
                 <div class="w-100 gap-10 peers">
                   <div class="peer">
-                    <a href="{% url 'employee:view-employee' pk=group.id %}">
+                    <a href="{% url 'home:group_view' pk=group.id %}">
                       <button type="button" class="btn cur-p btn-outline-primary">{% trans "View" %}</button>
                     </a>
                   </div>
@@ -45,11 +45,7 @@
                       <button type="button" class="btn cur-p btn-outline-success">{% trans "Update" %}</button>
                     </a>
                   </div>
-                  <div class="peer">
-                    <a href="#">
-                      <button type="button" class="btn cur-p btn-outline-danger" data-toggle="modal" data-target="#delete-modal{{emp.emp_id.pk}}">{% trans "Delete" %}</button>
-                    </a>
-                  </div>
+                  
                 </div>
               </td>
             </tr>

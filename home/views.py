@@ -27,7 +27,7 @@ from notification.models import Notification
 from leave.models import Leave
 from custom_user.models import UserCompany, Visitor
 from django.contrib.auth.models import Group
-from .forms import GroupForm
+from .forms import GroupForm,GroupViewForm
 from django.contrib.auth.models import Group, Permission
 from django.shortcuts import get_object_or_404
 
@@ -290,6 +290,11 @@ class PasswordChangeDoneView(PasswordContextMixin, TemplateView):
 def group_list(request):
     groups=Group.objects.all()
     return render(request,'groups_list.html',{'groups':groups})
+
+def group_view(request,pk):
+    group=Group.objects.get(id=pk)
+    form = GroupViewForm(instance=group)
+    return render(request,'group-view.html',{'form':form})
 
 def create_groups(request):
     form = GroupForm()

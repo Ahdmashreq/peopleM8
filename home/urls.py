@@ -31,8 +31,9 @@ urlpatterns=[
         #groups
         path('groups/',include([
             path('',views.group_list,name='group_list'),
+            path('<int:pk>/',views.group_view,name='group_view'),
             path('new/',views.create_groups,name='create_group'),
-            path('update/<int:pk>',views.edit_groups,name='update_group')
+            path('update/<int:pk>',views.edit_groups,name='update_group'),
 
         ])),
 ]

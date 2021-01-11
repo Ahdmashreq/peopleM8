@@ -51,4 +51,14 @@ class GroupForm(forms.ModelForm):
             self.helper = FormHelper()
             self.helper.form_show_labels = True
 
-
+class GroupViewForm(forms.ModelForm):
+    class Meta:
+        model=Group
+        fields='__all__'
+        widgets = {
+            'permissions': FilteredSelectMultiple("Permission", False, attrs={'rows': '3','disabled':True}),
+            'name':forms.TextInput(attrs={'readonly':'readonly'}),
+            # 'permissions':forms.TextInput(attrs={'readonly':'readonly'})
+        }
+        
+                
