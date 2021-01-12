@@ -30,7 +30,7 @@ from django.contrib.auth.models import Group
 from .forms import GroupForm, GroupViewForm
 from django.contrib.auth.models import Group, Permission
 from django.shortcuts import get_object_or_404
-
+from MashreqPayroll.utils import allowed_user
 
 def viewAR(request):
     if translation.LANGUAGE_SESSION_KEY in request.session:
@@ -294,7 +294,7 @@ class PasswordChangeDoneView(PasswordContextMixin, TemplateView):
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
-
+@allowed_user(allowed_roles=['test'])
 def group_list(request):
     groups = Group.objects.all()
     return render(request, 'groups_list.html', {'groups': groups})
