@@ -300,16 +300,16 @@ def createElementBatchView(request):
 
 def create_salary_structure_with_elements_view(request):
     structure_form = SalaryStructureForm()
-    elements_inlines = ElementInlineFormset()
+    elements_inlines = ElementInlineFormset(form_kwargs={'user': request.user})
     if request.method == 'POST':
         structure_form = SalaryStructureForm(request.POST)
-        elements_inlines = ElementInlineFormset(request.POST)
+        elements_inlines = ElementInlineFormset(request.POST,form_kwargs={'user': request.user})
         if structure_form.is_valid():
             structure_obj = structure_form.save(commit=False)
             structure_obj.created_by = request.user
             structure_obj.enterprise = request.user.company
             structure_obj.save()
-            elements_inlines = ElementInlineFormset(request.POST, instance=structure_obj)
+            elements_inlines = ElementInlineFormset(request.POST, instance=structure_obj,form_kwargs={'user': request.user})
             if elements_inlines.is_valid():
                 elements_objs = elements_inlines.save(commit=False)
                 for elements_obj in elements_objs:
@@ -330,17 +330,17 @@ def update_salary_structure_with_elements_view(request, pk):
     structure_form = SalaryStructureForm(instance=structure_instance)
     list_of_active_links = StructureElementLink.objects.filter(salary_structure=structure_instance).filter(
         Q(end_date__gt=date.today()) | Q(end_date__isnull=True))
-    elements_inlines = ElementInlineFormset(instance=structure_instance, queryset=list_of_active_links)
+    elements_inlines = ElementInlineFormset(instance=structure_instance, queryset=list_of_active_links,form_kwargs={'user': request.user})
     if request.method == 'POST':
         structure_form = SalaryStructureForm(request.POST, instance=structure_instance)
         elements_inlines = ElementInlineFormset(
-            request.POST, instance=structure_instance)
+            request.POST, instance=structure_instance,form_kwargs={'user': request.user})
         if structure_form.is_valid() and elements_inlines.is_valid():
             structure_obj = structure_form.save(commit=False)
             structure_obj.last_update_by = request.user
             structure_obj.save()
             elements_inlines = ElementInlineFormset(
-                request.POST, instance=structure_obj)
+                request.POST, instance=structure_obj,form_kwargs={'user': request.user})
             if elements_inlines.is_valid():
                 obj_det = elements_inlines.save(commit=False)
                 for obj in obj_det:

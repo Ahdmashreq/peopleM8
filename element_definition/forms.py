@@ -38,7 +38,7 @@ class ElementForm(forms.ModelForm):
         self.fields['element_type'].widget.attrs['onchange'] = 'myFunction(this)'
         self.fields['amount_type'].widget.attrs['onchange'] = 'check_amount_type(this)'
         self.fields['classification'].queryset = LookupDet.objects.filter(
-            lookup_type_fk__lookup_type_name='ELEMENT_CLASSIFICATION').filter(
+            lookup_type_fk__lookup_type_name='ELEMENT_CLASSIFICATION', lookup_type_fk__enterprise=user.company).filter(
             Q(end_date__gt=date.today()) | Q(end_date__isnull=True))
         for field in self.fields:
             self.fields[field].widget.attrs['class'] = 'form-control'
@@ -63,9 +63,12 @@ class StructureElementLinkForm(forms.ModelForm):
         exclude = common_items_to_execlude
 
     def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
         super(StructureElementLinkForm, self).__init__(*args, **kwargs)
         self.fields['start_date'].widget.input_type = 'date'
         self.fields['end_date'].widget.input_type = 'date'
+        self.fields['element'].queryset = Element.objects.filter(enterprise=user.company).filter(
+            Q(end_date__gt=date.today()) | Q(end_date__isnull=True))
         for field in self.fields:
             self.fields[field].widget.attrs['class'] = 'form-control'
 
