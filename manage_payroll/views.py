@@ -434,7 +434,7 @@ def deleteBankAccountView(request, pk):
 ################################################################################
 @login_required(login_url='home:user-login')
 def listPayrollView(request):
-    list_payroll = Payroll_Master.objects.filter(enterprise=request.user.company).filter(Q(end_date__gte=date.today())|Q(end_date__isnull=True))
+    list_payroll = Payroll_Master.objects.filter(enterprise=request.user.company).filter(Q(end_date__gt=date.today())|Q(end_date__isnull=True))
     payrollContext = {"page_title":_("payroll list") ,
                       'list_payroll': list_payroll}
     return render(request, 'list-payrolls.html', payrollContext)
@@ -442,9 +442,9 @@ def listPayrollView(request):
 
 @login_required(login_url='home:user-login')
 def createPayrollView(request):
-    payroll_form = PayrollMasterForm()
+    payroll_form = PayrollMasterForm(user=request.user)
     if request.method == 'POST':
-        payroll_form = PayrollMasterForm(request.POST)
+        payroll_form = PayrollMasterForm(request.POST,user=request.user)
         if payroll_form.is_valid():
             master_object = payroll_form.save(commit=False)
             master_object.enterprise = request.user.company
@@ -454,6 +454,8 @@ def createPayrollView(request):
             return redirect('manage_payroll:list-payroll')
             success_msg = _('Payroll Created Successfully')
             messages.success(request, success_msg)
+        else:
+            print(payroll_form.errors)
     payContext = {
         "page_title": _("Create Payroll"),
         'pay_form': payroll_form
@@ -464,9 +466,9 @@ def createPayrollView(request):
 @login_required(login_url='home:user-login')
 def updatePayrollView(request, pk):
     required_payroll = get_object_or_404(Payroll_Master, pk=pk)
-    pay_form = PayrollMasterForm(instance=required_payroll)
+    pay_form = PayrollMasterForm(instance=required_payroll,user=request.user)
     if request.method == 'POST':
-        pay_form = PayrollMasterForm(request.POST, instance=required_payroll)
+        pay_form = PayrollMasterForm(request.POST, instance=required_payroll,user=request.user)
         if pay_form.is_valid():
             pay_form.save()
         return redirect('manage_payroll:list-payroll')
@@ -483,7 +485,7 @@ def updatePayrollView(request, pk):
 def deletePayrollView(request, pk):
     required_payroll = get_object_or_404(Payroll_Master, pk=pk)
     try:
-        payroll_form = PayrollMasterForm(instance=required_payroll)
+        payroll_form = PayrollMasterForm(instance=required_payroll,user=request.user)
         payroll_obj = payroll_form.save(commit=False)
         payroll_obj.end_date = date.today()
         payroll_obj.save(update_fields=['end_date'])

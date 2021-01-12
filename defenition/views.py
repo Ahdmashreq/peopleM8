@@ -357,6 +357,8 @@ def create_tax_rules(request):
         formset.can_delete = False
         if form.is_valid():
             tax_rule = form.save(commit=False)
+            tax_rule.enterprise = request.user.company
+
             formset = TaxSectionFormSet(request.POST, instance=tax_rule)
             # formset.can_delete = False
             if formset.is_valid():
@@ -374,9 +376,11 @@ def create_tax_rules(request):
                 for error_dict in formset.errors:
                     [messages.error(request, error[0])
                      for error in error_dict.values()]
+                print(formset.errors)
         else:  # Form was not valid
             [messages.error(request, error[0])
              for error in form.errors.values()]
+            print(form.errors)
 
     context = {'form': form,
                'formset': formset,
@@ -389,17 +393,11 @@ def create_tax_rules(request):
 def list_tax_rules(request):
     form = TaxRule.objects.all(user=request.user)
     formset = TaxSection.objects.all().exclude((Q(end_date__gte=date.today()) | Q(end_date__isnull=True)))
-    egy_rule_flag = False
-    if TaxRule.objects.filter(enterprise=request.user.company).exclude(
-            (Q(end_date__gte=date.today()) | Q(end_date__isnull=True))):
-        egy_rule_flag = True
-    else:
-        egy_rule_flag = False
+
     taxContext = {
         'page_title': _('Tax Rules'),
         'form': form,
         'formset': formset,
-        'egy_rule_flag': egy_rule_flag
     }
     return render(request, 'tax_rules_list.html', taxContext)
 
@@ -476,4 +474,3 @@ def update_tax_rule(request, pk):
                'page_title': _('New Tax Rule'),
                'formset_title': _('Tax sections')}
     return render(request, 'tax_rules_create.html', context=context)
-

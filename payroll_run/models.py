@@ -31,8 +31,6 @@ class Salary_elements(models.Model):
     salary_year = models.IntegerField(verbose_name=_('Salary Year'))
     run_date = models.DateField(auto_now=False, auto_now_add=False,
                                 default=date.today, blank=True, null=True, verbose_name=_('Run Date'))
-    num_days = models.FloatField(
-        default=0.0, null=True, blank=True, verbose_name=_('Number of Days'))
     element_batch = models.ForeignKey(
         Element_Batch, on_delete=models.CASCADE, null=True, blank=True, verbose_name=_('Element Batch'))
     assignment_batch = models.ForeignKey(

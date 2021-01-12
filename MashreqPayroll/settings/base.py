@@ -6,7 +6,7 @@ BASE_DIR = os.path.dirname(
         os.path.dirname(
             os.path.abspath(__file__)))
 )
-TEMPLATES_DIR = os.path.join(BASE_DIR, 'MashreqPayroll', 'templates')
+TEMPLATES_DIR = os.path.join(BASE_DIR, "MashreqPayroll", 'templates')
 STATIC_DIR = os.path.join(BASE_DIR, "MashreqPayroll", "static")
 MEDIA_DIR = os.path.join(BASE_DIR, "MashreqPayroll", "media")
 
@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'service',
     'import_export',
     'mptt',
+    'notifications',
 ]
 
 
@@ -143,7 +144,6 @@ LOGIN_URL = '/home/login/'
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
-LANGUAGE_CODE = 'ar'
 
 TIME_ZONE = 'UTC'
 
@@ -165,6 +165,7 @@ LOCALE_PATHS = (
 
 # Languages using BiDi (right-to-left) layout
 LANGUAGES_BIDI = ["ar"]
+LANGUAGE_CODE = 'en'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
@@ -192,3 +193,4 @@ EMAIL_HOST_USER = "dina.abdullah.intern@mashreqarabia.com"
 with open(KEY_PATH) as f:
     EMAIL_HOST_PASSWORD = f.read().strip()
 EMAIL_USE_TLS = True
+DJANGO_NOTIFICATIONS_CONFIG = { 'USE_JSONFIELD': True}
