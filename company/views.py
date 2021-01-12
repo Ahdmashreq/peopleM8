@@ -204,7 +204,7 @@ def updateBusinessGroup(request, pk):
 
 @login_required(login_url='home:user-login')
 def deleteBusinessGroup(request, pk):
-    required_enterprice = Enterprise.objects.get(pk=pk)
+    required_enterprice = Enterprise.objects.get(pk=pk) 
     try:
         enterpriseForm = EnterpriseForm(instance=required_enterprice)
         enterprise_obj = enterpriseForm.save(commit=False)
@@ -334,7 +334,7 @@ def correctDepartmentView(request, pk):
 
 
 @login_required(login_url='home:user-login')
-def updateDepartmentView(request, pk):
+def updateDepartmentView(request, pk): 
     required_dept = Department.objects.get_department(user=request.user, dept_id=pk)
     dept_form = DepartmentForm(instance=required_dept)
     dept_form.fields['parent'].queryset = Department.objects.filter((Q(enterprise=request.user.company))).filter(
@@ -884,7 +884,9 @@ def CreateWorkingPolicyView(request):
 @login_required(login_url='home:user-login')
 def listWorkingPolicyView(request):
     if request.method == 'GET':
-        working_policy_list = Working_Days_Policy.objects.all(request.user)
+        working_policy_list = Working_Days_Policy.objects.all(request.user).filter(
+            Q(end_date__gt=date.today()) | Q(end_date__isnull=True))
+
     myContext = {
         "page_title": _("List working policies"),
         'policy_list': working_policy_list
@@ -924,25 +926,53 @@ def correctWorkingPolicyView(request, pk):
 
 
 @login_required(login_url='home:user-login')
-def deleteWorkingPolicyView(request, pk):
+def deleteWorkingPolicyView(request, pk): 
     req_working_policy = Working_Days_Policy.objects.get_policy(user=request.user, policy_id=pk)
-    deleted = req_working_policy.delete()
-    if deleted:
-        messages.success(request, 'Record successfully deleted')
-
-    else:
-        messages.error(request, 'Record is NOT deleted')
-
+    try:
+        required_form = WorkingDaysForm(instance=req_working_policy)
+        required_obj = required_form.save(commit=False)
+        required_obj.end_date = date.today()
+        required_obj.save(update_fields=['end_date'])
+        # success_msg = '{} successfully deleted'.format(req_working_policy)
+        user_lang = to_locale(get_language())
+        if user_lang == 'ar':
+            success_msg = '{} تم حذف السجل'.format(req_working_policy)
+        else:
+            success_msg = '{} successfully deleted'.format(req_working_policy)
+        messages.success(request, success_msg)
+    except Exception as e:
+        user_lang = to_locale(get_language())
+        if user_lang == 'ar':
+            error_msg = '{} لم يتم حذف '.format(req_working_policy)
+        else:
+            error_msg = '{} cannot be deleted '.format(req_working_policy)
+        # error_msg = '{} cannot be deleted '.format(req_working_policy)
+        messages.error(request, error_msg)
+        raise e
+   
     return redirect('company:working-hrs-policy-list')
 
 
+########################################Company holidays View ###################################################################
+
+
 @login_required(login_url='home:user-login')
-def listYearlyHolidayView(request, year_id):
+def listYearlyHolidayView(request, year_id): 
     yearly_holiday_list = []
     year = Year.objects.get_year(request.user, year_id)
     if request.method == 'GET':
-        yearly_holiday_list = YearlyHoliday.objects.get_year_holiday(user=request.user, year_name=year_id)
+        try :
+            yearly_holiday_list = YearlyHoliday.objects.get_year_holiday(user=request.user, year_name=year_id)
+        except :
+            yearly_holiday_list = None
 
+
+    #year = Year.objects.get(id = year_id)
+    #yearName = year.year
+
+    #first_obj=  queryset.first()
+    #year=first_obj.year_id
+    #yearName = Year.objects.get(id = year)
     myContext = {
         "page_title": f"List yearly holidays for {year}",
         'yearly_holiday_list': yearly_holiday_list,
@@ -1030,16 +1060,32 @@ def correctYearlyHolidayView(request, pk):
 
 @login_required(login_url='home:user-login')
 def deleteYearlyHolidayView(request, pk):
-    req_holiday = YearlyHoliday.objects.get_holiday(user=request.user, yearly_holiday_id=pk)
-    year_ID = req_holiday.year.id
-    deleted = req_holiday.delete()
-    if deleted:
-        messages.success(request, 'Record successfully deleted')
+    req_holiday = YearlyHoliday.objects.get( id=pk)
+    year=req_holiday.year_id
+    yearName = Year.objects.get(id = year)
+    try:
+        required_form = YearlyHolidayForm(instance=req_holiday)
+        required_obj = required_form.save(commit=False)
+        required_obj.end_date = date.today()
+        required_obj.save(update_fields=['end_date'])
+        # success_msg = '{} successfully deleted'.format(req_holiday)
+        user_lang = to_locale(get_language())
+        if user_lang == 'ar':
+            success_msg = '{} تم حذف السجل'.format(req_holiday)
+        else:
+            success_msg = '{} successfully deleted'.format(req_holiday)
+        messages.success(request, success_msg)
+    except Exception as e:
+        user_lang = to_locale(get_language())
+        if user_lang == 'ar':
+            error_msg = '{} لم يتم حذف '.format(req_holiday)
+        else:
+            error_msg = '{} cannot be deleted '.format(req_holiday)
+        # error_msg = '{} cannot be deleted '.format(req_holiday)
+        messages.error(request, error_msg)
+        raise e
 
-    else:
-        messages.error(request, 'Record is NOT deleted')
-
-    return redirect('company:yearly-holiday-list', year_id=year_ID)
+    return redirect('company:yearly-holiday-list', year_id=yearName.year)
 
 
 @login_required(login_url='home:user-login')
