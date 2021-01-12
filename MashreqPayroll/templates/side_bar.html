@@ -44,6 +44,7 @@
           <ul class="dropdown-menu" style="display: none;">
             {% if request.user|has_group:"test"%}
             <li><a href="{% url 'home:group_list' %}">groups</a></li>
+            <li><a href="{% url 'home:user_groups' %}">user group</a></li>
             {% endif %}
             <li><a href="{% url 'company:list-department' %}">{% trans "Departments" %}</a></li>
             <li><a href="{% url 'company:list-jobs' %}">{% trans "Jobs" %}</a></li>
