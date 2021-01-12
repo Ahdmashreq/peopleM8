@@ -34,6 +34,9 @@ urlpatterns=[
             path('<int:pk>/',views.group_view,name='group_view'),
             path('new/',views.create_groups,name='create_group'),
             path('update/<int:pk>',views.edit_groups,name='update_group'),
+            path('assign/',views.assign_role),
+            path('users/',views.user_group_list,name="user_groups"),
+            path('<int:pk>/delete',views.user_group_delete, name='reset_user_group')
 
         ])),
 ]
