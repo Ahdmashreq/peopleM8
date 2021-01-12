@@ -54,18 +54,34 @@
           </div>
           <div class="form-row gap-10 peers">
             <div class="peer">
-              <a href="{% url 'service:service-approve' service_id=service_id %}">
+            {% if home %}
+              <a href="{% url 'service:service-approve' service_id=service_id redirect_to='home:homepage' %}">
                 <button type="button" class="btn cur-p btn-success">{% trans "Approve" %}</button>
               </a>
+            {% else %}
+              <a href="{% url 'service:service-approve' service_id=service_id redirect_to='service:services_list' %}">
+                <button type="button" class="btn cur-p btn-success">{% trans "Approve" %}</button>
+              </a>
+            {% endif %}
 
             </div>
             <div class="peer">
-              <a href="{% url 'service:service-unapprove' service_id=service_id %}">
-              <button type="button" class="btn cur-p btn-danger">{% trans "Reject" %}</button>
+              {% if home %}
+                <a href="{% url 'service:service-unapprove' service_id=service_id redirect_to='home:homepage' %}">
+                <button type="button" class="btn cur-p btn-danger">{% trans "Reject" %}</button>
+                </a>
+            {% else %}
+              <a href="{% url 'service:service-unapprove' service_id=service_id redirect_to='service:services_list' %}">
+                <button type="button" class="btn cur-p btn-danger">{% trans "Reject" %}</button>
               </a>
+            {% endif %}
             </div>
             <div class="peer">
+            {% if home %}
+              <a href="{% url 'home:homepage' %}" class="btn cur-p btn-secondary">{% trans "Cancel" %}</a>
+            {% else %}
               <a href="{% url 'service:services_list' %}" class="btn cur-p btn-secondary">{% trans "Cancel" %}</a>
+            {% endif %}
             </div>
           </div>
         </div>

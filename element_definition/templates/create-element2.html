@@ -101,6 +101,7 @@
 
 {% block js %}
 <script>
+$(document).ready(function(){
 if(document.getElementById('id_element_type').value === 'formula') {
     document.getElementById('based_on').style.display = 'none';
     document.getElementById('fixed_amount').style.display = 'none';
@@ -145,6 +146,10 @@ else if (document.getElementById('id_element_type').value == 'payslip based'){
     document.getElementById('based_on').style.display = 'none';
 
 }
+})
+</script>
+
+<script>
 
 function myFunction(object) {
   if(object.value === 'formula') {
@@ -174,6 +179,9 @@ function myFunction(object) {
 function check_amount_type(object) {
  if(object.value === 'percentage') {
     document.getElementById('fixed_amount').style.display = 'block';
+    if (document.getElementById('id_element_type').value == 'payslip based'){
+        document.getElementById('fixed_amount').style.display = 'none';
+    };
     document.getElementById('formula').style.display = 'none';
     document.getElementById('based_on').style.display = 'block';
     }

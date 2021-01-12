@@ -57,19 +57,35 @@
           </div>
           <div class="form-row gap-10 peers">
             <div class="peer">
-              <a href="{% url 'leave:leave-approve' leave_id=leave_id %}">
+
+              {% if home %}
+              <a href="{% url 'leave:leave-approve' leave_id=leave_id redirect_to='home:homepage' %}">
                 <button type="button" class="btn cur-p btn-success">{% trans "Approve" %}</button>
               </a>
+              {% else %}
+               <a href="{% url 'leave:leave-approve' leave_id=leave_id redirect_to='leave:list_leave' %}">
+                <button type="button" class="btn cur-p btn-success">{% trans "Approve" %}</button>
+              </a>
+              {% endif %}
 
             </div>
             <div class="peer">
-              <a href="{% url 'leave:leave-unapprove' leave_id=leave_id %}">
+              {% if home %}
+
+              <a href="{% url 'leave:leave-unapprove' leave_id=leave_id redirect_to='home:homepage' %}">
               <button type="button" class="btn cur-p btn-danger">{% trans "Reject" %}</button>
               </a>
-            </div>
-            <div class="peer">
-              <a href="{% url 'leave:list_leave' %}" class="btn cur-p btn-secondary">{% trans "Cancel" %}</a>
-            </div>
+              <a href="{% url 'home:homepage' %}" class="btn cur-p btn-secondary">{% trans "Cancel" %}</a>
+              {% else %}
+               <a href="{% url 'leave:leave-unapprove' leave_id=leave_id redirect_to='leave:list_leave' %}">
+              <button type="button" class="btn cur-p btn-danger">{% trans "Reject" %}</button>
+              </a>
+                <a href="{% url 'leave:list_leave' %}" class="btn cur-p btn-secondary">{% trans "Cancel" %}</a>
+              </div>
+
+              {% endif %}
+
+
           </div>
         </div>
       </div>

@@ -1,6 +1,9 @@
 from django import forms
 from datetime import date
 from crispy_forms.helper import FormHelper
+from django.db.models import Q
+
+from manage_payroll.models import Assignment_Batch
 from payroll_run.models import Salary_elements
 from defenition.models import LookupDet
 from employee.models import Employee, Employee_Element
@@ -29,9 +32,12 @@ class SalaryElementForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
         super(SalaryElementForm, self).__init__(*args, **kwargs)
         # self.fields['start_date'].widget.input_type = 'date'
         # self.fields['end_date'].widget.input_type = 'date'
+        self.fields['assignment_batch'].queryset = Assignment_Batch.objects.filter(payroll_id__enterprise =user.company).filter(
+            Q(end_date__gt=date.today()) | Q(end_date__isnull=True))
         for field in self.fields:
             if self.fields[field].widget.input_type == 'checkbox':
                 self.fields[field].widget.attrs['class'] = ''
