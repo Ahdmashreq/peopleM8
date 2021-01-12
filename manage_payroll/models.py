@@ -76,11 +76,10 @@ class Payroll_Period(models.Model):
 
 class Payroll_Master(models.Model):
     enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE,related_name='payroll_enterprise', verbose_name=_('Enterprise Name'))
-    first_pay_period	=	models.DateField(auto_now=False, auto_now_add=False,verbose_name=_('First Pay Period'))
+    first_pay_period	=	models.DateField(auto_now=False, auto_now_add=False,verbose_name=_('First Pay Period'),blank=True,null=True)
     payroll_name	=	models.CharField(max_length=255,verbose_name=_('Payroll Name'))
     payment_method = models.ForeignKey(Payment_Type, on_delete=models.CASCADE,verbose_name=_('Payment Method'))
     period_type	=	models.ForeignKey(LookupDet, on_delete=models.CASCADE,verbose_name=_('Period Type'))
-    social_insurance = models.ForeignKey(InsuranceRule, on_delete=models.CASCADE, verbose_name=_('Social Insurance'))  # Deductions
     tax_rule = models.ForeignKey(TaxRule, on_delete=models.CASCADE, verbose_name=_('Tax Rule'))  # Deductions
 
     start_date	=	models.DateField(auto_now=False, auto_now_add=False, default=date.today,verbose_name=_('Start Date'))
