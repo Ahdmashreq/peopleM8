@@ -176,7 +176,7 @@ def list_attendance(request):
 
 @login_required(login_url='home:user-login')
 def check_in_time(request):
-    company_policy = Working_Hours_Policy.objects.get(enterprise=request.user.company)
+    company_policy = Working_Days_Policy.objects.get(enterprise=request.user.company)
     current_employee = Employee.objects.get(user=request.user)
     attendance_list = Attendance.objects.filter(employee=current_employee)
 
