@@ -10,7 +10,7 @@ from datetime import date
 from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
 from task_management.models import Project, Project_Task
-from task_management.forms import ProjectForm, Project_Tasks_ModelFormset
+from task_management.forms import ProjectForm, Project_Tasks_ModelFormset, ProjectTaskForm
 
 @login_required(login_url='home:user-login')
 def project_list_view(request):
@@ -29,6 +29,7 @@ def project_create_view(request):
         project_form = ProjectForm(request.POST)
         if project_form.is_valid():
             project_obj = project_form.save(commit=False)
+            project_obj.company = request.user.company
             project_obj.created_by = request.user
             project_obj.save()
     project_context = {
@@ -56,21 +57,43 @@ def project_task_list_view(request):
 
 @login_required(login_url='home:user-login')
 def project_task_create_view(request):
-        task_form = Project_Tasks_ModelFormset()
+        # task_form = Project_Tasks_ModelFormset(queryset=Project_Task.objects.none())
+        task_form = ProjectTaskForm()
         if request.method == 'POST':
-            task_form = Project_Tasks_ModelFormset(request.POST)
+            task_form = ProjectTaskForm(request.POST)
             if task_form.is_valid():
                 task_obj = task_form.save(commit=False)
-                for task in task_obj:
-                    task.created_by = request.user
-                    task.save()
+                # for task in task_obj:
+                task_obj.created_by = request.user
+                task_obj.save()
+                return redirect('task_management:task-list')
+                messages.success(request, 'Saved Successfully.')
+            else:
+                messages.error(request, task_form.errors)
         project_context = {
                            'page_title':'Create New Project',
                            'task_form':task_form,
         }
-        return render(request, 'tasks-create.html', project_context)
+        return render(request, 'task-create.html', project_context)
 
 
 @login_required(login_url='home:user-login')
-def project_task_update_view(request):
-    pass
+def project_task_update_view(request, task_id):
+    required_task = Project_Task.objects.get(id=task_id)
+    task_form = ProjectTaskForm(instance=required_task)
+    if request.method == 'POST':
+        task_form = ProjectTaskForm(request.POST, instance=required_task)
+        if task_form.is_valid():
+            task_obj = task_form.save(commit=False)
+            # for task in task_obj:
+            task_obj.created_by = request.user
+            task_obj.save()
+            return redirect('task_management:task-list')
+            messages.success(request, 'Saved Successfully.')
+        else:
+            messages.error(request, task_form.errors)
+    project_context = {
+                       'page_title':'Create New Project',
+                       'task_form':task_form,
+    }
+    return render(request, 'task-create.html', project_context)

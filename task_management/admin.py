@@ -1,5 +1,6 @@
 from django.contrib import admin
 from task_management import models
+from import_export.admin import ImportExportModelAdmin, ImportMixin
 
 
 # ################ inlines #################
@@ -57,7 +58,7 @@ class ProjectAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.Project_Task)
-class ProjectTaskAdmin(admin.ModelAdmin):
+class ProjectTaskAdmin(ImportExportModelAdmin):
     fields = (
         'project',
         'task_name',

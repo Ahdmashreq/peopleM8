@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 from datetime import date, datetime
+from company.models import Enterprise
 
 
 status_list = (
@@ -14,6 +15,7 @@ periority_list = (
                ('high','High'),
 )
 class Project(models.Model):
+    company = models.ForeignKey(Enterprise, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True, null=True)
     percentage = models.PositiveSmallIntegerField(default=0)

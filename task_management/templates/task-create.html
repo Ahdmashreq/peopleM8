@@ -1,0 +1,85 @@
+{% extends 'master.html'%}
+{% load staticfiles%}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+{% block body%}
+
+<div class="container-fluid">
+  <form method="post">
+    {% csrf_token %}
+    <!--  -->
+    <div class="row">
+      <div class="col-md-8">
+        <h4 class="c-grey-900">{{page_title|title}}</h4>
+      </div>
+      <div class="col-md-4">
+        <div class="gap-10 peers push-right">
+          <div class="peer">
+            <button type="submit" class="btn cur-p btn-primary">{% trans "Save" %}</button>
+          </div>
+          <div class="peer">
+            <a href="{% url 'task_management:task-list' %}" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-1">
+      <div class="bgc-white p-20 bd">
+        <div class="mT-30">
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <label>{{ task_form.project.label }}</label>
+              {{ task_form.project }}
+            </div>
+            <div class="form-group col-md-4">
+              <label>{{ task_form.task_name.label }}</label>
+              {{ task_form.task_name }}
+            </div>
+            <div class="form-group col-md-4">
+              <label>{{ task_form.parent_task.label }}</label>
+              {{ task_form.parent_task }}
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-8">
+              <label>{{ task_form.description.label }}</label>
+              {{ task_form.description }}
+            </div>
+            <div class="form-group col-md-4">
+              <label>{{ task_form.scope.label }}</label>
+              {{ task_form.scope }}
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <label>{{ task_form.status.label }}</label>
+              {{ task_form.status }}
+            </div>
+            <div class="form-group col-md-4">
+              <label>{{ task_form.assigned_to.label }}</label>
+              {{ task_form.assigned_to }}
+            </div>
+            <div class="form-group col-md-4">
+              <label>{{ task_form.percentage.label }}</label>
+              {{ task_form.percentage }}
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-3">
+              <label>{{ task_form.task_start_date.label }}</label>
+              {{ task_form.task_start_date }}
+            </div>
+            <div class="form-group col-md-3">
+              <label>{{ task_form.task_end_date.label }}</label>
+              {{ task_form.task_end_date }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+
+{% endblock body%}

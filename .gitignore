@@ -122,3 +122,5 @@ dmypy.json
 # End of https://www.gitignore.io/api/django
 /payroll_run/migrations/0004_auto_20210106_1104.py
 *.sqlite3
+
+settings/

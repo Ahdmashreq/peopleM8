@@ -12,7 +12,7 @@
     </div>
     <div class="col-md-4">
       <div class="gap-10 peers ">
-        <div class="peer"><a href="{% url 'manage_payroll:payroll-create' %}" class="btn cur-p btn-primary">{% trans "Add" %}</a></div>
+        <div class="peer"><a href="{% url 'task_management:tasks-create' %}" class="btn cur-p btn-primary">{% trans "Add New Task" %}</a></div>
       </div>
     </div>
   </div>
@@ -23,8 +23,11 @@
           <thead>
             <tr>
               <th>#</th>
-              <th>{% trans "Task Name" %}</th>
-              <th>{% trans "Type" %}</th>
+              <th style="width: 552px;">{% trans "Task Name" %}</th>
+              <th>{% trans "Project" %}</th>
+              <th>{% trans "Status" %}</th>
+              <th>{% trans "Percentage" %}</th>
+              <th>{% trans "Task Start Date" %}</th>
               <th>{% trans "Actions" %}</th>
             </tr>
           </thead>
@@ -32,12 +35,15 @@
             {% for x in all_tasks %}
             <tr>
               <th scope="row">{{ forloop.counter }}</th>
-              <td>{{ x.payroll_name }}</td>
-              <td>{{ x.period_type }}</td>
+              <td>{{ x.task_name }}</td>
+              <td>{{ x.project }}</td>
+              <td>{{ x.status }}</td>
+              <td>{{ x.percentage }}</td>
+              <td>{{ x.task_start_date }}</td>
               <td class="Actions">
                 <div class="w-100 gap-10 peers">
                   <div class="peer">
-                    <a href="#">
+                    <a href="{% url 'task_management:task-update' task_id=x.id %}">
                       <button type="button" class="btn cur-p btn-outline-primary">{% trans "Update" %}</button>
                     </a>
                   </div>

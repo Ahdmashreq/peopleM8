@@ -23,6 +23,8 @@ class ProjectTaskForm(forms.ModelForm):
         super(ProjectTaskForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_show_labels = True
+        self.fields['task_start_date'].widget.input_type = 'date'
+        self.fields['task_end_date'].widget.input_type = 'date'
         for field in self.fields:
             self.fields[field].widget.attrs['class'] = 'form-control parsley-validated'
 
@@ -31,4 +33,4 @@ class ProjectTaskForm(forms.ModelForm):
         fields = '__all__'
         exclude = ['created_by','creation_date','last_update_by','last_update_date']
 
-Project_Tasks_ModelFormset = forms.modelformset_factory(Project_Task, form=ProjectTaskForm, extra=3, can_delete=False)
+Project_Tasks_ModelFormset = forms.modelformset_factory(Project_Task, form=ProjectTaskForm, extra=10, can_delete=False)
