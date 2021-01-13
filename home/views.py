@@ -32,6 +32,7 @@ from django.contrib.auth.models import Group, Permission
 from django.shortcuts import get_object_or_404
 from MashreqPayroll.utils import allowed_user
 
+
 def viewAR(request):
     if translation.LANGUAGE_SESSION_KEY in request.session:
         del request.session[translation.LANGUAGE_SESSION_KEY]
@@ -68,8 +69,8 @@ def user_login(request):
             if user.is_active:
                 login(request, user)
                 if next:
-                    return redirect(next)
-                if user.employee_type == 'A':
+                    return redirect(next)  
+                if str(request.user.groups.first()) == "Admin":
                     return redirect(reverse('home:homepage'))
                 else:
                     return redirect(reverse('attendance:user-list-attendance'))
@@ -294,7 +295,8 @@ class PasswordChangeDoneView(PasswordContextMixin, TemplateView):
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
-@allowed_user(allowed_roles=['test'])
+
+@allowed_user(allowed_roles=['admin'])
 def group_list(request):
     groups = Group.objects.all()
     return render(request, 'groups_list.html', {'groups': groups})
