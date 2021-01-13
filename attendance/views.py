@@ -17,6 +17,7 @@ from attendance.utils import is_day_a_weekend, is_day_a_holiday, is_day_a_leave,
 from employee.models import Employee
 from leave.models import Leave
 from service.models import Bussiness_Travel
+from company.models import Working_Days_Policy
 import pytz
 from zk import ZK, const
 from zk.exception import ZKErrorConnection, ZKErrorResponse, ZKNetworkError
