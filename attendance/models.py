@@ -160,12 +160,6 @@ class Task(models.Model):
         return self.task
 
 
-@receiver(pre_save, sender=Task)
-def slug_task_generator(sender, instance, *args, **kwargs):
-    if not instance.slug:
-        instance.slug = unique_slug_generator(instance)
-
-
 @receiver(pre_save, sender=Attendance)
 def working_time(sender, instance, *args, **kwargs):
     # This function sets attendance status and calculates work_hrs ,overtime and delays
