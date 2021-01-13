@@ -327,3 +327,6 @@ def deleteEmployeeView(request, pk):
         messages.error(request, success_msg)
         raise e
     return redirect('employee:list-employee')
+
+
+

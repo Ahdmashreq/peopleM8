@@ -9,7 +9,7 @@ from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.csrf import csrf_protect
 from django.dispatch.dispatcher import receiver
 from django.contrib.sessions.models import Session
-from .forms import CustomUserCreationForm, AddUserForm
+from .forms import CustomUserCreationForm, AddUserForm, GroupAdminForm
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from custom_user.models import User, UserCompany
@@ -26,6 +26,11 @@ from company.models import Enterprise
 from notification.models import Notification
 from leave.models import Leave
 from custom_user.models import UserCompany, Visitor
+from django.contrib.auth.models import Group
+from .forms import GroupForm, GroupViewForm
+from django.contrib.auth.models import Group, Permission
+from django.shortcuts import get_object_or_404
+from MashreqPayroll.utils import allowed_user
 
 
 def viewAR(request):
@@ -65,7 +70,7 @@ def user_login(request):
                 login(request, user)
                 if next:
                     return redirect(next)
-                if user.employee_type == 'A':
+                if str(request.user.groups.first()) == "Admin":
                     return redirect(reverse('home:homepage'))
                 else:
                     return redirect(reverse('attendance:user-list-attendance'))
@@ -85,14 +90,19 @@ def user_home_page(request):
     employee = Employee.objects.get(user=request.user)
     employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
 
-    leave_count = Leave.objects.filter(user=request.user, status='pending').count()
-    unread_notifications = Notification.objects.filter(status='delivered', to_emp=employee).order_by('-creation_date')
-    notification_count = Notification.objects.filter(status='delivered', to_emp=employee).count()
+    leave_count = Leave.objects.filter(
+        user=request.user, status='pending').count()
+    unread_notifications = Notification.objects.filter(
+        status='delivered', to_emp=employee).order_by('-creation_date')
+    notification_count = Notification.objects.filter(
+        status='delivered', to_emp=employee).count()
 
-    birthdays_count = Employee.objects.filter(date_of_birth__month=date.today().month).count()
+    birthdays_count = Employee.objects.filter(
+        date_of_birth__month=date.today().month).count()
     employee_count = Employee.objects.all().count()
 
-    emps_birthdays = Employee.objects.filter(date_of_birth__month=date.today().month)
+    emps_birthdays = Employee.objects.filter(
+        date_of_birth__month=date.today().month)
 
     # List MY Bussiness_Travel/services
     bussiness_travel_service = Bussiness_Travel.objects.filter(Q(emp=employee) | Q(manager=employee), status='pending')
@@ -115,7 +125,8 @@ def user_home_page(request):
 
 @login_required(login_url='home:user-login')
 def admin_home_page(request):
-    user_companies_count = UserCompany.objects.filter(user__company=request.user.company).count()
+    user_companies_count = UserCompany.objects.filter(
+        user__company=request.user.company).count()
     if user_companies_count == 0:
         return redirect('company:user-companies-list')
         pass
@@ -292,3 +303,79 @@ class PasswordChangeDoneView(PasswordContextMixin, TemplateView):
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
+
+
+@allowed_user(allowed_roles=['admin'])
+def group_list(request):
+    groups = Group.objects.all()
+    return render(request, 'groups_list.html', {'groups': groups})
+
+
+def group_view(request, pk):
+    group = Group.objects.get(id=pk)
+    form = GroupViewForm(instance=group)
+    return render(request, 'group-view.html', {'form': form})
+
+
+def create_groups(request):
+    form = GroupForm()
+    if request.method == "POST":
+        form = GroupForm(request.POST)
+        if form.is_valid():
+            form.save()
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
+                success_msg = 'تم الانشاء بنجاح'
+            else:
+                success_msg = 'Create Successfully'
+            messages.success(request, success_msg)
+            return redirect('home:new-user')
+    return render(request, 'group-create.html', {'form': form})
+
+
+def edit_groups(request, pk):
+    group = get_object_or_404(Group, id=pk)
+    if request.method == "POST":
+        form = GroupForm(request.POST, instance=group)
+        if form.is_valid():
+            form.save()
+            # return HttpResponseRedirect('/contracts')
+    else:
+        form = GroupForm(instance=group)
+    return render(request, 'group-create.html', {'form': form})
+
+
+def assign_role(request):
+    form = GroupAdminForm()
+    if request.method == "POST":
+        form = GroupAdminForm(request.POST)
+        if form.is_valid():
+            form.save(commit=False)
+            user = User.objects.get(id=form.data['user'])
+            my_group = Group.objects.get(id=form.data['group'])
+            user.groups.add(my_group)
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
+                success_msg = 'تم الإنشاء بنجاح'
+            else:
+                success_msg = 'Created Successfully'
+                messages.success(request, success_msg)
+        return redirect('home:user_groups')
+    return render(request, 'group_assign.html', {'form': form})
+
+
+def user_group_list(request):
+    users = User.objects.all()
+    return render(request, 'user_group_list.html', {'users': users})
+
+
+def user_group_delete(request, pk):
+    user = User.objects.get(id=pk)
+    user.groups.clear()
+    user_lang = to_locale(get_language())
+    if user_lang == 'ar':
+        success_msg = 'تم المسح بنجاح'
+    else:
+        success_msg = 'Deleted Successfully'
+        messages.success(request, success_msg)
+    return redirect('home:user_groups')

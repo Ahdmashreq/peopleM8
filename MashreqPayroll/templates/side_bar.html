@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load l10n %}
+{% load group_extra %}
 {% load staticfiles %}
-
 <div class="sidebar-inner">
   <div class="sidebar-logo">
     <div class="peers ai-c fxw-nw">
@@ -18,7 +18,8 @@
         </a>
       </div>
       <div class="peer">
-        <div class="mobile-toggle sidebar-toggle"><a href="#" class="td-n"><i class="ti-arrow-circle-left"></i></a></div>
+        <div class="mobile-toggle sidebar-toggle"><a href="#" class="td-n"><i class="ti-arrow-circle-left"></i></a>
+        </div>
       </div>
     </div>
   </div>
@@ -27,17 +28,26 @@
         <span class="icon-holder"><i class="c-blue-500 ti-home"></i> </span>
         <span class="title">{% trans 'Dashboard'%}</span></a>
     </li>
+    {% if request.user|has_group:"Admin"%}
     <li class="nav-item dropdown">
-      <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-orange-500 ti-layout-list-thumb"></i> </span><span class="title">{% trans 'Company Setup'%}</span> <span class="arrow"><i
-            class="ti-angle-right"></i></span></a>
+      <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i
+            class="c-orange-500 ti-layout-list-thumb"></i> </span><span class="title">{% trans 'Company Setup'%}</span>
+        <span class="arrow"><i class="ti-angle-right"></i></span></a>
       <ul class="dropdown-menu">
+        <li><a class="sidebar-link" href="{% url 'company:list-company-information' %}">{% trans 'Enterprise'%}</a></li>
+        <li><a class="sidebar-link" href="{% url 'balanc_definition:list-cost-center' %}">{% trans 'Cost Center'%}</a>
+        </li>
+        {% if request.user.is_superuser %}
+        <li><a class="sidebar-link" href="{% url 'company:setup_company' %}">{% trans 'Upload Modules'%}</a></li>
+        {% endif %}
         <li class="nav-item dropdown">
           <a href="javascript:void(0);">
             <span>{% trans 'Enterprise structure'%}</span>
             <span class="arrow"><i class="ti-angle-right"></i></span>
           </a>
           <ul class="dropdown-menu" style="display: none;">
-            <li><a class="sidebar-link" href="{% url 'company:list-company-information' %}">{% trans 'Enterprise'%}</a></li>
+            <li><a href="{% url 'home:group_list' %}">groups</a></li>
+            <li><a href="{% url 'home:user_groups' %}">user group</a></li>
             <li><a href="{% url 'company:list-department' %}">{% trans "Departments" %}</a></li>
             <li><a href="{% url 'company:list-jobs' %}">{% trans "Jobs" %}</a></li>
             <li><a href="{% url 'company:list-grades' %}">{% trans "Grades" %}</a></li>
@@ -67,17 +77,22 @@
 
 
     <li class="nav-item dropdown">
-      <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-red-500 ti-files"></i> </span><span class="title">{% trans "Manage Payroll" %}</span> <span class="arrow"><i class="ti-angle-right"></i></span></a>
+      <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-red-500 ti-files"></i>
+        </span><span class="title">{% trans "Manage Payroll" %}</span> <span class="arrow"><i
+            class="ti-angle-right"></i></span></a>
       <ul class="dropdown-menu">
         <li class="nav-item dropdown">
-        <a class="dropdown-toggle" href="javascript:void(0);">
-          <span class="title">{% trans 'Wage Management'%}</span> <span class="arrow"><i class="ti-angle-right"></i></span>
-        </a>
-        <ul class="dropdown-menu">
-          <li><a class="sidebar-link" href="{% url 'element_definition:list-element' %}">{% trans 'Pay Details'%}</a></li>
-          <li><a class="sidebar-link" href="{% url 'element_definition:list-batchs' %}">{% trans 'Pay Batch'%}</a></li>
-          <li><a class="sidebar-link" href="{% url 'element_definition:list-links' %}">{% trans 'Link Pays'%}</a></li>
-        </ul>
+          <a class="dropdown-toggle" href="javascript:void(0);">
+            <span class="title">{% trans 'Wage Management'%}</span> <span class="arrow"><i
+                class="ti-angle-right"></i></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="sidebar-link" href="{% url 'element_definition:list-element' %}">{% trans 'Pay Details'%}</a>
+            </li>
+            <li><a class="sidebar-link" href="{% url 'element_definition:list-batchs' %}">{% trans 'Pay Batch'%}</a>
+            </li>
+            <li><a class="sidebar-link" href="{% url 'element_definition:list-links' %}">{% trans 'Link Pays'%}</a></li>
+          </ul>
         </li>
 
         <li><a class="sidebar-link" href="{% url 'manage_payroll:list-banks' %}">{% trans 'Banks and branches'%}</a></li>
@@ -89,24 +104,52 @@
       </ul>
     </li>
     <li class="nav-item dropdown">
-      <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-pink-500  ti-user"></i> </span><span class="title">{% trans "Employees" %}</span> <span class="arrow"><i class="ti-angle-right"></i></span></a>
+      <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i
+            class="c-pink-500  ti-user"></i> </span><span class="title">{% trans "Employees" %}</span> <span
+          class="arrow"><i class="ti-angle-right"></i></span></a>
       <ul class="dropdown-menu">
         <li><a class="sidebar-link" href="{% url 'employee:list-employee' %}">{% trans 'Personal & Job Information'%}</a></li>
 
       </ul>
     </li>
+    {% endif %}
 
     <li class="nav-item dropdown">
-      <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-pink-500 ti-agenda"></i> </span><span class="title">{% trans "Services" %}</span> <span class="arrow"><i class="ti-angle-right"></i></span></a>
+      <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i
+            class="c-pink-500 ti-agenda"></i> </span><span class="title">{% trans "Services" %}</span> <span
+          class="arrow"><i class="ti-angle-right"></i></span></a>
       <ul class="dropdown-menu">
-        <li><a class="sidebar-link" href="{% url 'leave:list_leave' %}">{% trans 'Leave Form'%}</a></li>
+        {% if request.user|has_group:"Admin" or request.user|has_group:"Employee" %}
         <li><a class="sidebar-link" href="{% url 'service:services_list' %}">{% trans 'Bussiness Travel Form'%}</a></li>
-        <li><a class="sidebar-link" href="{% url 'service:purchase-request-list' %}">{% trans 'Purchase Request Form'%}</a></li>
+        {% endif %}
+        {% if request.user|has_group:"Admin"%}
+        <li><a class="sidebar-link" href="{% url 'service:purchase-request-list' %}">{% trans 'Purchase Request
+            Form'%}</a></li>
+        {% endif %}
       </ul>
     </li>
-
+    {% if request.user|has_group:"Employee" %}
     <li class="nav-item dropdown">
-      <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-blue-500 ti-alarm-clock"></i> </span><span class="title">{% trans "Leave Management" %}</span> <span class="arrow"><i class="ti-angle-right"></i></span></a>
+      <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i
+            class="c-blue-500 ti-alarm-clock"></i> </span><span class="title">{% trans "Attendance" %}</span> <span
+          class="arrow"><i class="ti-angle-right"></i></span></a>
+      <ul class="dropdown-menu">
+        <li><a class="sidebar-link" href="{% url 'attendance:upload-attendance' %}">{% trans 'Upload Excel File' %}</a>
+        </li>
+        <li><a class="sidebar-link" href="{% url 'attendance:user-list-attendance' %}">{% trans 'Manual Attendance'
+            %}</a></li>
+        <li><a class="sidebar-link" href="{% url 'attendance:list-machine-log' %}">{% trans 'Connect To Machine'%}</a>
+        </li>
+        <li><a class="sidebar-link" href="{% url 'attendance:list-attendance-deductions' %}">{% trans 'List
+            Absence'%}</a></li>
+      </ul>
+    </li>
+    {% endif %}
+    {% if request.user|has_group:"Admin" %}
+    <li class="nav-item dropdown">
+      <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i
+            class="c-blue-500 ti-alarm-clock"></i> </span><span class="title">{% trans "Leave Management" %}</span>
+        <span class="arrow"><i class="ti-angle-right"></i></span></a>
       <ul class="dropdown-menu">
          <li><a href="javascript:void(0);">
           <span>{% trans 'Employee Leave setup'%}</span>
@@ -151,4 +194,5 @@
 
 
   </ul>
+  {% endif %}
 </div>
