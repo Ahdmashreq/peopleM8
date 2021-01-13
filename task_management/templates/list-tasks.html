@@ -1,0 +1,75 @@
+{% extends 'master.html'%}
+{% load staticfiles%}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+{% block body%}
+
+<div class="container-fluid">
+  <div class="row" style="margin-left:0px;">
+    <div class="col-md-8">
+      <h4 class="c-grey-900">{{page_title|title}}</h4>
+    </div>
+    <div class="col-md-4">
+      <div class="gap-10 peers ">
+        <div class="peer"><a href="{% url 'manage_payroll:payroll-create' %}" class="btn cur-p btn-primary">{% trans "Add" %}</a></div>
+      </div>
+    </div>
+  </div>
+  <div class="row" style="margin-left:0px;">
+    <div class="col-md-12">
+      <div class="bgc-white bd bdrs-3 p-20 mB-20">
+        <table class="table table-striped table-bordered" id="dataTable"  width="100%">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>{% trans "Task Name" %}</th>
+              <th>{% trans "Type" %}</th>
+              <th>{% trans "Actions" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for x in all_tasks %}
+            <tr>
+              <th scope="row">{{ forloop.counter }}</th>
+              <td>{{ x.payroll_name }}</td>
+              <td>{{ x.period_type }}</td>
+              <td class="Actions">
+                <div class="w-100 gap-10 peers">
+                  <div class="peer">
+                    <a href="#">
+                      <button type="button" class="btn cur-p btn-outline-primary">{% trans "Update" %}</button>
+                    </a>
+                  </div>
+                  <div class="peer">
+                    <a href="#">
+                      <button type="button" class="btn cur-p btn-outline-danger" data-toggle="modal" data-target="#delete-modal{{x.pk}}">{% trans "Delete" %}</button>
+                    </a>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          <div class="modal fade" id="delete-modal{{x.pk}}" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">{% trans "Delete " %}</h5>
+                </div>
+                <div class="modal-body">
+                  <p>{% trans "Are you sure you want to delete this record?" %}</p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
+                  <a href="#" class="btn btn-danger" type="button">{% trans "Delete" %}</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock body%}
