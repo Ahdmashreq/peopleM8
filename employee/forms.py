@@ -25,6 +25,8 @@ common_items_to_execlude = (
 ###############################################################################
 
 class EmployeeForm(forms.ModelForm):
+    salary_structure = forms.CharField()
+
     class Meta:
         model = Employee
         fields = '__all__'
@@ -43,6 +45,7 @@ class EmployeeForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(EmployeeForm, self).__init__(*args, **kwargs)
+        self.fields['salary_structure'].widget.attrs['readonly'] = True
         self.fields['date_of_birth'].widget.input_type = 'date'
         self.fields['hiredate'].widget.input_type = 'date'
         self.fields['start_date'].widget.input_type = 'date'
@@ -75,9 +78,9 @@ class JobRollForm(forms.ModelForm):
         self.fields['contract_type'].queryset = LookupDet.objects.filter(
             lookup_type_fk__lookup_type_name='EMPLOYEE_TYPE')
         self.fields['position'].queryset = Position.objects.filter((Q(department__enterprise=user_v.company)), (
-                    Q(end_date__gte=date.today()) | Q(end_date__isnull=True)))
+                Q(end_date__gte=date.today()) | Q(end_date__isnull=True)))
         self.fields['payroll'].queryset = Payroll_Master.objects.filter((Q(enterprise=user_v.company)), (
-                    Q(end_date__gte=date.today()) | Q(end_date__isnull=True)))
+                Q(end_date__gte=date.today()) | Q(end_date__isnull=True)))
         self.fields['manager'].queryset = Employee.objects.filter(enterprise=user_v.company)
 
 
@@ -111,7 +114,7 @@ class EmployeeElementForm(forms.ModelForm):
     class Meta:
         model = Employee_Element
         fields = "__all__"
-        exclude = ('emp_id',)+common_items_to_execlude
+        exclude = ('emp_id',) + common_items_to_execlude
 
     def __init__(self, *args, **kwargs):
         super(EmployeeElementForm, self).__init__(*args, **kwargs)

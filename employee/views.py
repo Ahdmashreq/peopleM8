@@ -174,7 +174,8 @@ def updateEmployeeView(request, pk):
         employee_has_structure=True
     except EmployeeStructureLink.DoesNotExist:
         employee_has_structure = False
-
+    # if employee_has_structure:
+    #      emp_form.fields['salary_structure'].initial = employee_salary_structure.salary_structure
     employee_element_form = EmployeeElementForm()
     if request.method == 'POST':
         emp_form = EmployeeForm(request.POST, instance=required_employee)
