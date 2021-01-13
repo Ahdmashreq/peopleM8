@@ -27,6 +27,13 @@ class FormAttendance(forms.ModelForm):
 
 
 class FormTasks(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        form_type = kwargs.pop('form_type')
+        super(FormTasks, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs['class'] = 'form-control parsley-validated'
+            self.helper = FormHelper()
+            self.helper.form_show_labels = False
     class Meta():
         model = Task
         fields = '__all__'
