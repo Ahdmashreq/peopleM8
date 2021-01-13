@@ -27,6 +27,12 @@ class FormAttendance(forms.ModelForm):
 
 
 class FormTasks(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(FormTasks, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs['class'] = 'form-control parsley-validated'
+            self.helper = FormHelper()
+            self.helper.form_show_labels = False
     class Meta():
         model = Task
         fields = '__all__'
@@ -34,7 +40,7 @@ class FormTasks(forms.ModelForm):
         widgets = {
             'start_time': forms.TimeInput(attrs={'class': 'form-control tm', 'type': 'time', }),
             'end_time': forms.TimeInput(attrs={'class': 'form-control tm', 'type': 'time', }),
-            'task': forms.TextInput(attrs={'class': 'form-control'}),
+            # 'task': forms.TextInput(attrs={'class': 'form-control'}),
 
         }
 

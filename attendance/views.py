@@ -17,6 +17,7 @@ from attendance.utils import is_day_a_weekend, is_day_a_holiday, is_day_a_leave,
 from employee.models import Employee
 from leave.models import Leave
 from service.models import Bussiness_Travel
+from company.models import Working_Days_Policy
 import pytz
 from zk import ZK, const
 from zk.exception import ZKErrorConnection, ZKErrorResponse, ZKNetworkError
@@ -175,7 +176,7 @@ def list_attendance(request):
 
 @login_required(login_url='home:user-login')
 def check_in_time(request):
-    company_policy = Working_Hours_Policy.objects.get(enterprise=request.user.company)
+    company_policy = Working_Days_Policy.objects.get(enterprise=request.user.company)
     current_employee = Employee.objects.get(user=request.user)
     attendance_list = Attendance.objects.filter(employee=current_employee)
 

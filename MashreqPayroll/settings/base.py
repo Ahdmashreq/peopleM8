@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'import_export',
     'mptt',
     'notifications',
+    'task_management',
 ]
 
 
