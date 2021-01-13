@@ -10,6 +10,7 @@ from string import Template
 from home.slugify import unique_slug_generator
 from django.utils.translation import ugettext_lazy as _
 from company.models import Enterprise, Working_Days_Policy
+from task_management.models import Project_Task
 import datetime as mydatetime
 
 from leave.models import Leave
@@ -144,7 +145,7 @@ class Employee_Attendance_History(models.Model):
 class Task(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=1)
     attendance = models.ForeignKey(Attendance, related_name='attendance', on_delete=models.CASCADE)
-    task = models.CharField(max_length=255)
+    task = models.ForeignKey(Project_Task, related_name='user_tasks', on_delete=models.CASCADE)
     start_time = models.TimeField()
     end_time = models.TimeField(blank=True, null=True)
     slug = models.SlugField(blank=True, null=True)
@@ -159,7 +160,6 @@ class Task(models.Model):
         return self.task
 
 
-# @receiver(pre_save, sender=Attendance)
 @receiver(pre_save, sender=Task)
 def slug_task_generator(sender, instance, *args, **kwargs):
     if not instance.slug:

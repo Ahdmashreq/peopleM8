@@ -34,7 +34,7 @@ class FormTasks(forms.ModelForm):
         widgets = {
             'start_time': forms.TimeInput(attrs={'class': 'form-control tm', 'type': 'time', }),
             'end_time': forms.TimeInput(attrs={'class': 'form-control tm', 'type': 'time', }),
-            'task': forms.TextInput(attrs={'class': 'form-control'}),
+            # 'task': forms.TextInput(attrs={'class': 'form-control'}),
 
         }
 
