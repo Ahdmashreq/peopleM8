@@ -8,6 +8,8 @@ status_list = (
                ('planned','Planned'),
                ('in-progress','In Progress'),
                ('complete','Complete'),
+               ('testing','Under Test'),
+               ('closed','Closed'),
 )
 periority_list = (
                ('normal','Normal'),
@@ -33,12 +35,12 @@ class Project_Task(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     parent_task = models.ForeignKey('Project_Task', on_delete=models.CASCADE, blank=True, null=True)
     task_name = models.CharField(max_length=200, blank=True, null=True)
-    description = models.CharField(max_length=255, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
     scope = models.CharField(max_length=200, blank=True, null=True)
     status = models.CharField(max_length=50, blank=True, null=True, choices=status_list)
     assigned_to = models.CharField(max_length=200, blank=True, null=True)
     percentage = models.PositiveSmallIntegerField(default=0)
-    task_start_date = models.DateField(auto_now=False, auto_now_add=False,)
+    task_start_date = models.DateField(default=date.today)
     task_end_date = models.DateField(blank=True, null=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='project_task_created_by')
     creation_date = models.DateField(auto_now_add=True)
