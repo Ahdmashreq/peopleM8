@@ -305,7 +305,7 @@ class PasswordChangeDoneView(PasswordContextMixin, TemplateView):
         return super().dispatch(*args, **kwargs)
 
 
-@allowed_user(allowed_roles=['admin'])
+@allowed_user(allowed_roles=['Admin'])
 def group_list(request):
     groups = Group.objects.all()
     return render(request, 'groups_list.html', {'groups': groups})
