@@ -38,7 +38,7 @@ class Project_Task(models.Model):
     description = models.TextField(blank=True, null=True)
     scope = models.CharField(max_length=200, blank=True, null=True)
     status = models.CharField(max_length=50, blank=True, null=True, choices=status_list)
-    assigned_to = models.CharField(max_length=200, blank=True, null=True)
+    assigned_to = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True, related_name='project_task_assigned_to')
     percentage = models.PositiveSmallIntegerField(default=0)
     task_start_date = models.DateField(default=date.today)
     task_end_date = models.DateField(blank=True, null=True)
@@ -49,8 +49,12 @@ class Project_Task(models.Model):
 
     @property
     def duration_days(self):
-        num_of_days = self.task_end_date.day - self.task_start_date.day + 1
-        return num_of_days
+        try:
+            num_of_days = self.task_end_date.day-self.task_start_date.day + 1
+            return num_of_days
+        except AttributeError:
+            return 0
+
 
     @property
     def total_hours(self):

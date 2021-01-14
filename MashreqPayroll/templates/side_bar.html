@@ -105,33 +105,28 @@
   </li>
   {% endif %}
 
+  {% if request.user|has_group:"Admin" or request.user|has_group:"Employee" %}
   <li class="nav-item dropdown">
     <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-pink-500 ti-agenda"></i> </span><span class="title">{% trans "Services" %}</span> <span class="arrow"><i class="ti-angle-right"></i></span></a>
     <ul class="dropdown-menu">
-      {% if request.user|has_group:"Admin" or request.user|has_group:"Employee" %}
       <li><a class="sidebar-link" href="{% url 'service:services_list' %}">{% trans 'Bussiness Travel Form'%}</a></li>
-      {% endif %}
-      {% if request.user|has_group:"Admin"%}
-      <li><a class="sidebar-link" href="{% url 'service:purchase-request-list' %}">{% trans 'Purchase Request
-            Form'%}</a></li>
-      {% endif %}
+      <li><a class="sidebar-link" href="{% url 'service:purchase-request-list' %}">{% trans 'Purchase Request Form'%}</a></li>
     </ul>
   </li>
+  {% endif %}
+
   {% if request.user|has_group:"Employee" %}
   <li class="nav-item dropdown">
     <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-blue-500 ti-alarm-clock"></i> </span><span class="title">{% trans "Attendance" %}</span> <span class="arrow"><i class="ti-angle-right"></i></span></a>
     <ul class="dropdown-menu">
-      <li><a class="sidebar-link" href="{% url 'attendance:upload-attendance' %}">{% trans 'Upload Excel File' %}</a>
-      </li>
-      <li><a class="sidebar-link" href="{% url 'attendance:user-list-attendance' %}">{% trans 'Manual Attendance'
-            %}</a></li>
-      <li><a class="sidebar-link" href="{% url 'attendance:list-machine-log' %}">{% trans 'Connect To Machine'%}</a>
-      </li>
-      <li><a class="sidebar-link" href="{% url 'attendance:list-attendance-deductions' %}">{% trans 'List
-            Absence'%}</a></li>
+      <li><a class="sidebar-link" href="{% url 'attendance:upload-attendance' %}">{% trans 'Upload Excel File' %}</a></li>
+      <li><a class="sidebar-link" href="{% url 'attendance:user-list-attendance' %}">{% trans 'Manual Attendance' %}</a></li>
+      <li><a class="sidebar-link" href="{% url 'attendance:list-machine-log' %}">{% trans 'Connect To Machine' %}</a></li>
+      <li><a class="sidebar-link" href="{% url 'attendance:list-attendance-deductions' %}">{% trans 'List Absence' %}</a></li>
     </ul>
   </li>
   {% endif %}
+
   {% if request.user|has_group:"Admin" %}
   <li class="nav-item dropdown">
     <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-blue-500 ti-alarm-clock"></i> </span><span class="title">{% trans "Leave Management" %}</span>
@@ -162,7 +157,9 @@
     </ul>
   </li>
   <li class="nav-item dropdown">
-    <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-blue-500 ti-alarm-clock"></i> </span><span class="title">{% trans "Attendance" %}</span> <span class="arrow"><i class="ti-angle-right"></i></span></a>
+    <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-blue-500 ti-alarm-clock"></i>
+    </span><span class="title">{% trans "Attendance" %}</span> <span class="arrow"><i class="ti-angle-right"></i></span>
+  </a>
     <ul class="dropdown-menu">
       <li><a class="sidebar-link" href="{% url 'attendance:upload-attendance' %}">{% trans 'Upload Excel File' %}</a></li>
       <li><a class="sidebar-link" href="{% url 'attendance:user-list-attendance' %}">{% trans 'Manual Attendance' %}</a></li>
@@ -170,7 +167,8 @@
       <li><a class="sidebar-link" href="{% url 'attendance:list-attendance-deductions' %}">{% trans 'List Absence'%}</a></li>
     </ul>
   </li>
-
+  {% endif %}
+  {% if request.user|has_group:"Employee" %}
   <li class="nav-item dropdown">
     <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-blue-500 ti-alarm-clock"></i> </span><span class="title">{% trans "Task Management" %}</span> <span class="arrow"><i
           class="ti-angle-right"></i></span></a>
@@ -178,6 +176,5 @@
       <li><a class="sidebar-link" href="{% url 'task_management:task-list' %}">{% trans 'User Tasks' %}</a></li>
     </ul>
   </li>
-
   {% endif %}
 </div>

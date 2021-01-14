@@ -9,6 +9,7 @@ from django.contrib import messages
 from datetime import date
 from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
+from custom_user.models import User
 from task_management.models import Project, Project_Task
 from task_management.forms import ProjectForm, Project_Tasks_ModelFormset, ProjectTaskForm
 
@@ -57,8 +58,9 @@ def project_task_list_view(request):
 
 @login_required(login_url='home:user-login')
 def project_task_create_view(request):
-        # task_form = Project_Tasks_ModelFormset(queryset=Project_Task.objects.none())
         task_form = ProjectTaskForm()
+        task_form.fields['assigned_to'].queryset = User.objects.filter(
+            company=request.user.company)
         if request.method == 'POST':
             task_form = ProjectTaskForm(request.POST)
             if task_form.is_valid():
@@ -81,6 +83,8 @@ def project_task_create_view(request):
 def project_task_update_view(request, task_id):
     required_task = Project_Task.objects.get(id=task_id)
     task_form = ProjectTaskForm(instance=required_task)
+    task_form.fields['assigned_to'].queryset = User.objects.filter(
+        company=request.user.company)
     if request.method == 'POST':
         task_form = ProjectTaskForm(request.POST, instance=required_task)
         if task_form.is_valid():

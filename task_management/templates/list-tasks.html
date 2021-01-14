@@ -28,6 +28,8 @@
               <th>{% trans "Status" %}</th>
               <th>{% trans "Percentage" %}</th>
               <th>{% trans "Task Start Date" %}</th>
+              <th>{% trans "Days" %}</th>
+              <th>{% trans "Hours" %}</th>
               <th>{% trans "Actions" %}</th>
             </tr>
           </thead>
@@ -40,6 +42,8 @@
               <td>{{ x.status }}</td>
               <td>{{ x.percentage }}</td>
               <td>{{ x.task_start_date }}</td>
+              <td>{{ x.duration_days }}</td>
+              <td>{{ x.total_hours }}</td>
               <td class="Actions">
                 <div class="w-100 gap-10 peers">
                   <div class="peer">
@@ -47,30 +51,9 @@
                       <button type="button" class="btn cur-p btn-outline-primary">{% trans "Update" %}</button>
                     </a>
                   </div>
-                  <div class="peer">
-                    <a href="#">
-                      <button type="button" class="btn cur-p btn-outline-danger" data-toggle="modal" data-target="#delete-modal{{x.pk}}">{% trans "Delete" %}</button>
-                    </a>
-                  </div>
                 </div>
               </td>
             </tr>
-          <div class="modal fade" id="delete-modal{{x.pk}}" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
-            <div class="modal-dialog" role="document">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel">{% trans "Delete " %}</h5>
-                </div>
-                <div class="modal-body">
-                  <p>{% trans "Are you sure you want to delete this record?" %}</p>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
-                  <a href="#" class="btn btn-danger" type="button">{% trans "Delete" %}</a>
-                </div>
-              </div>
-            </div>
-          </div>
           {% endfor %}
         </tbody>
         </table>
