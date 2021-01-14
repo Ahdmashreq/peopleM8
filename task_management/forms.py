@@ -31,6 +31,18 @@ class ProjectTaskForm(forms.ModelForm):
     class Meta():
         model = Project_Task
         fields = '__all__'
+        widgets = {
+                   'description': forms.Textarea(attrs={
+                       'rows': 8, 'cols': 80,
+                       'style': 'height: 8em;',
+                       'class': 'form-control',
+                   }),
+                'comments': forms.Textarea(attrs={
+                    'rows': 8, 'cols': 80,
+                    'style': 'height: 8em;',
+                    'class': 'form-control',
+                }),
+        }
         exclude = ['created_by','creation_date','last_update_by','last_update_date']
 
 Project_Tasks_ModelFormset = forms.modelformset_factory(Project_Task, form=ProjectTaskForm, extra=10, can_delete=False)
