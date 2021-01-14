@@ -168,7 +168,7 @@
     </ul>
   </li>
   {% endif %}
-  {% if request.user|has_group:"Employee" %}
+  {% if request.user|has_group:"Admin" or request.user|has_group:"Employee" %}
   <li class="nav-item dropdown">
     <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-blue-500 ti-alarm-clock"></i> </span><span class="title">{% trans "Task Management" %}</span> <span class="arrow"><i
           class="ti-angle-right"></i></span></a>

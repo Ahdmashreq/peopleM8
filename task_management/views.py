@@ -10,6 +10,7 @@ from datetime import date
 from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
 from custom_user.models import User
+from MashreqPayroll.utils import allowed_user
 from task_management.models import Project, Project_Task
 from task_management.forms import ProjectForm, Project_Tasks_ModelFormset, ProjectTaskForm
 
@@ -48,7 +49,10 @@ def project_update_view(request):
 
 @login_required(login_url='home:user-login')
 def project_task_list_view(request):
-    all_tasks = Project_Task.objects.filter()
+    if request.user.groups.get(user=request.user) == 'Admin':
+        all_tasks = Project_Task.objects.filter()
+    else:
+        all_tasks = Project_Task.objects.filter(assigned_to=request.user)
     project_context = {
                        'page_title':'List All Tasks',
                        'all_tasks':all_tasks,
