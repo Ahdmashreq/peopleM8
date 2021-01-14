@@ -329,7 +329,7 @@ def create_groups(request):
             else:
                 success_msg = 'Create Successfully'
             messages.success(request, success_msg)
-            return redirect('home:new-user')
+            return redirect('home:group_list')
     return render(request, 'group-create.html', {'form': form})
 
 
