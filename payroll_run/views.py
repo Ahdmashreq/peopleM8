@@ -105,11 +105,11 @@ def excludeAssignmentEmployeeFunction(batch):
 
 @login_required(login_url='home:user-login')
 def createSalaryView(request):
-    sal_form = SalaryElementForm()
+    sal_form = SalaryElementForm(user=request.user)
     all_current_employees =  Employee.objects.filter((Q(end_date__gte=date.today()) |Q(end_date__isnull=True)))
     print(all_current_employees)
     if request.method == 'POST':
-        sal_form = SalaryElementForm(request.POST)
+        sal_form = SalaryElementForm(request.POST,user=request.user)
         if sal_form.is_valid():
             sal_obj = sal_form.save(commit=False)
             # run employee on all emps.
@@ -123,7 +123,6 @@ def createSalaryView(request):
                         salary_month=sal_obj.salary_month,
                         salary_year=sal_obj.salary_year,
                         run_date=sal_obj.run_date,
-                        num_days=sal_obj.num_days,
                         created_by=request.user,
                         incomes = sc.calc_emp_income(),
                         insurance_amount = sc.calc_employee_insurance(),
@@ -161,7 +160,6 @@ def createSalaryView(request):
                         salary_month=sal_obj.salary_month,
                         salary_year=sal_obj.salary_year,
                         run_date=sal_obj.run_date,
-                        num_days=sal_obj.num_days,
                         created_by=request.user,
                         incomes = sc.calc_emp_income(),
                         insurance_amount = sc.calc_employee_insurance(),
@@ -188,7 +186,7 @@ def createSalaryView(request):
                                 sal_obj.assignment_batch))
                 for x in emps:
                     # calculate all furmulas elements for 'x' employee
-                    Employee_Element.set_formula_amount(x)
+                   # Employee_Element.set_formula_amount(x)
                     sc = Salary_Calculator(company=request.user.company, employee=x)
                     # # # getting informations for the salary
                     s = Salary_elements(
@@ -196,7 +194,6 @@ def createSalaryView(request):
                         salary_month=sal_obj.salary_month,
                         salary_year=sal_obj.salary_year,
                         run_date=sal_obj.run_date,
-                        num_days=sal_obj.num_days,
                         created_by=request.user,
                         incomes = sc.calc_emp_income(),
                         insurance_amount = sc.calc_employee_insurance(),
@@ -240,7 +237,6 @@ def createSalaryView(request):
                         salary_month=sal_obj.salary_month,
                         salary_year=sal_obj.salary_year,
                         run_date=sal_obj.run_date,
-                        num_days=sal_obj.num_days,
                         created_by=request.user,
                         incomes = sc.calc_emp_income(),
                         insurance_amount = sc.calc_employee_insurance(),

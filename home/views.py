@@ -69,7 +69,7 @@ def user_login(request):
             if user.is_active:
                 login(request, user)
                 if next:
-                    return redirect(next)  
+                    return redirect(next)
                 if str(request.user.groups.first()) == "Admin":
                     return redirect(reverse('home:homepage'))
                 else:
@@ -105,8 +105,10 @@ def user_home_page(request):
         date_of_birth__month=date.today().month)
 
     # List MY Bussiness_Travel/services
-    bussiness_travel_service = Bussiness_Travel.objects.filter(
-        Q(emp=employee) | Q(manager=employee), status='pending')
+    bussiness_travel_service = Bussiness_Travel.objects.filter(Q(emp=employee) | Q(manager=employee), status='pending')
+    # get a list of all notifications related to the current user within the current month
+    my_notifications = request.user.notifications.filter(timestamp__year=datetime.now().year,
+                                                         timestamp__month=datetime.now().month)
 
     context = {
         'birthdays': emps_birthdays,
@@ -116,6 +118,7 @@ def user_home_page(request):
         'count_notifications': notification_count,
         'bussiness_travel_service': bussiness_travel_service,
         'notifications': unread_notifications,
+        'my_notifications': my_notifications,
     }
     return render(request, 'index_user.html', context=context)
 
@@ -129,7 +132,13 @@ def admin_home_page(request):
         pass
     else:
         # employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
-        return render(request, 'index.html', context=None)
+        # get a list of all notifications related to the current user within the current month
+
+        my_notifications = request.user.notifications.filter(timestamp__year=datetime.now().year,
+                                                             timestamp__month=datetime.now().month)
+        context = {'my_notifications': my_notifications, }
+
+        return render(request, 'index.html', context=context)
 
 
 @login_required(login_url='home:user-login')
@@ -264,7 +273,7 @@ class PasswordResetCompleteView(PasswordContextMixin, TemplateView):
 
 class PasswordChangeView(PasswordContextMixin, FormView):
     form_class = PasswordChangeForm
-    success_url = reverse_lazy('password_change_done')
+    success_url = reverse_lazy('home:password_change_done')
     template_name = 'registration/password_change_form.html'
     title = _('Password change')
 
@@ -296,7 +305,7 @@ class PasswordChangeDoneView(PasswordContextMixin, TemplateView):
         return super().dispatch(*args, **kwargs)
 
 
-@allowed_user(allowed_roles=['admin'])
+@allowed_user(allowed_roles=['Admin'])
 def group_list(request):
     groups = Group.objects.all()
     return render(request, 'groups_list.html', {'groups': groups})

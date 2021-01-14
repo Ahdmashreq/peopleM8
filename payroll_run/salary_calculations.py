@@ -133,7 +133,7 @@ class Salary_Calculator:
     def calc_emp_income(self):
         emp_allowance = Employee_Element.objects.filter(element_id__classification__code='earn',
                                                         emp_id=self.employee).filter(
-            (Q(end_date__gte=date.today()) | Q(end_date__isnull=True)))
+            (Q(end_date__gt=date.today()) | Q(end_date__isnull=True)))
 
         total_earnnings = 0.0
         total_earnnings = total_earnnings

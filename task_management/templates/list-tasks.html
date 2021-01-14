@@ -1,0 +1,64 @@
+{% extends 'master.html'%}
+{% load staticfiles%}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+{% block body%}
+
+<div class="container-fluid">
+  <div class="row" style="margin-left:0px;">
+    <div class="col-md-8">
+      <h4 class="c-grey-900">{{page_title|title}}</h4>
+    </div>
+    <div class="col-md-4">
+      <div class="gap-10 peers ">
+        <div class="peer"><a href="{% url 'task_management:tasks-create' %}" class="btn cur-p btn-primary">{% trans "Add New Task" %}</a></div>
+      </div>
+    </div>
+  </div>
+  <div class="row" style="margin-left:0px;">
+    <div class="col-md-12">
+      <div class="bgc-white bd bdrs-3 p-20 mB-20">
+        <table class="table table-striped table-bordered" id="dataTable"  width="100%">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th style="width: 552px;">{% trans "Task Name" %}</th>
+              <th>{% trans "Project" %}</th>
+              <th>{% trans "Status" %}</th>
+              <th>{% trans "Percentage" %}</th>
+              <th>{% trans "Assigned To" %}</th>
+              <th>{% trans "Days" %}</th>
+              <th>{% trans "Hours" %}</th>
+              <th>{% trans "Actions" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for x in all_tasks %}
+            <tr>
+              <th scope="row">{{ forloop.counter }}</th>
+              <td>{{ x.task_name }}</td>
+              <td>{{ x.project }}</td>
+              <td>{{ x.status }}</td>
+              <td>{{ x.percentage }}</td>
+              <td>{{ x.assigned_to }}</td>
+              <td>{{ x.duration_days }}</td>
+              <td>{{ x.total_hours }}</td>
+              <td class="Actions">
+                <div class="w-100 gap-10 peers">
+                  <div class="peer">
+                    <a href="{% url 'task_management:task-update' task_id=x.id %}">
+                      <button type="button" class="btn cur-p btn-outline-primary">{% trans "Update" %}</button>
+                    </a>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock body%}
