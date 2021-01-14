@@ -18,7 +18,6 @@ KEY_PATH = os.path.join(BASE_DIR, 'MashreqPayroll', 'django_key.txt')
 with open(KEY_PATH) as f:
     SECRET_KEY = f.read().strip()
 
-
 INSTALLED_APPS = [
     'custom_user.apps.CustomUserConfig',
     'django.contrib.admin',
