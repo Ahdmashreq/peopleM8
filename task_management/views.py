@@ -49,6 +49,7 @@ def project_update_view(request):
 
 @login_required(login_url='home:user-login')
 def project_task_list_view(request):
+    print(request.user.groups.get(user=request.user))
     if request.user.groups.get(user=request.user) == 'Admin':
         all_tasks = Project_Task.objects.filter()
     else:
