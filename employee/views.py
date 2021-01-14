@@ -169,9 +169,8 @@ def updateEmployeeView(request, pk):
     employee_element_qs = Employee_Element.objects.filter(
         emp_id=required_employee, end_date__isnull=True)
     try:
-        EmployeeStructureLink.objects.get(employee=required_employee)
-        employee_salary_structure = EmployeeStructureLink.objects.filter(
-            Q(end_date__isnull=True) | Q(end_date__gt=date.today())).get(employee=required_employee)
+        employee_salary_structure= EmployeeStructureLink.objects.get(employee=required_employee)
+
         employee_has_structure = True
         emp_form.fields['salary_structure'].initial = employee_salary_structure.salary_structure
     except EmployeeStructureLink.DoesNotExist:
