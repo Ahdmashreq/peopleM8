@@ -1,5 +1,9 @@
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
+from django.db.models.signals import pre_save, post_save, post_init
+from django.dispatch import receiver
+from notifications.signals import notify
 from datetime import date, datetime
 from company.models import Enterprise
 from employee.models import Employee
@@ -70,3 +74,22 @@ class Project_Task(models.Model):
 
     def __str__(self):
         return self.task_name
+
+@receiver(post_save, sender=Project_Task)
+def task_creation_notification(sender, instance, created, **kwargs):
+    """
+        This function is a receiver, it listens to any save hit on Project_Task model, and send
+        a notification to the employee assigned to.
+    """
+    assignee_employee = instance.assignee
+    assigned_to_user = instance.assigned_to
+    sender_person = assignee_employee.user
+    recipient_person = assigned_to_user
+    notify.send(
+                sender= sender_person,
+                recipient= recipient_person,
+                verb='assigned',
+                description="New task Has been assigned to you by {}".format(assignee_employee),
+                action_object=instance,
+                level='info',
+            )
