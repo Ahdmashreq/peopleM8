@@ -25,8 +25,7 @@ common_items_to_execlude = (
 ###############################################################################
 
 class EmployeeForm(forms.ModelForm):
-    salary_structure = forms.CharField()
-
+    salary_structure = forms.CharField(required = False)
     class Meta:
         model = Employee
         fields = '__all__'

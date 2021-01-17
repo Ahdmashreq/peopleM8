@@ -29,7 +29,8 @@ def createEmployeeView(request):
     payment_form = Employee_Payment_formset(queryset=Payment.objects.none())
     for payment in payment_form:
         payment.fields['payment_method'].queryset = Payment_Method.objects.filter(
-            payment_type__enterprise=request.user.company).filter(Q(end_date__gte=date.today()) | Q(end_date__isnull=True))
+            payment_type__enterprise=request.user.company).filter(
+            Q(end_date__gte=date.today()) | Q(end_date__isnull=True))
     emp_element_form = Employee_Element_Inline(
         queryset=Employee_Element.objects.none())
     for element in emp_element_form:
@@ -169,9 +170,10 @@ def updateEmployeeView(request, pk):
         emp_id=required_employee, end_date__isnull=True)
     employee_has_structure = False
     try:
-        employee_salary_structure = EmployeeStructureLink.objects.get(
-            employee=required_employee)
-        employee_has_structure=True
+        employee_salary_structure= EmployeeStructureLink.objects.get(employee=required_employee)
+
+        employee_has_structure = True
+        emp_form.fields['salary_structure'].initial = employee_salary_structure.salary_structure
     except EmployeeStructureLink.DoesNotExist:
         employee_has_structure = False
     # if employee_has_structure:
@@ -328,6 +330,3 @@ def deleteEmployeeView(request, pk):
         messages.error(request, success_msg)
         raise e
     return redirect('employee:list-employee')
-
-
-
