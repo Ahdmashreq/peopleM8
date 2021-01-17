@@ -160,6 +160,7 @@ def updateEmployeeView(request, pk):
         company=request.user.company)
     jobroll_form = JobRollForm(user_v=request.user, instance=required_jobRoll)
     payment_form = Employee_Payment_formset(instance=required_employee)
+    get_employee_salary_structure = ""
     '''
         updateing employee element part to show the elements & values for that Employee
         (removing the formset) and adding a button to link salary structure to that employee.
@@ -169,22 +170,20 @@ def updateEmployeeView(request, pk):
     employee_element_qs = Employee_Element.objects.filter(
         emp_id=required_employee, end_date__isnull=True)
     employee_has_structure = False
-    try:
-        employee_salary_structure= EmployeeStructureLink.objects.get(employee=required_employee)
 
+    try:
+        employee_salary_structure= EmployeeStructureLink.objects.get(employee=required_employee, end_date__isnull=True)
         employee_has_structure = True
-        emp_form.fields['salary_structure'].initial = employee_salary_structure.salary_structure
+        get_employee_salary_structure = employee_salary_structure.salary_structure
+        # emp_form.fields['salary_structure'].initial = employee_salary_structure.salary_structure
     except EmployeeStructureLink.DoesNotExist:
         employee_has_structure = False
-    # if employee_has_structure:
-    #      emp_form.fields['salary_structure'].initial = employee_salary_structure.salary_structure
+
     employee_element_form = EmployeeElementForm()
     if request.method == 'POST':
         emp_form = EmployeeForm(request.POST, instance=required_employee)
-        jobroll_form = JobRollForm(
-            request.user, request.POST, instance=required_jobRoll)
-        payment_form = Employee_Payment_formset(
-            request.POST, instance=required_employee)
+        jobroll_form = JobRollForm(request.user, request.POST, instance=required_jobRoll)
+        payment_form = Employee_Payment_formset(request.POST, instance=required_employee)
 
         if EmployeeStructureLink.DoesNotExist:
             emp_link_structure_form = EmployeeStructureLinkForm(request.POST)
@@ -200,6 +199,7 @@ def updateEmployeeView(request, pk):
             emp_obj.last_update_by = request.user
             emp_obj.save()
         else:
+            print(emp_form.errors)
             messages.error(request, emp_form.errors)
 
         if jobroll_form.is_valid():
@@ -209,7 +209,9 @@ def updateEmployeeView(request, pk):
             job_obj.last_update_by = request.user
             job_obj.save()
         else:
+            print(jobroll_form.errors)
             messages.error(request, jobroll_form.errors)
+
         payment_form = Employee_Payment_formset(request.POST, instance=emp_obj)
 
         if payment_form.is_valid():
@@ -219,13 +221,18 @@ def updateEmployeeView(request, pk):
                 x.last_update_by = request.user
                 x.save()
         else:
+            print(payment_form.errors)
             messages.error(request, payment_form.errors)
+
         if employee_element_form.is_valid():
             emp_element_obj = employee_element_form.save(commit=False)
             emp_element_obj.emp_id = required_employee
             emp_element_obj.created_by = request.user
             emp_element_obj.last_update_by = request.user
             emp_element_obj.save()
+        else:
+            print(employee_element_form.errors)
+            messages.error(request, employee_element_form.errors)
 
         user_lang = to_locale(get_language())
 
@@ -235,7 +242,7 @@ def updateEmployeeView(request, pk):
             success_msg = 'Employee {}, has been created successfully'.format(
                 emp_obj.emp_name)
         return redirect('employee:list-employee')
-    print(employee_has_structure)
+
     myContext = {
         "page_title": _("update employee"),
         "emp_form": emp_form,
@@ -244,7 +251,8 @@ def updateEmployeeView(request, pk):
         "required_employee":required_employee,
         "employee_element_qs": employee_element_qs,
         "employee_has_structure":employee_has_structure,
-        "employee_element_form":employee_element_form
+        "employee_element_form":employee_element_form,
+        "get_employee_salary_structure":get_employee_salary_structure
     }
     return render(request, 'create-employee.html', myContext)
 

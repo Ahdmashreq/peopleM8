@@ -25,7 +25,6 @@ common_items_to_execlude = (
 ###############################################################################
 
 class EmployeeForm(forms.ModelForm):
-    salary_structure = forms.CharField(required = False)
     class Meta:
         model = Employee
         fields = '__all__'
@@ -44,7 +43,6 @@ class EmployeeForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(EmployeeForm, self).__init__(*args, **kwargs)
-        self.fields['salary_structure'].widget.attrs['readonly'] = True
         self.fields['date_of_birth'].widget.input_type = 'date'
         self.fields['hiredate'].widget.input_type = 'date'
         self.fields['start_date'].widget.input_type = 'date'

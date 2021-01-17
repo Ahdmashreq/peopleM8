@@ -5,9 +5,8 @@
 {% load crispy_forms_tags %}
 {% block body%}
 
-<form id="my_form" method="POST">
+<form method="POST">
   {% csrf_token %}
-  <!--  -->
 
   <div class="container-fluid">
     <div class="row">
@@ -244,7 +243,7 @@
                     </div>
                      <div class="col-sm-4">
                       <label class="fw-500">Salary Structure</label>
-                      {{ emp_form.salary_structure }}
+                      <input type="text" value="{{ get_employee_salary_structure }}" class="form-control parsley-validated" disabled>
                     </div>
                     <div class="col-sm-4">
                       <label class="fw-500">Start Date</label>
@@ -300,7 +299,7 @@
                           </thead>
                           <tbody class="ta-l">
                             {% for emp in employee_element_qs %}
-                            {% if emp.element_id.classification.id == 9 %}
+                            {% if emp.element_id.classification.code == 'earn' %}
                             <tr>
                               <td>{{ emp.element_id }}</td>
                               <td>{{ emp.element_value}}</td>
@@ -324,7 +323,7 @@
                           </thead>
                           <tbody class="ta-l">
                             {% for emp_d in employee_element_qs %}
-                            {% if emp_d.element_id.classification.id == 10 %}
+                            {% if emp_d.element_id.classification.code == 'deduct' %}
                             <tr>
                               <td>{{ emp_d.element_id }}</td>
                               <td>{{ emp_d.element_value}}</td>
