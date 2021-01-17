@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 {% load staticfiles %}
 {% load i18n %}
@@ -11,7 +10,7 @@
 
 
 
-<html  {% if LANGUAGE_BIDI %} dir="rtl" {% else %} dir="ltr" {% endif %}>
+<html {% if LANGUAGE_BIDI %} dir="rtl" {% else %} dir="ltr" {% endif %}>
 <meta content="text/html;charset=UTF-8" />
 
 <head>
@@ -19,9 +18,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.2.3/flatpickr.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.2.3/themes/dark.css">
   <link href="//cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/build/css/bootstrap-datetimepicker.css" rel="stylesheet">
-  <link rel = "icon" type = "image/png" href = "{% static 'img/PeopleIcon.ico'%}">
+  <link rel="icon" type="image/png" href="{% static 'img/PeopleIcon.ico'%}">
   <!-- For apple devices -->
-  <link rel = "apple-touch-icon" type = "image/png" href = "{% static 'img/PeopleIcon.ico'%}"/>
+  <link rel="apple-touch-icon" type="image/png" href="{% static 'img/PeopleIcon.ico'%}" />
 
   {% if LANGUAGE_BIDI %}
   <link href="{% static 'css/style-main-ar.css'%}" rel="stylesheet">
@@ -54,9 +53,9 @@
 
     <div class="sidebar">
       {% if request.user.employee_type == 'A'%}
-        {% include 'side_bar.html' %}
+      {% include 'side_bar.html' %}
       {% else %}
-        {% include 'side_bar.html' %}
+      {% include 'side_bar.html' %}
       {% endif %}
     </div>
     <div class="page-container">
@@ -69,13 +68,14 @@
       </div>
       <main class="main-content bgc-grey-100">
         <div id="mainContent">
-            {% block body %}
-            {% endblock body %}
+          {% block body %}
+          {% endblock body %}
         </div>
       </main>
       {% include 'footer.html' %}
     </div>
   </div>
+
   <script>
   function list_notification_list(data) {
     var menus = document.getElementsByClassName(notify_menu_class);
