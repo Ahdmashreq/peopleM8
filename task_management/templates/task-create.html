@@ -52,15 +52,26 @@
               <label>{{ task_form.scope.label }}</label>
               {{ task_form.scope }}
             </div>
+            <div class="form-group col-md-4">
+              <label>{{ task_form.periority.label }}</label>
+              {{ task_form.periority }}
+            </div>
           </div>
+
           <div class="form-row">
             <div class="form-group col-md-4">
               <label>{{ task_form.status.label }}</label>
               {{ task_form.status }}
             </div>
+          </div>
+          <div class="form-row">
             <div class="form-group col-md-4">
               <label>{{ task_form.assigned_to.label }}</label>
               {{ task_form.assigned_to }}
+            </div>
+            <div class="form-group col-md-4">
+              <label>{{ task_form.assignee.label }}</label>
+              {{ task_form.assignee }}
             </div>
             <div class="form-group col-md-4">
               <label>{{ task_form.percentage.label }}</label>

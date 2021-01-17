@@ -2,6 +2,7 @@ from django.conf import settings
 from django.db import models
 from datetime import date, datetime
 from company.models import Enterprise
+from employee.models import Employee
 
 
 status_list = (
@@ -15,6 +16,7 @@ periority_list = (
                ('normal','Normal'),
                ('medium','Medium'),
                ('high','High'),
+               ('vhigh','Very-High'),
 )
 class Project(models.Model):
     company = models.ForeignKey(Enterprise, on_delete=models.CASCADE)
@@ -39,7 +41,9 @@ class Project_Task(models.Model):
     scope = models.CharField(max_length=200, blank=True, null=True)
     status = models.CharField(max_length=50, blank=True, null=True, choices=status_list)
     assigned_to = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True, related_name='project_task_assigned_to')
+    assignee = models.ForeignKey(Employee, on_delete=models.CASCADE, blank=True, null=True, related_name='project_task_assignee')
     percentage = models.PositiveSmallIntegerField(default=0)
+    periority = models.CharField(max_length=50, blank=True, null=True, choices=periority_list)
     branch_url = models.URLField(max_length=255, blank=True, null=True)
     task_start_date = models.DateField(default=date.today)
     task_end_date = models.DateField(blank=True, null=True)
