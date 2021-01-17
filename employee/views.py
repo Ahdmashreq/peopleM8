@@ -68,7 +68,6 @@ def createEmployeeView(request):
                 # error_msg = '{}, has somthig wrong'.format(emp_payment_obj)
                 messages.success(request, success_msg)
 
-
                 user_lang = to_locale(get_language())
                 if user_lang == 'ar':
                     error_msg = '{}, لم يتم التسجيل'.format(element_obj)
@@ -89,7 +88,7 @@ def createEmployeeView(request):
         "emp_form": emp_form,
         "jobroll_form": jobroll_form,
         "payment_form": payment_form,
-        "create_employee":True,
+        "create_employee": True,
     }
     return render(request, 'create-employee.html', myContext)
 
@@ -172,7 +171,8 @@ def updateEmployeeView(request, pk):
     employee_has_structure = False
 
     try:
-        employee_salary_structure= EmployeeStructureLink.objects.get(employee=required_employee, end_date__isnull=True)
+        employee_salary_structure = EmployeeStructureLink.objects.get(
+            employee=required_employee, end_date__isnull=True)
         employee_has_structure = True
         get_employee_salary_structure = employee_salary_structure.salary_structure
         # emp_form.fields['salary_structure'].initial = employee_salary_structure.salary_structure
@@ -180,10 +180,13 @@ def updateEmployeeView(request, pk):
         employee_has_structure = False
 
     employee_element_form = EmployeeElementForm()
+
     if request.method == 'POST':
         emp_form = EmployeeForm(request.POST, instance=required_employee)
-        jobroll_form = JobRollForm(request.user, request.POST, instance=required_jobRoll)
-        payment_form = Employee_Payment_formset(request.POST, instance=required_employee)
+        jobroll_form = JobRollForm(
+            request.user, request.POST, instance=required_jobRoll)
+        payment_form = Employee_Payment_formset(
+            request.POST, instance=required_employee)
 
         if EmployeeStructureLink.DoesNotExist:
             emp_link_structure_form = EmployeeStructureLinkForm(request.POST)
@@ -191,37 +194,41 @@ def updateEmployeeView(request, pk):
             emp_link_structure_form = EmployeeStructureLinkForm(
                 request.POST, instance=employee_salary_structure)
 
-        employee_element_form = EmployeeElementForm(request.POST,)
+        employee_element_form = EmployeeElementForm(request.POST)
 
-        if emp_form.is_valid():
+        if emp_form.is_valid() and jobroll_form.is_valid() and payment_form.is_valid():
             emp_obj = emp_form.save(commit=False)
             emp_obj.created_by = request.user
             emp_obj.last_update_by = request.user
             emp_obj.save()
-        else:
-            print(emp_form.errors)
-            messages.error(request, emp_form.errors)
-
-        if jobroll_form.is_valid():
+            #
             job_obj = jobroll_form.save(commit=False)
             job_obj.emp_id_id = emp_obj.id
             job_obj.created_by = request.user
             job_obj.last_update_by = request.user
             job_obj.save()
-        else:
-            print(jobroll_form.errors)
-            messages.error(request, jobroll_form.errors)
-
-        payment_form = Employee_Payment_formset(request.POST, instance=emp_obj)
-
-        if payment_form.is_valid():
+            #
+            payment_form = Employee_Payment_formset(request.POST, instance=emp_obj)
             emp_payment_obj = payment_form.save(commit=False)
             for x in emp_payment_obj:
                 x.created_by = request.user
                 x.last_update_by = request.user
                 x.save()
-        else:
-            print(payment_form.errors)
+
+            user_lang = to_locale(get_language())
+
+            if user_lang == 'ar':
+                success_msg = ' {},تم تسجيل الموظف'.format(required_employee)
+            else:
+                success_msg = 'Employee {}, has been created successfully'.format(
+                    required_employee)
+            return redirect('employee:list-employee')
+
+        elif not emp_form.is_valid():
+            messages.error(request, emp_form.errors)
+        elif not jobroll_form.is_valid():
+            messages.error(request, jobroll_form.errors)
+        elif not payment_form.is_valid():
             messages.error(request, payment_form.errors)
 
         if employee_element_form.is_valid():
@@ -231,28 +238,18 @@ def updateEmployeeView(request, pk):
             emp_element_obj.last_update_by = request.user
             emp_element_obj.save()
         else:
-            print(employee_element_form.errors)
             messages.error(request, employee_element_form.errors)
-
-        user_lang = to_locale(get_language())
-
-        if user_lang == 'ar':
-            success_msg = ' {},تم تسجيل الموظف'.format(emp_obj.emp_name)
-        else:
-            success_msg = 'Employee {}, has been created successfully'.format(
-                emp_obj.emp_name)
-        return redirect('employee:list-employee')
 
     myContext = {
         "page_title": _("update employee"),
         "emp_form": emp_form,
         "jobroll_form": jobroll_form,
         "payment_form": payment_form,
-        "required_employee":required_employee,
+        "required_employee": required_employee,
         "employee_element_qs": employee_element_qs,
-        "employee_has_structure":employee_has_structure,
-        "employee_element_form":employee_element_form,
-        "get_employee_salary_structure":get_employee_salary_structure
+        "employee_has_structure": employee_has_structure,
+        "employee_element_form": employee_element_form,
+        "get_employee_salary_structure": get_employee_salary_structure
     }
     return render(request, 'create-employee.html', myContext)
 
@@ -274,7 +271,7 @@ def create_link_employee_structure(request, pk):
             print('Form is not valid')
     my_context = {
         "page_title": _("Link Employee Structure"),
-        "required_employee":required_employee,
+        "required_employee": required_employee,
         "emp_link_structure_form": emp_link_structure_form,
     }
     return render(request, 'link-structure.html', my_context)
@@ -288,7 +285,8 @@ def update_link_employee_structure(request, pk):
     emp_link_structure_form = EmployeeStructureLinkForm(
         instance=employee_salary_structure)
     if request.method == 'POST':
-        emp_link_structure_form = EmployeeStructureLinkForm(request.POST, instance=employee_salary_structure)
+        emp_link_structure_form = EmployeeStructureLinkForm(
+            request.POST, instance=employee_salary_structure)
         if emp_link_structure_form.is_valid():
             emp_structure_obj = emp_link_structure_form.save(commit=False)
             emp_structure_obj.employee = required_employee
@@ -300,7 +298,7 @@ def update_link_employee_structure(request, pk):
             print('Form is not valid')
     my_context = {
         "page_title": _("Link Employee Structure"),
-        "required_employee":required_employee,
+        "required_employee": required_employee,
         "emp_link_structure_form": emp_link_structure_form,
     }
     return render(request, 'link-structure.html', my_context)

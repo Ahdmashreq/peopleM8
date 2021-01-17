@@ -16,7 +16,6 @@ from employee.fast_formula import FastFormula
 from manage_payroll.models import (Bank_Master, Payroll_Master)
 import element_definition.models
 
-# from django.utils.translation import ugettext_lazy as _
 
 payment_type_list = [("c", _("Cash")), ("k", _("Check")),
                      ("b", _("Bank transfer")), ]

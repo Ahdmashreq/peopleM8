@@ -5,10 +5,9 @@
 {% load crispy_forms_tags %}
 {% block body%}
 
-<form method="POST">
-  {% csrf_token %}
-
   <div class="container-fluid">
+    <form method="POST">
+      {% csrf_token %}
     <div class="row">
       <div class="col-md-8">
         <h4 class="c-grey-900">{{page_title|title}}</h4>
@@ -354,6 +353,7 @@
         </div>
       </div>
     </div>
+  </form>
   </div>
   <div class="modal fade" id="element-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
     <div class="modal-dialog" role="document">
@@ -370,9 +370,6 @@
       </div>
     </div>
   </div>
-</form>
-
-
 
 {% endblock body%}
 {% block js %}
