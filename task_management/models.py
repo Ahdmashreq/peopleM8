@@ -81,18 +81,19 @@ def task_creation_notification(sender, instance, created, **kwargs):
         This function is a receiver, it listens to any save hit on Project_Task model, and send
         a notification to the employee assigned to.
     """
-    assignee_employee = instance.assignee
-    assigned_to_user = instance.assigned_to
-    sender_person = assignee_employee.user
-    recipient_person = assigned_to_user
-    data = {"title": "New task assigned to you by {}".format(assignee_employee),
-            "href": "task_management:task-list"}
-    notify.send(
-                sender= sender_person,
-                recipient= recipient_person,
-                verb='assigned',
-                description=instance.task_name,
-                action_object=instance,
-                level='info',
-                data= data,
-            )
+    if instance.assigned_to and instance.assignee:
+        assignee_employee = instance.assignee
+        assigned_to_user = instance.assigned_to
+        sender_person = assignee_employee.user
+        recipient_person = assigned_to_user
+        data = {"title": "New task assigned to you by {}".format(assignee_employee),
+                "href": "task_management:task-list"}
+        notify.send(
+                    sender= sender_person,
+                    recipient= recipient_person,
+                    verb='assigned',
+                    description=instance.task_name,
+                    action_object=instance,
+                    level='info',
+                    data= data,
+                )
