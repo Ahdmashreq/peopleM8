@@ -3,7 +3,6 @@ from django.http import HttpResponse
 from employee.models import Employee, JobRoll
 from service.models import Bussiness_Travel, Purchase_Request
 from service.forms import FormAllowance, PurchaseRequestForm, Purchase_Item_formset
-from notification.models import Notification
 from django.db.models import Q
 from company.models import Department
 from django.shortcuts import get_object_or_404
@@ -15,7 +14,6 @@ from django.contrib import messages
 from django import forms
 from django.core.mail import send_mail
 from django.template import loader
-from employee.notification_helper import NotificationHelper
 from datetime import date, datetime
 
 
@@ -118,10 +116,6 @@ def send_allowance_notification(request):
         pending = Bussiness_Travel.objects.filter(status='pending').order_by('creation_date')
         for request in pending:
             emp = Employee.objects.get(user=request.user)
-            n = Notification(from_emp=emp, message="A service has been requested", to_emp=manager,
-                             Bussiness_Travel=request)
-            n.save()
-        NotificationInstance = Notification.objects.all()
         return
 
 

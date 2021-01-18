@@ -3,7 +3,6 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from employee.models import JobRoll, Employee
-from employee.notification_helper import NotificationHelper
 from leave.models import LeaveMaster, Leave, Employee_Leave_balance
 from leave.forms import FormLeave, FormLeaveMaster, Leave_Balance_Form
 from django.views.generic import ListView
@@ -71,8 +70,6 @@ def add_leave(request):
                     leave.save()
                     required_employee = Employee.objects.get(user=request.user)
                     employee_job.manager= leave.check_manger(required_employee)
-                    if employee_job.manager:
-                        NotificationHelper(employee, employee_job.manager, leave).send_notification()
                     requestor_email = employee.email
                     team_leader_email = employee_job.manager.email
                     # print(team_leader_email)

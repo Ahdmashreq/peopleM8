@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'home',
     'leave',
     'attendance',
-    'notification',
     'report',
     'recruitment',
     'service',

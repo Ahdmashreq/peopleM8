@@ -18,7 +18,6 @@ urlpatterns = [
                   path('element/', include('element_definition.urls')),
                   path('costing/', include('balanc_definition.urls')),
                   path('leave/', include('leave.urls')),
-                  path('notification/', include('notification.urls')),
                   path('attendance/', include('attendance.urls')),
                   path('report/', include('report.urls')),
                   path('recruitment/', include('recruitment.urls')),

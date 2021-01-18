@@ -23,7 +23,6 @@ from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import to_locale, get_language
 from company.models import Enterprise
-from notification.models import Notification
 from leave.models import Leave
 from custom_user.models import UserCompany, Visitor
 from django.contrib.auth.models import Group
@@ -92,10 +91,6 @@ def user_home_page(request):
 
     leave_count = Leave.objects.filter(
         user=request.user, status='pending').count()
-    unread_notifications = Notification.objects.filter(
-        status='delivered', to_emp=employee).order_by('-creation_date')
-    notification_count = Notification.objects.filter(
-        status='delivered', to_emp=employee).count()
 
     birthdays_count = Employee.objects.filter(
         date_of_birth__month=date.today().month).count()
@@ -115,9 +110,7 @@ def user_home_page(request):
         'count_birthdays': birthdays_count,
         'count_employees': employee_count,
         'count_leaves': leave_count,
-        'count_notifications': notification_count,
         'bussiness_travel_service': bussiness_travel_service,
-        'notifications': unread_notifications,
         'my_notifications': my_notifications,
     }
     return render(request, 'index_user.html', context=context)
