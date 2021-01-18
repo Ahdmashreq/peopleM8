@@ -138,9 +138,11 @@ class Leave(models.Model):
             # reverse the leaves to get the last leave
             # get end date of last leave
             end_date = in_leave.last().enddate
+            start_date=in_leave.last().startdate
             today = date.today()
+            status=in_leave.last().status
             # if in leave
-            if not today > end_date:
+            if start_date <= today <= end_date and status == "Approved":
                 # get the parent manger
                 employee_job = JobRoll.objects.filter(
                     end_date__isnull=True, emp_id=current_manger)
