@@ -100,7 +100,8 @@ def user_home_page(request):
         date_of_birth__month=date.today().month)
 
     # List MY Bussiness_Travel/services
-    bussiness_travel_service = Bussiness_Travel.objects.filter(Q(emp=employee) | Q(manager=employee), status='pending')
+    bussiness_travel_service = Bussiness_Travel.objects.filter(
+        Q(emp=employee) | Q(manager=employee), status='pending')
     # get a list of all notifications related to the current user within the current month
     my_notifications = request.user.notifications.filter(timestamp__year=datetime.now().year,
                                                          timestamp__month=datetime.now().month)

@@ -26,7 +26,8 @@ class Employee(models.Model):
     identification_type_list = [("N", _("National Id")), ("P", _("Passport"))]
     gender_list = [("M", _("Male")), ("F", _("Female"))]
     social_status_list = [("M", _("Married")), ("S", _("Single"))]
-    military_status_list = [("E", _("Exemption")), ("C", _("Complete the service")), ("P", _("Postponed"))]
+    military_status_list = [("E", _("Exemption")), ("C", _(
+        "Complete the service")), ("P", _("Postponed"))]
     religion_list = [("M", _("Muslim")), ("C", _("Chrestin"))]
     emp_type_list = [("UP", _("Under Probation")), ("E", _("Employee")), ("EX", _("Ex-Employee")),
                      ("C", _("Contractor"))]
@@ -35,48 +36,69 @@ class Employee(models.Model):
                              related_name='employee_user')
     enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name='enterprise_employee',
                                    verbose_name=_('Department'))
-    emp_number = models.IntegerField(default=0, blank=True, null=True, verbose_name=_('Employee Number'))
+    emp_number = models.IntegerField(
+        default=0, blank=True, null=True, verbose_name=_('Employee Number'))
     emp_type = models.CharField(max_length=30, choices=emp_type_list, null=True, blank=True,
                                 verbose_name=_('Employee Type'))
     emp_name = models.CharField(max_length=60, verbose_name=_('Employee Name'))
-    address1 = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('address1'))
-    address2 = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('address2'))
-    phone = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('phone'))
-    mobile = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('mobile'))
+    address1 = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name=_('address1'))
+    address2 = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name=_('address2'))
+    phone = models.CharField(max_length=255, blank=True,
+                             null=True, verbose_name=_('phone'))
+    mobile = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name=_('mobile'))
     date_of_birth = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True,
                                      verbose_name=_('Birthdate'))
-    hiredate = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Hire Date'))
+    hiredate = models.DateField(
+        auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Hire Date'))
     email = models.EmailField(blank=True, null=True, verbose_name=_('email'))
-    picture = models.ImageField(null=True, blank=True, verbose_name=_('picture'))
-    is_active = models.BooleanField(blank=True, default=True, verbose_name=_('Is Active'))
+    picture = models.ImageField(
+        null=True, blank=True, verbose_name=_('picture'))
+    is_active = models.BooleanField(
+        blank=True, default=True, verbose_name=_('Is Active'))
     identification_type = models.CharField(max_length=5, choices=identification_type_list, null=True, blank=True,
                                            verbose_name=_('ID Type'))
-    id_number = models.CharField(max_length=50, blank=True, null=True, verbose_name=_('ID Number'))
-    place_of_birth = models.CharField(max_length=100, blank=True, null=True, verbose_name=_('Place of Birth'))
-    nationality = models.CharField(max_length=20, blank=True, null=True, verbose_name=_('Nationality'))
-    field_of_study = models.CharField(max_length=30, blank=True, null=True, verbose_name=_('Field of Study'))
-    education_degree = models.CharField(max_length=30, blank=True, null=True, verbose_name=_('Eductaion Degree'))
-    gender = models.CharField(max_length=5, choices=gender_list, null=True, blank=True, verbose_name=_('Gender'))
+    id_number = models.CharField(
+        max_length=50, blank=True, null=True, verbose_name=_('ID Number'))
+    place_of_birth = models.CharField(
+        max_length=100, blank=True, null=True, verbose_name=_('Place of Birth'))
+    nationality = models.CharField(
+        max_length=20, blank=True, null=True, verbose_name=_('Nationality'))
+    field_of_study = models.CharField(
+        max_length=30, blank=True, null=True, verbose_name=_('Field of Study'))
+    education_degree = models.CharField(
+        max_length=30, blank=True, null=True, verbose_name=_('Eductaion Degree'))
+    gender = models.CharField(
+        max_length=5, choices=gender_list, null=True, blank=True, verbose_name=_('Gender'))
     social_status = models.CharField(max_length=5, choices=social_status_list, null=True, blank=True,
                                      verbose_name=_('Social Status'))
     military_status = models.CharField(max_length=5, choices=military_status_list, null=True, blank=True,
                                        verbose_name=_('Milatery Status'))
-    religion = models.CharField(max_length=5, choices=religion_list, null=True, blank=True, verbose_name=_('Religion'))
+    religion = models.CharField(
+        max_length=5, choices=religion_list, null=True, blank=True, verbose_name=_('Religion'))
     insured = models.BooleanField(verbose_name=_('Insured'))
-    insurance_number = models.CharField(max_length=30, blank=True, null=True, verbose_name=_('Insurance Number'))
+    insurance_number = models.CharField(
+        max_length=30, blank=True, null=True, verbose_name=_('Insurance Number'))
     insurance_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True,
                                       verbose_name=_('Insurance Date'))
-    insurance_salary = models.FloatField(default=0.0, null=True, blank=True, verbose_name=_('Insurance Salary'))
+    insurance_salary = models.FloatField(
+        default=0.0, null=True, blank=True, verbose_name=_('Insurance Salary'))
     has_medical = models.BooleanField(verbose_name=_('Has Medical'))
-    medical_number = models.CharField(max_length=30, blank=True, null=True, verbose_name=_('Medical Number'))
+    medical_number = models.CharField(
+        max_length=30, blank=True, null=True, verbose_name=_('Medical Number'))
     medical_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True,
                                     verbose_name=_('Medical Date'))
-    start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
-    end_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=_('End Date'))
+    start_date = models.DateField(
+        auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
+    end_date = models.DateField(
+        auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=_('End Date'))
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
                                    related_name="emp_created_by")
     creation_date = models.DateField(auto_now=True, auto_now_add=False)
-    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE)
+    last_update_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE)
     last_update_date = models.DateField(auto_now=False, auto_now_add=True)
 
     def get_absolute_url(self):
@@ -168,11 +190,16 @@ class Payment(models.Model):
 
 
 class Employee_Element(models.Model):
-    emp_id = models.ForeignKey(Employee, on_delete=models.CASCADE, verbose_name=_('Employee'))
-    element_id = models.ForeignKey(element_definition.models.Element, on_delete=models.CASCADE, verbose_name=_('Pay'))
-    element_value =  models.FloatField(default=0.0, null=True, blank=True,verbose_name=_('Pay Value'))
-    start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
-    end_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=_('End Date'))
+    emp_id = models.ForeignKey(
+        Employee, on_delete=models.CASCADE, verbose_name=_('Employee'))
+    element_id = models.ForeignKey(
+        element_definition.models.Element, on_delete=models.CASCADE, verbose_name=_('Pay'))
+    element_value = models.FloatField(
+        default=0.0, null=True, blank=True, verbose_name=_('Pay Value'))
+    start_date = models.DateField(
+        auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
+    end_date = models.DateField(
+        auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=_('End Date'))
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
                                    related_name="emp_element_created_by")
     creation_date = models.DateField(auto_now=True, auto_now_add=False)
@@ -219,8 +246,10 @@ class EmployeeStructureLink(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, )
     salary_structure = models.ForeignKey(element_definition.models.SalaryStructure, on_delete=models.CASCADE,
                                          related_name='employee_structure_link', )
-    start_date = models.DateField(auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
-    end_date = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True, verbose_name=_('End Date'))
+    start_date = models.DateField(
+        auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
+    end_date = models.DateField(
+        auto_now=False, auto_now_add=False, null=True, blank=True, verbose_name=_('End Date'))
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
                                    related_name="employee_salary_is_created_by")
     creation_date = models.DateField(auto_now=False, auto_now_add=True)
@@ -235,7 +264,8 @@ class EmployeeStructureLink(models.Model):
     def insert_employee_elements(sender, instance, *args, **kwargs):
         if instance.id is not None:  # if record is being updated
             # delete elements related to old structure in emp-elements
-            old_salary_structure_link = EmployeeStructureLink.objects.get(id=instance.id)
+            old_salary_structure_link = EmployeeStructureLink.objects.get(
+                id=instance.id)
             linked_elements = element_definition.models.StructureElementLink.objects.filter(
                 salary_structure=old_salary_structure_link.salary_structure).filter(
                 Q(end_date__isnull=True) | Q(end_date__gt=date.today())).values('element')
@@ -271,23 +301,29 @@ month_name_choises = [
 
 class Employee_Element_History(models.Model):
     emp_id = models.ForeignKey(Employee, on_delete=models.CASCADE, )
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, blank=True, null=True)
+    content_type = models.ForeignKey(
+        ContentType, on_delete=models.CASCADE, blank=True, null=True)
     object_id = models.PositiveIntegerField(blank=True, null=True)
     element_id = GenericForeignKey()
     salary_month = models.IntegerField(choices=month_name_choises, validators=[
         MaxValueValidator(12), MinValueValidator(1)], verbose_name=_('Salary Month'), default=date.today().month)
-    salary_year = models.IntegerField(verbose_name=_('Salary Year'), default=date.today().year)
+    salary_year = models.IntegerField(verbose_name=_(
+        'Salary Year'), default=date.today().year)
     element_value = models.FloatField(default=0.0, null=True, blank=True)
-    element_computed_value = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    element_computed_value = models.DecimalField(
+        max_digits=10, decimal_places=2, blank=True, null=True)
     start_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True,
                                   verbose_name=_('Start Date'))
-    end_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=_('End Date'))
+    end_date = models.DateField(
+        auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=_('End Date'))
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE,
                                    related_name="emp_element_history_created_by")
-    creation_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, )
+    creation_date = models.DateField(
+        auto_now=False, auto_now_add=False, blank=True, null=True, )
     last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE,
                                        related_name="emp_element_history_last_update_by")
-    last_update_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, )
+    last_update_date = models.DateField(
+        auto_now=False, auto_now_add=False, blank=True, null=True, )
 
     def __str__(self):
         return self.emp_id.emp_name + ' / ' + self.element_id.element_name

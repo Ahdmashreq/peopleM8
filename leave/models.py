@@ -129,18 +129,18 @@ class Leave(models.Model):
         return self.status == 'rejected'
 
     def check_manger(self, emp):
-        #get manger of employee
+        # get manger of employee
         employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=emp)
         current_manger = employee_job.manager
-        #get the leaves of manger
+        # get the leaves of manger
         in_leave = Leave.objects.filter(user=current_manger.user)
         if in_leave.exists() is True:
             # reverse the leaves to get the last leave
             # get end date of last leave
             end_date = in_leave.last().enddate
-            start_date=in_leave.last().startdate
+            start_date = in_leave.last().startdate
             today = date.today()
-            status=in_leave.last().status
+            status = in_leave.last().status
             # if in leave
             if start_date <= today <= end_date and status == "Approved":
                 # get the parent manger
@@ -153,7 +153,7 @@ class Leave(models.Model):
                     # check if parent manger in leave or not
                     return self.check_manger(current_manger)
             else:
-                #return the manger
+                # return the manger
                 return current_manger
         return current_manger
 

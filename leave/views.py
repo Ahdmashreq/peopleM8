@@ -69,7 +69,8 @@ def add_leave(request):
                     leave.user = request.user
                     leave.save()
                     required_employee = Employee.objects.get(user=request.user)
-                    employee_job.manager= leave.check_manger(required_employee)
+                    employee_job.manager = leave.check_manger(
+                        required_employee)
                     requestor_email = employee.email
                     team_leader_email = employee_job.manager.email
                     # print(team_leader_email)
@@ -82,11 +83,13 @@ def add_leave(request):
                                          'Leave Request was created successfully')
                     return redirect('leave:list_leave')
                 else:
-                    leave_form.add_error(None, "Requested leave intersects with another leave")
+                    leave_form.add_error(
+                        None, "Requested leave intersects with another leave")
             else:
                 print(leave_form.errors)
         else:
-            leave_form.add_error(None, "You are not eligible for leave request")
+            leave_form.add_error(
+                None, "You are not eligible for leave request")
     else:  # http request
         leave_form = FormLeave(form_type=None)
     return render(request, 'add_leave.html', {'leave_form': leave_form})
@@ -105,7 +108,8 @@ def eligible_user_leave(user):
 
 def have_leave_balance(user):
     required_user = Employee.objects.get(user=user)
-    employee_leave_balance = Employee_Leave_balance.objects.get(employee=required_user)
+    employee_leave_balance = Employee_Leave_balance.objects.get(
+        employee=required_user)
     total_balance = employee_leave_balance.total_balance
     if not total_balance > 0:
         return False
@@ -128,7 +132,8 @@ def list_leave(request):
     is_manager = False
     try:
         employee = Employee.objects.get(user=request.user)
-        employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
+        employee_job = JobRoll.objects.get(
+            end_date__isnull=True, emp_id=employee)
         if employee_job.manager == None:  # check if the loged in user is a manager
             list_leaves = Leave.objects.all_pending_leaves()
             is_manager = True
@@ -158,7 +163,8 @@ def edit_leave(request, id):
     employee = Employee.objects.get(user=instance.user)
     home = False  # a variable indicating whether the request is from homepage or other link
     if request.method == "POST":
-        leave_form = FormLeave(data=request.POST, form_type='respond', instance=instance)
+        leave_form = FormLeave(
+            data=request.POST, form_type='respond', instance=instance)
         if leave_form.is_valid():
             leave = leave_form.save(commit=False)
             leave.save()
@@ -190,7 +196,8 @@ def leave_approve(request, leave_id, redirect_to):
     dates = (enddate - startdate)
     tottal_days = dates.days + 1
     required_user = Employee.objects.get(user=instance.user)
-    employee_leave_balance = Employee_Leave_balance.objects.get(employee=required_user)
+    employee_leave_balance = Employee_Leave_balance.objects.get(
+        employee=required_user)
     employee_leave_balance.casual = employee_leave_balance.casual - tottal_days
     employee_leave_balance.save(update_fields=['casual'])
     approved_by_email = Employee.objects.get(user=request.user).email
@@ -224,7 +231,8 @@ def leave_unapprove(request, leave_id, redirect_to):
 # #############################################################################
 @login_required(login_url='home:user-login')
 def list_leave_master(request):
-    leave_master_list = LeaveMaster.objects.filter(enterprise=request.user.company)
+    leave_master_list = LeaveMaster.objects.filter(
+        enterprise=request.user.company)
     return render(request, 'list_leave_master.html', {'leave_master_list': leave_master_list})
 
 
