@@ -119,8 +119,7 @@
                       <th scope="col">Notification Body</th>
                       <th scope="col">Type</th>
                       <th scope="col">Date & Time</th>
-                      <th scope="col">Status</th>
-                       <th scope="col">Action</th>
+                      <th scope="col">Action</th>
                    </tr>
                 </thead>
                 <tbody>
@@ -130,7 +129,6 @@
                       <td>{{ notice.description}}</td>
                       <td>{{ notice.level }}</td>
                       <td><span class="badge bgc-red-50 c-red-700 p-10 lh-0 tt-c badge-pill"> {{ notice.timestamp }} </span></td>
-                      <td><span class="badge bgc-green-50 c-green-700 p-10 lh-0 tt-c badge-pill">{{ notice.data.data.status }}</span></td>
                       <td>  {% if notice.data.data.href %}<a href="{% url notice.data.data.href id=notice.action_object_object_id %}">view request</a>{% endif %}</td>
                    </tr>
                    {% endfor %}
@@ -140,7 +138,7 @@
        </div>
     </div>
  </div>
-   
+
 
 </div>
 
