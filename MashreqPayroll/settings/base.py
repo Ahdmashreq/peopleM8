@@ -189,8 +189,9 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = "dina.abdullah.intern@mashreqarabia.com"
-with open(KEY_PATH) as f:
-    EMAIL_HOST_PASSWORD = f.read().strip()
+EMAIL_HOST_USER = "hr.mashreq.arabia@gmail.com"
+EMAIL_HOST_PASSWORD = 'amrawy.gehad.mamdouh'
+# with open(KEY_PATH) as f:
+#     EMAIL_HOST_PASSWORD = f.read().strip()
 EMAIL_USE_TLS = True
 DJANGO_NOTIFICATIONS_CONFIG = { 'USE_JSONFIELD': True}
