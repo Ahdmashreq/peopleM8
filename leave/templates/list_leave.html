@@ -3,6 +3,7 @@
 {% load crispy_forms_tags %}
 {% load l10n %}
 {% load i18n %}
+{% load group_extra %}
 
 {% block body %}
 <div class="row" style="margin-left:0px;">
@@ -30,7 +31,7 @@
               <th>{% trans "Leave start date" %}</th>
               <th>{% trans "Leave end date" %}</th>
               <th>{% trans "status" %}</th>
-              {% if is_manager %}
+              {% if request.user|has_group:"Admin"%}
               <th>{% trans "Actions" %}</th>
               {% endif %}
             </tr>
@@ -43,9 +44,9 @@
               <td>{{i.startdate}}</td>
               <td>{{i.enddate}}</td>
               <td>{{i.status}}</td>
-              {% if is_manager %}
+              {% if request.user|has_group:"Admin"%}
               <td class="Actions">
-                <div class="w-100 gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
+                <div class="w-100 gap-10 peers">
                   <div class="peer">
                     <a href="{% url 'leave:edit_leave' i.id %}">
                       <button type="button" class="btn cur-p btn-outline-primary">{% trans "Respond" %}</button>
