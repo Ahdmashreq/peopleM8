@@ -124,3 +124,7 @@ dmypy.json
 *.sqlite3
 
 settings/
+
+**/migrations/**
+!**/migrations
+!**/migrations/__init__.py

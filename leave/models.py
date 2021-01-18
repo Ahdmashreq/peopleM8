@@ -11,6 +11,7 @@ from datetime import date
 from django.utils.translation import ugettext_lazy as _
 from .manager import LeaveManager
 from company.models import Enterprise
+from datetime import date
 
 
 class LeaveMaster(models.Model):
@@ -47,14 +48,19 @@ class Leave(models.Model):
     # ###########################################################################################
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE, default=1)
-    startdate = models.DateField(verbose_name=_('Start Date'), null=True, blank=False)
-    enddate = models.DateField(verbose_name=_('End Date'), null=True, blank=False)
-    resume_date = models.DateField(verbose_name=_('Resume Date'), null=True, blank=False)
+    startdate = models.DateField(verbose_name=_(
+        'Start Date'), null=True, blank=False)
+    enddate = models.DateField(verbose_name=_(
+        'End Date'), null=True, blank=False)
+    resume_date = models.DateField(verbose_name=_(
+        'Resume Date'), null=True, blank=False)
     # leavetype = models.CharField(max_length=3, choices=leave_type_list, verbose_name=_('Leave Type Name'))
-    leavetype = models.ForeignKey(LeaveMaster, on_delete=models.CASCADE, verbose_name=_('Leave Type Name'))
+    leavetype = models.ForeignKey(
+        LeaveMaster, on_delete=models.CASCADE, verbose_name=_('Leave Type Name'))
     reason = models.CharField(verbose_name=_('Reason for Leave'), max_length=255,
                               help_text='add additional information for leave', null=True, blank=True)
-    attachment = models.ImageField(upload_to=path_and_rename, null=True, blank=True, verbose_name=_('Attachment'))
+    attachment = models.ImageField(
+        upload_to=path_and_rename, null=True, blank=True, verbose_name=_('Attachment'))
     status = models.CharField(max_length=20, default='pending')
     is_approved = models.BooleanField(default=False)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
@@ -67,6 +73,7 @@ class Leave(models.Model):
 
     def __str__(self):
         return ('{0} - {1}'.format(self.leavetype, self.user))
+        # return self.user
 
     @property
     def pretty_leave(self):
@@ -121,6 +128,33 @@ class Leave(models.Model):
     def is_rejected(self):
         return self.status == 'rejected'
 
+    def check_manger(self, emp):
+        #get manger of employee
+        employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=emp)
+        current_manger = employee_job.manager
+        #get the leaves of manger
+        in_leave = Leave.objects.filter(user=current_manger.user)
+        if in_leave.exists() is True:
+            # reverse the leaves to get the last leave
+            in_leave.reverse()
+            # get end date of last leave
+            end_date = in_leave[0].enddate
+            today = date.today()
+            # if in leave
+            if not today > end_date:
+                # get the parent manger
+                employee_job = JobRoll.objects.filter(
+                    end_date__isnull=True, emp_id=current_manger)
+                # if not have parent manger "CEO"
+                if not employee_job.exists():
+                    return current_manger
+                else:
+                    # check if parent manger in leave or not
+                    return self.check_manger(current_manger)
+        else:
+            #return the manger
+            return current_manger
+
 
 # @receiver(pre_save, sender=Leave)
 # def update_employee_leave_balance(sender, instance, *args, **kwargs):
@@ -169,7 +203,8 @@ def leave_creation(sender, instance, created, update_fields, **kwargs):
         a notification to the manager that someone created a leave.
         or send a notification to the person who created the leave, if his leave is processed .
     """
-    requestor_emp = instance.user.employee_user.all()[0]  # assuming one employee per user
+    requestor_emp = instance.user.employee_user.all(
+    )[0]  # assuming one employee per user
     manager_emp = requestor_emp.job_roll_emp_id.filter(
         Q(end_date__gt=date.today()) | Q(end_date__isnull=True))[0].manager
 
@@ -179,7 +214,7 @@ def leave_creation(sender, instance, created, update_fields, **kwargs):
         notify.send(sender=instance.user,
                     recipient=manager_emp.user,
                     verb='requested', description="{employee} has requested {leave}".format(employee=requestor_emp,
-                                                                                          leave=instance.leavetype.type),
+                                                                                            leave=instance.leavetype.type),
                     action_object=instance, level='action', data=data)
     elif 'status' in update_fields:  # check if leave status is updated
 
@@ -189,7 +224,7 @@ def leave_creation(sender, instance, created, update_fields, **kwargs):
                     recipient=instance.user,
                     verb=instance.status,
                     description="{employee} has {verb} your {leave}".format(employee=manager_emp, verb=instance.status,
-                                                                        leave=instance.leavetype.type),
+                                                                            leave=instance.leavetype.type),
                     action_object=instance, level='info', data=data)
 
         #  update the old notification for the manager with the new status

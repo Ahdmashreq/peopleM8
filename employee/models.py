@@ -16,6 +16,7 @@ from employee.fast_formula import FastFormula
 from manage_payroll.models import (Bank_Master, Payroll_Master)
 import element_definition.models
 
+
 # from django.utils.translation import ugettext_lazy as _
 
 payment_type_list = [("c", _("Cash")), ("k", _("Check")),
@@ -292,3 +293,5 @@ class Employee_Element_History(models.Model):
 
     def __str__(self):
         return self.emp_id.emp_name + ' / ' + self.element_id.element_name
+
+
