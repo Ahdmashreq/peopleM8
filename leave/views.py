@@ -60,7 +60,7 @@ def message_composer(request, html_template, instance_name, result):
 def add_leave(request):
     employee = Employee.objects.get(user=request.user)
     employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
-    print(have_leave_balance(request.user))
+    # print(have_leave_balance(request.user))
     if request.method == "POST":
         leave_form = FormLeave(data=request.POST, form_type=None)
         if eligible_user_leave(request.user) and have_leave_balance(request.user):
@@ -69,7 +69,8 @@ def add_leave(request):
                     leave = leave_form.save(commit=False)
                     leave.user = request.user
                     leave.save()
-
+                    employee_job.manager=leave.check_manger(request.user.id)
+                    # print(employee_job.manager.email)
                     if employee_job.manager:
                         NotificationHelper(employee, employee_job.manager, leave).send_notification()
                     requestor_email = employee.email
