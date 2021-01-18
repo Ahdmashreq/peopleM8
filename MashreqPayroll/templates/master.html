@@ -76,38 +76,27 @@
     </div>
   </div>
 
-  <script>
-  function list_notification_list(data) {
-    var menus = document.getElementsByClassName(notify_menu_class);
-    var mymenu = document.getElementsByClassName('mymenu');
-    if (menus) {
-      // Create the text node for anchor element.
-
-
-     // mymenu[0].href = notify_mark_all_unread_url;
-      // mymenu[0].innerHTML ="Mark all as read";
-     // mymenu[0].classList.add("peers","fxw-nw","td-n", "p-3", "bdB", "c-grey-800", "cH-blue", "bgcH-grey-100");
-        if (data.unread_list.length == 0){
-        var messages = "No Notifications to Show"
-        }
-        else{
-        var messages = data.unread_list.map(function (item) {
-              console.log(item)
-
+  <script type="text/javascript">
+    function list_notification_list(data) {
+      var menus = document.getElementsByClassName(notify_menu_class);
+      var mymenu = document.getElementsByClassName('mymenu');
+      if (menus) {
+        if (data.unread_list.length == 0) {
+          var messages = "No Notifications to Show"
+        } else {
+          var messages = data.unread_list.map(function(item) {
+            console.log(item)
             var message = "";
-            message=item.description
-
+            message = item.description
             return '<li><a href="#" class="peers fxw-nw td-n p-20 bdB c-grey-800 cH-blue bgcH-grey-100">' + message + '</a></li>';
-        }).join('')
-}
-        for (var i = 0; i < menus.length; i++){
-            menus[i].innerHTML = messages;
+          }).join('')
         }
-
-
+        for (var i = 0; i < menus.length; i++) {
+          menus[i].innerHTML = messages;
+        }
+      }
     }
-}
-</script>
+  </script>
   <script src="{% static 'notifications/notify.js' %}" type="text/javascript"></script>
   {% register_notify_callbacks callbacks='list_notification_list,fill_notification_badge' refresh_period=30 %}
   <script src="//cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/src/js/bootstrap-datetimepicker.js"></script>
