@@ -196,43 +196,43 @@ class Employee_Leave_balance(models.Model):
         return self.employee.emp_name
 
 
-# @receiver(post_save, sender=Leave)
-# def leave_creation(sender, instance, created, update_fields, **kwargs):
-#     """
-#         This function is a receiver, it listens to any save hit on leave model, and send
-#         a notification to the manager that someone created a leave.
-#         or send a notification to the person who created the leave, if his leave is processed .
-#     """
-#     requestor_emp = instance.user.employee_user.all(
-#     )[0]  # assuming one employee per user
-#     manager_emp = requestor_emp.job_roll_emp_id.filter(
-#         Q(end_date__gt=date.today()) | Q(end_date__isnull=True))[0].manager
-#
-#     if created:  # check if this is a new leave instance
-#         data = {"title": "Leave request", "status": instance.status,
-#                 "href": "leave:edit_leave"}
-#         notify.send(sender=instance.user,
-#                     recipient=manager_emp.user,
-#                     verb='requested', description="{employee} has requested {leave}".format(employee=requestor_emp,
-#                                                                                             leave=instance.leavetype.type),
-#                     action_object=instance, level='action', data=data)
-#     elif 'status' in update_fields:  # check if leave status is updated
-#
-#         data = {"title": "Leave request", "status": instance.status}
-#         # send notification to the requestor employee that his request status is updated
-#         notify.send(sender=manager_emp.user,
-#                     recipient=instance.user,
-#                     verb=instance.status,
-#                     description="{employee} has {verb} your {leave}".format(employee=manager_emp, verb=instance.status,
-#                                                                             leave=instance.leavetype.type),
-#                     action_object=instance, level='info', data=data)
-#
-#         #  update the old notification for the manager with the new status
-#         content_type = ContentType.objects.get_for_model(Leave)
-#         old_notification = manager_emp.user.notifications.filter(action_object_content_type=content_type,
-#                                                                  action_object_object_id=instance.id)
-#         if len(old_notification) > 0:
-#             old_notification[0].data['data']['status'] = instance.status
-#             old_notification[0].data['data']['href'] = ""
-#             old_notification[0].unread = False
-#             old_notification[0].save()
+@receiver(post_save, sender=Leave)
+def leave_creation(sender, instance, created, update_fields, **kwargs):
+    """
+        This function is a receiver, it listens to any save hit on leave model, and send
+        a notification to the manager that someone created a leave.
+        or send a notification to the person who created the leave, if his leave is processed .
+    """
+    requestor_emp = instance.user.employee_user.all(
+    )[0]  # assuming one employee per user
+    manager_emp = requestor_emp.job_roll_emp_id.filter(
+        Q(end_date__gt=date.today()) | Q(end_date__isnull=True))[0].manager
+
+    if created:  # check if this is a new leave instance
+        data = {"title": "Leave request", "status": instance.status,
+                "href": "leave:edit_leave"}
+        notify.send(sender=instance.user,
+                    recipient=manager_emp.user,
+                    verb='requested', description="{employee} has requested {leave}".format(employee=requestor_emp,
+                                                                                            leave=instance.leavetype.type),
+                    action_object=instance, level='action', data=data)
+    elif 'status' in update_fields:  # check if leave status is updated
+
+        data = {"title": "Leave request", "status": instance.status}
+        # send notification to the requestor employee that his request status is updated
+        notify.send(sender=manager_emp.user,
+                    recipient=instance.user,
+                    verb=instance.status,
+                    description="{employee} has {verb} your {leave}".format(employee=manager_emp, verb=instance.status,
+                                                                            leave=instance.leavetype.type),
+                    action_object=instance, level='info', data=data)
+
+        #  update the old notification for the manager with the new status
+        content_type = ContentType.objects.get_for_model(Leave)
+        old_notification = manager_emp.user.notifications.filter(action_object_content_type=content_type,
+                                                                 action_object_object_id=instance.id)
+        if len(old_notification) > 0:
+            old_notification[0].data['data']['status'] = instance.status
+            old_notification[0].data['data']['href'] = ""
+            old_notification[0].unread = False
+            old_notification[0].save()
