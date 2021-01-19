@@ -33,12 +33,10 @@
       <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-orange-500 ti-layout-list-thumb"></i> </span><span class="title">{% trans 'Company Setup'%}</span>
         <span class="arrow"><i class="ti-angle-right"></i></span></a>
       <ul class="dropdown-menu">
-        <li><a class="sidebar-link" href="{% url 'company:list-company-information' %}">{% trans 'Enterprise'%}</a></li>
+        <li><a class="sidebar-link" href="{% url 'company:list-company-information' %}">{% trans 'Enterprise Information'%}</a></li>
         <!-- <li><a class="sidebar-link" href="{% url 'balanc_definition:list-cost-center' %}">{% trans 'Cost Center'%}</a> -->
     </li>
-    {% if request.user.is_superuser %}
-    <li><a class="sidebar-link" href="{% url 'company:setup_company' %}">{% trans 'Upload Modules'%}</a></li>
-    {% endif %}
+
     <li class="nav-item dropdown">
       <a href="javascript:void(0);">
         <span>{% trans 'Enterprise structure'%}</span>
@@ -55,7 +53,7 @@
     </li>
   </ul>
 
-  {% if request.user|has_group:"Admin" %}
+  {% if request.user.is_superuser %}
   <ul class="dropdown-menu">
     <li class="nav-item dropdown">
       <a href="javascript:void(0);">
@@ -77,12 +75,12 @@
     <ul class="dropdown-menu">
       <li class="nav-item dropdown">
         <a class="dropdown-toggle" href="javascript:void(0);">
-          <span class="title">{% trans 'Wage Management'%}</span> <span class="arrow"><i class="ti-angle-right"></i></span>
+          <span class="title">{% trans 'Salary Management'%}</span> <span class="arrow"><i class="ti-angle-right"></i></span>
         </a>
         <ul class="dropdown-menu">
-          <li><a class="sidebar-link" href="{% url 'element_definition:list-element' %}">{% trans 'Pay Details'%}</a>
+          <li><a class="sidebar-link" href="{% url 'element_definition:list-element' %}">{% trans 'Salary Details'%}</a>
           </li>
-          <li><a class="sidebar-link" href="{% url 'element_definition:list-batchs' %}">{% trans 'Pay Structure'%}</a>
+          <li><a class="sidebar-link" href="{% url 'element_definition:list-batchs' %}">{% trans 'Salary Structure'%}</a>
           </li>
           <!-- <li><a class="sidebar-link" href="{% url 'element_definition:list-links' %}">{% trans 'Link Pays'%}</a></li> -->
         </ul>
@@ -97,7 +95,7 @@
     </ul>
   </li>
   <li class="nav-item dropdown">
-    <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-pink-500  ti-user"></i> </span><span class="title">{% trans "Employees" %}</span> <span class="arrow"><i class="ti-angle-right"></i></span></a>
+    <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-pink-500  ti-user"></i> </span><span class="title">{% trans "Employee Management" %}</span> <span class="arrow"><i class="ti-angle-right"></i></span></a>
     <ul class="dropdown-menu">
       <li><a class="sidebar-link" href="{% url 'employee:list-employee' %}">{% trans 'Personal & Job Information'%}</a></li>
 
@@ -107,30 +105,18 @@
 
   {% if request.user|has_group:"Admin" or request.user|has_group:"Employee" %}
   <li class="nav-item dropdown">
-    <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-pink-500 ti-agenda"></i> </span><span class="title">{% trans "Services" %}</span> <span class="arrow"><i class="ti-angle-right"></i></span></a>
+    <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-pink-500 ti-agenda"></i> </span><span class="title">{% trans "Employee Services" %}</span> <span class="arrow"><i class="ti-angle-right"></i></span></a>
     <ul class="dropdown-menu">
+      <li><a class="sidebar-link" href="{% url 'leave:list_leave' %}">{% trans 'Employee Leaves'%}</a></li>
       <li><a class="sidebar-link" href="{% url 'service:services_list' %}">{% trans 'Bussiness Travel Form'%}</a></li>
       <li><a class="sidebar-link" href="{% url 'service:purchase-request-list' %}">{% trans 'Purchase Request Form'%}</a></li>
-      <li><a class="sidebar-link" href="{% url 'leave:list_leave' %}">{% trans 'Employee Leaves'%}</a></li>
-    </ul>
-  </li>
-  {% endif %}
-
-  {% if request.user|has_group:"Employee" %}
-  <li class="nav-item dropdown">
-    <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-blue-500 ti-alarm-clock"></i> </span><span class="title">{% trans "Attendance" %}</span> <span class="arrow"><i class="ti-angle-right"></i></span></a>
-    <ul class="dropdown-menu">
-      <li><a class="sidebar-link" href="{% url 'attendance:upload-attendance' %}">{% trans 'Upload Excel File' %}</a></li>
-      <li><a class="sidebar-link" href="{% url 'attendance:user-list-attendance' %}">{% trans 'Manual Attendance' %}</a></li>
-      <li><a class="sidebar-link" href="{% url 'attendance:list-machine-log' %}">{% trans 'Connect To Machine' %}</a></li>
-      <li><a class="sidebar-link" href="{% url 'attendance:list-attendance-deductions' %}">{% trans 'List Absence' %}</a></li>
     </ul>
   </li>
   {% endif %}
 
   {% if request.user|has_group:"Admin" %}
   <li class="nav-item dropdown">
-    <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-blue-500 ti-alarm-clock"></i> </span><span class="title">{% trans "Leave Management" %}</span>
+    <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-blue-500 ti-alarm-clock"></i> </span><span class="title">{% trans "Work Days Management" %}</span>
       <span class="arrow"><i class="ti-angle-right"></i></span></a>
     <ul class="dropdown-menu">
       <li><a href="javascript:void(0);">
@@ -138,7 +124,7 @@
           <span class="arrow"><i class="ti-angle-right"></i></span>
         </a>
         <ul class="dropdown-menu" style="display: none;">
-          <li><a href="{% url 'leave:leave-balance' %}">{% trans "Employee Leave Balance" %}</a></li>
+          <li><a href="{% url 'leave:leave-balance' %}">{% trans "Employees Leave Balance" %}</a></li>
           <li><a href="{% url 'leave:list-leave-master' %}">{% trans "Leaves Type Setup" %}</a></li>
         </ul>
       </li>
@@ -159,13 +145,13 @@
   </li>
   <li class="nav-item dropdown">
     <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-blue-500 ti-alarm-clock"></i>
-    </span><span class="title">{% trans "Attendance" %}</span> <span class="arrow"><i class="ti-angle-right"></i></span>
-  </a>
+      </span><span class="title">{% trans "Attendance Management" %}</span> <span class="arrow"><i class="ti-angle-right"></i></span>
+    </a>
     <ul class="dropdown-menu">
+      <!-- <li><a class="sidebar-link" href="{% url 'attendance:list-machine-log' %}">{% trans 'Connect To Machine'%}</a></li> -->
+      <!-- <li><a class="sidebar-link" href="{% url 'attendance:list-attendance-deductions' %}">{% trans 'List Absence'%}</a></li> -->
       <li><a class="sidebar-link" href="{% url 'attendance:upload-attendance' %}">{% trans 'Upload Excel File' %}</a></li>
       <li><a class="sidebar-link" href="{% url 'attendance:user-list-attendance' %}">{% trans 'Manual Attendance' %}</a></li>
-      <li><a class="sidebar-link" href="{% url 'attendance:list-machine-log' %}">{% trans 'Connect To Machine'%}</a></li>
-      <li><a class="sidebar-link" href="{% url 'attendance:list-attendance-deductions' %}">{% trans 'List Absence'%}</a></li>
     </ul>
   </li>
   {% endif %}
