@@ -51,7 +51,8 @@ class Attendance(models.Model):
     check_out = models.TimeField(blank=True, null=True, )
     status = models.CharField(max_length=100, blank=True, null=True)
     work_hours = models.CharField(max_length=100, blank=True, null=True)
-    normal_hrs = models.DecimalField(decimal_places=2, max_digits=4, blank=True, null=True, default=0)
+    normal_hrs = models.DecimalField(
+        decimal_places=2, max_digits=4, blank=True, null=True, default=0)
     normal_overtime_hours = models.DurationField(blank=True, null=True)
     exceptional_hrs = models.TimeField(blank=True, null=True)
     exceptional_overtime = models.TimeField(blank=True, null=True)
@@ -98,7 +99,8 @@ class Attendance(models.Model):
         #                                    seconds=hrs_end_at.second)
         # difference = first_delta - second_delta
 
-        difference = datetime.combine(datetime.now(), self.check_out) - datetime.combine(datetime.now(), hrs_end_at)
+        difference = datetime.combine(
+            datetime.now(), self.check_out) - datetime.combine(datetime.now(), hrs_end_at)
         return difference
 
     @property
@@ -111,7 +113,8 @@ class Attendance(models.Model):
         # second_delta = mydatetime.timedelta(hours=hrs_start_from.hour, minutes=hrs_start_from.minute,
         #                                     seconds=hrs_start_from.second)
         # difference = first_delta - second_delta
-        difference = datetime.combine(datetime.now(), self.check_in) - datetime.combine(datetime.now(), hrs_start_from)
+        difference = datetime.combine(
+            datetime.now(), self.check_in) - datetime.combine(datetime.now(), hrs_start_from)
         return difference
 
 
@@ -126,9 +129,11 @@ class Employee_Attendance_History(models.Model):
                                  on_delete=models.CASCADE)
     month = models.PositiveIntegerField(choices=month_list)
     year = models.PositiveIntegerField()
-    attendance_days = models.PositiveIntegerField(default=0, blank=True, null=True)
+    attendance_days = models.PositiveIntegerField(
+        default=0, blank=True, null=True)
     leave_days = models.PositiveIntegerField(default=0, blank=True, null=True)
-    absence_days = models.PositiveIntegerField(default=0, blank=True, null=True)
+    absence_days = models.PositiveIntegerField(
+        default=0, blank=True, null=True)
     slug = models.SlugField(blank=True, null=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                                    blank=True, null=True, related_name='employee_attendance_history_created_by')
@@ -143,9 +148,12 @@ class Employee_Attendance_History(models.Model):
 
 
 class Task(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=1)
-    attendance = models.ForeignKey(Attendance, related_name='attendance', on_delete=models.CASCADE)
-    task = models.ForeignKey(Project_Task, related_name='user_tasks', on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE, default=1)
+    attendance = models.ForeignKey(
+        Attendance, related_name='attendance', on_delete=models.CASCADE)
+    task = models.ForeignKey(
+        Project_Task, related_name='user_tasks', on_delete=models.CASCADE)
     start_time = models.TimeField()
     end_time = models.TimeField(blank=True, null=True)
     slug = models.SlugField(blank=True, null=True)
@@ -179,17 +187,21 @@ def working_time(sender, instance, *args, **kwargs):
             overtime = instance.how_much_overtime
             instance.normal_overtime_hours = overtime
         else:
-            instance.normal_overtime_hours = mydatetime.timedelta(hours=0, minutes=0, seconds=0)
+            instance.normal_overtime_hours = mydatetime.timedelta(
+                hours=0, minutes=0, seconds=0)
         if instance.delay:
             delay = instance.how_much_delay
             instance.delay_hrs = delay
         else:
-            instance.delay_hrs = mydatetime.timedelta(hours=0, minutes=0, seconds=0)
+            instance.delay_hrs = mydatetime.timedelta(
+                hours=0, minutes=0, seconds=0)
     elif instance.check_in and not instance.check_out:
         instance.status = "N"
         instance.work_hours = 0
-        instance.normal_overtime_hours = mydatetime.timedelta(hours=0, minutes=0, seconds=0)
-        instance.delay_hrs = mydatetime.timedelta(hours=0, minutes=0, seconds=0)
+        instance.normal_overtime_hours = mydatetime.timedelta(
+            hours=0, minutes=0, seconds=0)
+        instance.delay_hrs = mydatetime.timedelta(
+            hours=0, minutes=0, seconds=0)
 
     elif not instance.check_in and not instance.check_out:
         if instance.employee.user is not None and is_day_a_leave(instance.employee.user.id, instance.date):
@@ -203,8 +215,10 @@ def working_time(sender, instance, *args, **kwargs):
             difference = datetime.combine(datetime.now(), instance.check_out) - datetime.combine(datetime.now(),
                                                                                                  instance.check_in)
             instance.work_hours = strfdelta(difference, "%H:%M:%S")
-            instance.normal_overtime_hours = mydatetime.timedelta(hours=0, minutes=0, seconds=0)
-            instance.delay_hrs = mydatetime.timedelta(hours=0, minutes=0, seconds=0)
+            instance.normal_overtime_hours = mydatetime.timedelta(
+                hours=0, minutes=0, seconds=0)
+            instance.delay_hrs = mydatetime.timedelta(
+                hours=0, minutes=0, seconds=0)
         elif is_day_a_service(instance.employee.id, instance.date):
             instance.status = "S"
             instance.check_in = \
@@ -216,8 +230,10 @@ def working_time(sender, instance, *args, **kwargs):
             difference = datetime.combine(datetime.now(), instance.check_out) - datetime.combine(datetime.now(),
                                                                                                  instance.check_in)
             instance.work_hours = strfdelta(difference, "%H:%M:%S")
-            instance.normal_overtime_hours = mydatetime.timedelta(hours=0, minutes=0, seconds=0)
-            instance.delay_hrs = mydatetime.timedelta(hours=0, minutes=0, seconds=0)
+            instance.normal_overtime_hours = mydatetime.timedelta(
+                hours=0, minutes=0, seconds=0)
+            instance.delay_hrs = mydatetime.timedelta(
+                hours=0, minutes=0, seconds=0)
 
         else:
             instance.status = "A"

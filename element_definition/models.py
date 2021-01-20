@@ -77,7 +77,8 @@ class Element(models.Model):
                             blank=True, verbose_name=_('code'))
     element_type = models.CharField(
         max_length=100, choices=element_type_choices)
-    amount_type = models.CharField(max_length=100, choices=amount_type_choices, null=True, blank=True)
+    amount_type = models.CharField(
+        max_length=100, choices=amount_type_choices, null=True, blank=True)
     fixed_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Amount'), null=True,
                                        blank=True, )
     element_formula = models.TextField(
@@ -146,7 +147,8 @@ def backup_elements(sender, instance, **kwargs):
             el.save()
 
         # update the values for emp elements
-        emp_element_list_current = employee.models.Employee_Element.objects.filter(element_id=instance)
+        emp_element_list_current = employee.models.Employee_Element.objects.filter(
+            element_id=instance)
         for emp_element_curr in emp_element_list_current:
             emp_element_curr.element_value = instance.fixed_amount
             emp_element_curr.last_update_by = instance.last_update_by
@@ -168,23 +170,27 @@ class ElementHistory(models.Model):
     classification = models.ForeignKey(LookupDet, on_delete=models.CASCADE,
                                        verbose_name=_('classification'),
                                        blank=True, null=True)
-    element_name = models.CharField(max_length=100, verbose_name=_('Pay Name'), null=True, blank=True)
+    element_name = models.CharField(
+        max_length=100, verbose_name=_('Pay Name'), null=True, blank=True)
     code = models.CharField(max_length=50, null=True,
                             blank=True, verbose_name=_('code'))
     element_type = models.CharField(
         max_length=100, choices=element_type_choices, null=True, blank=True)
-    amount_type = models.CharField(max_length=100, choices=amount_type_choices, null=True, blank=True)
+    amount_type = models.CharField(
+        max_length=100, choices=amount_type_choices, null=True, blank=True)
     fixed_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Amount'), null=True,
                                        blank=True, )
     element_formula = models.TextField(
         max_length=255, null=True, blank=True, verbose_name=_('Formula'))
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, blank=True, null=True)
+    content_type = models.ForeignKey(
+        ContentType, on_delete=models.CASCADE, blank=True, null=True)
     object_id = models.PositiveIntegerField(blank=True, null=True)
     based_on = GenericForeignKey()
     appears_on_payslip = models.BooleanField(
         verbose_name=_('Appears on payslip'), default=True, null=True, blank=True)
     sequence = models.IntegerField(null=True, blank=True, )
-    tax_flag = models.BooleanField(verbose_name=_('Tax Flag'), default=False, null=True, blank=True)
+    tax_flag = models.BooleanField(verbose_name=_(
+        'Tax Flag'), default=False, null=True, blank=True)
     scheduled_pay = models.CharField(
         max_length=100, choices=scheduled_pay_choices, null=True, blank=True)
     start_date = models.DateField(
@@ -193,10 +199,12 @@ class ElementHistory(models.Model):
         auto_now=False, auto_now_add=False, null=True, blank=True, verbose_name=_('End Date'))
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE,
                                    related_name="element_history_is_created_by")
-    creation_date = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True, )
+    creation_date = models.DateField(
+        auto_now=False, auto_now_add=False, null=True, blank=True, )
     last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                                        related_name="element_history_is_last_update_by", null=True, blank=True)
-    last_update_date = models.DateField(auto_now=False, auto_now_add=False, null=True, blank=True, )
+    last_update_date = models.DateField(
+        auto_now=False, auto_now_add=False, null=True, blank=True, )
 
     def __str__(self):
         return self.element_name
@@ -231,7 +239,8 @@ def update_emp_element(sender, instance, **kwargs):
         Q(end_date__gt=date.today()) | Q(end_date__isnull=True)).values('employee')
     if instance.pk is None:
         for linked_emp in linked_employees:
-            employee_inst = employee.models.Employee.objects.get(id=linked_emp['employee'])
+            employee_inst = employee.models.Employee.objects.get(
+                id=linked_emp['employee'])
             employee_element_obj = employee.models.Employee_Element(
                 emp_id=employee_inst,
                 element_id=instance.element,
@@ -271,7 +280,8 @@ class Element_Master(models.Model):
     enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name='enterprise_element_master',
                                    verbose_name=_('Enterprise Name'))
     element_name = models.CharField(max_length=100, verbose_name=_('Pay Name'))
-    db_name = models.CharField(max_length=50, null=True, blank=True, verbose_name=_('db Name'))
+    db_name = models.CharField(
+        max_length=50, null=True, blank=True, verbose_name=_('db Name'))
     basic_flag = models.BooleanField(default=False)
     element_type = models.ForeignKey(LookupDet, on_delete=models.CASCADE, null=True, blank=True,
                                      related_name='lookup_element', verbose_name=_('Pay Type'))
