@@ -17,9 +17,10 @@ from manage_payroll.models import Payroll_Master
 from defenition.models import LookupDet
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import to_locale, get_language
-
+from payroll_run.payslip_functions import PayslipFunction
 
 ################################################################################
+
 
 def installElementMaster(request):
     element_type_obj = LookupDet.objects.get(id=7)
@@ -68,7 +69,8 @@ def createElementView(request):
             element_obj.enterprise = request.user.company
             element_obj.created_by = request.user
             element_obj.last_update_by = request.user
-            element_obj.db_name = getDBSec(rows_number, request.user.company.id)
+            element_obj.db_name = getDBSec(
+                rows_number, request.user.company.id)
             element_obj.basic_flag = False
             element_obj.save()
             return redirect('element_definition:list-element')
@@ -113,7 +115,7 @@ def create_new_element(request):
     element_form = ElementForm(user=request.user)
     if request.method == "POST":
         user_lang = to_locale(get_language())
-        element_form = ElementForm(request.POST,user=request.user)
+        element_form = ElementForm(request.POST, user=request.user)
         if element_form.is_valid():
             elem_obj = element_form.save(commit=False)
             elem_obj.created_by = request.user
@@ -136,11 +138,11 @@ def create_new_element(request):
 
 def update_element_view(request, pk):
     element = get_object_or_404(Element, pk=pk)
-    element_master_form = ElementForm(instance=element,user=request.user)
+    element_master_form = ElementForm(instance=element, user=request.user)
     if request.method == 'POST':
         user_lang = to_locale(get_language())
         element_master_form = ElementForm(
-            request.POST, instance=element,user=request.user)
+            request.POST, instance=element, user=request.user)
         if element_master_form.is_valid():
             element_obj = element_master_form.save(commit=False)
             element_obj.last_update_by = request.user
@@ -303,13 +305,15 @@ def create_salary_structure_with_elements_view(request):
     elements_inlines = ElementInlineFormset(form_kwargs={'user': request.user})
     if request.method == 'POST':
         structure_form = SalaryStructureForm(request.POST)
-        elements_inlines = ElementInlineFormset(request.POST,form_kwargs={'user': request.user})
+        elements_inlines = ElementInlineFormset(
+            request.POST, form_kwargs={'user': request.user})
         if structure_form.is_valid():
             structure_obj = structure_form.save(commit=False)
             structure_obj.created_by = request.user
             structure_obj.enterprise = request.user.company
             structure_obj.save()
-            elements_inlines = ElementInlineFormset(request.POST, instance=structure_obj,form_kwargs={'user': request.user})
+            elements_inlines = ElementInlineFormset(
+                request.POST, instance=structure_obj, form_kwargs={'user': request.user})
             if elements_inlines.is_valid():
                 elements_objs = elements_inlines.save(commit=False)
                 for elements_obj in elements_objs:
@@ -330,21 +334,24 @@ def update_salary_structure_with_elements_view(request, pk):
     structure_form = SalaryStructureForm(instance=structure_instance)
     list_of_active_links = StructureElementLink.objects.filter(salary_structure=structure_instance).filter(
         Q(end_date__gt=date.today()) | Q(end_date__isnull=True))
-    elements_inlines = ElementInlineFormset(instance=structure_instance, queryset=list_of_active_links,form_kwargs={'user': request.user})
+    elements_inlines = ElementInlineFormset(
+        instance=structure_instance, queryset=list_of_active_links, form_kwargs={'user': request.user})
     if request.method == 'POST':
-        structure_form = SalaryStructureForm(request.POST, instance=structure_instance)
+        structure_form = SalaryStructureForm(
+            request.POST, instance=structure_instance)
         elements_inlines = ElementInlineFormset(
-            request.POST, instance=structure_instance,form_kwargs={'user': request.user})
+            request.POST, instance=structure_instance, form_kwargs={'user': request.user})
         if structure_form.is_valid() and elements_inlines.is_valid():
             structure_obj = structure_form.save(commit=False)
             structure_obj.last_update_by = request.user
             structure_obj.save()
             elements_inlines = ElementInlineFormset(
-                request.POST, instance=structure_obj,form_kwargs={'user': request.user})
+                request.POST, instance=structure_obj, form_kwargs={'user': request.user})
             if elements_inlines.is_valid():
                 obj_det = elements_inlines.save(commit=False)
                 for obj in obj_det:
-                    obj.created_by = (request.user if obj.pk is None else obj.created_by)
+                    obj.created_by = (
+                        request.user if obj.pk is None else obj.created_by)
                     obj.last_update_by = request.user
                     obj.save()
                 success_msg = 'Salary structure {} updated Successfully'.format(
@@ -386,7 +393,8 @@ def delete_salary_structure_with_elements_view(request, pk):
         for y in required_employee_elements:
             y.delete()
 
-        success_msg = '{} was deleted successfully'.format(required_salary_structure)
+        success_msg = '{} was deleted successfully'.format(
+            required_salary_structure)
         messages.success(request, success_msg)
     except Exception as e:
         error_msg = '{} cannot be deleted '.format(required_salary_structure)

@@ -67,21 +67,28 @@ def add_leave(request):
                 if valid_leave(request.user, leave_form.cleaned_data['startdate'], leave_form.cleaned_data['enddate']):
                     leave = leave_form.save(commit=False)
                     leave.user = request.user
-                    leave.save()
                     required_employee = Employee.objects.get(user=request.user)
-                    employee_job.manager = leave.check_manger(
-                        required_employee)
-                    requestor_email = employee.email
-                    team_leader_email = employee_job.manager.email
-                    # print(team_leader_email)
-                    html_message = message_composer(request, html_template='leave_mail.html', instance_name=leave,
-                                                    result=None)
-                    email_sender('Applying for a leave', 'Applying for a leave', requestor_email,
-                                 team_leader_email, html_message)
+                    check_validate_balance=Employee_Leave_balance.check_balance(
+                        required_employee, leave_form.data['startdate'], leave_form.data['enddate'])
+                    if check_validate_balance:
+                        leave.save()
+                        employee_job.manager = leave.check_manger(
+                            required_employee)
+                        print(leave.check_manger(required_employee))
+                        if employee_job.manager:
+                            NotificationHelper(
+                                employee, employee_job.manager, leave).send_notification()
+                        requestor_email = employee.email
+                        team_leader_email = employee_job.manager.email
+                        # print(team_leader_email)
+                        html_message = message_composer(request, html_template='leave_mail.html', instance_name=leave,
+                                                        result=None)
+                        email_sender('Applying for a leave', 'Applying for a leave', requestor_email,
+                                    team_leader_email, html_message)
 
-                    messages.add_message(request, messages.SUCCESS,
-                                         'Leave Request was created successfully')
-                    return redirect('leave:list_leave')
+                        messages.add_message(request, messages.SUCCESS,
+                                            'Leave Request was created successfully')
+                        return redirect('leave:list_leave')
                 else:
                     leave_form.add_error(
                         None, "Requested leave intersects with another leave")

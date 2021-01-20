@@ -11,7 +11,7 @@ from datetime import date
 from django.utils.translation import ugettext_lazy as _
 from .manager import LeaveManager
 from company.models import Enterprise
-from datetime import date
+from datetime import date, datetime
 
 
 class LeaveMaster(models.Model):
@@ -179,6 +179,47 @@ class Employee_Leave_balance(models.Model):
 
     def __str__(self):
         return self.employee.emp_name
+
+    def check_balance(emp_id, start_date, end_date):
+        employee_leave_balance = Employee_Leave_balance.objects.get(
+            employee=emp_id)
+        total_balance = employee_leave_balance.total_balance
+        needed_days = datetime.strptime(
+            end_date, '%m/%d/%Y')-datetime.strptime(start_date, '%m/%d/%Y')
+        print("casual", employee_leave_balance.casual,
+              "usual", employee_leave_balance.usual, "total", total_balance, "needed", needed_days)
+        if total_balance >= needed_days.days:
+            if employee_leave_balance.casual > 0:
+                if employee_leave_balance.casual > needed_days.days:
+                    new_balance = employee_leave_balance.casual-needed_days.days
+                    Employee_Leave_balance.objects.filter(
+                        employee=emp_id).update(casual=new_balance)
+                    print("casual", employee_leave_balance.casual,
+                          "usual", employee_leave_balance.usual)
+                    return True
+                else:
+                    new_balance = 0
+                    # calcuate the new balance
+                    new_balance += needed_days.days-employee_leave_balance.casual
+                    # set cascual=0
+                    Employee_Leave_balance.objects.filter(
+                        employee=emp_id).update(casual=0)
+                    # calcuate the usual balance
+                    new_usual_balance = employee_leave_balance.usual-new_balance
+                    # update
+                    Employee_Leave_balance.objects.filter(
+                        employee=emp_id).update(usual=new_usual_balance)
+                    print("casual", employee_leave_balance.casual,
+                          "usual", employee_leave_balance.usual)
+                    return True
+            elif employee_leave_balance.usual > 0:
+                new_balance = employee_leave_balance.usual-needed_days.days
+                Employee_Leave_balance.objects.filter(
+                    employee=emp_id).update(usual=new_balance)
+                print("casual", employee_leave_balance.casual,
+                      "usual", employee_leave_balance.usual)
+                return True
+        return False
 
 
 @receiver(post_save, sender=Leave)
