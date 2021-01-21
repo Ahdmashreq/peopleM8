@@ -3,8 +3,36 @@
 {% load crispy_forms_tags %}
 {% load l10n %}
 {% load i18n %}
-{% block body%}
 
+
+{% block style %}
+<style>
+  p {
+    color: red;
+  }
+
+  table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  td,
+  th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+
+  tr:nth-child(even) {
+    background-color: #dddddd;
+  }
+</style>
+{% endblock style %}
+
+
+
+{% block body%}
 <div class="container-fluid">
   <div class="row" style="margin-left:0px;">
     <div class="col-md-8">
@@ -19,46 +47,79 @@
   <div class="row" style="margin-left:0px;">
     <div class="col-md-12">
       <div class="bgc-white bd bdrs-3 p-20 mB-20">
-        <table class="table table-striped table-bordered" id="dataTable"  width="100%">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th style="width: 552px;">{% trans "Task Name" %}</th>
-              <th>{% trans "Project" %}</th>
-              <th>{% trans "Status" %}</th>
-              <th>{% trans "Assignee" %}</th>
-              <th>{% trans "Assigned To" %}</th>
-              <th>{% trans "Days" %}</th>
-              <th>{% trans "Hours" %}</th>
-              <th>{% trans "Actions" %}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for x in all_tasks %}
-            <tr>
-              <th scope="row">{{ forloop.counter }}</th>
-              <td>{{ x.task_name }}</td>
-              <td>{{ x.project }}</td>
-              <td>{{ x.status }}</td>
-              <td>{{ x.assignee }}</td>
-              <td>{{ x.assigned_to }}</td>
-              <td>{{ x.duration_days }}</td>
-              <td>{{ x.total_hours }}</td>
-              <td class="Actions">
-                <div class="w-100 gap-10 peers">
-                  <div class="peer">
-                    <a href="{% url 'task_management:task-update' task_id=x.id %}">
-                      <button type="button" class="btn cur-p btn-outline-primary">{% trans "Update" %}</button>
-                    </a>
-                  </div>
-                </div>
-              </td>
-            </tr>
+        <div class="accordion accordion-flush" id="accordionFlushExample">
+          {% for all_projects in grouped_project %}
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="flush-headingOne_{{forloop.counter}}">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne_{{forloop.counter}}" aria-expanded="false" aria-controls="flush-collapseOne_{{forloop.counter}}">
+                {{ all_projects.project__name }}
+              </button>
+            </h2>
+            <div id="flush-collapseOne_{{forloop.counter}}" class="accordion-collapse collapse" aria-labelledby="flush-headingOne_{{forloop.counter}}" data-bs-parent="#accordionFlushExample">
+              <div class="accordion-body">
+                <table class="table table-striped table-bordered" id="datatable" width="100%">
+                  <thead>
+                    <tr>
+                      <th>{% trans "Task Name" %}</th>
+                      <th>{% trans "Status" %}</th>
+                      <th>{% trans "Assignee" %}</th>
+                      <th>{% trans "Assigned To" %}</th>
+                      <th>{% trans "Days" %}</th>
+                      <th>{% trans "Hours" %}</th>
+                      <th>{% trans "Actions" %}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for x in all_tasks %}
+                    {% if x.project.id == all_projects.project__id %}
+                    <tr>
+                      <td>{{ x.task_name }}</td>
+                      <td>{{ x.status }}</td>
+                      <td>{{ x.assignee }}</td>
+                      <td>{{ x.assigned_to }}</td>
+                      <td>{{ x.duration_days }}</td>
+                      <td>{{ x.total_hours }}</td>
+                      <td class="Actions">
+                        <div class="w-100 gap-10 peers">
+                          <div class="peer">
+                            <a href="{% url 'task_management:task-update' task_id=x.id %}">
+                              <button type="button" class="btn cur-p btn-outline-primary">{% trans "Update" %}</button>
+                            </a>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    {% endif %}
+                  {% endfor %}
+                </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
           {% endfor %}
-        </tbody>
-        </table>
+        </div>
       </div>
     </div>
   </div>
 </div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js" integrity="sha384-q2kxQ16AaE6UbzuKqyBE9/u/KzioAlnx2maXQHiDX9d4/zp8Ok3f+M7DPm+Ib6IU" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-pQQkAEnwaBkjpqZ8RU1fF1AKtTcHJwFl3pblpTlHXybJjHpMYo79HY3hIi4NKxyj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+
 {% endblock body%}
+
+{% block js %}
+<script type="text/javascript" defer="defer">
+$(document).ready(function() {
+    $("table[id^='datatable']").DataTable( {
+        "scrollY": "600px",
+        "scrollCollapse": true,
+        "searching": true,
+        "paging": true
+    } );
+} );
+</script>
+{% endblock js %}

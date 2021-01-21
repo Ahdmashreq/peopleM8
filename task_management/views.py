@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
@@ -13,6 +13,8 @@ from custom_user.models import User
 from MashreqPayroll.utils import allowed_user
 from task_management.models import Project, Project_Task
 from task_management.forms import ProjectForm, Project_Tasks_ModelFormset, ProjectTaskForm
+
+
 
 @login_required(login_url='home:user-login')
 def project_list_view(request):
@@ -53,11 +55,15 @@ def project_task_list_view(request):
         all_tasks = Project_Task.objects.all()
     else:
         all_tasks = Project_Task.objects.filter(assigned_to=request.user)
+
+    grouped_project = all_tasks.values('project__name','project__id').annotate(project_count=Count('project_id'))
     project_context = {
                        'page_title':'List All Tasks',
                        'all_tasks':all_tasks,
+                       'grouped_project':grouped_project,
     }
     return render(request, 'list-tasks.html', project_context)
+
 
 
 @login_required(login_url='home:user-login')
