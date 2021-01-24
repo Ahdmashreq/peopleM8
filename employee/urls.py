@@ -19,6 +19,8 @@ urlpatterns =[
 
             path('link/employee/<int:pk>/structure/', views.create_link_employee_structure, name='link-structure-create'),
             path('update/link/employee/<int:pk>/structure/', views.update_link_employee_structure, name='link-structure-update'),
+            path('ajax/', views.change_element_value, name='change-element-value'),
+
     ])),
 
 ]

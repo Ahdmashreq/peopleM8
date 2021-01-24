@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.utils.translation import to_locale, get_language
-from element_definition.models import Element_Master, Element_Link
+from element_definition.models import Element_Master, Element_Link, Element
 from employee.models import (
     Employee, JobRoll, Payment, Employee_Element, EmployeeStructureLink)
 from employee.forms import (EmployeeForm, JobRollForm, Employee_Payment_formset,
@@ -18,6 +18,7 @@ from employee.fast_formula import FastFormula
 from manage_payroll.models import Payment_Method
 from custom_user.models import User
 from django.utils.translation import ugettext_lazy as _
+from django.http import JsonResponse
 
 ############################Employee View #################################
 @login_required(login_url='home:user-login')
@@ -180,6 +181,8 @@ def updateEmployeeView(request, pk):
         employee_has_structure = False
 
     employee_element_form = EmployeeElementForm()
+ 
+       
 
     if request.method == 'POST':
         emp_form = EmployeeForm(request.POST, instance=required_employee)
@@ -240,6 +243,7 @@ def updateEmployeeView(request, pk):
         else:
             messages.error(request, employee_element_form.errors)
 
+
     myContext = {
         "page_title": _("update employee"),
         "emp_form": emp_form,
@@ -249,10 +253,9 @@ def updateEmployeeView(request, pk):
         "employee_element_qs": employee_element_qs,
         "employee_has_structure": employee_has_structure,
         "employee_element_form": employee_element_form,
-        "get_employee_salary_structure": get_employee_salary_structure
+        "get_employee_salary_structure": get_employee_salary_structure,
     }
     return render(request, 'create-employee.html', myContext)
-
 
 @login_required(login_url='home:user-login')
 def create_link_employee_structure(request, pk):
@@ -336,3 +339,26 @@ def deleteEmployeeView(request, pk):
         messages.error(request, success_msg)
         raise e
     return redirect('employee:list-employee')
+
+
+
+
+def change_element_value(request): 
+    element = request.GET.get('element')
+    element_value = request.GET.get('value')
+    Employee_Element.objects.filter(id=element).update(element_value=element_value)
+    element_after_update = Employee_Element.objects.get(id=element)
+    element_after_update_element_value = element_after_update.element_value
+    
+    data = {'element_after_update_element_value' : element_after_update_element_value,
+           'element_value' : element_value
+            }
+    if element_after_update_element_value !=  element_value :
+        data['error_message'] = "Employee Element didn't save "
+
+   
+    return JsonResponse(data)
+    
+
+
+    

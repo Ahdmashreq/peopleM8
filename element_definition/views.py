@@ -757,3 +757,11 @@ def edit_custom_rule(request, pk):
         error_msg = 'لم يتم العثور على البيان المطلوب، قد يكون قد تم حذفة من قبل'
         messages.error(request, error_msg)
     return redirect('element_definition:custom_rules_list', by='')
+
+
+
+
+
+
+
+
