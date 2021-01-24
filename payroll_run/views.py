@@ -316,6 +316,9 @@ def userSalaryInformation(request, month_number, salary_year, salary_id,emp_id):
         'emp_elements_deductions': emp_elements_deductions,
         'emp_payment': emp_payment,
     }
+    sc = Salary_Calculator(company=request.user.company, employee=emp_id)
+    test=sc.calc_emp_deductions_amount()
+    print(test)
     return render(request, 'emp-payslip.html', monthSalaryContext)
 
 
