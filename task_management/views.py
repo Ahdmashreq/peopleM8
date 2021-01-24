@@ -51,7 +51,8 @@ def project_update_view(request):
 
 @login_required(login_url='home:user-login')
 def project_task_list_view(request):
-    if request.user.groups.get(user=request.user).name == 'Admin':
+    loged_in_user_groups = request.user.groups.filter(user=request.user)
+    if  'Admin' or 'PYTHON_DEV' in loged_in_user_groups:
         all_tasks = Project_Task.objects.all()
     else:
         all_tasks = Project_Task.objects.filter(assigned_to=request.user)
