@@ -18,6 +18,8 @@ from employee.fast_formula import FastFormula
 from manage_payroll.models import Payment_Method
 from custom_user.models import User
 from django.utils.translation import ugettext_lazy as _
+from django.http import JsonResponse
+
 
 ############################Employee View #################################
 @login_required(login_url='home:user-login')
@@ -336,3 +338,24 @@ def deleteEmployeeView(request, pk):
         messages.error(request, success_msg)
         raise e
     return redirect('employee:list-employee')
+
+
+
+
+
+
+def change_element_value(request):
+    element = request.GET.get('element')
+    element_value = request.GET.get('value')
+    Employee_Element.objects.filter(id=element).update(element_value=element_value)
+    element_after_update = Employee_Element.objects.get(id=element)
+    element_after_update_element_value = element_after_update.element_value
+
+    data = {'element_after_update_element_value' : element_after_update_element_value,
+           'element_value' : element_value
+            }
+    if element_after_update_element_value !=  element_value :
+        data['error_message'] = "Employee Element didn't save "
+
+
+    return JsonResponse(data)
