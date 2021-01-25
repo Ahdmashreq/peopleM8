@@ -189,7 +189,10 @@
           }
 
       });
-      document.getElementById("ele"+id).replaceWith(value)
+      v= document.getElementById("ele"+id)
+     console.log(v)
+
+     document.getElementById("ele"+id).innerHTML = value;
       };
    </script>
 
@@ -233,7 +236,7 @@
             }
 
         });
-        document.getElementById("el"+id).replaceWith(value)
+        document.getElementById("el"+id).innerHTML = value;
         };
      </script>
 {% endblock js %}
