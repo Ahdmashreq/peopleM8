@@ -342,8 +342,6 @@ def deleteEmployeeView(request, pk):
 
 
 
-
-
 def change_element_value(request):
     element = request.GET.get('element')
     element_value = request.GET.get('value')
