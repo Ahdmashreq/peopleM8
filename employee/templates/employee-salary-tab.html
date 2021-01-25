@@ -19,8 +19,48 @@
           {% if emp.element_id.classification.code == 'earn' %}
           <tr>
             <td>{{ emp.element_id }}</td>
-            <td>{{ emp.element_value}}</td>
-          </tr>
+            <td ><p id="ele{{emp.id}}">{{ emp.element_value }}</p></td>
+            {%  if emp.element_id.element_type == 'payslip based' %}
+            <td>
+                <a  class="fa fa-pencil" style="font-size:10px; color:#ED9943"
+                    data-toggle="modal" data-target="#update-{{emp.id}}">
+                </a>
+
+<div class="modal fade"  id="update-{{emp.id}}" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Update {{ emp.element_id }} Value</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form  method="POST">
+          {% csrf_token %}
+          <div class="form-row">
+            <div class="form-group col-md-12">
+              <input type="number" class="one" id="lname" name="lname">
+            </div>
+          </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" onclick="myFunction( {{emp.id}} )" class="btn btn-primary" name ='Save' data-dismiss="modal">Save Changes</button>
+        </div>
+
+      </form>
+    </div>
+
+    </div>
+  </div>
+</div>
+
+</td>
+</tr>
+          {% endif %}
           {% endif %}
           {% endfor %}
         </tbody>
@@ -43,8 +83,46 @@
           {% if emp_d.element_id.classification.code == 'deduct' %}
           <tr>
             <td>{{ emp_d.element_id }}</td>
-            <td>{{ emp_d.element_value}}</td>
-          </tr>
+            <td><p id="el{{emp_d.id}}">{{ emp_d.element_value}}</p></td>
+            {%  if emp_d.element_id.element_type == 'payslip based' %}
+            <td>
+                <a  class="fa fa-pencil" style="font-size:10px; color:#ED9943"
+                    data-toggle="modal" data-target="#update2-{{emp_d.id}}">
+                </a>
+
+<div class="modal fade"  id="update2-{{emp_d.id}}"tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Update {{ emp_d.element_id }} Value</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form  method="POST">
+          {% csrf_token %}
+          <div class="form-row">
+            <div class="form-group col-md-12">
+              <input type="number" class="two" id="lname" name="lname">
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" onclick="myFunction_2( {{emp_d.id}} )" class="btn btn-primary" name ='Save' data-dismiss="modal">Save Changes</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+</td>
+</tr>
+          {% endif %}
           {% endif %}
           {% endfor %}
         </tbody>
@@ -64,3 +142,95 @@
     {% endif %}
   </div>
 </div>
+
+
+{% block js %}
+<script>
+   var vala =1;
+
+     $( ".one" ).each(function () {
+       console.log(vala)
+       vala;
+       console.log(vala)
+     $( this ).change(function (){
+       vala;
+       console.log(vala)
+       console.log($(this).val());
+       vala =$(this).val();
+       console.log(vala)
+       return vala
+       });
+       return vala
+});
+
+
+     function myFunction(id) {
+     console.log(vala)
+     var value = vala
+     console.log(vala)
+     var element = id
+     console.log(value)
+     console.log(element)
+     $.ajax({
+         url: '/emp/employee/ajax/',
+         data : {
+             'element' :element,
+             'value' :value,
+         },
+         dataType : 'json',
+         success: function(data){
+             if (data.element_after_update_element_value != data.element_value){
+                 alert(data.error_message);
+             }
+         }
+
+     });
+     console.console.log(id);
+     document.getElementById("ele"+id).replaceWith(value)
+     };
+  </script>
+
+  <script>
+     var vala =1;
+
+       $( ".two" ).each(function () {
+         console.log(vala)
+         vala;
+         console.log(vala)
+       $( this ).change(function (){
+         vala;
+         console.log(vala)
+         console.log($(this).val());
+         vala =$(this).val();
+         console.log(vala)
+         return vala
+         });
+         return vala
+ });
+
+
+       function myFunction_2(id) {
+       console.log(vala)
+       var value = vala
+       console.log(vala)
+       var element = id
+       console.log(value)
+       console.log(element)
+       $.ajax({
+           url: '/emp/employee/ajax/',
+           data : {
+               'element' :element,
+               'value' :value,
+           },
+           dataType : 'json',
+           success: function(data){
+               if (data.element_after_update_element_value != data.element_value){
+                   alert(data.error_message);
+               }
+           }
+
+       });
+       document.getElementById("el"+id).replaceWith(value)
+       };
+    </script>
+    {% endblock js %}
