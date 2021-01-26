@@ -356,6 +356,4 @@ def change_element_value(request):
             }
     if element_after_update_element_value !=  element_value :
         data['error_message'] = "Employee Element didn't save "
-
-
     return JsonResponse(data)
