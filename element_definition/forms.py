@@ -47,7 +47,6 @@ class ElementForm(forms.ModelForm):
             Q(end_date__gt=date.today()) | Q(end_date__isnull=True))   
         self.fields['element_type'].widget.attrs['onchange'] = 'myFunction(this)'
         self.fields['amount_type'].widget.attrs['onchange'] = 'check_amount_type(this)'
-        self.fields['based_on'].widget.attrs['onchange'] = 'genrate_code()'
         self.fields['classification'].queryset = LookupDet.objects.filter(
             lookup_type_fk__lookup_type_name='ELEMENT_CLASSIFICATION', lookup_type_fk__enterprise=user.company).filter(
             Q(end_date__gt=date.today()) | Q(end_date__isnull=True))

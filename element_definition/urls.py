@@ -11,6 +11,8 @@ urlpatterns=[
                 path('list/', views.list_elements_view, name='list-element'),
                 path('update/<int:pk>/', views.update_element_view, name='update-element'),
                 path('delete/<int:pk>/', views.delete_element_view, name='delete-element'),
+                path('ajax/', views.fast_formula, name=' fast_formula'),
+
     ])),
     path('batch/', include([
                 ######################### ElementBatch URLs ################################

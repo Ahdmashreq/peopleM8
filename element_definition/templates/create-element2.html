@@ -65,8 +65,13 @@
               {{ element_master_form.fixed_amount }}
             </div>
 
-            
 
+            <div class="form-group col-md-2" id="formula" style="display: none;">
+              <label>formula</label>
+                  {{ element_master_form.element_formula }}
+            </div>
+
+      
             <div class="form-group col-md-2" id="percentage">
               <label>Percentage</label>
                   {{ element_master_form.percentage }}
@@ -236,28 +241,18 @@ function check_amount_type(object) {
 
 <script>
  
-  
-  function genrate_code(){
-    var based_on =$('#based_on')
+$('#id_based_on').change(function (){
+    base =$(this).val();
     var sign = $('#id_arithmetic_signs').val();
     var percentage = $('#id_percentage').val();
-    console.log(sign)
-    console.log(percentage)
 
-    console.log("1")
+    sign_string = String(sign)
+    percentage_string = String(percentage)
+    base_string = String(base)
+    code = percentage_string + " " + sign_string + " " + base_string
+    formula.innerh = code
 
-    console.log(based_on)
-
-    based_on.change(function (){
-          base =$('#based_on').val();
-          console.log(base)
-          return base
-          });
-
-  }
-
-
-
+    document.getElementById("id_element_formula").innerHTML = code;
+            });
 </script>
 {% endblock js %}
-
