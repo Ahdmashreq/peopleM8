@@ -327,3 +327,16 @@ class Employee_Element_History(models.Model):
 
     def __str__(self):
         return self.emp_id.emp_name + ' / ' + self.element_id.element_name
+        
+class Employee_File(models.Model):
+    emp_id = models.ForeignKey(Employee , on_delete=models.CASCADE)
+    name = models.CharField(max_length=60, verbose_name=_('File Name'))
+    emp_file = models.FileField(upload_to="uploads/" , blank=True , null=True)
+    created_at = models.DateField(auto_now_add=True, null=True)
+    last_updated_at = models.DateField(null=True, auto_now=True, auto_now_add=False)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True,
+                                   related_name="file_created_by")
+    last_updated_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+
+    def __str__(self):
+        return self.emp_file
