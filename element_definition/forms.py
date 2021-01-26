@@ -22,8 +22,18 @@ common_items_to_execlude = ('id',
                             'attribute13', 'attribute14', 'attribute15',
                             )
 
+Arithmetic_Signs= [
+    ('%', '%'),
+    ('+', '+'),
+    ('-', '-'),
+    ('*', '*'),
+    ('/', '/'),
+    ]
+
 
 class ElementForm(forms.ModelForm):
+    percentage = forms.DecimalField(max_digits=200, decimal_places=20, initial=0)
+    arithmetic_signs = forms.CharField(widget=forms.Select(choices=Arithmetic_Signs))
     class Meta:
         model = Element
         exclude = common_items_to_execlude
