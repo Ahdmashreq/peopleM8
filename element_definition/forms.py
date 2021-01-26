@@ -22,8 +22,18 @@ common_items_to_execlude = ('id',
                             'attribute13', 'attribute14', 'attribute15',
                             )
 
+Arithmetic_Signs= [
+    ('%', '%'),
+    ('+', '+'),
+    ('-', '-'),
+    ('*', '*'),
+    ('/', '/'),
+    ]                            
+
 
 class ElementForm(forms.ModelForm):
+    percentage = forms.DecimalField(max_digits=200, decimal_places=20, initial=0)
+    arithmetic_signs = forms.CharField(widget=forms.Select(choices=Arithmetic_Signs))
     class Meta:
         model = Element
         exclude = common_items_to_execlude
@@ -34,9 +44,10 @@ class ElementForm(forms.ModelForm):
         self.fields['start_date'].widget.input_type = 'date'
         self.fields['end_date'].widget.input_type = 'date'
         self.fields['based_on'].queryset = Element.objects.filter(enterprise=user.company).filter(
-            Q(end_date__gt=date.today()) | Q(end_date__isnull=True))
+            Q(end_date__gt=date.today()) | Q(end_date__isnull=True))   
         self.fields['element_type'].widget.attrs['onchange'] = 'myFunction(this)'
         self.fields['amount_type'].widget.attrs['onchange'] = 'check_amount_type(this)'
+        self.fields['based_on'].widget.attrs['onchange'] = 'genrate_code()'
         self.fields['classification'].queryset = LookupDet.objects.filter(
             lookup_type_fk__lookup_type_name='ELEMENT_CLASSIFICATION', lookup_type_fk__enterprise=user.company).filter(
             Q(end_date__gt=date.today()) | Q(end_date__isnull=True))
