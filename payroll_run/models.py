@@ -11,6 +11,7 @@ from element_definition.models import Element_Batch
 from manage_payroll.models import Assignment_Batch, Payroll_Master
 from payroll_run.new_tax_rules import Tax_Deduction_Amount
 from django.utils.translation import ugettext_lazy as _
+from element_definition.models import Element
 
 month_name_choises = [
     (1, _('January')), (2, _('February')), (3, _('March')), (4, _('April')),
@@ -19,6 +20,8 @@ month_name_choises = [
                           ), (11, _('November')), (12, _('December')),
 ]
 
+elements_to_run_choices = [('appear', 'Appear on Payslip'), ('no_appear', 'Do not Appear on Payslip')]
+
 
 class Salary_elements(models.Model):
     class Meta:
@@ -26,13 +29,16 @@ class Salary_elements(models.Model):
 
     emp = models.ForeignKey(Employee, on_delete=models.CASCADE,
                             null=True, blank=True, verbose_name=_('Employee'))
+
     salary_month = models.IntegerField(choices=month_name_choises, validators=[
         MaxValueValidator(12), MinValueValidator(1)], verbose_name=_('Salary Month'))
     salary_year = models.IntegerField(verbose_name=_('Salary Year'))
     run_date = models.DateField(auto_now=False, auto_now_add=False,
                                 default=date.today, blank=True, null=True, verbose_name=_('Run Date'))
-    element_batch = models.ForeignKey(
-        Element_Batch, on_delete=models.CASCADE, null=True, blank=True, verbose_name=_('Element Batch'))
+    elements_type_to_run = models.CharField(max_length=50, verbose_name=_('Run on Elements'), choices=elements_to_run_choices,
+                                            default='appear')
+    element = models.ForeignKey(
+        Element, on_delete=models.CASCADE, null=True, blank=True, verbose_name=_('Element'))
     assignment_batch = models.ForeignKey(
         Assignment_Batch, on_delete=models.CASCADE, null=True, blank=True, verbose_name=_('Assignment Batch'))
     ################################### Incomes/ allowances ####################

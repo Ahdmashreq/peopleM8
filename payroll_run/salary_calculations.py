@@ -132,12 +132,12 @@ class Salary_Calculator:
     #     return absence_days
     # calculate total employee earnings
     def calc_emp_income(self):
+        #TODO filter employee element with start date
         emp_allowance = Employee_Element.objects.filter(element_id__classification__code='earn',
                                                         emp_id=self.employee).filter(
             (Q(end_date__gt=date.today()) | Q(end_date__isnull=True)))
 
         total_earnnings = 0.0
-        total_earnnings = total_earnnings
         #earning | type_amount | mounthly
         for x in emp_allowance:
             payslip_func = PayslipFunction()
@@ -166,6 +166,7 @@ class Salary_Calculator:
     # calculate employee deductions without social insurance
     #3 + deduction
     def calc_emp_deductions_amount(self):
+        # TODO : Need to filter with start date
         emp_deductions = Employee_Element.objects.filter(
             element_id__classification__code='deduct', emp_id=self.employee).filter(
             (Q(end_date__gte=date.today()) | Q(end_date__isnull=True)))
