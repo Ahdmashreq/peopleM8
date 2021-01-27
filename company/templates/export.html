@@ -5,19 +5,41 @@
 {% load i18n %}
 {% block body%}
 
-<h3>Export Data</h3>
-<p>exporting from database</p>
-<form method="post" enctype="multipart/form-data">
+
+<div class="container-fluid">
+  <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    <p>Please select format of file.</p>
-    <select name="file-format" class="form-control my-3">
-        <option selected>Choose format...</option>
-        <option>CSV</option>
-        <option>JSON</option>
-        <option>XLS (Excel)</option>
-      </select>
-    <button class="btn btn-primary" type="submit">Export</button>
+    <!--  -->
+    <div class="row">
+      <div class="col-md-8">
+        <h4 class="c-grey-900">{{page_title|title}}</h4>
+      </div>
+      <div class="col-md-4">
+        <div class="gap-10 peers push-right">
+          <div class="peer">
+            <button type="submit" class="btn cur-p btn-primary">{% trans "Export" %}</button>
+          </div>
+          <div class="peer">
+            <a href="{% url 'company:list-department' %}" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-1">
+      <div class="bgc-white p-20 bd">
+        <div class="mT-30">
+          <div class="form-row">
+            <div class="form-group col-md-3">
+              <select name="file-format" class="form-control my-3">
+                <option selected>Choose format...</option>
+                <option>CSV</option>
+                <option>JSON</option>
+                <option>XLS (Excel)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
   </form>
-  <a href="{% url 'company:list-department' %}" >Return </a>
-  
-  {% endblock body%}
+</div>
+{% endblock body%}
