@@ -44,12 +44,12 @@
               <label>{{ element_master_form.scheduled_pay.label }}</label>
               {{ element_master_form.scheduled_pay }}
             </div>
-             <div class="form-group col-md-4" id="element_type">
+            <div class="form-group col-md-4" id="element_type">
               <label>{{ element_master_form.element_type.label }}</label>
               {{ element_master_form.element_type }}
             </div>
-              <div class="form-group col-md-4">
-                <label>{{ element_master_form.appears_on_payslip.label }}</label>
+            <div class="form-group col-md-4">
+              <label>{{ element_master_form.appears_on_payslip.label }}</label>
               {{ element_master_form.appears_on_payslip}}
             </div>
             <div class="form-group col-md-4">
@@ -64,15 +64,35 @@
               <label>{{ element_master_form.fixed_amount.label }} </label>
               {{ element_master_form.fixed_amount }}
             </div>
+
+
+            <div class="form-group col-md-2" id="formula" style="display: none;">
+              <label>formula</label>
+              {{ element_master_form.element_formula }}
+            </div>
+
+
+            <div class="form-group col-md-2" id="percentage">
+              <label>Percentage</label>
+              {{ element_master_form.percentage }}
+            </div>
+
+            <div class="form-group col-md-2" id="sign">
+              <label>Signs</label>
+              {{ element_master_form.arithmetic_signs }}
+            </div>
+
             <div class="form-group col-md-4" id="based_on">
               <label>{{ element_master_form.based_on.label }}</label>
               {{ element_master_form.based_on }}
             </div>
 
-            <div class="form-group col-md-12" id="formula">
-              <label>{{ element_master_form.element_formula.label }}</label>
-              {{ element_master_form.element_formula }}
-              <hr>
+
+
+
+
+            <hr>
+            <div class="form-group col-md-12">
               <button type="button" class="btn btn-primary push-right" data-toggle="tooltip" data-placement="top" title="" data-original-title="To write the formula correctly, it must be as following:
           1-Use the name of the item in the database (db Name) with a value or other item in the database in addition to the mathematical operators (+, -, *, / or %).
           ** Example of calculating a specific allowance equal to 40% of the basic salary:
@@ -99,113 +119,128 @@
 </div>
 {% endblock body %}
 
+
 {% block js %}
 <script>
-$(document).ready(function(){
-if(document.getElementById('id_element_type').value === 'formula') {
-    document.getElementById('based_on').style.display = 'none';
-    document.getElementById('fixed_amount').style.display = 'none';
-    document.getElementById('amount_type').style.display = 'none';
+  $(document).ready(function() {
+    if (document.getElementById('id_element_type').value === 'formula') {
+      document.getElementById('based_on').style.display = 'none';
+      document.getElementById('fixed_amount').style.display = 'none';
+      document.getElementById('amount_type').style.display = 'none';
 
-}
-else if (document.getElementById('id_element_type').value == 'global value'){
 
-    document.getElementById('formula').style.display = 'none';
-    document.getElementById('fixed_amount').style.display = 'block';
-    document.getElementById('amount_type').style.display = 'block';
-    if (document.getElementById('id_amount_type').value == 'percentage'){
-      document.getElementById('based_on').style.display = 'block';
-    }
-    else{
+    } else if (document.getElementById('id_element_type').value == 'global value') {
 
+      document.getElementById('sign').style.display = 'none';
+      document.getElementById('percentage').style.display = 'none';
+      document.getElementById('fixed_amount').style.display = 'block';
+      document.getElementById('amount_type').style.display = 'block';
+      if (document.getElementById('id_amount_type').value == 'percentage') {
+        document.getElementById('based_on').style.display = 'block';
+      } else {
+
+        document.getElementById('based_on').style.display = 'none';
+
+      };
+
+    } else if (document.getElementById('id_element_type').value == 'payslip based') {
+
+
+      document.getElementById('fixed_amount').style.display = 'none';
+      document.getElementById('sign').style.display = 'none';
+      document.getElementById('percentage').style.display = 'none';
+      document.getElementById('amount_type').style.display = 'block';
+      if (document.getElementById('id_amount_type').value == 'percentage') {
+
+        document.getElementById('based_on').style.display = 'block';
+      } else {
+        document.getElementById('based_on').style.display = 'none';
+
+      };
+
+
+    } else {
+      document.getElementById('sign').style.display = 'none';
+      document.getElementById('percentage').style.display = 'none';
+      document.getElementById('fixed_amount').style.display = 'none';
+      document.getElementById('amount_type').style.display = 'none';
       document.getElementById('based_on').style.display = 'none';
 
-     };
-
-     }
-else if (document.getElementById('id_element_type').value == 'payslip based'){
-
-
-    document.getElementById('fixed_amount').style.display = 'none';
-    document.getElementById('formula').style.display = 'none';
-    document.getElementById('amount_type').style.display = 'block';
-    if (document.getElementById('id_amount_type').value == 'percentage'){
-
-      document.getElementById('based_on').style.display = 'block';
     }
-    else{
-      document.getElementById('based_on').style.display = 'none';
-
-     };
-
-
-}else {
-    document.getElementById('formula').style.display = 'none';
-    document.getElementById('fixed_amount').style.display = 'none';
-    document.getElementById('amount_type').style.display = 'none';
-    document.getElementById('based_on').style.display = 'none';
-
-}
-})
+  })
 </script>
 
 <script>
+  function myFunction(object) {
+    if (object.value === 'formula') {
+      document.getElementById('amount_type').style.display = 'none';
+      document.getElementById('fixed_amount').style.display = 'none';
+      document.getElementById('sign').style.display = 'block';
+      document.getElementById('percentage').style.display = 'block';
+      document.getElementById('based_on').style.display = 'block';
+    } else if (object.value === 'payslip based') {
+      document.getElementById('amount_type').style.display = 'block';
+      document.getElementById('fixed_amount').style.display = 'none';
+      document.getElementById('sign').style.display = 'none';
+      document.getElementById('percentage').style.display = 'none';
+      document.getElementById('based_on').style.display = 'none';
+    } else {
 
-function myFunction(object) {
-  if(object.value === 'formula') {
-    document.getElementById('amount_type').style.display = 'none';
-    document.getElementById('fixed_amount').style.display = 'none';
-    document.getElementById('formula').style.display = 'block';
-    document.getElementById('based_on').style.display = 'none';
+      document.getElementById('amount_type').style.display = 'block';
+      document.getElementById('fixed_amount').style.display = 'none';
+      document.getElementById('sign').style.display = 'none';
+      document.getElementById('percentage').style.display = 'none';
+      document.getElementById('based_on').style.display = 'none';
+
     }
-  else if (object.value === 'payslip based')  {
-  document.getElementById('amount_type').style.display = 'block';
-  document.getElementById('fixed_amount').style.display = 'none';
-  document.getElementById('formula').style.display = 'none';
-  document.getElementById('based_on').style.display = 'none';
-  }
-  else{
 
-    document.getElementById('amount_type').style.display = 'block';
-  document.getElementById('fixed_amount').style.display = 'none';
-  document.getElementById('formula').style.display = 'none';
-  document.getElementById('based_on').style.display = 'none';
   }
-
-    }
 </script>
 
 <script>
-function check_amount_type(object) {
- if(object.value === 'percentage') {
-    document.getElementById('fixed_amount').style.display = 'block';
-    if (document.getElementById('id_element_type').value == 'payslip based'){
+  function check_amount_type(object) {
+    if (object.value === 'percentage') {
+      document.getElementById('fixed_amount').style.display = 'block';
+      if (document.getElementById('id_element_type').value == 'payslip based') {
         document.getElementById('fixed_amount').style.display = 'none';
-    };
-    document.getElementById('formula').style.display = 'none';
-    document.getElementById('based_on').style.display = 'block';
+      };
+      document.getElementById('sign').style.display = 'none';
+      document.getElementById('percentage').style.display = 'none';
+      document.getElementById('based_on').style.display = 'block';
+    } else if (document.getElementById('id_element_type').value == 'formula') {
+      document.getElementById('fixed_amount').style.display = 'none';
+      document.getElementById('based_on').style.display = 'block';
+      document.getElementById('sign').style.display = 'block';
+      document.getElementById('percentage').style.display = 'block';
+      document.getElementById('amount_type').style.display = 'none';
+    } else if (document.getElementById('id_element_type').value == 'payslip based') {
+      document.getElementById('fixed_amount').style.display = 'none';
+      document.getElementById('based_on').style.display = 'none';
+      document.getElementById('sign').style.display = 'none';
+      document.getElementById('percentage').style.display = 'none';
+      document.getElementById('amount_type').style.display = 'block';
+    } else {
+      document.getElementById('fixed_amount').style.display = 'block';
+      document.getElementById('based_on').style.display = 'none';
+      document.getElementById('sign').style.display = 'none';
+      document.getElementById('percentage').style.display = 'none';
     }
+  }
+</script>
 
-  else if (document.getElementById('id_element_type').value == 'formula'){
-        document.getElementById('fixed_amount').style.display = 'none';
-        document.getElementById('formula').style.display = 'block';
-        document.getElementById('based_on').style.display = 'none';
-        document.getElementById('amount_type').style.display = 'none';
-        }
+<script>
+  $('#id_based_on').change(function() {
+    base = $(this).val();
+    var sign = $('#id_arithmetic_signs').val();
+    var percentage = $('#id_percentage').val();
 
-  else  if (document.getElementById('id_element_type').value == 'payslip based'){
-        document.getElementById('fixed_amount').style.display = 'none';
-        document.getElementById('formula').style.display = 'none';
-        document.getElementById('based_on').style.display = 'none';
-        document.getElementById('amount_type').style.display = 'block';
-         }
-   else {
-   document.getElementById('fixed_amount').style.display = 'block';
-    document.getElementById('formula').style.display = 'none';
-    document.getElementById('based_on').style.display = 'none';
-   }
-    }
+    sign_string = String(sign)
+    percentage_string = String(percentage)
+    base_string = String(base)
+    code = percentage_string + " " + sign_string + " " + base_string
+    formula.innerh = code
 
+    document.getElementById("id_element_formula").innerHTML = code;
+  });
 </script>
 {% endblock js %}
-

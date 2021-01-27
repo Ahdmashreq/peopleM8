@@ -100,8 +100,7 @@ def task_creation_notification(sender, instance, created, **kwargs):
         assigned_to_user = instance.assigned_to
         sender_person = assignee_employee.user
         recipient_person = assigned_to_user
-        data = {"title": "New task assigned to you by {}".format(assignee_employee),
-                "href": "task_management:task-list"}
+        data = {"title": "New task assigned to you by {}".format(assignee_employee)}
         notify.send(
             sender=sender_person,
             recipient=recipient_person,
