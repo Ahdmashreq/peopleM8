@@ -29,7 +29,10 @@
         <div class="mT-30">
           <div class="form-row">
             <div class="form-group col-md-4">
-              {{ sal_form.element_batch|as_crispy_field }}
+              {{ sal_form.elements_type_to_run|as_crispy_field }}
+            </div>
+            <div class="form-group col-md-4" style="display:none;" id="element">
+              {{ sal_form.element|as_crispy_field }}
             </div>
             <div class="form-group col-md-4">
               {{ sal_form.assignment_batch|as_crispy_field }}
@@ -49,3 +52,16 @@
   </form>
 </div>
 {% endblock body%}
+{% block js %}
+<script>
+  function show_element_field(){
+    console.log(document.getElementById('id_elements_type_to_run').value);
+    if (document.getElementById('id_elements_type_to_run').value == 'no_appear'){
+    document.getElementById('element').style.display = 'block';
+    }
+    else{ document.getElementById('element').style.display = 'none'}
+
+
+  }
+</script>
+{% endblock js %}

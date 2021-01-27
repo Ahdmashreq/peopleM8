@@ -11,7 +11,7 @@ import calendar
 from django.db.models import Avg, Count
 from payroll_run.models import Salary_elements
 from payroll_run.forms import SalaryElementForm, Salary_Element_Inline
-from element_definition.models import Element_Master, Element_Batch, Element_Batch_Master
+from element_definition.models import Element_Master, Element_Batch, Element_Batch_Master, Element
 from manage_payroll.models import Assignment_Batch, Assignment_Batch_Include, Assignment_Batch_Exclude
 from employee.models import Employee_Element, Employee, JobRoll, Payment
 from employee.forms import Employee_Element_Inline
@@ -47,8 +47,6 @@ def includeAssignmentEmployeeFunction(batch):
     assignment_batch = Assignment_Batch.objects.get(id=batch.id)
     include_query = Assignment_Batch_Include.objects.filter(include_batch_id=assignment_batch).exclude(
         Q(end_date__gte=date.today()) | Q(end_date__isnull=False))
-    print("include_query")
-    print(include_query)
     dept_set = set()
     job_set = set()
     position_set = set()
@@ -62,7 +60,6 @@ def includeAssignmentEmployeeFunction(batch):
             job_set.add(x.job_id.id)
         if x.emp_id is not None:
             emp_set.add(x.emp_id.id)
-    print(emp_set)
     filtered_emps = JobRoll.objects.filter(
         (
                 Q(position__department__id__in=dept_set) |
@@ -110,157 +107,179 @@ def excludeAssignmentEmployeeFunction(batch):
 def createSalaryView(request):
     sal_form = SalaryElementForm(user=request.user)
     # TODO filter employee by company
-    all_current_employees = Employee.objects.filter((Q(end_date__gte=date.today()) | Q(end_date__isnull=True)))
     if request.method == 'POST':
         sal_form = SalaryElementForm(request.POST, user=request.user)
         if sal_form.is_valid():
             sal_obj = sal_form.save(commit=False)
+            element = None
             # run employee on all emps.
-            if sal_obj.element_batch == None and sal_obj.assignment_batch == None:
-                for x in all_current_employees:
-                    sc = Salary_Calculator(company=request.user.company, employee=x)
-                    # calculate all furmulas elements for 'x' employee
-                    # Employee_Element.set_formula_amount(x)
-                    s = Salary_elements(
-                        emp=x,
-                        salary_month=sal_obj.salary_month,
-                        salary_year=sal_obj.salary_year,
-                        run_date=sal_obj.run_date,
-                        created_by=request.user,
-                        incomes=sc.calc_emp_income(),
-                        insurance_amount=sc.calc_employee_insurance(),
-# TODO need to check if the tax is applied
-                        tax_amount=sc.calc_taxes_deduction(),
-                        deductions=sc.calc_emp_deductions_amount(),
-                        gross_salary=sc.calc_gross_salary(),
-                        net_salary=sc.calc_net_salary(),
-                    )
-                    s.save()
-                user_lang = to_locale(get_language())
-                if user_lang == 'ar':
-                    success_msg = 'تم تشغيل راتب شهر {} بنجاح'.format(
-                        calendar.month_name[sal_obj.salary_month])
-                else:
-                    success_msg = 'Payroll for month {} done successfully'.format(
-                        calendar.month_name[sal_obj.salary_month])
-                messages.success(request, success_msg)
-            # the user select element batch to run on without assignment batch.
-            elif sal_obj.element_batch and sal_obj.assignment_batch == None:
-                elements_in_batch = get_list_or_404(
-                    ElementBatchMaster, element_batch_fk=sal_obj.element_batch)
-                emp_in_batch = Employee_Element.objects.filter(
-                    element_id__elementMaster__in=elements_in_batch)
-                emps = set()
-                for x in emp_in_batch:
-                    emps.add(x.emp_id)
-                for x in emps:
-                    sc = Salary_Calculator(company=request.user.company, employee=x)
-                    # calculate all formulas elements for 'x' employee
-                    # Employee_Element.set_formula_amount(x)
-                    # # ################################################
-                    # # # getting informations for the salary
-                    s = Salary_elements(
-                        emp=x,
-                        salary_month=sal_obj.salary_month,
-                        salary_year=sal_obj.salary_year,
-                        run_date=sal_obj.run_date,
-                        created_by=request.user,
-                        incomes=sc.calc_emp_income(),
-                        insurance_amount=sc.calc_employee_insurance(),
-                        tax_amount=sc.calc_taxes_deduction(),
-                        deductions=sc.calc_emp_deductions_amount(),
-                        gross_salary=sc.calc_gross_salary(),
-                        net_salary=sc.calc_net_salary(),
-                    )
-                    s.save()
-                user_lang = to_locale(get_language())
-                if user_lang == 'ar':
-                    success_msg = 'تم تشغيل الراتب بنجاح {} '.format(
-                        sal_obj.salary_month)
-                else:
-                    success_msg = 'Payroll for month {} done successfully'.format(
-                        sal_obj.salary_month)
-                messages.success(request, success_msg)
-            # the user select assignment batch without element batch to run on.
-            elif sal_obj.assignment_batch and sal_obj.element_batch == None:
+            if sal_obj.elements_type_to_run == 'appear':
+                elements = Employee_Element.objects.filter(element_id__appears_on_payslip=True).filter(
+                    (Q(start_date__lte=date.today()) & (
+                            Q(end_date__gt=date.today()) | Q(end_date__isnull=True)))).values('element_id')
+            else:
+                elements = Employee_Element.objects.filter(element_id=sal_obj.element).filter(
+                    Q(start_date__lte=date.today()) & (
+                        (Q(end_date__gt=date.today()) | Q(end_date__isnull=True)))).values('element_id')
+                if len(elements) != 0:
+                    element = Element.objects.get(id=elements[0]['element_id'])
+            if sal_obj.assignment_batch is not None:
                 emps = Employee.objects.filter(
-                    id__in=includeAssignmentEmployeeFunction(
-                        sal_obj.assignment_batch)).exclude(
-                    id__in=excludeAssignmentEmployeeFunction(
-                        sal_obj.assignment_batch))
-                for x in emps:
-                    # calculate all furmulas elements for 'x' employee
-                    # Employee_Element.set_formula_amount(x)
-                    sc = Salary_Calculator(company=request.user.company, employee=x)
-                    # # # getting informations for the salary
-                    s = Salary_elements(
-                        emp=x,
-                        salary_month=sal_obj.salary_month,
-                        salary_year=sal_obj.salary_year,
-                        run_date=sal_obj.run_date,
-                        created_by=request.user,
-                        incomes=sc.calc_emp_income(),
-                        insurance_amount=sc.calc_employee_insurance(),
-                        tax_amount=sc.calc_taxes_deduction(),
-                        deductions=sc.calc_emp_deductions_amount(),
-                        gross_salary=sc.calc_gross_salary(),
-                        net_salary=sc.calc_net_salary(),
-                    )
-                    s.save()
-                user_lang = to_locale(get_language())
-                if user_lang == 'ar':
-                    success_msg = 'تم تشغيل الراتب بنجاح {} '.format(
-                        sal_obj.salary_month)
-                else:
-                    success_msg = 'Payroll for month {} done successfully'.format(
-                        sal_obj.salary_month)
-                messages.success(request, success_msg)
-            # the user select both assignment batch and element batch to run on.
-            elif sal_obj.assignment_batch and sal_obj.element_batch:
-                all_emps = set()
-                emp_in_assignment = Employee.objects.filter(
-                    id__in=includeAssignmentEmployeeFunction(
-                        sal_obj.assignment_batch)).exclude(
-                    id__in=excludeAssignmentEmployeeFunction(
-                        sal_obj.assignment_batch))
-                for emp in emp_in_assignment:
-                    all_emps.add(emp)
-                elements_in_batch = get_list_or_404(
-                    ElementBatchMaster, element_batch_fk=sal_obj.element_batch)
-                emp_in_element_batch = Employee_Element.objects.filter(
-                    element_id__elementMaster__in=elements_in_batch)
-                for emp in emp_in_element_batch:
-                    all_emps.add(x.emp_id)
-                for x in all_emps:
-                    # calculate all furmulas elements for 'x' employee
-                    Employee_Element.set_formula_amount(x)
-                    sc = Salary_Calculator(company=request.user.company, employee=x)
-                    # # # getting informations for the salary
-                    s = Salary_elements(
-                        emp=x,
-                        salary_month=sal_obj.salary_month,
-                        salary_year=sal_obj.salary_year,
-                        run_date=sal_obj.run_date,
-                        created_by=request.user,
-                        incomes=sc.calc_emp_income(),
-                        insurance_amount=sc.calc_employee_insurance(),
-                        tax_amount=sc.calc_taxes_deduction(),
-                        deductions=sc.calc_emp_deductions_amount(),
-                        gross_salary=sc.calc_gross_salary(),
-                        net_salary=sc.calc_net_salary(),
-                    )
-                    s.save()
-                user_lang = to_locale(get_language())
-                if user_lang == 'ar':
-                    success_msg = 'تم تشغيل الراتب بنجاح {} '.format(
-                        sal_obj.salary_month)
-                else:
-                    success_msg = 'Payroll for month {} done successfully'.format(
-                        sal_obj.salary_month)
-                messages.success(request, success_msg)
-        else:  # Form was not valid
-            messages.error(request, sal_form.errors)
-        # return redirect('payroll_run:create-salary')
+                         id__in=includeAssignmentEmployeeFunction(
+                             sal_obj.assignment_batch)).exclude(
+                         id__in=excludeAssignmentEmployeeFunction(
+                             sal_obj.assignment_batch))
+            else:
+                emps = Employee.objects.filter(
+                    (Q(end_date__gt=date.today()) | Q(end_date__isnull=True)))
+
+            for x in emps:
+
+                emp_elements = Employee_Element.objects.filter(element_id__in=elements, emp_id=x).values('element_id')
+                sc = Salary_Calculator(company=request.user.company, employee=x, elements=emp_elements)
+                # calculate all furmulas elements for 'x' employee
+                # Employee_Element.set_formula_amount(x)
+                s = Salary_elements(
+                    emp=x,
+                    elements_type_to_run = sal_obj.elements_type_to_run,
+                    salary_month=sal_obj.salary_month,
+                    salary_year=sal_obj.salary_year,
+                    run_date=sal_obj.run_date,
+                    created_by=request.user,
+                    incomes=sc.calc_emp_income(),
+                    element=element,
+                    insurance_amount=sc.calc_employee_insurance(),
+                    # TODO need to check if the tax is applied
+                    tax_amount=sc.calc_taxes_deduction(),
+                    deductions=sc.calc_emp_deductions_amount(),
+                    gross_salary=sc.calc_gross_salary(),
+                    net_salary=sc.calc_net_salary(),
+                )
+                s.save()
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
+                success_msg = 'تم تشغيل راتب شهر {} بنجاح'.format(
+                    calendar.month_name[sal_obj.salary_month])
+            else:
+                success_msg = 'Payroll for month {} done successfully'.format(
+                    calendar.month_name[sal_obj.salary_month])
+            messages.success(request, success_msg)
+            # # the user select element batch to run on without assignment batch.
+            # elif sal_obj.element_batch and sal_obj.assignment_batch == None:
+            #     elements_in_batch = get_list_or_404(
+            #         ElementBatchMaster, element_batch_fk=sal_obj.element_batch)
+            #     emp_in_batch = Employee_Element.objects.filter(
+            #         element_id__elementMaster__in=elements_in_batch)
+            #     emps = set()
+            #     for x in emp_in_batch:
+            #         emps.add(x.emp_id)
+            #     for x in emps:
+            #         sc = Salary_Calculator(company=request.user.company, employee=x)
+            #         # calculate all formulas elements for 'x' employee
+            #         # Employee_Element.set_formula_amount(x)
+            #         # # ################################################
+            #         # # # getting informations for the salary
+            #         s = Salary_elements(
+            #             emp=x,
+            #             salary_month=sal_obj.salary_month,
+            #             salary_year=sal_obj.salary_year,
+            #             run_date=sal_obj.run_date,
+            #             created_by=request.user,
+            #             incomes=sc.calc_emp_income(),
+            #             insurance_amount=sc.calc_employee_insurance(),
+            #             tax_amount=sc.calc_taxes_deduction(),
+            #             deductions=sc.calc_emp_deductions_amount(),
+            #             gross_salary=sc.calc_gross_salary(),
+            #             net_salary=sc.calc_net_salary(),
+            #         )
+            #         s.save()
+            #     user_lang = to_locale(get_language())
+            #     if user_lang == 'ar':
+            #         success_msg = 'تم تشغيل الراتب بنجاح {} '.format(
+            #             sal_obj.salary_month)
+            #     else:
+            #         success_msg = 'Payroll for month {} done successfully'.format(
+            #             sal_obj.salary_month)
+            #     messages.success(request, success_msg)
+            # # the user select assignment batch without element batch to run on.
+            # elif sal_obj.assignment_batch and sal_obj.element_batch == None:
+            #     emps = Employee.objects.filter(
+            #         id__in=includeAssignmentEmployeeFunction(
+            #             sal_obj.assignment_batch)).exclude(
+            #         id__in=excludeAssignmentEmployeeFunction(
+            #             sal_obj.assignment_batch))
+            #     for x in emps:
+            #         # calculate all furmulas elements for 'x' employee
+            #         # Employee_Element.set_formula_amount(x)
+            #         sc = Salary_Calculator(company=request.user.company, employee=x)
+            #         # # # getting informations for the salary
+            #         s = Salary_elements(
+            #             emp=x,
+            #             salary_month=sal_obj.salary_month,
+            #             salary_year=sal_obj.salary_year,
+            #             run_date=sal_obj.run_date,
+            #             created_by=request.user,
+            #             incomes=sc.calc_emp_income(),
+            #             insurance_amount=sc.calc_employee_insurance(),
+            #             tax_amount=sc.calc_taxes_deduction(),
+            #             deductions=sc.calc_emp_deductions_amount(),
+            #             gross_salary=sc.calc_gross_salary(),
+            #             net_salary=sc.calc_net_salary(),
+            #         )
+            #         s.save()
+            #     user_lang = to_locale(get_language())
+            #     if user_lang == 'ar':
+            #         success_msg = 'تم تشغيل الراتب بنجاح {} '.format(
+            #             sal_obj.salary_month)
+            #     else:
+            #         success_msg = 'Payroll for month {} done successfully'.format(
+            #             sal_obj.salary_month)
+            #     messages.success(request, success_msg)
+            # # the user select both assignment batch and element batch to run on.
+            # elif sal_obj.assignment_batch and sal_obj.element_batch:
+            #     all_emps = set()
+            #     emp_in_assignment = Employee.objects.filter(
+            #         id__in=includeAssignmentEmployeeFunction(
+            #             sal_obj.assignment_batch)).exclude(
+            #         id__in=excludeAssignmentEmployeeFunction(
+            #             sal_obj.assignment_batch))
+            #     for emp in emp_in_assignment:
+            #         all_emps.add(emp)
+            #     elements_in_batch = get_list_or_404(
+            #         ElementBatchMaster, element_batch_fk=sal_obj.element_batch)
+            #     emp_in_element_batch = Employee_Element.objects.filter(
+            #         element_id__elementMaster__in=elements_in_batch)
+            #     for emp in emp_in_element_batch:
+            #         all_emps.add(x.emp_id)
+            #     for x in all_emps:
+            #         # calculate all furmulas elements for 'x' employee
+            #         Employee_Element.set_formula_amount(x)
+            #         sc = Salary_Calculator(company=request.user.company, employee=x)
+            #         # # # getting informations for the salary
+            #         s = Salary_elements(
+            #             emp=x,
+            #             salary_month=sal_obj.salary_month,
+            #             salary_year=sal_obj.salary_year,
+            #             run_date=sal_obj.run_date,
+            #             created_by=request.user,
+            #             incomes=sc.calc_emp_income(),
+            #             insurance_amount=sc.calc_employee_insurance(),
+            #             tax_amount=sc.calc_taxes_deduction(),
+            #             deductions=sc.calc_emp_deductions_amount(),
+            #             gross_salary=sc.calc_gross_salary(),
+            #             net_salary=sc.calc_net_salary(),
+            #         )
+            #         s.save()
+            #     user_lang = to_locale(get_language())
+            #     if user_lang == 'ar':
+            #         success_msg = 'تم تشغيل الراتب بنجاح {} '.format(
+            #             sal_obj.salary_month)
+            #     else:
+            #         success_msg = 'Payroll for month {} done successfully'.format(
+            #             sal_obj.salary_month)
+            #     messages.success(request, success_msg)
+    else:  # Form was not valid
+        messages.error(request, sal_form.errors)
     salContext = {
         'page_title': _('create salary'),
         'sal_form': sal_form,
@@ -303,14 +322,27 @@ def userSalaryInformation(request, month_number, salary_year, salary_id, emp_id)
         salary_year=salary_year,
         pk=salary_id
     )
+    appear_on_payslip = salary_obj.elements_type_to_run
+    if appear_on_payslip == 'appear':
+
+        elements = Employee_Element.objects.filter(element_id__appears_on_payslip=True).filter(
+            (Q(start_date__lte=date.today()) & (
+                    Q(end_date__gt=salary_obj.run_date) | Q(end_date__isnull=True)))).values('element_id')
+    else:
+        print("HWYYYYYYYYYYYYYYYYYY")
+        elements = Employee_Element.objects.filter(element_id__id=salary_obj.element.id,
+                                                   element_id__appears_on_payslip=False).filter(
+            (Q(start_date__lte=date.today()) & (
+                    Q(end_date__gt=salary_obj.run_date) | Q(end_date__isnull=True)))).values('element_id')
+
     emp_elements_incomes = Employee_Element.objects.filter(
+        element_id__in=elements,
         emp_id=emp_id,
         element_id__classification__code='earn',
-        end_date__isnull=True
+
     )
-    emp_elements_deductions = Employee_Element.objects.filter(emp_id=emp_id,
+    emp_elements_deductions = Employee_Element.objects.filter(element_id__in=elements, emp_id=emp_id,
                                                               element_id__classification__code='deduct',
-                                                              end_date__isnull=True
                                                               )
     emp_payment = Payment.objects.filter((Q(end_date__gte=date.today()) | Q(end_date__isnull=True)), emp_id=emp_id)
     monthSalaryContext = {
@@ -320,9 +352,10 @@ def userSalaryInformation(request, month_number, salary_year, salary_id, emp_id)
         'emp_elements_deductions': emp_elements_deductions,
         'emp_payment': emp_payment,
     }
-    sc = Salary_Calculator(company=request.user.company, employee=emp_id)
-    test = sc.calc_emp_deductions_amount()
-    print(test)
+    # emp_elements = Employee_Element.objects.filter(emp_id=emp_id).values('element_id')
+
+    # sc = Salary_Calculator(company=request.user.company, employee=emp_id, elements=emp_elements)
+    # test = sc.calc_emp_deductions_amount()
     return render(request, 'emp-payslip.html', monthSalaryContext)
 
 

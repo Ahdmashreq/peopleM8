@@ -18,9 +18,10 @@ import calendar
 
 class Salary_Calculator:
 
-    def __init__(self, company, employee):
+    def __init__(self, company, employee,elements):
         self.company = company
         self.employee = employee
+        self.elements = elements
 
     def workdays_weekends_number(self, month, year):
         output = dict()
@@ -133,7 +134,7 @@ class Salary_Calculator:
     # calculate total employee earnings
     def calc_emp_income(self):
         #TODO filter employee element with start date
-        emp_allowance = Employee_Element.objects.filter(element_id__classification__code='earn',
+        emp_allowance = Employee_Element.objects.filter(element_id__in=self.elements,element_id__classification__code='earn',
                                                         emp_id=self.employee).filter(
             (Q(end_date__gt=date.today()) | Q(end_date__isnull=True)))
 
@@ -156,7 +157,7 @@ class Salary_Calculator:
             enterprise=self.company)
         # عدد ساعات العمل للشركة
         company_working_hrs = company_policy.number_of_daily_working_hrs
-        emp_allowance = Employee_Element.objects.filter(element_id__classification__code='earn',
+        emp_allowance = Employee_Element.objects.filter(element_id__in=self.elements,element_id__classification__code='earn',
                                                         emp_id=self.employee).filter(
             (Q(end_date__gte=date.today()) | Q(end_date__isnull=True))).get(element_id__basic_flag=True)
         emp_basic = emp_allowance.element_value  # المرتب الاساسي للعامل
@@ -167,7 +168,7 @@ class Salary_Calculator:
     #3 + deduction
     def calc_emp_deductions_amount(self):
         # TODO : Need to filter with start date
-        emp_deductions = Employee_Element.objects.filter(
+        emp_deductions = Employee_Element.objects.filter(element_id__in=self.elements,
             element_id__classification__code='deduct', emp_id=self.employee).filter(
             (Q(end_date__gte=date.today()) | Q(end_date__isnull=True)))
         total_deductions = 0
