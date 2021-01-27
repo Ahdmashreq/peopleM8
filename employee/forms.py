@@ -151,5 +151,11 @@ class EmployeeFileForm(forms.ModelForm):
         fields = "__all__"
         exclude = common_items_to_execlude + ('emp_id',)
     
-    # def __init__(self , *args, *kwargs):
-    #     self.fields['']
+    def __init__(self , *args, **kwargs):
+        super(EmployeeFileForm , self).__init__(*args , **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs['class'] = 'form-control parsley-validated'
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+
+Employee_Files_inline = forms.inlineformset_factory(Employee, Employee_File, form=EmployeeFileForm, extra=1)

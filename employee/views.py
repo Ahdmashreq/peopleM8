@@ -9,9 +9,10 @@ from django.contrib import messages
 from django.utils.translation import to_locale, get_language
 from element_definition.models import Element_Master, Element_Link
 from employee.models import (
-    Employee, JobRoll, Payment, Employee_Element, EmployeeStructureLink)
+    Employee, JobRoll, Payment, Employee_Element, EmployeeStructureLink, Employee_File) 
 from employee.forms import (EmployeeForm, JobRollForm, Employee_Payment_formset,
-                            EmployeeElementForm, Employee_Element_Inline, EmployeeStructureLinkForm)
+                            EmployeeElementForm, Employee_Element_Inline, EmployeeStructureLinkForm
+                            ,EmployeeFileForm,Employee_Files_inline)
 from payroll_run.models import Salary_elements
 from payroll_run.forms import SalaryElementForm
 from employee.fast_formula import FastFormula
@@ -29,6 +30,7 @@ def createEmployeeView(request):
         company=request.user.company)
     jobroll_form = JobRollForm(user_v=request.user)
     payment_form = Employee_Payment_formset(queryset=Payment.objects.none())
+    files_formset = Employee_Files_inline()
     for payment in payment_form:
         payment.fields['payment_method'].queryset = Payment_Method.objects.filter(
             payment_type__enterprise=request.user.company).filter(
@@ -41,6 +43,7 @@ def createEmployeeView(request):
         emp_form = EmployeeForm(request.POST)
         jobroll_form = JobRollForm(request.user, request.POST)
         payment_form = Employee_Payment_formset(request.POST)
+        files_formset = Employee_Files_inline(request.POST , request.FILES)
 
         if emp_form.is_valid() and jobroll_form.is_valid() and payment_form.is_valid():
             emp_obj = emp_form.save(commit=False)
@@ -81,15 +84,27 @@ def createEmployeeView(request):
                         emp_obj.emp_name)
 
                     messages.success(request, success_msg)
+            if files_formset.is_valid():
+                files_obj = files_formset.save(commit=False)
+                for file_obj in files_obj:
+                    file_obj.created_by = request.user
+                    file_obj.last_update_by = request.user
+                    file_obj.emp_id = emp_obj
+                    print("*******")
+                    print(file_obj.emp_file)
+                    file_obj.save()
+
             return redirect('employee:update-employee', pk=emp_obj.id)
         else:
             messages.error(request, emp_form.errors)
             messages.error(request, jobroll_form.errors)
+            messages.error(request, files_formset.errors)
     myContext = {
         "page_title": _("create employee"),
         "emp_form": emp_form,
         "jobroll_form": jobroll_form,
         "payment_form": payment_form,
+        "files_formset" : files_formset,
         "create_employee": True,
     }
     return render(request, 'create-employee.html', myContext)
@@ -156,6 +171,7 @@ def updateEmployeeView(request, pk):
     required_employee = get_object_or_404(Employee, pk=pk)
     required_jobRoll = JobRoll.objects.get(emp_id=required_employee)
     emp_form = EmployeeForm(instance=required_employee)
+    files_formset = Employee_Files_inline(instance=required_employee)
     # filter the user fk list to show the company users only.
     emp_form.fields['user'].queryset = User.objects.filter(
         company=request.user.company)
@@ -171,6 +187,7 @@ def updateEmployeeView(request, pk):
     employee_element_qs = Employee_Element.objects.filter(
         emp_id=required_employee, end_date__isnull=True)
     employee_has_structure = False
+    files = Employee_File.objects.filter(emp_id=required_employee)
 
     try:
         employee_salary_structure = EmployeeStructureLink.objects.get(
@@ -189,6 +206,8 @@ def updateEmployeeView(request, pk):
             request.user, request.POST, instance=required_jobRoll)
         payment_form = Employee_Payment_formset(
             request.POST, instance=required_employee)
+        files_formset = Employee_Files_inline(request.POST , request.FILES
+        ,instance=required_employee)
 
         if EmployeeStructureLink.DoesNotExist:
             emp_link_structure_form = EmployeeStructureLinkForm(request.POST)
@@ -241,7 +260,13 @@ def updateEmployeeView(request, pk):
             emp_element_obj.save()
         else:
             messages.error(request, employee_element_form.errors)
-
+        if files_formset.is_valid():
+                files_obj = files_formset.save(commit=False)
+                for file_obj in files_obj:
+                    file_obj.created_by = request.user
+                    file_obj.last_update_by = request.user
+                    file_obj.emp_id = emp_obj
+                    file_obj.save()
     myContext = {
         "page_title": _("update employee"),
         "emp_form": emp_form,
@@ -251,7 +276,8 @@ def updateEmployeeView(request, pk):
         "employee_element_qs": employee_element_qs,
         "employee_has_structure": employee_has_structure,
         "employee_element_form": employee_element_form,
-        "get_employee_salary_structure": get_employee_salary_structure
+        "get_employee_salary_structure": get_employee_salary_structure,
+        "files_formset" : files_formset,
     }
     return render(request, 'create-employee.html', myContext)
 
