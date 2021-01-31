@@ -106,7 +106,6 @@ def excludeAssignmentEmployeeFunction(batch):
 @login_required(login_url='home:user-login')
 def createSalaryView(request):
     sal_form = SalaryElementForm(user=request.user)
-    # TODO filter employee by company
     if request.method == 'POST':
         sal_form = SalaryElementForm(request.POST, user=request.user)
         if sal_form.is_valid():
@@ -125,23 +124,23 @@ def createSalaryView(request):
                     element = Element.objects.get(id=elements[0]['element_id'])
             if sal_obj.assignment_batch is not None:
                 emps = Employee.objects.filter(
-                         id__in=includeAssignmentEmployeeFunction(
-                             sal_obj.assignment_batch)).exclude(
-                         id__in=excludeAssignmentEmployeeFunction(
-                             sal_obj.assignment_batch))
+                    id__in=includeAssignmentEmployeeFunction(
+                        sal_obj.assignment_batch)).exclude(
+                    id__in=excludeAssignmentEmployeeFunction(
+                        sal_obj.assignment_batch))
             else:
                 emps = Employee.objects.filter(
                     (Q(end_date__gt=date.today()) | Q(end_date__isnull=True)))
-
+            # TODO: review the include and exclude assignment batch
+            print(emps)
             for x in emps:
-
                 emp_elements = Employee_Element.objects.filter(element_id__in=elements, emp_id=x).values('element_id')
                 sc = Salary_Calculator(company=request.user.company, employee=x, elements=emp_elements)
                 # calculate all furmulas elements for 'x' employee
                 # Employee_Element.set_formula_amount(x)
                 s = Salary_elements(
                     emp=x,
-                    elements_type_to_run = sal_obj.elements_type_to_run,
+                    elements_type_to_run=sal_obj.elements_type_to_run,
                     salary_month=sal_obj.salary_month,
                     salary_year=sal_obj.salary_year,
                     run_date=sal_obj.run_date,
