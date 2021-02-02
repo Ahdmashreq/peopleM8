@@ -1,0 +1,169 @@
+{% extends "master.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+
+{% block body %}
+<!--  -->
+<div class="container-fluid ">
+  {% if not confirm_form %}
+  <div class="row" style="margin-left:0px;">
+    <div class="col-md-8">
+      <h4 class="c-grey-900">Import Department Sheet</h4>
+    </div>
+  </div>
+  <div class="row" style="margin-left:0px;">
+    <div class="col-md-8">
+      <p>
+        This importer will import the following fields:
+        <code>{{fields|join:","}}</code>
+      </p>
+    </div>
+  </div>
+  <div class="row" style="margin-left:0px;">
+    <div class="col-md-8">
+      <form action="{% url 'company:upload-departments' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="file1"> File to import</label>
+        <input type="file" id="file1" name="import_file">
+        <div class="submit-row" style="margin-top: 25px;">
+          <input type="submit" class="btn cur-p btn-primary" value="Upload">
+        </div>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if confirm_form %}
+  <form action="{% url 'company:confirm-upload' %}" method="POST">
+    {% csrf_token %}
+    {{confirm_form}}
+    <p>
+      {% trans "Below is a preview of data to be imported. If you are satisfied with the results, click 'Confirm import'" %}
+    </p>
+    <div class="submit-row">
+      <input type="submit" class="btn cur-p btn-primary" name="confirm" value="{% trans 'Confirm import' %}">
+    </div>
+  </form>
+  {% endif %}
+  {% if result %}
+
+  {% if result.has_errors %}
+
+  <h2>{% trans "Errors" %}</h2>
+  <ul>
+    {% for error in result.base_errors  %}
+    <li>
+      {{ error.error }}
+      <div class="traceback">{{ error.traceback|linebreaks }}</div>
+    </li>
+    {% endfor %}
+    {% for line, errors in result.row_errors %}
+    {% for error in errors %}
+    <li>
+      {% trans "Line number" %}: {{ line }} - {{ error.error }}
+      <div><code>{{ error.row.values|join:", " }}</code></div>
+      <div class="traceback">{{ error.traceback|linebreaks }}</div>
+    </li>
+    {% endfor %}
+    {% endfor %}
+  </ul>
+
+  {% elif result.has_validation_errors %}
+  <div class="row" style="margin-left:0px;">
+    <div class="col-md-8">
+      <h2>{% trans "Some rows failed to validate" %}</h2>
+
+      <p>{% trans "Please correct these errors in your data where possible, then reupload it using the form above." %}</p>
+    </div>
+  </div>
+  <div class="col-md-8">
+    <table class="table import-preview">
+      <thead>
+        <tr>
+          <th>{% trans "Row" %}</th>
+          <th>{% trans "Errors" %}</th>
+          {% for field in result.diff_headers %}
+          <th>{{ field }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in result.invalid_rows %}
+        <tr>
+          <td>{{ row.number }} </td>
+          <td class="errors">
+            <span class="validation-error-count">{{ row.error_count }}</span>
+            <div class="validation-error-container">
+              <ul class="validation-error-list">
+                {% for field_name, error_list in row.field_specific_errors.items %}
+                <li>
+                  <span class="validation-error-field-label">{{ field_name }}</span>
+                  <ul>
+                    {% for error in error_list %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                  </ul>
+                </li>
+                {% endfor %}
+                {% if row.non_field_specific_errors %}
+                <li>
+                  <span class="validation-error-field-label">{% trans "Non field specific" %}</span>
+                  <ul>
+                    {% for error in row.non_field_specific_errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                  </ul>
+                </li>
+                {% endif %}
+              </ul>
+            </div>
+          </td>
+          {% for field in row.values %}
+          <td>{{ field }}</td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    {% else %}
+
+    <h2>{% trans "Preview" %}</h2>
+
+    <table class="table import-preview">
+      <thead>
+        <tr>
+          <th></th>
+          {% for field in result.diff_headers %}
+          <th>{{ field|capfirst}}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      {% for row in result.valid_rows %}
+      <tr class="{{ row.import_type }}">
+        <td class="import-type">
+          {% if row.import_type == 'new' %}
+          {% trans "New" %}
+          {% elif row.import_type == 'skip' %}
+          {% trans "Skipped" %}
+          {% elif row.import_type == 'delete' %}
+          {% trans "Delete" %}
+          {% elif row.import_type == 'update' %}
+          {% trans "Update" %}
+          {% endif %}
+        </td>
+        {% for field in row.diff %}
+        <td>{{ field }}</td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </table>
+
+    {% endif %}
+
+    {% endif %}
+  </div>
+</div>
+{% endblock body %}

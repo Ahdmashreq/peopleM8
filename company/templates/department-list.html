@@ -17,6 +17,8 @@
     <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %} ">
       <div class="peer"><a href="{% url 'company:department-create' %}" class="btn cur-p btn-primary">{% trans "Add" %}</a></div>
       <div class="peer"><a href="{% url 'company:department-export' %}" class="btn cur-p btn-primary">{% trans "Export" %}</a></div>
+      <div class="peer"><a href="{% url 'company:upload-departments' %}" class="btn cur-p btn-primary">{% trans "Import" %}</a></div>
+
 
     </div>
   </div>

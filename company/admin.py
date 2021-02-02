@@ -1,5 +1,10 @@
 from django.contrib import admin
 from company import models
+from import_export.admin import ImportExportModelAdmin, ImportMixin
+from .resources import DepartmentResource
+from . models import Department
+
+
 
 
 ####################################### Admin Forms #############################################
@@ -205,3 +210,11 @@ class YearAdmin(admin.ModelAdmin):
         instance.last_update_by = user
         instance.save()
         return instance
+
+
+
+#class DepartmentResourceAdmin(ImportExportModelAdmin):
+ #   resource_class = DepartmentResource
+  #  def get_resource_kwargs(self, request, *args, **kwargs):
+        #""" Passing request to resource obj to control exported fields dynamically """
+   #     return {'request': request}

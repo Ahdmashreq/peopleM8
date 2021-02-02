@@ -13,6 +13,7 @@ from multiselectfield import MultiSelectField
 from mptt.models import MPTTModel, TreeForeignKey
 
 
+
 class Enterprise(models.Model):
     enterprise_user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="company_user")
@@ -106,6 +107,13 @@ class Department(MPTTModel):
 
     def __str__(self):
         return self.dept_name
+
+    
+def get_user(request):
+    user = request.user
+    myContext = {'user':user}
+    return myContext
+    
 
 
 class Job(models.Model):

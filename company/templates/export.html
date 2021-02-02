@@ -6,7 +6,6 @@
 {% block body%}
 
 <h3>Export Data</h3>
-<p>exporting from database</p>
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <p>Please select format of file.</p>
@@ -18,6 +17,9 @@
       </select>
     <button class="btn btn-primary" type="submit">Export</button>
   </form>
-  <a href="{% url 'company:list-department' %}" >Return </a>
+<br>
+  <div>
+      <a href="{% url 'company:list-department' %}"  class="btn cur-p btn-primary">{% trans "Return" %}</a></div>
+  </div>
   
   {% endblock body%}

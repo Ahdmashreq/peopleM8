@@ -25,7 +25,9 @@ urlpatterns = [
         path('department/view/<int:pk>', views.viewDepartmentView, name='department-view'),
         path('department/correct/<int:pk>', views.correctDepartmentView, name='department-correct'),
         path('department/delete/<int:pk>', views.deleteDepartmentView, name='department-delete'),
-        path('department/export/', views.export_data, name='department-export'),
+        path('department/export/', views.export_data, name='department-export'), 
+        path('upload-file/', views.upload_xls_file, name='upload-departments'),
+        path('confirm-file/', views.confirm_xls_upload, name='confirm-upload'),
         path('hirarchy/', views.viewHirarchy, name='hirarchy'),
         ######################### Jobs URLs #########################################
         path('jobs/list/', views.listJobView, name='list-jobs'),

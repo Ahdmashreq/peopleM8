@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
+from django.http import HttpResponse
 from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
@@ -10,11 +11,12 @@ from datetime import date
 from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView
+from attendance.tmp_storage import TempFolderStorage
 from custom_user.models import User, UserCompany
 from company.forms import (EnterpriseForm, DepartmentInline, DepartmentForm, JobInline,
                            JobForm, GradeInline, GradeForm, PositionInline, PositionForm, WorkingDaysForm,
                            WorkingHoursDeductionForm, Working_Hours_Deduction_Form_Inline,
-                           YearlyHolidayInline, YearlyHolidayForm, YearForm, CompanySetupForm)
+                           YearlyHolidayInline, YearlyHolidayForm, YearForm, CompanySetupForm, ConfirmImportForm)
 from company.models import (Enterprise, Department, Job, Grade, Position, YearlyHoliday,
                             Working_Days_Policy, Working_Hours_Deductions_Policy, Year)
 from django.utils.translation import ugettext_lazy as _
@@ -22,10 +24,16 @@ from cities_light.models import City, Country
 from django.core.exceptions import ObjectDoesNotExist
 from tablib import Dataset
 from .resources import DepartmentResource
+from django.conf import settings
+from django.utils.encoding import force_bytes, force_str
+
+
 
 ########################################Enterprise views###################################################################
 from defenition.models import TaxRule, Tax_Sections, LookupType, LookupDet
 from company.utils import DatabaseLoader
+
+
 
 
 def load_cities(request):
@@ -85,7 +93,8 @@ def create_user_companies_view(request):
             bg_obj.save()
             current_user_obj.company = bg_obj
             current_user_obj.save(update_fields=['company', ])
-            user_company_count = UserCompany.objects.filter(user=request.user).count()
+            user_company_count = UserCompany.objects.filter(
+                user=request.user).count()
             user_co = UserCompany(
                 user=request.user,
                 company=bg_obj,
@@ -304,7 +313,8 @@ def createDepartmentView(request):
 
 @login_required(login_url='home:user-login')
 def correctDepartmentView(request, pk):
-    required_dept = Department.objects.get_department(user=request.user, dept_id=pk)
+    required_dept = Department.objects.get_department(
+        user=request.user, dept_id=pk)
     dept_form = DepartmentForm(instance=required_dept)
     dept_form.fields['parent'].queryset = Department.objects.filter((Q(enterprise=request.user.company))).filter(
         Q(end_date__gte=date.today()) | Q(end_date__isnull=True))
@@ -337,7 +347,8 @@ def correctDepartmentView(request, pk):
 
 @login_required(login_url='home:user-login')
 def updateDepartmentView(request, pk):
-    required_dept = Department.objects.get_department(user=request.user, dept_id=pk)
+    required_dept = Department.objects.get_department(
+        user=request.user, dept_id=pk)
     dept_form = DepartmentForm(instance=required_dept)
     dept_form.fields['parent'].queryset = Department.objects.filter((Q(enterprise=request.user.company))).filter(
         Q(end_date__gte=date.today()) | Q(end_date__isnull=True))
@@ -379,7 +390,8 @@ def updateDepartmentView(request, pk):
 
 @login_required(login_url='home:user-login')
 def deleteDepartmentView(request, pk):
-    deleted_obj = Department.objects.get_department(user=request.user, dept_id=pk)
+    deleted_obj = Department.objects.get_department(
+        user=request.user, dept_id=pk)
     try:
         department_form = DepartmentForm(instance=deleted_obj)
         department_obj = department_form.save(commit=False)
@@ -409,23 +421,107 @@ def export_data(request):
     if request.method == 'POST':
         file_format = request.POST['file-format']
         department_resource = DepartmentResource()
-        dataset = department_resource.export()
+        queryset = Department.objects.all(request.user)
+        data = department_resource.export(queryset)
 
         if file_format == 'CSV':
-            response = HttpResponse(dataset.csv, content_type='text/csv')
+            response = HttpResponse(data.csv, content_type='text/csv')
             response['Content-Disposition'] = 'attachment; filename="exported_data.csv"'
-            return response        
+            return response
         elif file_format == 'JSON':
-            response = HttpResponse(dataset.json, content_type='application/json')
+            response = HttpResponse(data.json, content_type='application/json')
             response['Content-Disposition'] = 'attachment; filename="exported_data.json"'
             return response
         elif file_format == 'XLS (Excel)':
-            response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
+            response = HttpResponse(
+                data.xls, content_type='application/vnd.ms-excel')
             response['Content-Disposition'] = 'attachment; filename="exported_data.xls"'
             return response
 
     #context['fields'] = [f.column_name for f in department_resource.get_user_visible_fields()]
-    return render(request, 'export.html' )
+    return render(request, 'export.html')
+
+
+TMP_STORAGE_CLASS = getattr(settings, 'IMPORT_EXPORT_TMP_STORAGE_CLASS',
+                            TempFolderStorage)
+
+def write_to_tmp_storage(file_format):
+    tmp_storage = TMP_STORAGE_CLASS()
+    data = bytes()
+    for chunk in file_format.chunks():
+        data += chunk
+
+    tmp_storage.save(data, 'rb')
+    return tmp_storage
+
+
+@login_required(login_url='home:user-login')
+def upload_xls_file(request):
+    department_resource = DepartmentResource(user=request.user)
+
+    context = {}
+    if request.method == "POST":
+        import_file = request.FILES['import_file']
+        dataset = Dataset()
+        # unhash the following line in case of csv file
+        # imported_data = dataset.load(import_file.read().decode(), format='csv')
+        imported_data = dataset.load(
+                  import_file.read().decode('utf-8'), format='csv')
+        result = department_resource.import_data(imported_data, dry_run=True, user=request.user)
+
+       # elif import_file == 'xlsx':      
+        #    imported_data = dataset.load(import_file.read(), format='xlsx')  
+         #   result = department_resource.import_data(dataset, dry_run=True)
+    
+        context['result'] = result
+        tmp_storage = write_to_tmp_storage(import_file)
+        if not result.has_errors() and not result.has_validation_errors():
+            initial = {
+            'import_file_name': tmp_storage.name,
+            'original_file_name': import_file.name,
+            }
+            confirm_form = ConfirmImportForm(initial=initial)
+            context['confirm_form'] = confirm_form
+
+    context['fields'] = [f.column_name for f in department_resource.get_user_visible_fields()]
+
+    return render(request, 'upload-departments.html', context=context)
+
+
+
+
+@login_required(login_url='home:user-login')
+def confirm_xls_upload(request):
+    if request.method == "POST":
+        confirm_form = ConfirmImportForm(request.POST)
+        department_resource = DepartmentResource(user=request.user)
+        if confirm_form.is_valid():
+            tmp_storage = TMP_STORAGE_CLASS(name=confirm_form.cleaned_data['import_file_name'])
+            # Uncomment the following line in case of 'csv' file
+            dataset = Dataset()
+            data = tmp_storage.read('rb')
+            data = force_str(data, "utf-8")
+            # Enter format = 'csv' for csv file
+            #imported_data = dataset.load(data, format='csv')
+            imported_data = dataset.load(data,format='csv')
+           
+           # elif import_file == 'xlsx':
+             #   data = tmp_storage.read('rb')
+             #   imported_data = dataset.load(data,format='xlsx')
+     
+            result = department_resource.import_data(imported_data,
+                                                     dry_run=False,
+                                                     raise_errors=True,
+                                                     file_name=confirm_form.cleaned_data['original_file_name'],
+                                                     user=request.user, )
+            messages.success(request, 'Department successfully uploaded')
+            tmp_storage.remove()
+            return redirect('company:list-department')
+        else:
+            messages.error(request, 'Uploading failed ,please try again')
+            return redirect('company:upload-departments')
+
+
 ########################################Job views###################################################################
 @login_required(login_url='home:user-login')
 def listJobView(request):
@@ -720,7 +816,8 @@ def listPositionView(request):
     if request.method == 'GET':
         position_list = Position.objects.all(request.user)
 
-    myContext = {"page_title": _("List positions"), 'position_list': position_list}
+    myContext = {"page_title": _("List positions"),
+                 'position_list': position_list}
     return render(request, 'position-list.html', myContext)
 
 
@@ -772,7 +869,8 @@ def createPositionView(request):
 
 @login_required(login_url='home:user-login')
 def updatePositionView(request, pk):
-    required_position = Position.objects.get_position(user=request.user, position_id=pk)
+    required_position = Position.objects.get_position(
+        user=request.user, position_id=pk)
     position_form = PositionForm(instance=required_position)
     new_obj = Position(
         # position_user=request.user,
@@ -815,7 +913,8 @@ def updatePositionView(request, pk):
 
 @login_required(login_url='home:user-login')
 def correctPositionView(request, pk):
-    required_position = Position.objects.get_position(user=request.user, position_id=pk)
+    required_position = Position.objects.get_position(
+        user=request.user, position_id=pk)
     position_form = PositionForm(instance=required_position)
     if request.method == 'POST':
         position_form = PositionForm(request.POST, instance=required_position)
@@ -845,7 +944,8 @@ def correctPositionView(request, pk):
 
 @login_required(login_url='home:user-login')
 def deletePositionView(request, pk):
-    deleted_obj = Position.objects.get_position(user=request.user, position_id=pk)
+    deleted_obj = Position.objects.get_position(
+        user=request.user, position_id=pk)
     try:
         required_form = DepartmentForm(instance=deleted_obj)
         required_obj = required_form.save(commit=False)
@@ -918,7 +1018,8 @@ def listWorkingPolicyView(request):
 
 @login_required(login_url='home:user-login')
 def correctWorkingPolicyView(request, pk):
-    required_policy = Working_Days_Policy.objects.get_policy(user=request.user, policy_id=pk)
+    required_policy = Working_Days_Policy.objects.get_policy(
+        user=request.user, policy_id=pk)
     policy_form = WorkingDaysForm(instance=required_policy)
     user_lang = to_locale(get_language())
     if request.method == 'POST':
@@ -949,7 +1050,8 @@ def correctWorkingPolicyView(request, pk):
 
 @login_required(login_url='home:user-login')
 def deleteWorkingPolicyView(request, pk):
-    req_working_policy = Working_Days_Policy.objects.get_policy(user=request.user, policy_id=pk)
+    req_working_policy = Working_Days_Policy.objects.get_policy(
+        user=request.user, policy_id=pk)
     deleted = req_working_policy.delete()
     if deleted:
         messages.success(request, 'Record successfully deleted')
@@ -965,7 +1067,8 @@ def listYearlyHolidayView(request, year_id):
     yearly_holiday_list = []
     year = Year.objects.get_year(request.user, year_id)
     if request.method == 'GET':
-        yearly_holiday_list = YearlyHoliday.objects.get_year_holiday(user=request.user, year_name=year_id)
+        yearly_holiday_list = YearlyHoliday.objects.get_year_holiday(
+            user=request.user, year_name=year_id)
 
     myContext = {
         "page_title": f"List yearly holidays for {year}",
@@ -978,7 +1081,8 @@ def listYearlyHolidayView(request, year_id):
 @login_required(login_url='home:user-login')
 def createYearlyHolidayView(request, year_id):
     year = Year.objects.get_year(user=request.user, year_id=year_id)
-    yearly_holiday_formset = YearlyHolidayInline(queryset=YearlyHoliday.objects.none())
+    yearly_holiday_formset = YearlyHolidayInline(
+        queryset=YearlyHoliday.objects.none())
     user_lang = to_locale(get_language())
     if request.method == 'POST':
         yearly_holiday_formset = YearlyHolidayInline(request.POST)
@@ -1017,12 +1121,14 @@ def createYearlyHolidayView(request, year_id):
 
 @login_required(login_url='home:user-login')
 def correctYearlyHolidayView(request, pk):
-    required_holiday = YearlyHoliday.objects.get_holiday(user=request.user, yearly_holiday_id=pk)
+    required_holiday = YearlyHoliday.objects.get_holiday(
+        user=request.user, yearly_holiday_id=pk)
     holiday_form = YearlyHolidayForm(instance=required_holiday)
     year_id = required_holiday.year.year
     user_lang = to_locale(get_language())
     if request.method == 'POST':
-        holiday_form = YearlyHolidayForm(request.POST, instance=required_holiday)
+        holiday_form = YearlyHolidayForm(
+            request.POST, instance=required_holiday)
 
         if holiday_form.is_valid():
             holiday_obj = holiday_form.save(commit=False)
@@ -1054,7 +1160,8 @@ def correctYearlyHolidayView(request, pk):
 
 @login_required(login_url='home:user-login')
 def deleteYearlyHolidayView(request, pk):
-    req_holiday = YearlyHoliday.objects.get_holiday(user=request.user, yearly_holiday_id=pk)
+    req_holiday = YearlyHoliday.objects.get_holiday(
+        user=request.user, yearly_holiday_id=pk)
     year_ID = req_holiday.year.id
     deleted = req_holiday.delete()
     if deleted:
@@ -1108,8 +1215,10 @@ def create_working_hours_deductions_view(request):
     working_deductions_formset = Working_Hours_Deduction_Form_Inline(
         queryset=Working_Hours_Deductions_Policy.objects.none())
     if request.method == 'POST':
-        company_working_policy = Working_Days_Policy.objects.get(enterprise=request.user.company)
-        working_deductions_formset = Working_Hours_Deduction_Form_Inline(request.POST)
+        company_working_policy = Working_Days_Policy.objects.get(
+            enterprise=request.user.company)
+        working_deductions_formset = Working_Hours_Deduction_Form_Inline(
+            request.POST)
         if working_deductions_formset.is_valid():
             try:
                 formset_obj = working_deductions_formset.save(commit=False)
@@ -1117,7 +1226,8 @@ def create_working_hours_deductions_view(request):
                     form.Working_Days_Policy_id = company_working_policy.id
                     form.created_by = request.user
                     form.save()
-                messages.success(request, _('Working Hours Deductions Created Successfully'))
+                messages.success(request, _(
+                    'Working Hours Deductions Created Successfully'))
             except IntegrityError as e:
                 messages.error(request, _('UNIQUE constraint failed'))
 
@@ -1181,7 +1291,8 @@ def load_lookups(user, company_id):
         new_item.created_by = user
         new_item.last_update_by = None
         new_item.save()
-        related_details = LookupDet.objects.filter(lookup_type_fk=myid).values()
+        related_details = LookupDet.objects.filter(
+            lookup_type_fk=myid).values()
         for record in related_details:
             new_record = LookupDet(**record)
             new_record.id = None
@@ -1212,7 +1323,8 @@ def load_tax_rules(user, company_id):
         new_item.last_update_by = None
         new_item.created_by = user
         new_item.save()
-        related_details = Tax_Sections.objects.filter(tax_rule_id=myid).values()
+        related_details = Tax_Sections.objects.filter(
+            tax_rule_id=myid).values()
         for record in related_details:
             record.pop('id')
             new_record = Tax_Sections(**record)
@@ -1250,11 +1362,13 @@ def load_modules(request):
             # TODO: Check if company already has the module
 
             if "1" in module:
-                loader = DatabaseLoader('LookupType', 1, company_id, 'enterprise_id')
+                loader = DatabaseLoader(
+                    'LookupType', 1, company_id, 'enterprise_id')
                 loader.duplicate_data()
                 # load_lookups(request.user, company_id)
             if "2" in module:
-                loader = DatabaseLoader('TaxRule', 1, company_id, 'enterprise_id')
+                loader = DatabaseLoader(
+                    'TaxRule', 1, company_id, 'enterprise_id')
                 loader.duplicate_data()
                 # load_tax_rules(request.user, company_id)
             messages.success(request, "Modules uploaded Successfully")
@@ -1264,3 +1378,5 @@ def load_modules(request):
     context = {"company_form": company_form, "page_title": "Upload Modules"}
 
     return render(request, 'setup_new_company.html', context=context)
+
+

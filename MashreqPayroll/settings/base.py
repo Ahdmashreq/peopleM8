@@ -65,6 +65,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'home.middleware.PreventConcurrentLoginsMiddleware',
+    'django_currentuser.middleware.ThreadLocalUserMiddleware',
+
 ]
 
 ROOT_URLCONF = 'MashreqPayroll.urls'

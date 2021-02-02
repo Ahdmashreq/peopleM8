@@ -7,6 +7,8 @@ from defenition.models import LookupDet
 from cities_light.models import City, Country
 from datetime import date
 from django.db.models import Q
+import os
+
 
 common_items_to_execlude = (
     'enterprise_user',
@@ -234,3 +236,14 @@ class CompanySetupForm(forms.Form):
         modules = forms.MultipleChoiceField(choices=MODULE_CHOICES, widget=forms.CheckboxSelectMultiple())
     except OperationalError:
         pass
+
+
+class ConfirmImportForm(forms.Form):
+    import_file_name = forms.CharField(widget=forms.HiddenInput())
+    original_file_name = forms.CharField(widget=forms.HiddenInput())
+
+    def clean_import_file_name(self):
+        data = self.cleaned_data['import_file_name']
+        data = os.path.basename(data)
+        return data
+
