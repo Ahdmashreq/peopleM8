@@ -437,7 +437,9 @@ def export_data(request):
                 data.xls, content_type='application/vnd.ms-excel')
             response['Content-Disposition'] = 'attachment; filename="exported_data.xls"'
             return response
-
+    export_context = {
+    'page_title':'Please select format of file.',
+    }
     #context['fields'] = [f.column_name for f in department_resource.get_user_visible_fields()]
     return render(request, 'export.html')
 
