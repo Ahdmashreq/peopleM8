@@ -5,7 +5,6 @@ class PayslipFunction(object):
     def get_element_amount_type(self, elm_id):
         try:
             element = Element.objects.get(id=elm_id)
-            print(element.amount_type)
             return element.amount_type
         except:
             raise Exception("this field doesn't existed")
@@ -13,7 +12,6 @@ class PayslipFunction(object):
     def get_element_element_type(self, elm_id):
         try:
             element = Element.objects.get(id=elm_id)
-            print(element.element_type)
             return element.element_type
         except:
             raise Exception("this field doesn't existed")
