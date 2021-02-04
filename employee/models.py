@@ -81,15 +81,13 @@ class Employee(models.Model):
     insured = models.BooleanField(verbose_name=_('Insured'))
     insurance_number = models.CharField(
         max_length=30, blank=True, null=True, verbose_name=_('Insurance Number'))
-    insurance_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True,
-                                      verbose_name=_('Insurance Date'))
+    insurance_date = models.DateField(blank=True, null=True, verbose_name=_('Insurance Date'))
     insurance_salary = models.FloatField(
         default=0.0, null=True, blank=True, verbose_name=_('Insurance Salary'))
     has_medical = models.BooleanField(verbose_name=_('Has Medical'))
     medical_number = models.CharField(
         max_length=30, blank=True, null=True, verbose_name=_('Medical Number'))
-    medical_date = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True,
-                                    verbose_name=_('Medical Date'))
+    medical_date = models.DateField(blank=True, null=True, verbose_name=_('Medical Date'))
     start_date = models.DateField(
         auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
     end_date = models.DateField(
@@ -327,7 +325,7 @@ class Employee_Element_History(models.Model):
 
     def __str__(self):
         return self.emp_id.emp_name + ' / ' + self.element_id.element_name
-        
+
 class Employee_File(models.Model):
     emp_id = models.ForeignKey(Employee , on_delete=models.CASCADE)
     name = models.CharField(max_length=60, verbose_name=_('File Name'))

@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'mptt',
     'notifications',
     'task_management',
+    'fontawesome-free',
 ]
 
 

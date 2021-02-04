@@ -25,11 +25,12 @@
             <tr>
               <th>#</th>
               <th>{% trans "Employee Name" %}</th>
+              <th>{% trans "Employee Num" %}</th>
               <th>{% trans "Username" %}</th>
               <th>{% trans "Position" %}</th>
               <th>{% trans "Contract Type" %}</th>
               <th>{% trans "Hire Date" %}</th>
-              <th width="30%">{% trans "Actions" %}</th>
+              <th>{% trans "Actions" %}</th>
             </tr>
           </thead>
           <tbody>
@@ -37,6 +38,7 @@
             <tr>
               <td scope="row">{{ forloop.counter }}</td>
               <td>{{ emp.emp_id.emp_name }}</td>
+              <td>{{ emp.emp_id.emp_number }}</td>
               <td>{{ emp.emp_id.user }}</td>
               <td>{{ emp.position }}</td>
               <td>{{ emp.contract_type }}</td>
@@ -45,17 +47,23 @@
                 <div class="w-100 gap-10 peers">
                   <div class="peer">
                     <a href="{% url 'employee:view-employee' pk=emp.emp_id.id %}">
-                      <button type="button" class="btn cur-p btn-outline-primary">{% trans "View" %}</button>
+                      <button type="button" class="btn cur-p btn-outline-primary">
+                        <i class="fas fa-search-plus"></i>
+                      </button>
                     </a>
                   </div>
                   <div class="peer">
                     <a href="{% url 'employee:update-employee' pk=emp.emp_id.id %}">
-                      <button type="button" class="btn cur-p btn-outline-success">{% trans "Update" %}</button>
+                      <button type="button" class="btn cur-p btn-outline-success">
+                        <i class="fas fa-user-edit"></i>
+                      </button>
                     </a>
                   </div>
                   <div class="peer">
                     <a href="#">
-                      <button type="button" class="btn cur-p btn-outline-danger" data-toggle="modal" data-target="#delete-modal{{emp.emp_id.pk}}">{% trans "Delete" %}</button>
+                      <button type="button" class="btn cur-p btn-outline-danger" data-toggle="modal" data-target="#delete-modal{{emp.emp_id.pk}}">
+                        <i class="fa fa-trash"></i>
+                      </button>
                     </a>
                   </div>
                 </div>
