@@ -11,7 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 from notifications.signals import notify
 
 from company.models import Department, Position
-from employee.models import Employee
+from employee.models import Employee , JobRoll
 from custom_user.models import User
 
 
@@ -113,8 +113,9 @@ def business_request_handler(sender, instance, created, update_fields, **kwargs)
            or send a notification to the person who created the Travel, if his request is processed .
     """
     requestor_emp = instance.emp
-    if instance.manager:
-        manager_emp = instance.manager.user
+    required_job_roll = JobRoll.objects.get(emp_id = instance.ordered_by, end_date__isnull=True)
+    if required_job_roll.manager:
+        manager_emp = required_job_roll.manager.user
     else:
         hr_users = User.objects.filter(groups__name='HR')
         manager_emp = hr_users
@@ -157,13 +158,17 @@ def purchase_request_handler(sender, instance, created, update_fields, **kwargs)
        or send a notification to the person who created the request, if his request is processed .
     """
     requestor_emp = instance.ordered_by
-    manager_emp = instance.ordered_by.user.employee_user.all()[0].job_roll_emp_id.filter(
-        Q(end_date__gt=date.today()) | Q(end_date__isnull=True))[0].manager
+    required_job_roll = JobRoll.objects.get(emp_id = instance.ordered_by, end_date__isnull=True)
+    if required_job_roll.manager:
+        manager_emp = required_job_roll.manager.user
+    else:
+        hr_users = User.objects.filter(groups__name='HR')
+        manager_emp = hr_users
     if created:  # check if this is a new Purchase_Request instance
         data = {"title": "Purchase Request", "status": instance.status, "href": "service:purchase-request-update"}
 
         notify.send(sender=requestor_emp.user,
-                    recipient=manager_emp.user,
+                    recipient=manager_emp,
                     verb='created a', action_object=instance,
                     description="{employee} has created a purchase request".format(employee=requestor_emp),
                     level='action',
