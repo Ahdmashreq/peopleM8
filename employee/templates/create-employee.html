@@ -525,7 +525,10 @@
           }
 
       });
-      document.getElementById("ele"+id).replaceWith(value)
+      v= document.getElementById("ele"+element)
+      console.log(v);
+
+      document.getElementById("ele"+element).innerHTML= value
       };
    </script>
 
