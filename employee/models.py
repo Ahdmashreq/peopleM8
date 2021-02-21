@@ -15,7 +15,7 @@ from company.models import (Enterprise, Department, Grade, Position, Job)
 from employee.fast_formula import FastFormula
 from manage_payroll.models import (Bank_Master, Payroll_Master)
 import element_definition.models
-
+from django_cryptography.fields import encrypt
 
 payment_type_list = [("c", _("Cash")), ("k", _("Check")),
                      ("b", _("Bank transfer")), ]
@@ -194,8 +194,8 @@ class Employee_Element(models.Model):
         Employee, on_delete=models.CASCADE, verbose_name=_('Employee'))
     element_id = models.ForeignKey(
         element_definition.models.Element, on_delete=models.CASCADE, verbose_name=_('Pay'))
-    element_value = models.FloatField(
-        default=0.0, null=True, blank=True, verbose_name=_('Pay Value'))
+    element_value =encrypt(models.FloatField(
+        default=0.0, null=True, blank=True, verbose_name=_('Pay Value')))
     start_date = models.DateField(
         auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
     end_date = models.DateField(
