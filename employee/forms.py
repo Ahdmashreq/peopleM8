@@ -3,7 +3,7 @@ from crispy_forms.helper import FormHelper
 from django.db.models import Q
 from company.models import Department, Job, Grade, Position
 from manage_payroll.models import Payroll_Master
-from employee.models import Employee, JobRoll, Payment, Employee_Element, EmployeeStructureLink
+from employee.models import Employee, JobRoll, Payment, Employee_Element, EmployeeStructureLink, Employee_File
 from defenition.models import LookupType, LookupDet
 from element_definition.models import Element_Master, Element_Link, SalaryStructure
 from django.shortcuts import get_object_or_404, get_list_or_404
@@ -144,3 +144,12 @@ class EmployeeStructureLinkForm(forms.ModelForm):
             self.fields[field].widget.attrs['class'] = 'form-control parsley-validated'
         self.helper = FormHelper()
         self.helper.form_show_labels = True
+
+class EmployeeFileForm(forms.ModelForm):
+    class Meta:
+        model = Employee_File
+        fields = "__all__"
+        exclude = common_items_to_execlude + ('emp_id',)
+    
+    # def __init__(self , *args, *kwargs):
+    #     self.fields['']

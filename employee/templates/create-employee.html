@@ -5,9 +5,9 @@
 {% load crispy_forms_tags %}
 {% block body%}
 
-  <div class="container-fluid">
-    <form method="POST">
-      {% csrf_token %}
+<div class="container-fluid">
+  <form method="POST">
+    {% csrf_token %}
     <div class="row">
       <div class="col-md-8">
         <h4 class="c-grey-900">{{page_title|title}}</h4>
@@ -97,125 +97,94 @@
       </div>
     </div>
   </form>
-  </div>
-  <div class="modal fade" id="element-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-body">
-          <p>{% trans "Which Other Element You Want To Assign?" %}</p>
-          <form method="post">
-            {% csrf_token %}
-            {{employee_element_form.as_p}}
-            <button type="submit" class="btn btn-success" data-dismiss="modal">{% trans "Save" %}</button>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
-          </form>
-        </div>
+</div>
+<div class="modal fade" id="element-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <p>{% trans "Which Other Element You Want To Assign?" %}</p>
+        <form method="post">
+          {% csrf_token %}
+          {{employee_element_form.as_p}}
+          <button type="submit" class="btn btn-success" data-dismiss="modal">{% trans "Save" %}</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
+        </form>
       </div>
     </div>
   </div>
+</div>
 
 {% endblock body%}
 
 {% block js %}
+
 <script>
-    $(document).ready(function () {
-      function insured_cb() {
-        if (this.checked) {
-          $('#id_insurance_number').prop('disabled', false);
-          $('#id_insurance_date').prop('disabled', false);
-        } else {
-          $('#id_insurance_number').prop('disabled', true);
-          $('#id_insurance_date').prop('disabled', true);
-        }
-      }
-      $(function() {
-        insured_cb();
-        $("#id_insured").on('click',insured_cb);
-      });
+  var vala = 1;
 
-      function has_medical_cb() {
-        if (this.checked) {
-          $('#id_medical_number').prop('disabled', false);
-          $('#id_medical_date').prop('disabled', false);
-        } else {
-          $('#id_medical_number').prop('disabled', true);
-          $('#id_medical_date').prop('disabled', true);
-        }
-      }
-      $(function() {
-        has_medical_cb();
-        $("#id_has_medical").on('click',has_medical_cb);
-      });
-
+  $(".one").each(function() {
+    vala;
+    $(this).change(function() {
+      vala;
+      vala = $(this).val();
+      return vala
     });
-</script>
-  <script>
-    var vala =1;
-
-      $( ".one" ).each(function () {
-        vala;
-      $( this ).change(function (){
-        vala;
-        vala =$(this).val();
-        return vala
-        });
-        return vala
-});
-
-
-      function myFunction(id) {
-      var value = vala
-      var element = id
-      $.ajax({
-          url: '/emp/employee/ajax/',
-          data : {
-              'element' :element,
-              'value' :value,
-          },
-          dataType : 'json',
-          success: function(data){
-              if (data.element_after_update_element_value != data.element_value){
-                  alert(data.error_message);
-              }
-          }
-
-      });
-      document.getElementById("ele"+id).innerHTML = value;
-      };
-   </script>
-
-    <script>
-      var vala =1;
-
-        $( ".two" ).each(function () {
-          vala;
-        $( this ).change(function (){
-          vala;
-          vala =$(this).val();
-          return vala
-          });
-          return vala
+    return vala
   });
 
 
-        function myFunction_2(id) {
-        var value = vala
-        var element = id
-        $.ajax({
-            url: '/emp/employee/ajax/',
-            data : {
-                'element' :element,
-                'value' :value,
-            },
-            dataType : 'json',
-            success: function(data){
-                if (data.element_after_update_element_value != data.element_value){
-                    alert(data.error_message);
-                }
-            }
+  function myFunction(id) {
+    var value = vala
+    var element = id
+    $.ajax({
+      url: '/emp/employee/ajax/',
+      data: {
+        'element': element,
+        'value': value,
+      },
+      dataType: 'json',
+      success: function(data) {
+        if (data.element_after_update_element_value != data.element_value) {
+          alert(data.error_message);
+        }
+      }
 
-        });
-        document.getElementById("el"+id).innerHTML = value;
-        };
-     </script>
+    });
+    document.getElementById("ele" + id).innerHTML = value;
+  };
+</script>
+
+<script>
+  var vala = 1;
+
+  $(".two").each(function() {
+    vala;
+    $(this).change(function() {
+      vala;
+      vala = $(this).val();
+      return vala
+    });
+    return vala
+  });
+
+
+  function myFunction_2(id) {
+    var value = vala
+    var element = id
+    $.ajax({
+      url: '/emp/employee/ajax/',
+      data: {
+        'element': element,
+        'value': value,
+      },
+      dataType: 'json',
+      success: function(data) {
+        if (data.element_after_update_element_value != data.element_value) {
+          alert(data.error_message);
+        }
+      }
+
+    });
+    document.getElementById("el" + id).innerHTML = value;
+  };
+</script>
 {% endblock js %}
