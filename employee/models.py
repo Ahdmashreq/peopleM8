@@ -36,8 +36,8 @@ class Employee(models.Model):
                              related_name='employee_user')
     enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name='enterprise_employee',
                                    verbose_name=_('Department'))
-    emp_number = models.IntegerField(
-        default=0, blank=True, null=True, verbose_name=_('Employee Number'))
+    emp_number = models.CharField(
+        max_length=30,default="0", blank=True, null=True, verbose_name=_('Employee Number'))
     emp_type = models.CharField(max_length=30, choices=emp_type_list, null=True, blank=True,
                                 verbose_name=_('Employee Type'))
     emp_name = models.CharField(max_length=60, verbose_name=_('Employee Name'))
