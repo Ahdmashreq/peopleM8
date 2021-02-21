@@ -12,6 +12,7 @@ from notifications.signals import notify
 
 from company.models import Department, Position
 from employee.models import Employee
+from custom_user.models import User
 
 
 class Bussiness_Travel(models.Model):
@@ -112,11 +113,16 @@ def business_request_handler(sender, instance, created, update_fields, **kwargs)
            or send a notification to the person who created the Travel, if his request is processed .
     """
     requestor_emp = instance.emp
-    manager_emp = instance.manager
+    if instance.manager:
+        manager_emp = instance.manager.user
+    else:
+        hr_users = User.objects.filter(groups__name='HR')
+        manager_emp = hr_users
+        
     if created:  # check if this is a new Business_travel instance
         data = {"title": "Business Travel Request", "status": instance.status, "href": "service:services_edit"}
         notify.send(sender=requestor_emp.user,
-                    recipient=manager_emp.user,
+                    recipient=manager_emp,
                     verb='requested', action_object=instance,
                     description="{employee} requested a Business Travel".format(employee=requestor_emp), level='action',
                     data=data)

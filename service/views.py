@@ -100,7 +100,7 @@ def services_create(request):
             service_obj.save()
             messages.add_message(request, messages.SUCCESS, 'Service was created successfully')
 
-            NotificationHelper(employee, employee_job.manager, service_obj).send_notification()
+            # NotificationHelper(employee, employee_job.manager, service_obj).send_notification()
 
             return redirect('service:services_list')
         else:
