@@ -1,0 +1,144 @@
+{% load i18n %}
+{% load l10n %}
+{% load group_extra %}
+{% load staticfiles %}
+
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="bgc-white bd bdrs-3 p-20 mB-20">
+      <table class="table">
+        <thead class="thead-light ta-c">
+          <tr>
+            <th scope="col">{% trans "Earning" %}</th>
+            <th scope="col">{% trans "Amount" %}</th>
+          </tr>
+        </thead>
+        <tbody class="ta-l">
+          {% for emp in employee_element_qs %}
+          {% if emp.element_id.classification.code == 'earn' %}
+          <tr>
+            <td>{{ emp.element_id }}</td>
+            <td ><p id="ele{{emp.id}}">{{ emp.element_value }}</p></td>
+            {%  if emp.element_id.element_type == 'payslip based' %}
+            <td>
+                <a  class="fa fa-pencil" style="font-size:10px; color:#ED9943"
+                    data-toggle="modal" data-target="#update-{{emp.id}}">
+                </a>
+
+<div class="modal fade"  id="update-{{emp.id}}" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Update {{ emp.element_id }} Value</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form  method="POST">
+          {% csrf_token %}
+          <div class="form-row">
+            <div class="form-group col-md-12">
+              <input type="number" class="one" id="lname" name="lname">
+            </div>
+          </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" onclick="myFunction( {{emp.id}} )" class="btn btn-primary" name ='Save' data-dismiss="modal">Save Changes</button>
+        </div>
+
+      </form>
+    </div>
+
+    </div>
+  </div>
+</div>
+
+</td>
+</tr>
+          {% endif %}
+          {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="bgc-white bd bdrs-3 p-20 mB-20">
+      <!-- <h4 class="c-grey-900 mB-20">Table head options</h4> -->
+      <table class="table">
+        <thead class="thead-light ta-c">
+          <tr>
+            <th>{% trans "Deductions" %} </th>
+            <th>{% trans "Amount" %} </th>
+          </tr>
+        </thead>
+        <tbody class="ta-l">
+          {% for emp_d in employee_element_qs %}
+          {% if emp_d.element_id.classification.code == 'deduct' %}
+          <tr>
+            <td>{{ emp_d.element_id }}</td>
+            <td><p id="el{{emp_d.id}}">{{ emp_d.element_value}}</p></td>
+            {%  if emp_d.element_id.element_type == 'payslip based' %}
+            <td>
+                <a  class="fa fa-pencil" style="font-size:10px; color:#ED9943"
+                    data-toggle="modal" data-target="#update2-{{emp_d.id}}">
+                </a>
+
+<div class="modal fade"  id="update2-{{emp_d.id}}"tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Update {{ emp_d.element_id }} Value</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form  method="POST">
+          {% csrf_token %}
+          <div class="form-row">
+            <div class="form-group col-md-12">
+              <input type="number" class="two" id="lname" name="lname">
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" onclick="myFunction_2( {{emp_d.id}} )" class="btn btn-primary" name ='Save' data-dismiss="modal">Save Changes</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+</td>
+</tr>
+          {% endif %}
+          {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
+  <div class="peer">
+    {% if not create_employee %}
+      {% if employee_has_structure %}
+        <a href="{% url 'employee:link-structure-update' pk=required_employee.id %}" class="btn cur-p btn-primary">{% trans "Assign Salary Structure" %}</a>
+        <a href="#" class="btn cur-p btn-primary" data-toggle="modal" data-target="#element-modal">{% trans "Assign Other Element" %}</a>
+        {% else %}
+        <a href="{% url 'employee:link-structure-create' pk=required_employee.id %}" class="btn cur-p btn-primary" >{% trans "Assign Salary Structure" %}</a>
+        {% endif %}
+    {% endif %}
+  </div>
+</div>

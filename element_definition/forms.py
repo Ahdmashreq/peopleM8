@@ -22,8 +22,18 @@ common_items_to_execlude = ('id',
                             'attribute13', 'attribute14', 'attribute15',
                             )
 
+Arithmetic_Signs= [
+    ('%', '%'),
+    ('+', '+'),
+    ('-', '-'),
+    ('*', '*'),
+    ('/', '/'),
+    ]
+
 
 class ElementForm(forms.ModelForm):
+    percentage = forms.DecimalField(max_digits=200, decimal_places=20, initial=0)
+    arithmetic_signs = forms.CharField(widget=forms.Select(choices=Arithmetic_Signs))
     class Meta:
         model = Element
         exclude = common_items_to_execlude
@@ -41,7 +51,10 @@ class ElementForm(forms.ModelForm):
             lookup_type_fk__lookup_type_name='ELEMENT_CLASSIFICATION', lookup_type_fk__enterprise=user.company).filter(
             Q(end_date__gt=date.today()) | Q(end_date__isnull=True))
         for field in self.fields:
-            self.fields[field].widget.attrs['class'] = 'form-control'
+            if field == 'appears_on_payslip' or field == 'tax_flag':
+                self.fields[field].widget.attrs['class'] = ''
+            else:
+                self.fields[field].widget.attrs['class'] = 'form-control'
 
 
 class SalaryStructureForm(forms.ModelForm):

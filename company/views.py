@@ -20,6 +20,8 @@ from company.models import (Enterprise, Department, Job, Grade, Position, Yearly
 from django.utils.translation import ugettext_lazy as _
 from cities_light.models import City, Country
 from django.core.exceptions import ObjectDoesNotExist
+from tablib import Dataset
+from .resources import DepartmentResource
 
 ########################################Enterprise views###################################################################
 from defenition.models import TaxRule, Tax_Sections, LookupType, LookupDet
@@ -402,6 +404,30 @@ def deleteDepartmentView(request, pk):
     return redirect('company:list-department')
 
 
+@login_required(login_url='home:user-login')
+def export_data(request):
+    if request.method == 'POST':
+        file_format = request.POST['file-format']
+        department_resource = DepartmentResource()
+        dataset = department_resource.export()
+
+        if file_format == 'CSV':
+            response = HttpResponse(dataset.csv, content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="exported_data.csv"'
+            return response
+        elif file_format == 'JSON':
+            response = HttpResponse(dataset.json, content_type='application/json')
+            response['Content-Disposition'] = 'attachment; filename="exported_data.json"'
+            return response
+        elif file_format == 'XLS (Excel)':
+            response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
+            response['Content-Disposition'] = 'attachment; filename="exported_data.xls"'
+            return response
+    export_context = {
+    'page_title':'Please select format of file.',
+    }
+    #context['fields'] = [f.column_name for f in department_resource.get_user_visible_fields()]
+    return render(request, 'export.html', export_context )
 ########################################Job views###################################################################
 @login_required(login_url='home:user-login')
 def listJobView(request):

@@ -1,0 +1,39 @@
+{% load i18n %}
+{% load l10n %}
+{% load group_extra %}
+{% load staticfiles %}
+
+<div class="form-row p-20">
+  <div class="col-sm-4">
+    <label class="fw-500">Manager</label>
+    {{ jobroll_form.manager }}
+  </div>
+  <div class="col-sm-4">
+    <label class="fw-500">Payroll</label>
+    {{ jobroll_form.payroll }}
+  </div>
+  <div class="col-sm-4">
+    <label class="fw-500">Contract Type</label>
+    {{ jobroll_form.contract_type }}
+  </div>
+  <div class="col-sm-4">
+    <label class="fw-500">Position</label>
+    {{ jobroll_form.position }}
+  </div>
+  <div class="col-sm-4">
+    <label class="fw-500">Employee Type</label>
+    {{ emp_form.emp_type }}
+  </div>
+   <div class="col-sm-4">
+    <label class="fw-500">Salary Structure</label>
+    <input type="text" value="{{ get_employee_salary_structure }}" class="form-control parsley-validated" disabled>
+  </div>
+  <div class="col-sm-4">
+    <label class="fw-500">Start Date</label>
+    {{ jobroll_form.start_date }}
+  </div>
+  <div class="col-sm-3">
+    <label class="fw-500">End Date</label>
+    {{ jobroll_form.end_date }}
+  </div>
+</div>

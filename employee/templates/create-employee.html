@@ -81,350 +81,16 @@
             <div class="panel-body">
               <div class="tab-content">
                 <div class="tab-pane active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-                  <div class="form-row p-20">
-                    <div class="form-row col-md-12">
-                      <div class="form-group col-md-4">
-                        <label class="fw-500">{% trans "Address1" %}</label>
-                        {{ emp_form.address1}}
-                      </div>
-                      <div class="form-group col-md-4">
-                        <label class="fw-500">{% trans "Address2" %}</label>
-                        {{ emp_form.address2}}
-                      </div>
-                      <div class="form-group col-md-4">
-                        <label class="fw-500">{% trans "Phone" %}</label>
-                        {{ emp_form.phone}}
-                      </div>
-                    </div>
-                    <div class="form-row col-md-12">
-                      <div class="form-group col-md-4">
-                        <label class="fw-500">{% trans "Mobile" %}</label>
-                        {{ emp_form.mobile}}
-                      </div>
-                      <div class="form-group col-md-4">
-                        <label class="fw-500">{% trans "Place of Birth" %}</label>
-                        {{ emp_form.place_of_birth}}
-                      </div>
-                      <div class="form-group col-md-4">
-                        <label class="fw-500">{% trans "Nationality" %}</label>
-                        {{ emp_form.nationality}}
-                      </div>
-                    </div>
-                    <div class="form-row col-md-12">
-                      <div class="form-group col-md-4">
-                        <label class="fw-500">{% trans "ID Type" %}</label>
-                        {{ emp_form.identification_type}}
-                      </div>
-                      <div class="form-group col-md-4">
-                        <label class="fw-500">{% trans "ID Number" %}</label>
-                        {{ emp_form.id_number}}
-                      </div>
-                      <div class="form-group col-md-4">
-                        <label class="fw-500">{% trans "Picture" %}</label>
-                        {{ emp_form.picture }}
-                      </div>
-                    </div>
-                    <div class="form-row col-md-12">
-                      <div class="form-group col-md-4">
-                        <label class="fw-500">{% trans "Social Status" %}</label>
-                        {{ emp_form.social_status}}
-                      </div>
-                      <div class="form-group col-md-4">
-                        <label class="fw-500">{% trans "Milatery Status" %}</label>
-                        {{ emp_form.military_status}}
-                      </div>
-                      <div class="form-group col-md-4">
-                        <label class="fw-500">{% trans "Religion" %}</label>
-                        {{ emp_form.religion}}
-                      </div>
-                    </div>
-                    <div class="form-row col-md-12">
-                      <div class="form-group col-md-4">
-                        <label class="fw-500">{% trans "Field of Study" %}</label>
-                        {{ emp_form.field_of_study}}
-                      </div>
-                      <div class="form-group col-md-4">
-                        <label class="fw-500">{% trans "Eductaion Degree" %}</label>
-                        {{ emp_form.education_degree}}
-                      </div>
-                      <div class="form-group col-md-4 checkbox-info peers ai-c">
-                        {{ emp_form.is_active}}
-                        <label for="inputCall2" class="peers peer-greed js-sb ai-c">
-                          <span class="peer peer-greed">{% trans "Is Active" %}</span>
-                        </label>
-                      </div>
-                    </div>
-                    <div class="form-row col-md-12">
-                      <div class="form-group col-md-2 checkbox-info peers ai-c">
-                        <label for="id_insured" class="peers peer-greed js-sb ai-c">
-                          {{ emp_form.insured.label }}
-                        </label>
-                        {{ emp_form.insured }}
-                      </div>
-                      <div class="form-group col-md-2">
-                        <label class="fw-500">{% trans "Insurance Date" %}</label>
-                        {{ emp_form.insurance_date}}
-                      </div>
-                      <div class="form-group col-md-3">
-                        <label class="fw-500">{% trans "Insurance Number" %}</label>
-                        {{ emp_form.insurance_number}}
-                      </div>
-                      <div class="form-group col-md-2">
-                        <label class="fw-500">{% trans "Insurance Salary" %}</label>
-                        {{ emp_form.insurance_salary}}
-                      </div>
-                    </div>
-
-                    <div class="form-row col-md-12">
-                      <div class="form-group col-md-4 checkbox-info peers ai-c">
-                        <label for="id_has_medical" class="peers peer-greed js-sb ai-c">
-                        {{ emp_form.has_medical.label }}
-                        </label>
-                        {{ emp_form.has_medical}}
-                      </div>
-                      <div class="form-group col-md-4">
-                        <label class="fw-500">{% trans "Medical Number" %}</label>
-                        {{ emp_form.medical_number}}
-                      </div>
-                      <div class="form-group col-md-4">
-                        <label class="fw-500">{% trans "Medical Date" %}</label>
-                        <div class="timepicker-input input-icon form-group">
-                          <div class="input-group">
-                            <div class="input-group-addon bgc-white bd bdwR-0"><i class="ti-calendar"></i></div>
-                            {{ emp_form.medical_date}}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="form-row col-md-12">
-                      <div class="col-md-2"></div>
-                      <div class="form-group col-md-4">
-                        <label class="fw-500">{% trans "Start Date" %}</label>
-                        <div class="timepicker-input input-icon form-group">
-                          <div class="input-group">
-                            <div class="input-group-addon bgc-white bd bdwR-0"><i class="ti-calendar"></i></div>
-                            {{ emp_form.start_date}}
-                          </div>
-                        </div>
-                      </div>
-                      <div class="form-group col-md-4">
-                        <label class="fw-500">{% trans "End Date" %}</label>
-                        <div class="timepicker-input input-icon form-group">
-                          <div class="input-group">
-                            <div class="input-group-addon bgc-white bd bdwR-0"><i class="ti-calendar"></i></div>
-                            {{ emp_form.end_date}}
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-md-2"></div>
-                    </div>
-                  </div>
+                  {% include 'employee-personal-tab.html' %}
                 </div>
                 <div class="tab-pane" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-                  <div class="form-row p-20">
-                    <div class="col-sm-4">
-                      <label class="fw-500">Manager</label>
-                      {{ jobroll_form.manager }}
-                    </div>
-                    <div class="col-sm-4">
-                      <label class="fw-500">Payroll</label>
-                      {{ jobroll_form.payroll }}
-                    </div>
-                    <div class="col-sm-4">
-                      <label class="fw-500">Contract Type</label>
-                      {{ jobroll_form.contract_type }}
-                    </div>
-                    <div class="col-sm-4">
-                      <label class="fw-500">Position</label>
-                      {{ jobroll_form.position }}
-                    </div>
-                    <div class="col-sm-4">
-                      <label class="fw-500">Employee Type</label>
-                      {{ emp_form.emp_type }}
-                    </div>
-                     <div class="col-sm-4">
-                      <label class="fw-500">Salary Structure</label>
-                      <input type="text" value="{{ get_employee_salary_structure }}" class="form-control parsley-validated" disabled>
-                    </div>
-                    <div class="col-sm-4">
-                      <label class="fw-500">Start Date</label>
-                      {{ jobroll_form.start_date }}
-                    </div>
-                    <div class="col-sm-3">
-                      <label class="fw-500">End Date</label>
-                      {{ jobroll_form.end_date }}
-                    </div>
-                  </div>
+                  {% include 'employee-official-tab.html' %}
                 </div>
                 <div class="tab-pane" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
-                  <table class="table table-striped m-b-none text-sm">
-                    {{ payment_form.management_form }}
-                    {% for form in payment_form %}
-                    {{ form.id }}
-                    {% if forloop.first %}
-                    <thead>
-                      <tr>
-                        {% for field in form.visible_fields %}
-                        <th>{{ field.label|capfirst }}</th>
-                        {% endfor %}
-                      </tr>
-                    </thead>
-                    {% endif %}
-                    <tr>
-                      {% for field in form.visible_fields %}
-                      <td>
-                        {# exclude the hidden fields in the form #}
-                        {% if forloop.first %}
-                        {% for hidden in form.hidden_fields %}
-                        {{ hidden }}
-                        {% endfor %}
-                        {% endif %}
-                        {{ field.errors.as_ul }}
-                        {{ field }}
-                      </td>
-                      {% endfor %}
-                    </tr>
-                    {% endfor %}
-                  </table>
+                  {% include 'employee-payments-tab.html' %}
                 </div>
                 <div class="tab-pane" id="nav-elements" role="tabpanel" aria-labelledby="nav-elements-tab">
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="bgc-white bd bdrs-3 p-20 mB-20">
-                        <table class="table">
-                          <thead class="thead-light ta-c">
-                            <tr>
-                              <th scope="col">{% trans "Earning" %}</th>
-                              <th scope="col">{% trans "Amount" %}</th>
-                            </tr>
-                          </thead>
-                          <tbody class="ta-l">
-                            {% for emp in employee_element_qs %}
-                            {% if emp.element_id.classification.code == 'earn' %}
-                            <tr>
-                              <td >{{ emp.element_id }}</td>
-                              <td ><p id="ele{{emp.id}}">{{ emp.element_value }}</p></td> 
-                              {%  if emp.element_id.element_type == 'payslip based' %}
-                              <td>
-                                <a  class="fa fa-pencil" style="font-size:10px; color:#ED9943"
-  
-                                data-toggle="modal" data-target="#update-{{emp.id}}">
-                                 </a>
-                               
-  <div class="modal fade"  id="update-{{emp.id}}"
-  tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Update {{ emp.element_id }} Value</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form  method="POST"> 
-                             {% csrf_token %}
-                  <div class="form-row">
-                    <div class="form-group col-md-12">
-                     <input type="number" class="one" id="lname" name="lname">
-
-                    </div>
-                    </div>
-                  </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                     <button type="button" onclick="myFunction( {{emp.id}} )" class="btn btn-primary" name ='Save' data-dismiss="modal">Save Changes</button>
-                  </div>
-                </form>
-    </div>
-  </div>
-      </div>
-    </div>
-  </td>
-</tr>
-    {% endif %}
-    {% endif %}
-
-                            {% endfor %}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-
-                    <div class="col-md-6">
-                      <div class="bgc-white bd bdrs-3 p-20 mB-20">
-                        <!-- <h4 class="c-grey-900 mB-20">Table head options</h4> -->
-                        <table class="table">
-                          <thead class="thead-light ta-c">
-                            <tr>
-                              <th>{% trans "Deductions" %} </th>
-                              <th>{% trans "Amount" %} </th>
-                            </tr>
-                          </thead>
-                          <tbody class="ta-l">
-                            {% for emp_d in employee_element_qs %}
-                            {% if emp_d.element_id.classification.code == 'deduct' %}
-                            <tr>
-                              <td>{{ emp_d.element_id }}</td>
-                              <td><p id="el{{emp_d.id}}">{{ emp_d.element_value}}</p></td>
-                              {%  if emp_d.element_id.element_type == 'payslip based' %}
-                              <td>
-                                <a  class="fa fa-pencil" style="font-size:10px; color:#ED9943"
-                                data-toggle="modal" data-target="#update2-{{emp_d.id}}">
-                                 </a> 
-                                                          
-  <div class="modal fade"  id="update2-{{emp_d.id}}"
-  tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Update {{ emp_d.element_id }} Value</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form  method="POST"> 
-                             {% csrf_token %}
-                  <div class="form-row">
-                    <div class="form-group col-md-12">
-                     <input type="number" class="two" id="lname" name="lname">
-
-                    </div>
-                    </div>
-                  </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                     <button type="button" onclick="myFunction_2( {{emp_d.id}} )" class="btn btn-primary" name ='Save' data-dismiss="modal">Save Changes</button>
-                  </div>
-                </form>
-    </div>
-  </div>
-      </div>
-    </div>
-  </td>
-</tr>
-    {% endif %}
-    {% endif %}
-
-                            {% endfor %}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
-                    <div class="peer">
-                      {% if not create_employee %}
-                        {% if employee_has_structure %}
-                          <a href="{% url 'employee:link-structure-update' pk=required_employee.id %}" class="btn cur-p btn-primary">{% trans "Assign Salary Structure" %}</a>
-                          <a href="#" class="btn cur-p btn-primary" data-toggle="modal" data-target="#element-modal">{% trans "Assign Other Element" %}</a>
-                          {% else %}
-                          <a href="{% url 'employee:link-structure-create' pk=required_employee.id %}" class="btn cur-p btn-primary" >{% trans "Assign Salary Structure" %}</a>
-                          {% endif %}
-                      {% endif %}
-                    </div>
-                  </div>
+                  {% include 'employee-salary-tab.html' %}
                 </div>
               </div>
             </div>
@@ -433,57 +99,96 @@
       </div>
     </div>
   </form>
-  </div>
-  <div class="modal fade" id="element-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-body">
-          <p>{% trans "Which Other Element You Want To Assign?" %}</p>
-          <form method="post">
-            {% csrf_token %}
-            {{employee_element_form.as_p}}
-            <button type="submit" class="btn btn-success" data-dismiss="modal">{% trans "Save" %}</button>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
-          </form>
-        </div>
+</div>
+<div class="modal fade" id="element-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <p>{% trans "Which Other Element You Want To Assign?" %}</p>
+        <form method="post">
+          {% csrf_token %}
+          {{employee_element_form.as_p}}
+          <button type="submit" class="btn btn-success" data-dismiss="modal">{% trans "Save" %}</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
+        </form>
       </div>
     </div>
   </div>
+</div>
 
 
 {% endblock body%}
-{% block js %}
-<script>
-    $(document).ready(function () {
-      function insured_cb() {
-        if (this.checked) {
-          $('#id_insurance_number').prop('disabled', false);
-          $('#id_insurance_date').prop('disabled', false);
-        } else {
-          $('#id_insurance_number').prop('disabled', true);
-          $('#id_insurance_date').prop('disabled', true);
-        }
-      }
-      $(function() {
-        insured_cb();
-        $("#id_insured").on('click',insured_cb);
-      });
 
-      function has_medical_cb() {
-        if (this.checked) {
-          $('#id_medical_number').prop('disabled', false);
-          $('#id_medical_date').prop('disabled', false);
-        } else {
-          $('#id_medical_number').prop('disabled', true);
-          $('#id_medical_date').prop('disabled', true);
+{% block js %}
+
+<script>
+  var vala = 1;
+
+  $(".one").each(function() {
+    vala;
+    $(this).change(function() {
+      vala;
+      vala = $(this).val();
+      return vala
+    });
+    return vala
+  });
+
+
+  function myFunction(id) {
+    var value = vala
+    var element = id
+    $.ajax({
+      url: '/emp/employee/ajax/',
+      data: {
+        'element': element,
+        'value': value,
+      },
+      dataType: 'json',
+      success: function(data) {
+        if (data.element_after_update_element_value != data.element_value) {
+          alert(data.error_message);
         }
       }
-      $(function() {
-        has_medical_cb();
-        $("#id_has_medical").on('click',has_medical_cb);
-      });
 
     });
+    document.getElementById("ele" + id).innerHTML = value;
+  };
+</script>
+
+<script>
+  var vala = 1;
+
+  $(".two").each(function() {
+    vala;
+    $(this).change(function() {
+      vala;
+      vala = $(this).val();
+      return vala
+    });
+    return vala
+  });
+
+
+  function myFunction_2(id) {
+    var value = vala
+    var element = id
+    $.ajax({
+      url: '/emp/employee/ajax/',
+      data: {
+        'element': element,
+        'value': value,
+      },
+      dataType: 'json',
+      success: function(data) {
+        if (data.element_after_update_element_value != data.element_value) {
+          alert(data.error_message);
+        }
+      }
+
+    });
+    document.getElementById("el" + id).innerHTML = value;
+  };
 </script>
   <script>
     var vala =1;

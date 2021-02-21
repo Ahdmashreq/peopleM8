@@ -18,6 +18,8 @@ from defenition.models import LookupDet
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import to_locale, get_language
 from payroll_run.payslip_functions import PayslipFunction
+from django.http import JsonResponse
+
 
 ################################################################################
 
@@ -759,9 +761,17 @@ def edit_custom_rule(request, pk):
     return redirect('element_definition:custom_rules_list', by='')
 
 
-
-
-
-
-
-
+def fast_formula(request):
+    code = request.GET.get('code')
+    arr = code.split()
+    element_id = arr[2]
+    element = Element.objects.get(id=element_id)
+    amount = str(element.fixed_amount)
+    arr[2] = amount
+    str1 = " "
+    string = (str1.join(arr))
+    print(string)
+    data = {
+        'string': string,
+    }
+    return JsonResponse(data)

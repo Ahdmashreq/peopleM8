@@ -11,16 +11,17 @@ from element_definition.models import Element_Batch
 from manage_payroll.models import Assignment_Batch, Payroll_Master
 from payroll_run.new_tax_rules import Tax_Deduction_Amount
 from django.utils.translation import ugettext_lazy as _
-
+from .payslip_functions import PayslipFunction
 import datetime
 import calendar
 
 
 class Salary_Calculator:
 
-    def __init__(self, company, employee):
+    def __init__(self, company, employee,elements):
         self.company = company
         self.employee = employee
+        self.elements = elements
 
     def workdays_weekends_number(self, month, year):
         output = dict()
@@ -52,7 +53,8 @@ class Salary_Calculator:
         return output
 
     def company_weekends(self):
-        company_policy = Working_Days_Policy.objects.get(enterprise=self.company)
+        company_policy = Working_Days_Policy.objects.get(
+            enterprise=self.company)
         company_weekends = company_policy.week_end_days
         weekend_days = []
         for x in company_weekends:
@@ -84,7 +86,7 @@ class Salary_Calculator:
     def is_day_a_leave(self, year, month, day):
         leave_list = Leave.objects.filter(
             Q(user__id=self.employee.user) & ((Q(startdate__month=month) & Q(startdate__year=month)) | (
-                    Q(enddate__month=month) & Q(enddate__year=month))))
+                Q(enddate__month=month) & Q(enddate__year=month))))
         for leave in leave_list:
             if (leave.startdate <= date_v <= leave.enddate) and leave.is_approved:
                 return True
@@ -93,7 +95,7 @@ class Salary_Calculator:
     def is_day_a_service(self, year, month, day):
         services_list = Bussiness_Travel.objects.filter(
             Q(emp=self.employee) & (
-                    (Q(estimated_date_of_travel_from__month=month) & Q(estimated_date_of_travel_from__year=month)) | (
+                (Q(estimated_date_of_travel_from__month=month) & Q(estimated_date_of_travel_from__year=month)) | (
                     Q(estimated_date_of_travel_to__month=month) & Q(estimated_date_of_travel_from__year=month))))
         for service in services_list:
             if (
@@ -131,24 +133,31 @@ class Salary_Calculator:
     #     return absence_days
     # calculate total employee earnings
     def calc_emp_income(self):
-        emp_allowance = Employee_Element.objects.filter(element_id__classification__code='earn',
+        #TODO filter employee element with start date
+        emp_allowance = Employee_Element.objects.filter(element_id__in=self.elements,element_id__classification__code='earn',
                                                         emp_id=self.employee).filter(
             (Q(end_date__gt=date.today()) | Q(end_date__isnull=True)))
 
         total_earnnings = 0.0
-        total_earnnings = total_earnnings
+        #earning | type_amount | mounthly
         for x in emp_allowance:
-            if x.element_value:
-                total_earnnings += x.element_value
-            else:
-                total_earnnings += 0.0
+            payslip_func = PayslipFunction()
+            if payslip_func.get_element_classification(x.element_id.id) == 'earn' and \
+                    payslip_func.get_element_amount_type(x.element_id.id) == 'fixed amount' and \
+                    payslip_func.get_element_scheduled_pay(x.element_id.id) == 'monthly':
+                if x.element_value:
+                    total_earnnings += x.element_value
+                else:
+                    total_earnnings += 0.0
         return total_earnnings
 
     # حساب اجر اليوم و سعر الساعة
     def calc_daily_rate(self):
-        company_policy = Working_Days_Policy.objects.get(enterprise=self.company)
-        company_working_hrs = company_policy.number_of_daily_working_hrs  # عدد ساعات العمل للشركة
-        emp_allowance = Employee_Element.objects.filter(element_id__classification__code='earn',
+        company_policy = Working_Days_Policy.objects.get(
+            enterprise=self.company)
+        # عدد ساعات العمل للشركة
+        company_working_hrs = company_policy.number_of_daily_working_hrs
+        emp_allowance = Employee_Element.objects.filter(element_id__in=self.elements,element_id__classification__code='earn',
                                                         emp_id=self.employee).filter(
             (Q(end_date__gte=date.today()) | Q(end_date__isnull=True))).get(element_id__basic_flag=True)
         emp_basic = emp_allowance.element_value  # المرتب الاساسي للعامل
@@ -156,16 +165,22 @@ class Salary_Calculator:
         return hour_rate
 
     # calculate employee deductions without social insurance
+    #3 + deduction
     def calc_emp_deductions_amount(self):
-        emp_deductions = Employee_Element.objects.filter(
+        # TODO : Need to filter with start date
+        emp_deductions = Employee_Element.objects.filter(element_id__in=self.elements,
             element_id__classification__code='deduct', emp_id=self.employee).filter(
             (Q(end_date__gte=date.today()) | Q(end_date__isnull=True)))
         total_deductions = 0
+        payslip_func = PayslipFunction()
         for x in emp_deductions:
-            if x.element_value:
-                total_deductions += x.element_value
-            else:
-                total_deductions += 0.0
+            if payslip_func.get_element_classification(x.element_id.id) == 'deduct' and \
+                payslip_func.get_element_amount_type(x.element_id.id) == 'fixed amount' and \
+                payslip_func.get_element_scheduled_pay(x.element_id.id) == 'monthly':
+                if x.element_value:
+                    total_deductions += x.element_value
+                else:
+                    total_deductions += 0.0
         return total_deductions
 
     # calculate social insurance
@@ -184,13 +199,16 @@ class Salary_Calculator:
 
     # calculate gross salary
     def calc_gross_salary(self):
-        gross_salary = self.calc_emp_income() - (self.calc_emp_deductions_amount() + self.calc_employee_insurance())
+        gross_salary = self.calc_emp_income() - (self.calc_emp_deductions_amount() +
+                                                 self.calc_employee_insurance())
         return gross_salary
 
     # calculate tax amount
+    #
     def calc_taxes_deduction(self):
         required_employee = Employee.objects.get(id=self.employee.id)
-        tax_rule_master = Payroll_Master.objects.get(enterprise=required_employee.enterprise)
+        tax_rule_master = Payroll_Master.objects.get(
+            enterprise=required_employee.enterprise)
         personal_exemption = tax_rule_master.tax_rule.personal_exemption
         round_to_10 = tax_rule_master.tax_rule.round_down_to_nearest_10
         tax_deduction_amount = Tax_Deduction_Amount(
