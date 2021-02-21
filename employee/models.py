@@ -67,7 +67,7 @@ class Employee(models.Model):
     nationality = models.CharField(
         max_length=20, blank=True, null=True, verbose_name=_('Nationality'))
     field_of_study = models.CharField(
-        max_length=30, blank=True, null=True, verbose_name=_('Field of Study'))
+        max_length=200, blank=True, null=True, verbose_name=_('Field of Study'))
     education_degree = models.CharField(
         max_length=30, blank=True, null=True, verbose_name=_('Eductaion Degree'))
     gender = models.CharField(
