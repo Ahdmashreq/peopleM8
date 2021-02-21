@@ -38,7 +38,7 @@ def createEmployeeView(request):
     for element in emp_element_form:
         element.fields['element_id'].queryset = Element_Master.objects.none()
     if request.method == 'POST':
-        emp_form = EmployeeForm(request.POST)
+        emp_form = EmployeeForm(request.POST,request.FILES)
         jobroll_form = JobRollForm(request.user, request.POST)
         payment_form = Employee_Payment_formset(request.POST)
 
@@ -184,7 +184,7 @@ def updateEmployeeView(request, pk):
     employee_element_form = EmployeeElementForm()
 
     if request.method == 'POST':
-        emp_form = EmployeeForm(request.POST, instance=required_employee)
+        emp_form = EmployeeForm(request.POST, request.FILES, instance=required_employee)
         jobroll_form = JobRollForm(
             request.user, request.POST, instance=required_jobRoll)
         payment_form = Employee_Payment_formset(
@@ -202,6 +202,9 @@ def updateEmployeeView(request, pk):
             emp_obj = emp_form.save(commit=False)
             emp_obj.created_by = request.user
             emp_obj.last_update_by = request.user
+            # if request.FILES['picture']:
+            #     emp_obj.picture = request.FILES['picture']
+            print(emp_obj.picture)
             emp_obj.save()
             #
             job_obj = jobroll_form.save(commit=False)

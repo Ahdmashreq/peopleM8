@@ -55,7 +55,7 @@ class Employee(models.Model):
         auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Hire Date'))
     email = models.EmailField(blank=True, null=True, verbose_name=_('email'))
     picture = models.ImageField(
-        null=True, blank=True, verbose_name=_('picture'))
+        upload_to = "avatars/",null=True, blank=True, verbose_name=_('picture'))
     is_active = models.BooleanField(
         blank=True, default=True, verbose_name=_('Is Active'))
     identification_type = models.CharField(max_length=5, choices=identification_type_list, null=True, blank=True,
