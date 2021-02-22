@@ -6,7 +6,7 @@
 {% block body%}
 
 <div class="container-fluid">
-  <form method="POST">
+  <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="row">
       <div class="col-md-8">
@@ -46,6 +46,20 @@
                 </div>
               </div>
             </div>
+            {% if emp_form.picture.value %}
+    <div class="form-group col-md-6">
+      <label class="fw-500">{% trans "Picture" %}</label>
+      {{ emp_form.picture }}
+    </div>
+    <div class="form-group col-md-6">
+      <img src="/media/{{ emp_form.picture.value }}" style="width: 20%;">
+    </div>
+    {% else %}
+    <div class="form-group col-md-12">
+      <label class="fw-500">{% trans "Picture" %}</label>
+      {{ emp_form.picture }}
+    </div>
+    {% endif %}
           </div>
           <div class="form-row">
             <div class="form-group col-md-4">

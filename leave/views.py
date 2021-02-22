@@ -72,14 +72,17 @@ def add_leave(request):
                         required_employee, leave_form.data['startdate'], leave_form.data['enddate'])
                     if check_validate_balance:
                         leave.save()
-                        employee_job.manager = leave.check_manger(
+                        team_leader_email = []
+                        check_manager = leave.check_manger(
                             required_employee)
-                        print(leave.check_manger(required_employee))
-                        if employee_job.manager:
-                            NotificationHelper(
-                                employee, employee_job.manager, leave).send_notification()
+                        for manager in check_manager:
+                            team_leader_email.append(manager.user.email)
+                       
+                        # if employee_job.manager:
+                        #     NotificationHelper(
+                        #         employee, employee_job.manager, leave).send_notification()
                         requestor_email = employee.email
-                        team_leader_email = employee_job.manager.email
+                        
                         # print(team_leader_email)
                         html_message = message_composer(request, html_template='leave_mail.html', instance_name=leave,
                                                         result=None)
