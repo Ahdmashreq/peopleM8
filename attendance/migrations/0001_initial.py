@@ -45,16 +45,9 @@ class Migration(migrations.Migration):
             name='Task',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-<<<<<<< HEAD
-                ('user_name', models.CharField(max_length=250)),
-                ('user_id', models.PositiveIntegerField()),
-                ('date', models.DateTimeField()),
-                ('punch', models.CharField(max_length=3)),
-=======
                 ('start_time', models.TimeField()),
                 ('end_time', models.TimeField(blank=True, null=True)),
                 ('slug', models.SlugField(blank=True, null=True)),
->>>>>>> 4135061baad5254cbe59b66164ea4f5f3c7e201a
                 ('creation_date', models.DateField(auto_now_add=True)),
                 ('last_update_date', models.DateField(auto_now=True)),
                 ('attendance', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='attendance', to='attendance.Attendance')),
@@ -85,16 +78,10 @@ class Migration(migrations.Migration):
             name='Attendance_Interface',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-<<<<<<< HEAD
-                ('start_time', models.TimeField()),
-                ('end_time', models.TimeField(blank=True, null=True)),
-                ('slug', models.SlugField(blank=True, null=True)),
-=======
                 ('user_name', models.CharField(max_length=250)),
                 ('user_id', models.PositiveIntegerField()),
                 ('date', models.DateTimeField()),
                 ('punch', models.CharField(max_length=3)),
->>>>>>> 4135061baad5254cbe59b66164ea4f5f3c7e201a
                 ('creation_date', models.DateField(auto_now_add=True)),
                 ('last_update_date', models.DateField(auto_now=True)),
                 ('company', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='company.Enterprise')),

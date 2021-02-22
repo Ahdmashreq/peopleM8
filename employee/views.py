@@ -19,10 +19,6 @@ from manage_payroll.models import Payment_Method
 from custom_user.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.http import JsonResponse
-<<<<<<< HEAD
-=======
-
->>>>>>> 4135061baad5254cbe59b66164ea4f5f3c7e201a
 
 ############################Employee View #################################
 @login_required(login_url='home:user-login')
