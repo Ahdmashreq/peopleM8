@@ -12,7 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 from .manager import LeaveManager
 from company.models import Enterprise
 from datetime import date, datetime
-
+from custom_user.models import User
 
 class LeaveMaster(models.Model):
     enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name='leave_master_bank_master',
@@ -131,7 +131,13 @@ class Leave(models.Model):
     def check_manger(self, emp):
         # get manger of employee
         employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=emp)
-        current_manger = employee_job.manager
+        if employee_job.manager:
+            current_manger =[]
+            current_manger.append(employee_job.manager)
+        else:
+             hr_users = User.objects.filter(groups__name='HR')
+             hr_employees = Employee.objects.filter(user__in=hr_users)
+             return hr_employees
         # get the leaves of manger
         in_leave = Leave.objects.filter(user=current_manger.user)
         if in_leave.exists() is True:
@@ -231,14 +237,22 @@ def leave_creation(sender, instance, created, update_fields, **kwargs):
     """
     requestor_emp = instance.user.employee_user.all(
     )[0]  # assuming one employee per user
-    manager_emp = requestor_emp.job_roll_emp_id.filter(
-        Q(end_date__gt=date.today()) | Q(end_date__isnull=True))[0].manager
+    # manager_emp = requestor_emp.job_roll_emp_id.filter(
+    #     Q(end_date__gt=date.today()) | Q(end_date__isnull=True))[0].manager
+
+    # requestor_emp = instance.ordered_by
+    required_job_roll = JobRoll.objects.get(emp_id = requestor_emp, end_date__isnull=True)
+    if required_job_roll.manager:
+        manager_emp = required_job_roll.manager.user
+    else:
+        hr_users = User.objects.filter(groups__name='HR')
+        manager_emp = hr_users
 
     if created:  # check if this is a new leave instance
         data = {"title": "Leave request", "status": instance.status,
                 "href": "leave:edit_leave"}
         notify.send(sender=instance.user,
-                    recipient=manager_emp.user,
+                    recipient=manager_emp,
                     verb='requested', description="{employee} has requested {leave}".format(employee=requestor_emp,
                                                                                             leave=instance.leavetype.type),
                     action_object=instance, level='action', data=data)
