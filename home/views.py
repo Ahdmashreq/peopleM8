@@ -61,7 +61,7 @@ def viewEN(request):
 def user_login(request):
     next = request.GET.get('next')
     if request.method == "POST":
-        username = request.POST.get('username')
+        username = request.POST.get('username').lower()
         password = request.POST.get('password')
         user = authenticate(username=username, password=password)
         if user is not None:

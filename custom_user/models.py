@@ -16,6 +16,9 @@ class User(AbstractUser):
     reg_tax_num = models.CharField(max_length=150, null=True, blank=True, verbose_name=_('Reg Tax Num'))
     commercail_record = models.CharField(max_length=150, null=True, blank=True, verbose_name=_('Commercail Record '))
 
+    def save(self, *args, **kwargs):
+        self.username = self.username.lower()
+        return super(User, self).save(*args, **kwargs)
 
 class UserCompany(models.Model):
     user = models.ForeignKey(base.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE,
