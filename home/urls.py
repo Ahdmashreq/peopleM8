@@ -36,9 +36,7 @@ urlpatterns=[
             path('update/<int:pk>',views.edit_groups,name='update_group'),
             path('assign/',views.assign_role,name='assign_user'),
             path('users/',views.user_group_list,name="user_groups"),
-            path('<int:pk>/delete',views.user_group_delete, name='reset_user_group'),
-            path('group/export/', views.export_data, name='group-export'),
-
+            path('<int:pk>/delete',views.user_group_delete, name='reset_user_group')
 
         ])),
 ]
