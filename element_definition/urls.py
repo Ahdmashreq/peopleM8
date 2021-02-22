@@ -34,5 +34,4 @@ urlpatterns=[
     path('custom-rules/', views.customRulesView, name='list-custom-rules'),
     path('custom/rules/update/<int:pk>/', views.edit_custom_rule, name='update-custom-rules'),
     path('custom/rules/delete/<int:pk>/', views.delete_custom_rule, name='delete-custom-rules'),
-
 ]

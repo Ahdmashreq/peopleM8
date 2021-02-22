@@ -30,7 +30,6 @@
               <th>{% trans "Position" %}</th>
               <th>{% trans "Contract Type" %}</th>
               <th>{% trans "Hire Date" %}</th>
-              <th>{% trans "End Date" %}</th>
               <th>{% trans "Actions" %}</th>
             </tr>
           </thead>
@@ -44,7 +43,6 @@
               <td>{{ emp.position }}</td>
               <td>{{ emp.contract_type }}</td>
               <td>{{ emp.emp_id.hiredate }}</td>
-              <td>{{ emp.emp_id.end_date }}</td>
               <td class="Actions">
                 <div class="w-100 gap-10 peers">
                   <div class="peer">
@@ -55,7 +53,7 @@
                     </a>
                   </div>
                   <div class="peer">
-                    <a href="{% url 'employee:update-employee' pk=emp.emp_id.id  po_id=emp.position.id %}">
+                    <a href="{% url 'employee:update-employee' pk=emp.emp_id.id %}">
                       <button type="button" class="btn cur-p btn-outline-success">
                         <i class="fas fa-user-edit"></i>
                       </button>
@@ -76,27 +74,9 @@
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-body">
-                    <p>{% trans "Are you sure you want to delete " %} {{ emp.emp_id.emp_name }} ?</p>
-                    <button class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
-                    <a href="{% url 'employee:delete-employee' pk=emp.emp_id.pk %}"  class="btn btn-warning" type="button">{% trans "Delete and Keep Histort" %}</a>
-                    
-                    <button class="btn btn-danger" type="button" data-toggle="modal" data-target="#deleteforever-modal{{emp.emp_id.pk}}">{% trans "Delete permanently" %}</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-
-
-
-            <div class="modal fade" id="deleteforever-modal{{emp.emp_id.pk}}" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                  <div class="modal-body">
-                    <p>{% trans "Are you sure you want to delete " %} {{ emp.emp_id.emp_name }} permanently?</p>
+                    <p>{% trans "Are you sure you want to delete this record?" %}</p>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
-                    <a  href="{% url 'employee:delete-employee-permanently' pk=emp.emp_id.pk %}" class="btn btn-danger" type="button">{% trans "Delete" %}</a>
-                  
+                    <a href="{% url 'employee:delete-employee' pk=emp.emp_id.pk %}" class="btn btn-danger" type="button">{% trans "Delete" %}</a>
                   </div>
                 </div>
               </div>

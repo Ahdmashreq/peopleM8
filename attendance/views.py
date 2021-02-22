@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect , HttpResponse
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
 from datetime import datetime, timedelta
@@ -387,46 +387,6 @@ def list_all_attendance(request):
 
     }
     return render(request, 'list_attendance.html', att_context)
-
-
-
-@login_required(login_url='home:user-login')
-def export_data(request):
-    if request.method == 'POST':
-        file_format = request.POST['file-format']
-        attendance_resource = AttendanceResource()
-        dataset = attendance_resource.export()
-
-
-        if file_format == 'CSV':
-            response = HttpResponse(dataset.csv, content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="attendance_exported_data.csv"'
-            return response
-        elif file_format == 'JSON':
-            response = HttpResponse(dataset.json, content_type='application/json')
-            response['Content-Disposition'] = 'attachment; filename="attendance_exported_data.json"'
-            return response
-        elif file_format == 'XLS (Excel)':
-            response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
-            response['Content-Disposition'] = 'attachment; filename="attendance_exported_data.xls"'
-            return response
-    export_context = {
-    'page_title':'Please select format of file.',
-    }
-    #context['fields'] = [f.column_name for f in department_resource.get_user_visible_fields()]
-    return render(request, 'export.html', export_context )
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 @login_required(login_url='home:user-login')
