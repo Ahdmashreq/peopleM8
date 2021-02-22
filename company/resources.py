@@ -37,13 +37,9 @@ class DepartmentResource(resources.ModelResource):
         instance.last_update_by = kwargs['user']
 
 
-
-
-
-
-class DepartmentResource(resources.ModelResource): 
+class PositionResource(resources.ModelResource): 
     class Meta:
-        model = Department
+        model = Position
         skip_unchanged = True
         report_skipped = True
 
