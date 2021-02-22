@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.utils.translation import to_locale, get_language
-from element_definition.models import Element_Master, Element_Link
+from element_definition.models import Element_Master, Element_Link, Element
 from employee.models import (
     Employee, JobRoll, Payment, Employee_Element, EmployeeStructureLink)
 from employee.forms import (EmployeeForm, JobRollForm, Employee_Payment_formset,
@@ -19,7 +19,8 @@ from manage_payroll.models import Payment_Method
 from custom_user.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.http import JsonResponse
-
+from company.models import Position
+from .resources import *
 
 ############################Employee View #################################
 @login_required(login_url='home:user-login')
@@ -111,7 +112,7 @@ def listEmployeeView(request):
     emp_list = Employee.objects.filter(enterprise=request.user.company).filter(
         (Q(end_date__gt=date.today()) | Q(end_date__isnull=True)))
     emp_job_roll_list = JobRoll.objects.filter(
-        emp_id__enterprise=request.user.company, end_date__isnull=True)
+        emp_id__enterprise=request.user.company)
     myContext = {
         "page_title": _("List employees"),
         "emp_list": emp_list,
@@ -152,16 +153,20 @@ def viewEmployeeView(request, pk):
 
 
 @login_required(login_url='home:user-login')
-def updateEmployeeView(request, pk):
+def updateEmployeeView(request, pk, po_id):
     required_employee = get_object_or_404(Employee, pk=pk)
-    required_jobRoll = JobRoll.objects.get(emp_id=required_employee)
+    position = Position.objects.get(pk=po_id)
+    required_jobRoll = JobRoll.objects.get(position=position, emp_id=required_employee)
     emp_form = EmployeeForm(instance=required_employee)
     # filter the user fk list to show the company users only.
     emp_form.fields['user'].queryset = User.objects.filter(
         company=request.user.company)
+    jobroll_form2 = JobRollForm(user_v=request.user)
     jobroll_form = JobRollForm(user_v=request.user, instance=required_jobRoll)
     payment_form = Employee_Payment_formset(instance=required_employee)
     get_employee_salary_structure = ""
+
+    
     '''
         updateing employee element part to show the elements & values for that Employee
         (removing the formset) and adding a button to link salary structure to that employee.
@@ -182,6 +187,8 @@ def updateEmployeeView(request, pk):
         employee_has_structure = False
 
     employee_element_form = EmployeeElementForm()
+ 
+       
 
     if request.method == 'POST':
         emp_form = EmployeeForm(request.POST, request.FILES, instance=required_employee)
@@ -245,6 +252,7 @@ def updateEmployeeView(request, pk):
         else:
             messages.error(request, employee_element_form.errors)
 
+
     myContext = {
         "page_title": _("update employee"),
         "emp_form": emp_form,
@@ -254,10 +262,10 @@ def updateEmployeeView(request, pk):
         "employee_element_qs": employee_element_qs,
         "employee_has_structure": employee_has_structure,
         "employee_element_form": employee_element_form,
-        "get_employee_salary_structure": get_employee_salary_structure
+        "get_employee_salary_structure": get_employee_salary_structure,
+        "jobroll_form2" : jobroll_form2,
     }
     return render(request, 'create-employee.html', myContext)
-
 
 @login_required(login_url='home:user-login')
 def create_link_employee_structure(request, pk):
@@ -314,10 +322,20 @@ def deleteEmployeeView(request, pk):
     required_employee = get_object_or_404(Employee, pk=pk)
     required_jobRoll = get_object_or_404(JobRoll, emp_id=pk)
     try:
+        jobroll_form = JobRollForm(user_v=request.user, instance=required_jobRoll)
+        end_date_jobroll_obj = jobroll_form.save(commit=False)
+        end_date_jobroll_obj.end_date = date.today()
+        end_date_jobroll_obj.save(update_fields=['end_date'])
+
+
+
+
         emp_form = EmployeeForm(instance=required_employee)
         end_date_obj = emp_form.save(commit=False)
         end_date_obj.end_date = date.today()
         end_date_obj.save(update_fields=['end_date'])
+        
+      
         user_lang = to_locale(get_language())
         if user_lang == 'ar':
 
@@ -344,6 +362,31 @@ def deleteEmployeeView(request, pk):
 
 
 
+@login_required(login_url='home:user-login')
+def deleteEmployeePermanently(request, pk):
+    required_employee = get_object_or_404(Employee, pk=pk)
+    required_jobRoll = get_object_or_404(JobRoll, emp_id=pk)
+    try:
+        required_employee.delete()
+        user_lang = to_locale(get_language())
+        if user_lang == 'ar':
+            success_msg = ' {},تم حذف الموظف'.format(required_employee)
+        else:
+
+            success_msg = 'Employee {} was deleted permanently successfully'.format(
+                required_employee)
+        messages.success(request, success_msg)
+    except Exception as e:
+        user_lang = to_locale(get_language())
+        if user_lang == 'ar':
+            success_msg = '{} لم يتم حذف '.format(required_employee)
+        else:
+            success_msg = '{} cannot be deleted '.format(required_employee)
+        # success_msg = 'Employee {} cannot be deleted'.format(
+            # required_employee)
+        messages.error(request, success_msg)
+        raise e
+    return redirect('employee:list-employee')    
 
 
 
@@ -353,12 +396,36 @@ def change_element_value(request):
     Employee_Element.objects.filter(id=element).update(element_value=element_value)
     element_after_update = Employee_Element.objects.get(id=element)
     element_after_update_element_value = element_after_update.element_value
-
     data = {'element_after_update_element_value' : element_after_update_element_value,
            'element_value' : element_value
             }
     if element_after_update_element_value !=  element_value :
         data['error_message'] = "Employee Element didn't save "
 
-
     return JsonResponse(data)
+
+@login_required(login_url='home:user-login')
+def export_employee_data(request):
+    if request.method == 'POST':
+        file_format = request.POST['file-format']
+        employee_resource = EmployeeResource()
+        dataset = employee_resource.export()
+
+        if file_format == 'CSV':
+            response = HttpResponse(dataset.csv, content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="employee_exported_data.csv"'
+            return response
+        elif file_format == 'JSON':
+            response = HttpResponse(dataset.json, content_type='application/json')
+            response['Content-Disposition'] = 'attachment; filename="employee_exported_data.json"'
+            return response
+        elif file_format == 'XLS (Excel)':
+            response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
+            response['Content-Disposition'] = 'attachment; filename="employee_exported_data.xls"'
+            return response
+    export_context = {
+    'page_title':'Please select format of file.',
+    }
+    #context['fields'] = [f.column_name for f in department_resource.get_user_visible_fields()]
+    return render(request, 'export.html', export_context )
+

@@ -16,6 +16,7 @@ from datetime import datetime
 from django.utils.translation import ugettext_lazy as _
 
 
+
 def email_sender(subject, message, from_email, recipient_list, html_message):
     try:
         send_mail(subject=subject,
@@ -117,7 +118,7 @@ def eligible_user_leave(user):
 
 
 def have_leave_balance(user):
-    required_user = Employee.objects.get(user=user)
+    required_user = Employee.objects.get(user=user.id)
     employee_leave_balance = Employee_Leave_balance.objects.get(
         employee=required_user)
     total_balance = employee_leave_balance.total_balance

@@ -4,10 +4,12 @@
 {% load i18n %}
 {% load crispy_forms_tags %}
 {% block body%}
+<style>
 
-<div class="container-fluid">
-  <form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
+</style>
+  <div class="container-fluid">
+    <form method="POST">
+      {% csrf_token %}
     <div class="row">
       <div class="col-md-8">
         <h4 class="c-grey-900">{{page_title|title}}</h4>
@@ -128,6 +130,7 @@
   </div>
 </div>
 
+
 {% endblock body%}
 
 {% block js %}
@@ -200,5 +203,115 @@
     });
     document.getElementById("el" + id).innerHTML = value;
   };
+</script>
+  <script>
+    var vala =1;
+     
+      $( ".one" ).each(function () {
+        console.log(vala)
+        vala;
+        console.log(vala)
+      $( this ).change(function (){  
+        vala;
+        console.log(vala)
+        console.log($(this).val());
+        vala =$(this).val();
+        console.log(vala)
+        return vala
+        });
+        return vala
+});
+
+     
+      function myFunction(id) {
+      console.log(vala)
+      var value = vala
+      console.log(vala)
+      var element = id
+      console.log(value)
+      console.log(element)
+      $.ajax({
+          url: '/emp/employee/ajax/',
+          data : {
+              'element' :element,
+              'value' :value,
+          },
+          dataType : 'json',
+          success: function(data){
+              if (data.element_after_update_element_value != data.element_value){
+                  alert(data.error_message);
+              }
+          }
+
+      });
+      v= document.getElementById("ele"+element)
+      console.log(v);
+
+      document.getElementById("ele"+element).innerHTML= value
+      };
+   </script>
+
+    <script>
+      var vala =1;
+       
+        $( ".two" ).each(function () {
+          console.log(vala)
+          vala;
+          console.log(vala)
+        $( this ).change(function (){  
+          vala;
+          console.log(vala)
+          console.log($(this).val());
+          vala =$(this).val();
+          console.log(vala)
+          return vala
+          });
+          return vala
+  });
+  
+       
+        function myFunction_2(id) {
+        console.log(vala)
+        var value = vala
+        console.log(vala)
+        var element = id
+        console.log(value)
+        console.log(element)
+        $.ajax({
+            url: '/emp/employee/ajax/',
+            data : {
+                'element' :element,
+                'value' :value,
+            },
+            dataType : 'json',
+            success: function(data){
+                if (data.element_after_update_element_value != data.element_value){
+                    alert(data.error_message);
+                }
+            }
+  
+        });
+        document.getElementById("el"+id).replaceWith(value)
+        };
+     </script>
+  <script>
+    function one_Function()
+    {
+      console.log("gggg")
+      manager = document.getElementById("id_manager")
+        console.log(manager);
+      }
+    
+      
+
+</script>
+<script>
+  window.addEventListener("beforeunload", function (e) {
+    var confirmationMessage = 'It looks like you have been editing something. '
+                            + 'If you leave before saving, your changes will be lost.';
+
+    (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+    return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+});
 </script>
 {% endblock js %}

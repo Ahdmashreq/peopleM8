@@ -63,7 +63,7 @@ class JobRollForm(forms.ModelForm):
         model = JobRoll
         fields = '__all__'
         exclude = common_items_to_execlude
-
+       
     def __init__(self, user_v, *args, **kwargs):
         super(JobRollForm, self).__init__(*args, **kwargs)
         self.fields['start_date'].widget.input_type = 'date'
@@ -79,6 +79,7 @@ class JobRollForm(forms.ModelForm):
         self.fields['payroll'].queryset = Payroll_Master.objects.filter((Q(enterprise=user_v.company)), (
                 Q(end_date__gte=date.today()) | Q(end_date__isnull=True)))
         self.fields['manager'].queryset = Employee.objects.filter(enterprise=user_v.company)
+        self.fields['manager'].widget.attrs['onchange'] = 'one_Function(this)'
 
 
 class PaymentForm(forms.ModelForm):
