@@ -6,7 +6,7 @@
 {% block body%}
 
 <div class="container-fluid">
-  <form method="post">
+  <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <!--  -->
     <div class="row">
@@ -16,7 +16,7 @@
       <div class="col-md-4">
         <div class="gap-10 peers push-right">
           <div class="peer">
-            <button type="submit" class="btn cur-p btn-primary">{% trans "Save" %}</button>
+            <button type="submit" class="btn cur-p btn-primary">{% trans "Export" %}</button>
           </div>
           <div class="peer">
             <a href="{% url 'company:list-department' %}" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
@@ -27,19 +27,19 @@
     <div class="mt-1">
       <div class="bgc-white p-20 bd">
         <div class="mT-30">
-          {{dept_form|crispy}}
+          <div class="form-row">
+            <div class="form-group col-md-3">
+              <select name="file-format" class="form-control my-3">
+                <option selected>Choose format...</option>
+                <option>CSV</option>
+                <option>JSON</option>
+                <option>XLS (Excel)</option>
+              </select>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
   </form>
 </div>
-<script>
-  window.addEventListener("beforeunload", function (e) {
-    var confirmationMessage = 'It looks like you have been editing something. '
-                            + 'If you leave before saving, your changes will be lost.';
 
-    (e || window.event).returnValue = confirmationMessage; //Gecko + IE
-    return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
-});
-</script>
 {% endblock body%}
