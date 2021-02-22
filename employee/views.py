@@ -19,10 +19,7 @@ from manage_payroll.models import Payment_Method
 from custom_user.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.http import JsonResponse
-<<<<<<< HEAD
-=======
-
->>>>>>> 4135061baad5254cbe59b66164ea4f5f3c7e201a
+from company.models import Position
 
 ############################Employee View #################################
 @login_required(login_url='home:user-login')
@@ -114,7 +111,7 @@ def listEmployeeView(request):
     emp_list = Employee.objects.filter(enterprise=request.user.company).filter(
         (Q(end_date__gt=date.today()) | Q(end_date__isnull=True)))
     emp_job_roll_list = JobRoll.objects.filter(
-        emp_id__enterprise=request.user.company, end_date__isnull=True)
+        emp_id__enterprise=request.user.company)
     myContext = {
         "page_title": _("List employees"),
         "emp_list": emp_list,
@@ -155,16 +152,20 @@ def viewEmployeeView(request, pk):
 
 
 @login_required(login_url='home:user-login')
-def updateEmployeeView(request, pk):
+def updateEmployeeView(request, pk, po_id):
     required_employee = get_object_or_404(Employee, pk=pk)
-    required_jobRoll = JobRoll.objects.get(emp_id=required_employee)
+    position = Position.objects.get(pk=po_id)
+    required_jobRoll = JobRoll.objects.get(position=position, emp_id=required_employee)
     emp_form = EmployeeForm(instance=required_employee)
     # filter the user fk list to show the company users only.
     emp_form.fields['user'].queryset = User.objects.filter(
         company=request.user.company)
+    jobroll_form2 = JobRollForm(user_v=request.user)
     jobroll_form = JobRollForm(user_v=request.user, instance=required_jobRoll)
     payment_form = Employee_Payment_formset(instance=required_employee)
     get_employee_salary_structure = ""
+
+    
     '''
         updateing employee element part to show the elements & values for that Employee
         (removing the formset) and adding a button to link salary structure to that employee.
@@ -258,6 +259,7 @@ def updateEmployeeView(request, pk):
         "employee_has_structure": employee_has_structure,
         "employee_element_form": employee_element_form,
         "get_employee_salary_structure": get_employee_salary_structure,
+        "jobroll_form2" : jobroll_form2,
     }
     return render(request, 'create-employee.html', myContext)
 
@@ -316,10 +318,20 @@ def deleteEmployeeView(request, pk):
     required_employee = get_object_or_404(Employee, pk=pk)
     required_jobRoll = get_object_or_404(JobRoll, emp_id=pk)
     try:
+        jobroll_form = JobRollForm(user_v=request.user, instance=required_jobRoll)
+        end_date_jobroll_obj = jobroll_form.save(commit=False)
+        end_date_jobroll_obj.end_date = date.today()
+        end_date_jobroll_obj.save(update_fields=['end_date'])
+
+
+
+
         emp_form = EmployeeForm(instance=required_employee)
         end_date_obj = emp_form.save(commit=False)
         end_date_obj.end_date = date.today()
         end_date_obj.save(update_fields=['end_date'])
+        
+      
         user_lang = to_locale(get_language())
         if user_lang == 'ar':
 
@@ -343,6 +355,56 @@ def deleteEmployeeView(request, pk):
         messages.error(request, success_msg)
         raise e
     return redirect('employee:list-employee')
+
+
+
+@login_required(login_url='home:user-login')
+def deleteEmployeePermanently(request, pk):
+    required_employee = get_object_or_404(Employee, pk=pk)
+    required_jobRoll = get_object_or_404(JobRoll, emp_id=pk)
+    try:
+        required_employee.delete()
+        user_lang = to_locale(get_language())
+        if user_lang == 'ar':
+            success_msg = ' {},تم حذف الموظف'.format(required_employee)
+        else:
+
+            success_msg = 'Employee {} was deleted permanently successfully'.format(
+                required_employee)
+        messages.success(request, success_msg)
+    except Exception as e:
+        user_lang = to_locale(get_language())
+        if user_lang == 'ar':
+            success_msg = '{} لم يتم حذف '.format(required_employee)
+        else:
+            success_msg = '{} cannot be deleted '.format(required_employee)
+        # success_msg = 'Employee {} cannot be deleted'.format(
+            # required_employee)
+        messages.error(request, success_msg)
+        raise e
+    return redirect('employee:list-employee')    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
