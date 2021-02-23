@@ -139,7 +139,7 @@ class Leave(models.Model):
              hr_employees = Employee.objects.filter(user__in=hr_users)
              return hr_employees
         # get the leaves of manger
-        in_leave = Leave.objects.filter(user=current_manger.user)
+        in_leave = Leave.objects.filter(user=current_manger[0].user)
         if in_leave.exists() is True:
             # reverse the leaves to get the last leave
             # get end date of last leave
@@ -151,13 +151,13 @@ class Leave(models.Model):
             if start_date <= today <= end_date and status == "Approved":
                 # get the parent manger
                 employee_job = JobRoll.objects.filter(
-                    end_date__isnull=True, emp_id=current_manger)
+                    end_date__isnull=True, emp_id=current_manger[0])
                 # if not have parent manger "CEO"
                 if not employee_job.exists():
                     return current_manger
                 else:
                     # check if parent manger in leave or not
-                    return self.check_manger(current_manger)
+                    return self.check_manger(current_manger[0])
             else:
                 # return the manger
                 return current_manger
