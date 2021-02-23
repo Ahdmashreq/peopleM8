@@ -155,14 +155,13 @@ def viewEmployeeView(request, pk):
 @login_required(login_url='home:user-login')
 def updateEmployeeView(request, pk, po_id):
     required_employee = get_object_or_404(Employee, pk=pk)
-    position = Position.objects.get(pk=po_id)
-    required_jobRoll = JobRoll.objects.get(position=position, emp_id=required_employee)
+    required_jobRoll = JobRoll.objects.get(id = po_id)
     emp_form = EmployeeForm(instance=required_employee)
     # filter the user fk list to show the company users only.
     emp_form.fields['user'].queryset = User.objects.filter(
         company=request.user.company)
-    jobroll_form2 = JobRollForm(user_v=request.user)
     jobroll_form = JobRollForm(user_v=request.user, instance=required_jobRoll)
+    
     payment_form = Employee_Payment_formset(instance=required_employee)
     get_employee_salary_structure = ""
 
@@ -209,9 +208,6 @@ def updateEmployeeView(request, pk, po_id):
             emp_obj = emp_form.save(commit=False)
             emp_obj.created_by = request.user
             emp_obj.last_update_by = request.user
-            # if request.FILES['picture']:
-            #     emp_obj.picture = request.FILES['picture']
-            print(emp_obj.picture)
             emp_obj.save()
             #
             job_obj = jobroll_form.save(commit=False)
@@ -263,7 +259,10 @@ def updateEmployeeView(request, pk, po_id):
         "employee_has_structure": employee_has_structure,
         "employee_element_form": employee_element_form,
         "get_employee_salary_structure": get_employee_salary_structure,
-        "jobroll_form2" : jobroll_form2,
+        "emp" : pk,
+        "position" : po_id,
+        "required_jobRoll" : required_jobRoll,
+
     }
     return render(request, 'create-employee.html', myContext)
 
@@ -433,29 +432,35 @@ def export_employee_data(request):
 
 
 @login_required(login_url='home:user-login')
-def EmployeeView(request, pk):
+def createJobROll(request, job_id):
     emp_list = Employee.objects.filter(enterprise=request.user.company).filter(
         (Q(end_date__gt=date.today()) | Q(end_date__isnull=True)))
     emp_job_roll_list = JobRoll.objects.filter(
-        emp_id__enterprise=request.user.company)     
-    required_employee = get_object_or_404(Employee, pk=pk)
+        emp_id__enterprise=request.user.company) 
+        
+    try:
+        required_jobRoll = JobRoll.objects.get(id=job_id)
+        required_jobRoll.end_date = date.today()
+        required_jobRoll.save()
+    except JobRoll.DoesNotExist:
+        employee_has_job = False
+          
     jobroll_form = JobRollForm(user_v=request.user)
     if request.method == "POST":
         jobroll_form = JobRollForm(request.user, request.POST)
         if jobroll_form.is_valid():
             job_obj = jobroll_form.save(commit=False)
-            job_obj.emp_id = required_employee
-            job_obj.start_date =date.today()
+            job_obj.emp_id = required_jobRoll.emp_id
             job_obj.created_by = request.user
-            job_obj.creation_date = date.today()
-            job_obj.last_update_by = request.user
-            job_obj.last_update_date = date.today()
-            job_obj.save()            
-    myContext = {
-        "page_title": _("List employees"),
-        "emp_list": emp_list,
-        'emp_job_roll_list': emp_job_roll_list,
-    }
-    return render(request, 'list-employees.html', myContext)
+            job_obj.save()
+            print(job_obj.end_date)
+        else:
+            print(jobroll_form.errors)                
+        return redirect('employee:update-employee', pk=required_jobRoll.emp_id.id, po_id =  job_id   )
+
+    else:
+        return render(request , 'create-jobroll.html' , {'jobroll_form':jobroll_form
+        , 'required_employee' :required_jobRoll.emp_id})
+    
 
 

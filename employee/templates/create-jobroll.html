@@ -1,0 +1,50 @@
+{% extends 'master.html'%}
+{% load staticfiles%}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+{% block body%}
+<div class="container-fluid">
+  <div class="row" style="margin-left:0px;">
+    <div class="col-md-8">
+      <h4 class="c-grey-900">Create New JobRoll for  {{ required_employee }}</h4>
+    </div>
+    <form method="POST" class="col-md-6 mb-0" id="form">
+            {% csrf_token %}
+    <label class="fw-500">manager</label>
+       {{ jobroll_form.manager }}
+
+    <label class="fw-500">Position</label> 
+    {{ jobroll_form.position }}
+
+    <label class="fw-500">Contract Type</label>
+    {{ jobroll_form.contract_type }}
+
+    <label class="fw-500">Payroll</label>
+    {{ jobroll_form.payroll }}
+    <label class="fw-500">Payroll</label>
+    {{ jobroll_form.start_date }}
+    <br>
+    <div class="submit-row">
+      <button type="submit" id="button" class="btn btn-primary btn-lg mt-3" name ='Save'>Save</button>
+    </div>
+  </form>
+  </div>
+</div>
+</div>
+</div>
+<script>
+  if(document.getElementById('button').clicked == false){
+  window.addEventListener("beforeunload", function (e) {
+    var confirmationMessage = 'It looks like you have been editing something. '
+                            + 'If you leave before saving, your changes will be lost.';
+
+    (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+    return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+});
+  }
+
+
+
+</script>    
+{% endblock body%}
