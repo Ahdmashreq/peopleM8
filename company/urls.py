@@ -25,7 +25,7 @@ urlpatterns = [
         path('department/view/<int:pk>', views.viewDepartmentView, name='department-view'),
         path('department/correct/<int:pk>', views.correctDepartmentView, name='department-correct'),
         path('department/delete/<int:pk>', views.deleteDepartmentView, name='department-delete'),
-        path('department/export/', views.export_data, name='department-export'),
+        path('department/export/', views.export_department_data, name='department-export'),
         path('hirarchy/', views.viewHirarchy, name='hirarchy'),
         ######################### Jobs URLs #########################################
         path('jobs/list/', views.listJobView, name='list-jobs'),
@@ -33,13 +33,15 @@ urlpatterns = [
         path('job/update/<int:pk>', views.updateJobView, name='job-update'),
         path('job/correct/<int:pk>', views.correctJobView, name='job-correct'),
         path('job/delete/<int:pk>', views.deleteJobView, name='job-delete'),
+        path('job/export/', views.export_job_data, name='job-export'),
 
         ######################### Grades URLs #######################################
         path('grade/list/', views.listGradeView, name='list-grades'),
         path('grade/new/', views.createGradeView, name='grade-create'),
         path('grade/update/<int:pk>', views.updateGradeView, name='grade-update'),
         path('grade/correct/<int:pk>', views.correctGradeView, name='grade-correct'),
-        path('grade/delete/<int:pk>', views.deleteGradeView, name='grade-delete'),
+        path('grade/delete/<int:pk>', views.deleteGradeView, name='grade-delete'), 
+        path('grade/export/', views.export_grade_data, name='grade-export'),
 
         ######################### Positions URLs ###################################
         path('positions/list/', views.listPositionView, name='list-positions'),
@@ -47,6 +49,7 @@ urlpatterns = [
         path('position/update/<int:pk>', views.updatePositionView, name='position-update'),
         path('position/correct/<int:pk>', views.correctPositionView, name='position-correct'),
         path('position/delete/<int:pk>', views.deletePositionView, name='position-delete'),
+        path('position/export/', views.export_position_data, name='position-export'),
 
     ])),
     ######################### Working Hours Policy URLs ###################################

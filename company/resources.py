@@ -1,9 +1,7 @@
 from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget
-from .models import Department ,Enterprise
+from .models import Department ,Enterprise , Job , Grade, Position
 from mptt.models import MPTTModel, TreeForeignKey
-
-
 
 
 class DepartmentResource(resources.ModelResource): 
@@ -39,3 +37,29 @@ class DepartmentResource(resources.ModelResource):
 
 
 
+class JobResource(resources.ModelResource): 
+    class Meta:
+        model = Job
+        skip_unchanged = True
+        report_skipped = True
+        fields = ('job_name', 'job_description', 'start_date', 'end_date',)
+       
+
+
+class GradeResource(resources.ModelResource): 
+    class Meta:
+        model = Grade
+        skip_unchanged = True
+        report_skipped = True
+        fields = ('grade_name', 'grade_description', 'start_date', 'end_date',)
+
+
+class PositionResource(resources.ModelResource): 
+    class Meta:
+        model = Position
+        skip_unchanged = True
+        report_skipped = True
+        fields = ('job', 'department', 'grade', 'position_name', 'position_description', 'start_date', 'end_date',)
+
+
+      
