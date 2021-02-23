@@ -21,5 +21,7 @@ urlpatterns = [
         path('delete-attendance/<slug:att_delete_slug>/', views.delete_attendance, name='delete-attendance'),
         path('list-machine-logs/', views.list_machine_logs, name='list-machine-log'),
         path('list-attendance/deductions/', views.get_unsigned_and_absence_days, name='list-attendance-deductions'),
+        path('attendance/export/', views.export_data, name='attendance-export'),
+
 
 ]

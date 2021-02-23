@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.db.models import Q
 from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
@@ -21,7 +21,7 @@ from django.utils.translation import ugettext_lazy as _
 from cities_light.models import City, Country
 from django.core.exceptions import ObjectDoesNotExist
 from tablib import Dataset
-from .resources import DepartmentResource
+from .resources import *
 
 ########################################Enterprise views###################################################################
 from defenition.models import TaxRule, Tax_Sections, LookupType, LookupDet
@@ -405,23 +405,24 @@ def deleteDepartmentView(request, pk):
 
 
 @login_required(login_url='home:user-login')
-def export_data(request):
+def export_department_data(request):
     if request.method == 'POST':
         file_format = request.POST['file-format']
         department_resource = DepartmentResource()
-        dataset = department_resource.export()
+        queryset = Department.objects.all(request.user)
+        dataset = department_resource.export(queryset)
 
         if file_format == 'CSV':
             response = HttpResponse(dataset.csv, content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="exported_data.csv"'
+            response['Content-Disposition'] = 'attachment; filename="department_exported_data.csv"'
             return response
         elif file_format == 'JSON':
             response = HttpResponse(dataset.json, content_type='application/json')
-            response['Content-Disposition'] = 'attachment; filename="exported_data.json"'
+            response['Content-Disposition'] = 'attachment; filename="department_exported_data.json"'
             return response
         elif file_format == 'XLS (Excel)':
             response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
-            response['Content-Disposition'] = 'attachment; filename="exported_data.xls"'
+            response['Content-Disposition'] = 'attachment; filename="department_exported_data.xls"'
             return response
     export_context = {
     'page_title':'Please select format of file.',
@@ -570,6 +571,33 @@ def deleteJobView(request, pk):
     return redirect('company:list-jobs')
 
 
+@login_required(login_url='home:user-login')
+def export_job_data(request):
+    if request.method == 'POST':
+        file_format = request.POST['file-format']
+        job_resource = JobResource()
+        queryset = Job.objects.all(request.user)
+        dataset = job_resource.export(queryset)
+
+        if file_format == 'CSV':
+            response = HttpResponse(dataset.csv, content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="jobs_exported_data.csv"'
+            return response
+        elif file_format == 'JSON':
+            response = HttpResponse(dataset.json, content_type='application/json')
+            response['Content-Disposition'] = 'attachment; filename="jobs_exported_data.json"'
+            return response
+        elif file_format == 'XLS (Excel)':
+            response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
+            response['Content-Disposition'] = 'attachment; filename="jobs_exported_data.xls"'
+            return response
+    export_context = {
+    'page_title':'Please select format of file.',
+    }
+    #context['fields'] = [f.column_name for f in department_resource.get_user_visible_fields()]
+    return render(request, 'export.html', export_context )
+#
+
 ########################################Grade views###################################################################
 @login_required(login_url='home:user-login')
 def listGradeView(request):
@@ -715,6 +743,33 @@ def deleteGradeView(request, pk):
         raise e
     return redirect('company:list-grades')
 
+
+
+@login_required(login_url='home:user-login')
+def export_grade_data(request):
+    if request.method == 'POST':
+        file_format = request.POST['file-format']
+        grade_resource = GradeResource()
+        queryset = Grade.objects.all(request.user)
+        dataset = grade_resource.export(queryset)
+
+        if file_format == 'CSV':
+            response = HttpResponse(dataset.csv, content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="grads_exported_data.csv"'
+            return response
+        elif file_format == 'JSON':
+            response = HttpResponse(dataset.json, content_type='application/json')
+            response['Content-Disposition'] = 'attachment; filename="grads_exported_data.json"'
+            return response
+        elif file_format == 'XLS (Excel)':
+            response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
+            response['Content-Disposition'] = 'attachment; filename="grads_exported_data.xls"'
+            return response
+    export_context = {
+    'page_title':'Please select format of file.',
+    }
+    #context['fields'] = [f.column_name for f in department_resource.get_user_visible_fields()]
+    return render(request, 'export.html', export_context )
 
 ########################################Position views###################################################################
 @login_required(login_url='home:user-login')
@@ -870,6 +925,33 @@ def deletePositionView(request, pk):
         messages.error(request, error_msg)
         raise e
     return redirect('company:list-positions')
+
+
+@login_required(login_url='home:user-login')
+def export_position_data(request):
+    if request.method == 'POST':
+        file_format = request.POST['file-format']
+        position_resource = PositionResource()
+        queryset = Position.objects.all(request.user)
+        dataset = position_resource.export(queryset)
+
+        if file_format == 'CSV':
+            response = HttpResponse(dataset.csv, content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="position_exported_data.csv"'
+            return response
+        elif file_format == 'JSON':
+            response = HttpResponse(dataset.json, content_type='application/json')
+            response['Content-Disposition'] = 'attachment; filename="position_exported_data.json"'
+            return response
+        elif file_format == 'XLS (Excel)':
+            response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
+            response['Content-Disposition'] = 'attachment; filename="position_exported_data.xls"'
+            return response
+    export_context = {
+    'page_title':'Please select format of file.',
+    }
+    #context['fields'] = [f.column_name for f in department_resource.get_user_visible_fields()]
+    return render(request, 'export.html', export_context )
 
 
 ########################################Company Policies views###################################################################
