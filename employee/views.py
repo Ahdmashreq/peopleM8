@@ -429,3 +429,33 @@ def export_employee_data(request):
     #context['fields'] = [f.column_name for f in department_resource.get_user_visible_fields()]
     return render(request, 'export.html', export_context )
 
+
+
+
+@login_required(login_url='home:user-login')
+def EmployeeView(request, pk):
+    emp_list = Employee.objects.filter(enterprise=request.user.company).filter(
+        (Q(end_date__gt=date.today()) | Q(end_date__isnull=True)))
+    emp_job_roll_list = JobRoll.objects.filter(
+        emp_id__enterprise=request.user.company)     
+    required_employee = get_object_or_404(Employee, pk=pk)
+    jobroll_form = JobRollForm(user_v=request.user)
+    if request.method == "POST":
+        jobroll_form = JobRollForm(request.user, request.POST)
+        if jobroll_form.is_valid():
+            job_obj = jobroll_form.save(commit=False)
+            job_obj.emp_id = required_employee
+            job_obj.start_date =date.today()
+            job_obj.created_by = request.user
+            job_obj.creation_date = date.today()
+            job_obj.last_update_by = request.user
+            job_obj.last_update_date = date.today()
+            job_obj.save()            
+    myContext = {
+        "page_title": _("List employees"),
+        "emp_list": emp_list,
+        'emp_job_roll_list': emp_job_roll_list,
+    }
+    return render(request, 'list-employees.html', myContext)
+
+
