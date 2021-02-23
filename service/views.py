@@ -100,7 +100,7 @@ def services_create(request):
             service_obj.save()
             messages.add_message(request, messages.SUCCESS, 'Service was created successfully')
 
-            NotificationHelper(employee, employee_job.manager, service_obj).send_notification()
+            # NotificationHelper(employee, employee_job.manager, service_obj).send_notification()
 
             return redirect('service:services_list')
         else:
@@ -184,6 +184,7 @@ def purchase_request_create(request):
                     item.save()
             # NotificationHelper(request_employee,employee_job.manager,purchase_obj).send_notification()
             messages.success(request, 'Purchase Request was created successfully')
+            return redirect('service:purchase-request-list')
         else:
             messages.error(request, 'Purchase Request was not created')
 

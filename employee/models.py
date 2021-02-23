@@ -36,8 +36,8 @@ class Employee(models.Model):
                              related_name='employee_user')
     enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name='enterprise_employee',
                                    verbose_name=_('Department'))
-    emp_number = models.IntegerField(
-        default=0, blank=True, null=True, verbose_name=_('Employee Number'))
+    emp_number = models.CharField(
+        max_length=30,default="0", blank=True, null=True, verbose_name=_('Employee Number'))
     emp_type = models.CharField(max_length=30, choices=emp_type_list, null=True, blank=True,
                                 verbose_name=_('Employee Type'))
     emp_name = models.CharField(max_length=60, verbose_name=_('Employee Name'))
@@ -55,7 +55,7 @@ class Employee(models.Model):
         auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Hire Date'))
     email = models.EmailField(blank=True, null=True, verbose_name=_('email'))
     picture = models.ImageField(
-        null=True, blank=True, verbose_name=_('picture'))
+        upload_to = "avatars/",null=True, blank=True, verbose_name=_('picture'))
     is_active = models.BooleanField(
         blank=True, default=True, verbose_name=_('Is Active'))
     identification_type = models.CharField(max_length=5, choices=identification_type_list, null=True, blank=True,
@@ -67,7 +67,7 @@ class Employee(models.Model):
     nationality = models.CharField(
         max_length=20, blank=True, null=True, verbose_name=_('Nationality'))
     field_of_study = models.CharField(
-        max_length=30, blank=True, null=True, verbose_name=_('Field of Study'))
+        max_length=200, blank=True, null=True, verbose_name=_('Field of Study'))
     education_degree = models.CharField(
         max_length=30, blank=True, null=True, verbose_name=_('Eductaion Degree'))
     gender = models.CharField(
@@ -337,4 +337,4 @@ class Employee_File(models.Model):
     last_updated_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
-        return self.emp_file
+        return self.name
