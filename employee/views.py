@@ -92,6 +92,7 @@ def createEmployeeView(request):
         "jobroll_form": jobroll_form,
         "payment_form": payment_form,
         "create_employee": True,
+        "flage" : 0,
     }
     return render(request, 'create-employee.html', myContext)
 
@@ -260,6 +261,8 @@ def updateEmployeeView(request, pk):
         "get_employee_salary_structure": get_employee_salary_structure,
         "emp" : pk,
         "required_jobRoll" : required_jobRoll,
+        "flage" : 1,
+
 
     }
     return render(request, 'create-employee.html', myContext)

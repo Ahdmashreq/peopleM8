@@ -16,7 +16,7 @@
       </div>
       <div class="col-md-4">
         <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
-          <div class="peer"><button type="submit" class="btn cur-p btn-primary">{% trans "Save" %}</button></div>
+          <div class="peer"><button type="submit" id="button" class="btn cur-p btn-primary">{% trans "Save" %}</button></div>
           <div class="peer"><a href="{% url 'employee:list-employee' %}" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a></div>
         </div>
       </div>
@@ -303,4 +303,5 @@
     return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
 });
 </script>
+
 {% endblock js %}

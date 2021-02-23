@@ -32,14 +32,5 @@
   </div>
 </div>
 </div>
-</div>
-<script>
-  $(document).ready(function() {
-     formmodified=0; $('#form').change(function() { formmodified=1; });
-      window.onbeforeunload = confirmExit; function confirmExit() { 
-        if (formmodified == 1) { return "New information not saved."}
-      }
-    })
-
-</script>    
+</div>    
 {% endblock body%}
