@@ -43,8 +43,10 @@
         <span class="arrow"><i class="ti-angle-right"></i></span>
       </a>
       <ul class="dropdown-menu" style="display: none;">
+        {% if request.user.is_superuser %}
         <li><a href="{% url 'home:group_list' %}">{% trans "Groups" %}</a></li>
         <li><a href="{% url 'home:user_groups' %}">{% trans "Users Groups" %}</a></li>
+        {% endif %}
         <li><a href="{% url 'company:list-department' %}">{% trans "Departments" %}</a></li>
         <li><a href="{% url 'company:list-jobs' %}">{% trans "Jobs" %}</a></li>
         <li><a href="{% url 'company:list-grades' %}">{% trans "Grades" %}</a></li>
@@ -82,7 +84,6 @@
           </li>
           <li><a class="sidebar-link" href="{% url 'element_definition:list-batchs' %}">{% trans 'Salary Structure'%}</a>
           </li>
-          <!-- <li><a class="sidebar-link" href="{% url 'element_definition:list-links' %}">{% trans 'Link Pays'%}</a></li> -->
         </ul>
       </li>
 
