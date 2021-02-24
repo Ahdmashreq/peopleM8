@@ -6,7 +6,7 @@
 {% block body%}
 
 <div class="container-fluid">
-  <form method="post">
+  <form method="post" id="myform">
     {% csrf_token %}
     <!--  -->
     <div class="row">
@@ -16,7 +16,7 @@
       <div class="col-md-4">
         <div class="gap-10 peers push-right">
           <div class="peer">
-            <button type="submit" class="btn cur-p btn-primary">Save</button>
+            <button type="submit"  class="btn cur-p btn-primary" onclick="change_x()">Save</button>
           </div>
           <div class="peer">
             <a href="{% url 'manage_payroll:list-assignBatch' %}" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
@@ -143,12 +143,25 @@
   </form>
 </div>
 <script>
-  window.addEventListener("beforeunload", function (e) {
-    var confirmationMessage = 'It looks like you have been editing something. '
-                            + 'If you leave before saving, your changes will be lost.';
-
-    (e || window.event).returnValue = confirmationMessage; //Gecko + IE
-    return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
-});
-</script>
+  isDirty = true
+  x = false
+  console.log(isDirty)
+  document.getElementById("myform").onchange = function() {myFunction()};
+ 
+ function myFunction() {
+   x= true
+ }
+  
+  function change_x()
+  {isDirty = false
+ console.log(isDirty)}
+ 
+  window.onbeforeunload = function () {
+             if (isDirty && x ) {
+                 return "There are unsaved data.";
+                 console.log(isDirty)
+             }
+             return undefined;
+         }
+ </script>
 {% endblock body%}

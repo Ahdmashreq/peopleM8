@@ -16,7 +16,7 @@
       </div>
       <div class="col-md-4">
         <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
-          <div class="peer"><button type="submit" class="btn cur-p btn-primary">{% trans "Save" %}</button></div>
+          <div class="peer"><button type="submit" onclick="change_x()" class="btn cur-p btn-primary">{% trans "Save" %}</button></div>
           <div class="peer"><a href="{% url 'employee:list-employee' %}" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a></div>
         </div>
       </div>
@@ -359,12 +359,25 @@
     });
 </script>
 <script>
-  window.addEventListener("beforeunload", function (e) {
-    var confirmationMessage = 'It looks like you have been editing something. '
-                            + 'If you leave before saving, your changes will be lost.';
-
-    (e || window.event).returnValue = confirmationMessage; //Gecko + IE
-    return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
-});
-</script>
+  isDirty = true
+  x = false
+  console.log(isDirty)
+  document.getElementById("my_form").onchange = function() {myFunction()};
+ 
+ function myFunction() {
+   x= true
+ }
+  
+  function change_x()
+  {isDirty = false
+ console.log(isDirty)}
+ 
+  window.onbeforeunload = function () {
+             if (isDirty && x ) {
+                 return "There are unsaved data.";
+                 console.log(isDirty)
+             }
+             return undefined;
+         }
+ </script>
 {% endblock js %}
