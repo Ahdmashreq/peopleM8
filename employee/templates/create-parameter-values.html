@@ -17,7 +17,7 @@
   <h1 id="page_title">{{page_title}}</h1>
 </div>
 <div>
-  <form method="POST">
+  <form method="POST" id="myform">
     {% csrf_token %}
     <table id="form_table">
       <tr>
@@ -67,17 +67,30 @@
     <a href="{% url 'employee:employee-create' %}">
       <button type="button" class="btn-sm btn-secondary">{% trans "Back Employee" %}</button>
     </a>
-    <button type="submit" class="btn-sm btn-secondary">{% trans "Save" %}</button>
+    <button type="submit"  onclick="change_x()" class="btn-sm btn-secondary">{% trans "Save" %}</button>
   </form>
 </div>
 <script>
-  window.addEventListener("beforeunload", function (e) {
-    var confirmationMessage = 'It looks like you have been editing something. '
-                            + 'If you leave before saving, your changes will be lost.';
-
-    (e || window.event).returnValue = confirmationMessage; //Gecko + IE
-    return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
-});
-</script>
-
+  isDirty = true
+  x = false
+  console.log(isDirty)
+  document.getElementById("myform").onchange = function() {myFunction()};
+ 
+ function myFunction() {
+   x= true
+ }
+  
+  function change_x()
+  {isDirty = false
+ console.log(isDirty)}
+ 
+  window.onbeforeunload = function () {
+             if (isDirty && x ) {
+                 return "There are unsaved data.";
+                 console.log(isDirty)
+             }
+             return undefined;
+         }
+ </script>
+ 
 {% endblock body%}

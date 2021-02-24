@@ -92,6 +92,7 @@ def createEmployeeView(request):
         "jobroll_form": jobroll_form,
         "payment_form": payment_form,
         "create_employee": True,
+        "flage" : 0,
     }
     return render(request, 'create-employee.html', myContext)
 
@@ -153,9 +154,9 @@ def viewEmployeeView(request, pk):
 
 
 @login_required(login_url='home:user-login')
-def updateEmployeeView(request, pk, po_id):
-    required_employee = get_object_or_404(Employee, pk=pk)
-    required_jobRoll = JobRoll.objects.get(id = po_id)
+def updateEmployeeView(request, pk):
+    required_jobRoll = JobRoll.objects.get(id = pk)
+    required_employee = get_object_or_404(Employee, pk=required_jobRoll.emp_id.id)
     emp_form = EmployeeForm(instance=required_employee)
     # filter the user fk list to show the company users only.
     emp_form.fields['user'].queryset = User.objects.filter(
@@ -190,9 +191,8 @@ def updateEmployeeView(request, pk, po_id):
        
 
     if request.method == 'POST':
+        jobroll_form = JobRollForm(request.user, request.POST, instance=required_jobRoll)
         emp_form = EmployeeForm(request.POST, request.FILES, instance=required_employee)
-        jobroll_form = JobRollForm(
-            request.user, request.POST, instance=required_jobRoll)
         payment_form = Employee_Payment_formset(
             request.POST, instance=required_employee)
 
@@ -260,8 +260,9 @@ def updateEmployeeView(request, pk, po_id):
         "employee_element_form": employee_element_form,
         "get_employee_salary_structure": get_employee_salary_structure,
         "emp" : pk,
-        "position" : po_id,
         "required_jobRoll" : required_jobRoll,
+        "flage" : 1,
+
 
     }
     return render(request, 'create-employee.html', myContext)
@@ -456,7 +457,8 @@ def createJobROll(request, job_id):
             print(job_obj.end_date)
         else:
             print(jobroll_form.errors)                
-        return redirect('employee:update-employee', pk=required_jobRoll.emp_id.id, po_id =  job_id   )
+        return redirect('employee:update-employee',
+         pk = job_obj.id)
 
     else:
         return render(request , 'create-jobroll.html' , {'jobroll_form':jobroll_form
