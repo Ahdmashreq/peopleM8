@@ -45,7 +45,6 @@ def connect_download_from_machine(company):
     zk = ZK('192.168.1.220', port=4370, timeout=5)
     device_users = []
     try:
-        print('Connecting to device ...')
         conn = zk.connect()
         # Get all users (will return list of User object)
         users = conn.get_users()
