@@ -19,7 +19,7 @@
             <button type="submit" onclick="change_x()" class="btn cur-p btn-primary">{% trans "Save" %}</button>
           </div>
           <div class="peer">
-            <a href="{% url 'company:list-grades' %}" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
+            <a href="{% url 'company:list-grades' %}" onclick="change_x()" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
           </div>
         </div>
       </div>
@@ -96,6 +96,13 @@
   });
 </script>
 
+<script>
+  $('#add_more').click(function() {
+    var form_idx = $('#id_form-TOTAL_FORMS').val();
+    $('#form_set').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
+    $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+  });
+</script>
 <script>
   isDirty = true
   x = false

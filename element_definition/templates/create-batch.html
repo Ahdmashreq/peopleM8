@@ -19,7 +19,7 @@
             <button type="submit" onclick="change_x()" class="btn cur-p btn-primary">Save</button>
           </div>
           <div class="peer">
-            <a href="{% url 'element_definition:list-batchs' %}" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
+            <a href="{% url 'element_definition:list-batchs' %}"  onclick="change_x()" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
           </div>
         </div>
       </div>
@@ -133,7 +133,6 @@
     $('#id_element_batch_fk-TOTAL_FORMS').val(parseInt(form_idx) + 1);
   });
 </script>
- 
 <script>
   isDirty = true
   x = false
