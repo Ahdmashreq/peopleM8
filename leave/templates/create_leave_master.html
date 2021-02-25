@@ -20,7 +20,7 @@
       <div class="mt-1">
         <div class="bgc-white p-20 bd">
           <div class="mT-30">
-            <form method="POST">
+            <form method="POST" id="myform">
               {% csrf_token %}
               <div class="form-row">
                 <div class="form-group col-md-6">
@@ -42,8 +42,8 @@
 
               <div class="form-group row">
                 <div class="col-sm-10">
-                  <button type="submit" name ='save_and_exit' class="btn cur-p btn-outline-primary">{% trans "Save & Exit" %}</button>
-                  <button type="submit" name ='save_and_add' class="btn cur-p btn-outline-primary">{% trans "Save & Add another" %}</button>
+                  <button type="submit" onclick="change_x()" name ='save_and_exit' class="btn cur-p btn-outline-primary">{% trans "Save & Exit" %}</button>
+                  <button type="submit"  onclick="change_x()" name ='save_and_add' class="btn cur-p btn-outline-primary">{% trans "Save & Add another" %}</button>
                   <button type="button" class="btn cur-p btn-outline-secondary">
                     <a href="{% url 'leave:list-leave-master' %}">{% trans "Cancel" %}</a>
                   </button>
@@ -59,12 +59,25 @@
   </div>
 </div>
 <script>
-  window.addEventListener("beforeunload", function (e) {
-    var confirmationMessage = 'It looks like you have been editing something. '
-                            + 'If you leave before saving, your changes will be lost.';
-
-    (e || window.event).returnValue = confirmationMessage; //Gecko + IE
-    return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
-});
-</script>
+  isDirty = true
+  x = false
+  console.log(isDirty)
+  document.getElementById("myform").onchange = function() {myFunction()};
+ 
+ function myFunction() {
+   x= true
+ }
+  
+  function change_x()
+  {isDirty = false
+ console.log(isDirty)}
+ 
+  window.onbeforeunload = function () {
+             if (isDirty && x ) {
+                 return "There are unsaved data.";
+                 console.log(isDirty)
+             }
+             return undefined;
+         }
+ </script>
 {% endblock body %}

@@ -8,7 +8,7 @@
 
 
 <div class="container-fluid">
-  <form method="post">
+  <form method="post" id="myform">
     {% csrf_token %}
     <!--  -->
     <div class="row">
@@ -52,7 +52,7 @@
           <div class="form-group row">
             <div class="form-row gap-10 peers">
               <div class="peer">
-                  <button type="submit" class="btn cur-p btn-success">Save changes</button>
+                  <button type="submit" onclick="change_x()" class="btn cur-p btn-success">Save changes</button>
               </div>
               <div class="peer">
                 <a href="{% url 'attendance:list-tasks' attendance_slug=all_tasks_id %}">
@@ -65,13 +65,27 @@
     </div>
   </form>
 </div>
-<script>
-  window.addEventListener("beforeunload", function (e) {
-    var confirmationMessage = 'It looks like you have been editing something. '
-                            + 'If you leave before saving, your changes will be lost.';
 
-    (e || window.event).returnValue = confirmationMessage; //Gecko + IE
-    return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
-});
-</script>
+<script>
+  isDirty = true
+  x = false
+  console.log(isDirty)
+  document.getElementById("myform").onchange = function() {myFunction()};
+ 
+ function myFunction() {
+   x= true
+ }
+  
+  function change_x()
+  {isDirty = false
+ console.log(isDirty)}
+ 
+  window.onbeforeunload = function () {
+             if (isDirty && x ) {
+                 return "There are unsaved data.";
+                 console.log(isDirty)
+             }
+             return undefined;
+         }
+ </script>
 {% endblock body %}

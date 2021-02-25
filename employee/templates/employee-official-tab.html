@@ -36,36 +36,13 @@
     <label class="fw-500">End Date</label>
     {{ jobroll_form.end_date }}
   </div>
-
-  <div class="col-sm-3">
+</div>
+{% if flage == 1 %}
+  <div class="col-sm-3 mb-4">
     <label class="fw-500">Add New Position</label>
     <br>
-      <button class="btn btn-danger" type="button" data-toggle="modal" data-target="#add-modal">{% trans "Add" %}</button>
+      <div class="peer"><a href="{% url 'employee:new-jobroll' job_id=required_jobRoll.id %}" class="btn cur-p btn-secondary">{% trans "Add" %}</a></div>
   </div>
-</div>
+  {% endif %}
 
-<div class="modal fade" id="add-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">   
-      <div class="modal-body"> 
-        <label class="fw-500">Employee</label>
-        <br>
-        <p>{{ required_employee }}</p>
-        <label class="fw-500">manager</label>
-           {{ jobroll_form2.manager }}
-
-        <label class="fw-500">Position</label> 
-        {{ jobroll_form2.position }}
-
-        <label class="fw-500">Contract Type</label>
-        {{ jobroll_form2.contract_type }}
-
-        <label class="fw-500">Payroll</label>
-        {{ jobroll_form2.payroll }}
-        <br>
-        <button type="button" class="btn btn-secondary" 
-        onclick="addPosition()" data-dismiss="modal">{% trans "Add" %}</button>
-      </div>
-    </div>
-  </div>
-</div>
+       

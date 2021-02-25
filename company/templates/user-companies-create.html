@@ -40,7 +40,7 @@
       <div class="col-12 col-md-12 pY-40 scrollable pos-r">
 
 
-        <form method="post">
+        <form method="post" id="myform">
           {% csrf_token %}
           <!--  -->
           <div class="row">
@@ -56,8 +56,8 @@
                   <a href="{% url 'company:user-companies-list' %}" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
                 </div>
                 <div class="peer">
-                  <button type="submit" class="btn cur-p btn-primary" name='Save and exit'>{% trans "Save & exit" %}</button>
-                  <button type="submit" class="btn cur-p btn-primary" name='Save and add'>{% trans "Save & add another" %}</button>
+                  <button type="submit" onclick="change_x()" class="btn cur-p btn-primary" name='Save and exit'>{% trans "Save & exit" %}</button>
+                  <button type="submit" onclick="change_x()" class="btn cur-p btn-primary" name='Save and add'>{% trans "Save & add another" %}</button>
                 </div>
               </div>
             </div>
@@ -141,15 +141,7 @@
   </div>
 
   <!-- jQuery -->
-  <script>
-    window.addEventListener("beforeunload", function (e) {
-      var confirmationMessage = 'It looks like you have been editing something. '
-                              + 'If you leave before saving, your changes will be lost.';
-  
-      (e || window.event).returnValue = confirmationMessage; //Gecko + IE
-      return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
-  });
-  </script>
+ 
   <script src="{% static 'jquery/jquery.min.js'%}"></script>
   <script type="text/javascript" src="{% static 'js/vendor.js'%}"></script>
   {% if LANGUAGE_BIDI %}
