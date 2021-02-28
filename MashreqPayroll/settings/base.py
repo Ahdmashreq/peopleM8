@@ -105,7 +105,7 @@ MIDDLEWARE_CLASSES = (
 
 WSGI_APPLICATION = 'MashreqPayroll.wsgi.application'
 
-
+FILE_UPLOAD_PERMISSIONS = 0o777
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
 
