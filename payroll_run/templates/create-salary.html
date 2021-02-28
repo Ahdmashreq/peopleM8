@@ -19,7 +19,7 @@
             <button type="submit" onclick="change_x()" class="btn cur-p btn-primary">{% trans "Run Payroll" %}</button>
           </div>
           <div class="peer">
-            <a href="{% url 'payroll_run:list-salary' %}" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
+            <a href="{% url 'payroll_run:list-salary' %}" onclick="change_x()" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
           </div>
         </div>
       </div>

@@ -36,7 +36,7 @@
     <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
       <div class="peer"><a href="{% url 'payroll_run:genereate-salary' month=salary_obj.salary_month year=salary_obj.salary_year salary_id=salary_obj.id emp_id=salary_obj.emp.id %}" target="_blank"
           class="btn cur-p btn-primary">{% trans "Print" %}</a></div>
-      <div class="peer"><a href="{% url 'payroll_run:list-month-salary' month=salary_obj.salary_month year=salary_obj.salary_year %}" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a></div>
+      <div class="peer"><a href="{% url 'payroll_run:list-month-salary' month=salary_obj.salary_month year=salary_obj.salary_year %}"  class="btn cur-p btn-secondary">{% trans "Back to List" %}</a></div>
     </div>
   </div>
 </div>

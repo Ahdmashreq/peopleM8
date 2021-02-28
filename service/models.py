@@ -113,7 +113,7 @@ def business_request_handler(sender, instance, created, update_fields, **kwargs)
            or send a notification to the person who created the Travel, if his request is processed .
     """
     requestor_emp = instance.emp
-    required_job_roll = JobRoll.objects.get(emp_id = instance.ordered_by, end_date__isnull=True)
+    required_job_roll = JobRoll.objects.get(emp_id = instance.emp.id, end_date__isnull=True)
     if required_job_roll.manager:
         manager_emp = required_job_roll.manager.user
     else:
