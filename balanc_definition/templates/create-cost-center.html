@@ -19,7 +19,7 @@
             <button type="submit" onclick="change_x()" class="btn cur-p btn-primary">{% trans "Save" %}</button>
           </div>
           <div class="peer">
-            <a href="{% url 'balanc_definition:list-costing' %}" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
+            <a href="{% url 'balanc_definition:list-costing' %}" onclick="change_x()" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
           </div>
         </div>
       </div>
@@ -71,7 +71,6 @@
     </div>
   </form>
 </div>
-
 <script>
   isDirty = true
   x = false

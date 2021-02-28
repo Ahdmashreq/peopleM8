@@ -19,7 +19,7 @@
             <button type="submit" onclick="change_x()" class="btn cur-p btn-primary">{% trans "Save" %}</button>
           </div>
           <div class="peer">
-            <a href="{% url 'manage_payroll:list-banks' %}" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
+            <a href="{% url 'manage_payroll:list-banks' %}"  onclick="change_x()" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
           </div>
         </div>
       </div>
@@ -98,5 +98,4 @@
              return undefined;
          }
  </script>
-
 {% endblock body%}

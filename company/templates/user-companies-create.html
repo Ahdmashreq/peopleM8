@@ -142,28 +142,6 @@
 
   <!-- jQuery -->
  
-<script>
-  isDirty = true
-  x = false
-  console.log(isDirty)
-  document.getElementById("myform").onchange = function() {myFunction()};
- 
- function myFunction() {
-   x= true
- }
-  
-  function change_x()
-  {isDirty = false
- console.log(isDirty)}
- 
-  window.onbeforeunload = function () {
-             if (isDirty && x ) {
-                 return "There are unsaved data.";
-                 console.log(isDirty)
-             }
-             return undefined;
-         }
- </script>
   <script src="{% static 'jquery/jquery.min.js'%}"></script>
   <script type="text/javascript" src="{% static 'js/vendor.js'%}"></script>
   {% if LANGUAGE_BIDI %}

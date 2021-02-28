@@ -19,7 +19,7 @@
             <button type="submit" onclick="change_x()" class="btn cur-p btn-primary">Save</button>
           </div>
           <div class="peer">
-            <a href="{% url 'defenition:list-lookups' %}" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
+            <a href="{% url 'defenition:list-lookups' %}" onclick="change_x()" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
           </div>
         </div>
       </div>
@@ -91,7 +91,6 @@
     </div>
   </form>
 </div>
- 
 <script>
   isDirty = true
   x = false
