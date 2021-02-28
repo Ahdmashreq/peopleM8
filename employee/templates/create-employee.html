@@ -8,7 +8,7 @@
 
 </style>
   <div class="container-fluid">
-    <form method="POST" id="myform">
+    <form method="POST" id="myform" enctype="multipart/form-data">
       {% csrf_token %}
     <div class="row">
       <div class="col-md-8">
@@ -85,11 +85,12 @@
           </div>
           <section class="panel panel-default">
             <header class="panel-heading bg-light">
-              <ul class="nav nav-tabs nav-justified">
-                <li class="active"><a href="#nav-home" data-toggle="tab" id="nav-home-tab" role="tab" aria-controls="nav-home" aria-selected="true">{% trans "Personal" %}</a></li>
-                <li><a href="#nav-profile" id="nav-profile-tab" data-toggle="tab" role="tab" aria-controls="nav-profile" aria-selected="false">{% trans "Official" %}</a></li>
-                <li><a href="#nav-contact" id="nav-contact-tab" data-toggle="tab" role="tab" aria-controls="nav-contact" aria-selected="false">{% trans "Payments" %}</a></li>
-                <li><a href="#nav-elements" id="nav-elements-tab" data-toggle="tab" role="tab" aria-controls="nav-elements" aria-selected="false">{% trans "Pays" %}</a></li>
+              <ul class="nav nav-tabs nav-justified ">
+                <li class="active" style="width: 20%;"><a href="#nav-home" data-toggle="tab" id="nav-home-tab" role="tab" aria-controls="nav-home" aria-selected="true">{% trans "Personal" %}</a></li>
+                <li style="width: 20%;"><a href="#nav-profile" id="nav-profile-tab" data-toggle="tab" role="tab" aria-controls="nav-profile" aria-selected="false">{% trans "Official" %}</a></li>
+                <li style="width: 20%;"><a href="#nav-contact" id="nav-contact-tab" data-toggle="tab" role="tab" aria-controls="nav-contact" aria-selected="false">{% trans "Payments" %}</a></li>
+                <li style="width: 20%;"><a href="#nav-elements" id="nav-elements-tab" data-toggle="tab" role="tab" aria-controls="nav-elements" aria-selected="false">{% trans "Pays" %}</a></li>
+                <li style="width: 20%;"><a href="#nav-files" id="nav-files-tab" data-toggle="tab" role="tab" aria-controls="nav-files" aria-selected="false">{% trans "Files" %}</a></li>
               </ul>
             </header>
             <div class="panel-body">
@@ -105,6 +106,9 @@
                 </div>
                 <div class="tab-pane" id="nav-elements" role="tabpanel" aria-labelledby="nav-elements-tab">
                   {% include 'employee-salary-tab.html' %}
+                </div>
+                <div class="tab-pane" id="nav-files" role="tabpanel" aria-labelledby="nav-files-tab">
+                  {% include 'employee-files-tab.html' %}
                 </div>
               </div>
             </div>
@@ -206,12 +210,12 @@
 </script>
   <script>
     var vala =1;
-     
+
       $( ".one" ).each(function () {
         console.log(vala)
         vala;
         console.log(vala)
-      $( this ).change(function (){  
+      $( this ).change(function (){
         vala;
         console.log(vala)
         console.log($(this).val());
@@ -222,7 +226,7 @@
         return vala
 });
 
-     
+
       function myFunction(id) {
       console.log(vala)
       var value = vala
@@ -253,12 +257,12 @@
 
     <script>
       var vala =1;
-       
+
         $( ".two" ).each(function () {
           console.log(vala)
           vala;
           console.log(vala)
-        $( this ).change(function (){  
+        $( this ).change(function (){
           vala;
           console.log(vala)
           console.log($(this).val());
@@ -268,8 +272,8 @@
           });
           return vala
   });
-  
-       
+
+
         function myFunction_2(id) {
         console.log(vala)
         var value = vala
@@ -289,31 +293,42 @@
                     alert(data.error_message);
                 }
             }
-  
+
         });
         document.getElementById("el"+id).replaceWith(value)
         };
      </script>
 <script>
-  isDirty = true
-  x = false
-  console.log(isDirty)
-  document.getElementById("myform").onchange = function() {myFunction()};
- 
- function myFunction() {
-   x= true
- }
-  
-  function change_x()
-  {isDirty = false
- console.log(isDirty)}
- 
-  window.onbeforeunload = function () {
-             if (isDirty && x ) {
-                 return "There are unsaved data.";
-                 console.log(isDirty)
-             }
-             return undefined;
-         }
- </script>
+
+ isDirty = true
+ x = false
+ console.log(isDirty)
+ document.getElementById("myform").onchange = function() {myFunction()};
+
+function myFunction() {
+  x= true
+}
+
+ function change_x()
+ {isDirty = false
+console.log(isDirty)}
+
+ window.onbeforeunload = function () {
+            if (isDirty && x ) {
+                return "There are unsaved data.";
+                console.log(isDirty)
+            }
+            return undefined;
+        }
+</script>
+
+     <script>
+      $('#add_file').click(function () {
+          var form_idx = $('#id_employee_file_set-TOTAL_FORMS').val();
+          $('#form_set').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
+          $('#id_employee_file_set-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+          var current_indx = Number(form_idx)
+      });
+     </script>
+
 {% endblock js %}
