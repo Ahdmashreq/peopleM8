@@ -124,7 +124,7 @@
 <script>
   $(document).ready(function() {
     if (document.getElementById('id_element_type').value === 'formula') {
-      document.getElementById('based_on').style.display = 'block';
+      document.getElementById('based_on').style.display = 'none';
       document.getElementById('fixed_amount').style.display = 'none';
       document.getElementById('amount_type').style.display = 'none';
 
@@ -214,7 +214,7 @@
       document.getElementById('percentage').style.display = 'block';
       document.getElementById('amount_type').style.display = 'none';
     } else if (document.getElementById('id_element_type').value == 'payslip based') {
-      document.getElementById('fixed_amount').style.display = 'none';
+      document.getElementById('fixed_amount').style.display = 'block';
       document.getElementById('based_on').style.display = 'none';
       document.getElementById('sign').style.display = 'none';
       document.getElementById('percentage').style.display = 'none';
