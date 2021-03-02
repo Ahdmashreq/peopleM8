@@ -48,7 +48,7 @@
 
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" onclick="myFunction( {{emp.id}} )" class="btn btn-primary" name ='Save' data-dismiss="modal">Save Changes</button>
+          <button type="button" onclick="myFunction_3({{emp.id}})" class="btn btn-primary" name ='Save' data-dismiss="modal">Save Changes</button>
         </div>
 
       </form>
@@ -106,7 +106,7 @@
           {% csrf_token %}
           <div class="form-row">
             <div class="form-group col-md-12">
-              <input type="number" class="two" id="lname" name="lname">
+              <input type="number" class="two" id="name" name="name">
             </div>
           </div>
 
