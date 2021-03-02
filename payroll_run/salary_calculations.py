@@ -222,13 +222,8 @@ class Salary_Calculator:
     def calc_net_salary(self):
         net_salary = self.calc_gross_salary() - self.calc_taxes_deduction()
         return net_salary
-
-
-    def net_to_gross(self):
-
-        taxes=0
-        diffrence=0
-        percent=0    
+#########################################################################
+    def calc_basic_net(self):
         basic_net =Employee_Element.objects.filter(element_id__element_name="Basic Net", emp_id=self.employee).filter(
             (Q(end_date__gte=date.today()) | Q(end_date__isnull=True)))[0].element_value
         
@@ -236,6 +231,15 @@ class Salary_Calculator:
         deductions = self.calc_emp_deductions_amount()
         insurence = self.calc_employee_insurance()
         final_net = ( basic_net + allowence - (deductions + insurence) )
+        print(final_net)
+        return final_net
+
+    def net_to_tax(self):
+
+        taxes=0
+        diffrence=0
+        percent=0    
+        final_net = self.calc_basic_net()
         year_net = (final_net * 12) - 9000
         values = Taxes.objects.all()
         for x in values :
@@ -251,16 +255,22 @@ class Salary_Calculator:
         #print(taxes)
         #print(dummy3)
         final_tax=round(taxes + dummy3,3)/12
-        gross_salary = round(final_tax +float(final_net),3)
-
-
-
-
-
-        print("################")
-        print(final_net)
         print(final_tax)
+        return final_tax
+
+
+    def net_to_gross(self):
+        final_net = self.calc_basic_net()
+        tax = self.net_to_tax()
+        gross_salary = round(tax +float(final_net),3)
         print(gross_salary)
+        return gross_salary
+        
+
+
+
+
+
         
 
         

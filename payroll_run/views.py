@@ -11,9 +11,9 @@ import calendar
 from django.db.models import Avg, Count
 from payroll_run.models import Salary_elements
 from payroll_run.forms import SalaryElementForm, Salary_Element_Inline
-from element_definition.models import Element_Master, Element_Batch, Element_Batch_Master, Element
+from element_definition.models import Element_Master, Element_Batch, Element_Batch_Master, Element , SalaryStructure
 from manage_payroll.models import Assignment_Batch, Assignment_Batch_Include, Assignment_Batch_Exclude
-from employee.models import Employee_Element, Employee, JobRoll, Payment
+from employee.models import Employee_Element, Employee, JobRoll, Payment, EmployeeStructureLink
 from employee.forms import Employee_Element_Inline
 from django.utils.translation import ugettext_lazy as _
 # ############################################################
@@ -138,25 +138,49 @@ def createSalaryView(request):
                 sc = Salary_Calculator(company=request.user.company, employee=x, elements=emp_elements)
                 # calculate all furmulas elements for 'x' employee
                 # Employee_Element.set_formula_amount(x)
-                s = Salary_elements(
-                    emp=x,
-                    elements_type_to_run=sal_obj.elements_type_to_run,
-                    salary_month=sal_obj.salary_month,
-                    salary_year=sal_obj.salary_year,
-                    run_date=sal_obj.run_date,
-                    created_by=request.user,
-                    incomes=sc.calc_emp_income(),
-                    element=element,
-                    insurance_amount=sc.calc_employee_insurance(),
-                    # TODO need to check if the tax is applied
-                    tax_amount=sc.calc_taxes_deduction(),
-                    deductions=sc.calc_emp_deductions_amount(),
-                    gross_salary=sc.calc_gross_salary(),
-                    net_salary=sc.calc_net_salary(),
+                emp = EmployeeStructureLink.objects.get(employee=x)
+                structure = emp.salary_structure.structure_type
+                #print(structure)
+                
+                if structure == 'Gross to Net' :
+                    s = Salary_elements(
+                        emp=x,
+                        elements_type_to_run=sal_obj.elements_type_to_run,
+                        salary_month=sal_obj.salary_month,
+                        salary_year=sal_obj.salary_year,
+                        run_date=sal_obj.run_date,
+                        created_by=request.user,
+                        incomes=sc.calc_emp_income(),
+                        element=element,
+                        insurance_amount=sc.calc_employee_insurance(),
+                        # TODO need to check if the tax is applied
+                        tax_amount=sc.calc_taxes_deduction(),
+                        deductions=sc.calc_emp_deductions_amount(),
+                        gross_salary=sc.calc_gross_salary(),
+                        net_salary=sc.calc_net_salary(),
 
-                )
+                    )
+                else :
+                    
+                    s = Salary_elements(
+                        emp=x,
+                        elements_type_to_run=sal_obj.elements_type_to_run,
+                        salary_month=sal_obj.salary_month,
+                        salary_year=sal_obj.salary_year,
+                        run_date=sal_obj.run_date,
+                        created_by=request.user,
+                        incomes=sc.calc_emp_income(),
+                        element=element,
+                        insurance_amount=sc.calc_employee_insurance(),
+                        # TODO need to check if the tax is applied
+                        tax_amount=sc.net_to_tax(),
+                        deductions=sc.calc_emp_deductions_amount(),
+                        gross_salary=sc.net_to_gross(),
+                        net_salary=sc.calc_basic_net(),
+                    )
+                            
                 s.save()
-                gross= sc.net_to_gross()
+                #gross= sc.net_to_gross()
             user_lang = to_locale(get_language())
             if user_lang == 'ar':
                 success_msg = 'تم تشغيل راتب شهر {} بنجاح'.format(

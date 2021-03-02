@@ -38,6 +38,7 @@ class Element_Batch(models.Model):
 
 
 class SalaryStructure(models.Model):
+    structure_type_choices = [('Net to Gross', 'Net to Gross'), ('Gross to Net', 'Gross to Net')]
     enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name='enterprise_salary_structures',
                                    verbose_name=_('Enterprise Name'))
     structure_name = models.CharField(
@@ -46,6 +47,8 @@ class SalaryStructure(models.Model):
         auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
     end_date = models.DateField(
         auto_now=False, auto_now_add=False, null=True, blank=True, verbose_name=_('End Date'))
+    structure_type = models.CharField(
+        max_length=100, choices=structure_type_choices,null=False, blank=False)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
                                    related_name="salary_structure_created_by")
     creation_date = models.DateField(auto_now=False, auto_now_add=True)
