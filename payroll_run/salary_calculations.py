@@ -1,4 +1,4 @@
-
+from .models import Taxes
 from django.db.models import Count, Q
 from datetime import date
 from django.db.models import Count, Sum
@@ -222,3 +222,46 @@ class Salary_Calculator:
     def calc_net_salary(self):
         net_salary = self.calc_gross_salary() - self.calc_taxes_deduction()
         return net_salary
+
+
+    def net_to_gross(self):
+
+        taxes=0
+        diffrence=0
+        percent=0    
+        basic_net =Employee_Element.objects.filter(element_id__element_name="Basic Net", emp_id=self.employee).filter(
+            (Q(end_date__gte=date.today()) | Q(end_date__isnull=True)))[0].element_value
+        
+        allowence = self.calc_emp_income()
+        deductions = self.calc_emp_deductions_amount()
+        insurence = self.calc_employee_insurance()
+        final_net = ( basic_net + allowence - (deductions + insurence) )
+        year_net = (final_net * 12) - 9000
+        values = Taxes.objects.all()
+        for x in values :
+            if float(year_net)>x.start_range and float(year_net)<=x.end_range:
+                percent = x.percent
+                break
+            else:
+                taxes+=x.tax
+                diffrence+=x.diffrence
+        dummy = float(year_net)+taxes-diffrence
+        dummy2= dummy/(1-percent)
+        dummy3= dummy2*percent 
+        #print(taxes)
+        #print(dummy3)
+        final_tax=round(taxes + dummy3,3)/12
+        gross_salary = round(final_tax +float(final_net),3)
+
+
+
+
+
+        print("################")
+        print(final_net)
+        print(final_tax)
+        print(gross_salary)
+        
+
+        
+

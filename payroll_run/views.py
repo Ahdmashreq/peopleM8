@@ -153,8 +153,10 @@ def createSalaryView(request):
                     deductions=sc.calc_emp_deductions_amount(),
                     gross_salary=sc.calc_gross_salary(),
                     net_salary=sc.calc_net_salary(),
+
                 )
                 s.save()
+                gross= sc.net_to_gross()
             user_lang = to_locale(get_language())
             if user_lang == 'ar':
                 success_msg = 'تم تشغيل راتب شهر {} بنجاح'.format(
