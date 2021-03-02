@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404, get_list_or_404, redirect
+from django.shortcuts import render, get_object_or_404, get_list_or_404, redirect , HttpResponse
 from django.views.generic import DetailView, ListView, View
 from django.contrib import messages
 from django.template.loader import get_template
