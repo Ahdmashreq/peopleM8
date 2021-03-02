@@ -41,7 +41,7 @@
   <div class="col-sm-3 mb-4">
     <label class="fw-500">Add New Position</label>
     <br>
-      <div class="peer"><a href="{% url 'employee:new-jobroll' job_id=required_jobRoll.id %}" class="btn cur-p btn-secondary">{% trans "Add" %}</a></div>
+      <div class="peer"><a href="{% url 'employee:new-jobroll' job_id=required_jobRoll.id %}"   onclick="change_x()"  class="btn cur-p btn-secondary">{% trans "Add" %}</a></div>
   </div>
   {% endif %}
 

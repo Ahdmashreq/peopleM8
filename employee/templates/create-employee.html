@@ -123,17 +123,16 @@
     <div class="modal-content">
       <div class="modal-body">
         <p>{% trans "Which Other Element You Want To Assign?" %}</p>
-        <form method="post">
+        <form method="POST" action="{% url 'employee:new-employee-element' job_id=required_jobRoll.id %}">
           {% csrf_token %}
           {{employee_element_form.as_p}}
-          <button type="submit" class="btn btn-success" data-dismiss="modal">{% trans "Save" %}</button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
+          <button type="submit"  class="btn btn-success" >{% trans "Save" %}</button>
+          <button type="button"  class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
         </form>
       </div>
     </div>
   </div>
 </div>
-
 
 {% endblock body%}
 
@@ -147,15 +146,16 @@
     $(this).change(function() {
       vala;
       vala = $(this).val();
+      console.log(vala)
       return vala
     });
     return vala
   });
 
-
-  function myFunction(id) {
+  function myFunction_3(id){
     var value = vala
     var element = id
+   
     $.ajax({
       url: '/emp/employee/ajax/',
       data: {
@@ -188,6 +188,7 @@
   });
 
 
+
   function myFunction_2(id) {
     var value = vala
     var element = id
@@ -208,96 +209,6 @@
     document.getElementById("el" + id).innerHTML = value;
   };
 </script>
-  <script>
-    var vala =1;
-
-      $( ".one" ).each(function () {
-        console.log(vala)
-        vala;
-        console.log(vala)
-      $( this ).change(function (){
-        vala;
-        console.log(vala)
-        console.log($(this).val());
-        vala =$(this).val();
-        console.log(vala)
-        return vala
-        });
-        return vala
-});
-
-
-      function myFunction(id) {
-      console.log(vala)
-      var value = vala
-      console.log(vala)
-      var element = id
-      console.log(value)
-      console.log(element)
-      $.ajax({
-          url: '/emp/employee/ajax/',
-          data : {
-              'element' :element,
-              'value' :value,
-          },
-          dataType : 'json',
-          success: function(data){
-              if (data.element_after_update_element_value != data.element_value){
-                  alert(data.error_message);
-              }
-          }
-
-      });
-      v= document.getElementById("ele"+element)
-      console.log(v);
-
-      document.getElementById("ele"+element).innerHTML= value
-      };
-   </script>
-
-    <script>
-      var vala =1;
-
-        $( ".two" ).each(function () {
-          console.log(vala)
-          vala;
-          console.log(vala)
-        $( this ).change(function (){
-          vala;
-          console.log(vala)
-          console.log($(this).val());
-          vala =$(this).val();
-          console.log(vala)
-          return vala
-          });
-          return vala
-  });
-
-
-        function myFunction_2(id) {
-        console.log(vala)
-        var value = vala
-        console.log(vala)
-        var element = id
-        console.log(value)
-        console.log(element)
-        $.ajax({
-            url: '/emp/employee/ajax/',
-            data : {
-                'element' :element,
-                'value' :value,
-            },
-            dataType : 'json',
-            success: function(data){
-                if (data.element_after_update_element_value != data.element_value){
-                    alert(data.error_message);
-                }
-            }
-
-        });
-        document.getElementById("el"+id).replaceWith(value)
-        };
-     </script>
 <script>
 
  isDirty = true

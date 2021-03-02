@@ -23,6 +23,9 @@ urlpatterns =[
             path('ajax/', views.change_element_value, name='change-element-value'),
             path('employee/export/', views.export_employee_data, name='employee-export'),
             path('jobroll/new/<int:job_id>', views.createJobROll, name='new-jobroll'),
+            path('element/new/<int:job_id>', views.create_employee_element, name='new-employee-element'),
+
+
 
 
 

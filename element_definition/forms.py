@@ -45,7 +45,7 @@ class ElementForm(forms.ModelForm):
         self.fields['end_date'].widget.input_type = 'date'
         self.fields['based_on'].queryset = Element.objects.filter(enterprise=user.company).filter(
             Q(end_date__gt=date.today()) | Q(end_date__isnull=True))
-        self.fields['element_type'].widget.attrs['onchange'] = 'myFunction(this)'
+        self.fields['element_type'].widget.attrs['onchange'] = 'myFunction_2(this)'
         self.fields['amount_type'].widget.attrs['onchange'] = 'check_amount_type(this)'
         self.fields['classification'].queryset = LookupDet.objects.filter(
             lookup_type_fk__lookup_type_name='ELEMENT_CLASSIFICATION', lookup_type_fk__enterprise=user.company).filter(

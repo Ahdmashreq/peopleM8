@@ -1,4 +1,4 @@
-from django.shortcuts import render, reverse, redirect
+from django.shortcuts import render, reverse, redirect , HttpResponse
 from django.contrib import messages
 from django.db.models import Q
 from django.contrib.auth import login, logout, authenticate, update_session_auth_hash, user_logged_in, user_logged_out

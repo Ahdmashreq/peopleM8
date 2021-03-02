@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404, get_list_or_404, redirect
+from django.shortcuts import render, get_object_or_404, get_list_or_404, redirect, HttpResponse
 from django.views.generic import ListView
 from django.contrib.auth.decorators import login_required
 from datetime import date
@@ -46,7 +46,7 @@ def createEmployeeView(request):
         payment_form = Employee_Payment_formset(request.POST)
         files_formset = Employee_Files_inline(request.POST , request.FILES)
 
-        if emp_form.is_valid() and jobroll_form.is_valid() and payment_form.is_valid():
+        if emp_form.is_valid() and jobroll_form.is_valid() and payment_form.is_valid() and files_formset.is_valid():
             emp_obj = emp_form.save(commit=False)
             emp_obj.enterprise = request.user.company
             emp_obj.created_by = request.user
@@ -85,21 +85,21 @@ def createEmployeeView(request):
                         emp_obj.emp_name)
 
                     messages.success(request, success_msg)
-            if files_formset.is_valid():
-                files_obj = files_formset.save(commit=False)
-                for file_obj in files_obj:
-                    file_obj.created_by = request.user
-                    file_obj.last_update_by = request.user
-                    file_obj.emp_id = emp_obj
-                    print("*******")
-                    print(file_obj.emp_file)
-                    file_obj.save()
+            
+            files_obj = files_formset.save(commit=False)
+            for file_obj in files_obj:
+                file_obj.created_by = request.user
+                file_obj.last_update_by = request.user
+                file_obj.emp_id = emp_obj
+                file_obj.save()
 
             return redirect('employee:update-employee', pk=emp_obj.id)
         else:
             messages.error(request, emp_form.errors)
             messages.error(request, jobroll_form.errors)
             messages.error(request, files_formset.errors)
+            messages.error(request,files_formset.errors)
+            messages.error(request, employee_element_form.errors)
     myContext = {
         "page_title": _("create employee"),
         "emp_form": emp_form,
@@ -206,7 +206,6 @@ def updateEmployeeView(request, pk):
     employee_element_form = EmployeeElementForm()
 
 
-
     if request.method == 'POST':
         jobroll_form = JobRollForm(request.user, request.POST, instance=required_jobRoll)
         emp_form = EmployeeForm(request.POST, request.FILES, instance=required_employee)
@@ -223,7 +222,7 @@ def updateEmployeeView(request, pk):
 
         employee_element_form = EmployeeElementForm(request.POST)
 
-        if emp_form.is_valid() and jobroll_form.is_valid() and payment_form.is_valid():
+        if emp_form.is_valid() and jobroll_form.is_valid() and payment_form.is_valid() and files_formset.is_valid() and employee_element_form.is_valid():
             emp_obj = emp_form.save(commit=False)
             emp_obj.created_by = request.user
             emp_obj.last_update_by = request.user
@@ -241,7 +240,20 @@ def updateEmployeeView(request, pk):
                 x.created_by = request.user
                 x.last_update_by = request.user
                 x.save()
-
+            #
+            files_obj = files_formset.save(commit=False)
+            for file_obj in files_obj:
+                file_obj.created_by = request.user
+                file_obj.last_update_by = request.user
+                file_obj.emp_id = emp_obj
+                file_obj.save()
+            #
+            emp_element_obj = employee_element_form.save(commit=False)
+            emp_element_obj.emp_id = required_employee
+            emp_element_obj.created_by = request.user
+            emp_element_obj.last_update_by = request.user
+            emp_element_obj.save()
+            
             user_lang = to_locale(get_language())
 
             if user_lang == 'ar':
@@ -257,22 +269,12 @@ def updateEmployeeView(request, pk):
             messages.error(request, jobroll_form.errors)
         elif not payment_form.is_valid():
             messages.error(request, payment_form.errors)
-
-        if employee_element_form.is_valid():
-            emp_element_obj = employee_element_form.save(commit=False)
-            emp_element_obj.emp_id = required_employee
-            emp_element_obj.created_by = request.user
-            emp_element_obj.last_update_by = request.user
-            emp_element_obj.save()
-        else:
+        elif not files_formset.is_valid():
+            messages.error(request,files_formset.errors)
+        elif not employee_element_form.is_valid():
             messages.error(request, employee_element_form.errors)
-        if files_formset.is_valid():
-                files_obj = files_formset.save(commit=False)
-                for file_obj in files_obj:
-                    file_obj.created_by = request.user
-                    file_obj.last_update_by = request.user
-                    file_obj.emp_id = emp_obj
-                    file_obj.save()
+
+
     myContext = {
         "page_title": _("update employee"),
         "emp_form": emp_form,
@@ -457,27 +459,18 @@ def export_employee_data(request):
 
 @login_required(login_url='home:user-login')
 def createJobROll(request, job_id):
-    emp_list = Employee.objects.filter(enterprise=request.user.company).filter(
-        (Q(end_date__gt=date.today()) | Q(end_date__isnull=True)))
-    emp_job_roll_list = JobRoll.objects.filter(
-        emp_id__enterprise=request.user.company)
-
-    try:
-        required_jobRoll = JobRoll.objects.get(id=job_id)
-        required_jobRoll.end_date = date.today()
-        required_jobRoll.save()
-    except JobRoll.DoesNotExist:
-        employee_has_job = False
-
     jobroll_form = JobRollForm(user_v=request.user)
+    required_jobRoll = JobRoll.objects.get(id=job_id)
     if request.method == "POST":
         jobroll_form = JobRollForm(request.user, request.POST)
         if jobroll_form.is_valid():
+            required_jobRoll.end_date = date.today()
+            required_jobRoll.save()
+            
             job_obj = jobroll_form.save(commit=False)
             job_obj.emp_id = required_jobRoll.emp_id
             job_obj.created_by = request.user
             job_obj.save()
-            print(job_obj.end_date)
         else:
             print(jobroll_form.errors)
         return redirect('employee:update-employee',
@@ -486,3 +479,24 @@ def createJobROll(request, job_id):
     else:
         return render(request , 'create-jobroll.html' , {'jobroll_form':jobroll_form
         , 'required_employee' :required_jobRoll.emp_id})
+
+
+
+@login_required(login_url='home:user-login')
+def create_employee_element(request, job_id):
+    required_jobRoll = JobRoll.objects.get(id = job_id)
+    required_employee = get_object_or_404(Employee, pk=required_jobRoll.emp_id.id)
+    emp_element_form = EmployeeElementForm()
+    if request.method == "POST":
+        emp_element_form = EmployeeElementForm(request.POST)
+        if emp_element_form.is_valid():
+            emp_obj = emp_element_form.save(commit=False)
+            emp_obj.emp_id = required_employee
+            emp_obj.created_by = request.user
+            emp_obj.last_update_by = request.user
+            emp_obj.save()
+        else:
+            print(emp_element_form.errors)
+        return redirect('employee:update-employee',
+         pk = required_jobRoll.id)
+
