@@ -21,7 +21,7 @@ from custom_user.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.http import JsonResponse
 from company.models import Position
-from .resources import *
+from .resources_two import *
 
 ############################Employee View #################################
 @login_required(login_url='home:user-login')
