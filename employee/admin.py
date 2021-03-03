@@ -2,6 +2,9 @@ from django.contrib import admin
 from import_export.forms import ImportForm, ConfirmImportForm
 from employee.models import Employee, Medical, JobRoll, Payment, Employee_Element, Employee_Element_History, \
     EmployeeStructureLink
+from import_export.admin import ImportExportModelAdmin, ImportMixin
+from .resources import *
+
 
 
 class JobRollInlineAdmin(admin.TabularInline):
@@ -18,8 +21,24 @@ class JobRollInlineAdmin(admin.TabularInline):
     fk_name = 'emp_id'
 
 
+@admin.register(JobRoll)
+class JobRollAsmin(ImportExportModelAdmin):
+    resource_class = JobRollResource
+    fields = (
+        'emp_id',
+        'manager',
+        'position',
+        'contract_type',
+        'payroll',
+        'start_date',
+        'end_date',
+    )
+   
+
+
 @admin.register(Employee)
-class EmployeeAdmin(admin.ModelAdmin):
+class EmployeeAdmin(ImportExportModelAdmin):
+    resource_class = EmployeeResource
     fields = (
         'user',
         'enterprise',
@@ -109,3 +128,5 @@ class EmployeeElementHistoryAdmin(admin.ModelAdmin):
 class EmployeeStructureLinkAdmin(admin.ModelAdmin):
     class Meta:
         model = EmployeeStructureLink
+
+

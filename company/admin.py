@@ -1,10 +1,15 @@
 from django.contrib import admin
 from company import models
+from .resources import *
+from import_export.forms import ImportForm, ConfirmImportForm
+from import_export.admin import ImportExportModelAdmin, ImportMixin
+from .resources import *
 
 
 ####################################### Admin Forms #############################################
 @admin.register(models.Enterprise)
-class EnterpriseAdmin(admin.ModelAdmin):
+class EnterpriseAdmin(ImportExportModelAdmin):
+    resource_class = EnterpriseResource
     fields = (
         'enterprise_user',
         'name',
@@ -34,7 +39,8 @@ class EnterpriseAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.Department)
-class DepartmentAdmin(admin.ModelAdmin):
+class DepartmentAdmin(ImportExportModelAdmin):
+    resource_class = DepartmentResource
     fields = (
         'enterprise',
         'department_user',
@@ -56,7 +62,8 @@ class DepartmentAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.Job)
-class JobAdmin(admin.ModelAdmin):
+class JobAdmin(ImportExportModelAdmin):
+    resource_class = JobResource
     fields = (
         'job_user',
         'job_name',
@@ -77,7 +84,8 @@ class JobAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.Grade)
-class GradeAdmin(admin.ModelAdmin):
+class GradeAdmin(ImportExportModelAdmin):
+    resource_class = GradeResource
     fields = (
         'grade_user',
         'grade_name',
@@ -98,7 +106,8 @@ class GradeAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.Position)
-class PositionAdmin(admin.ModelAdmin):
+class PositionAdmin(ImportExportModelAdmin):
+    resource_class = PositionResource
     fields = (
         'job',
         'department',

@@ -28,6 +28,7 @@ from defenition.models import TaxRule, Tax_Sections, LookupType, LookupDet
 from company.utils import DatabaseLoader
 
 
+
 def load_cities(request):
     country_id = request.GET.get('country')
     cities = City.objects.filter(country_id=country_id).order_by('name')
@@ -256,7 +257,8 @@ def viewDepartmentView(request, pk):
 @login_required(login_url='home:user-login')
 def listDepartmentView(request):
     if request.method == 'GET':
-        dept_list = Department.objects.all(request.user).order_by('tree_id')
+        dept_list = Department.objects.filter(enterprise=request.user.company).filter(
+            Q(end_date__gt=date.today()) | Q(end_date__isnull=True)).order_by('tree_id')
     myContext = {
         "page_title": _("list departments"),
         'dept_list': dept_list
@@ -409,8 +411,8 @@ def export_department_data(request):
     if request.method == 'POST':
         file_format = request.POST['file-format']
         department_resource = DepartmentResource()
-        queryset = Department.objects.all(request.user)
-        dataset = department_resource.export(queryset)
+        #queryset = Department.objects.all(request.user)
+        dataset = department_resource.export()
 
         if file_format == 'CSV':
             response = HttpResponse(dataset.csv, content_type='text/csv')
@@ -432,8 +434,9 @@ def export_department_data(request):
 ########################################Job views###################################################################
 @login_required(login_url='home:user-login')
 def listJobView(request):
-    if request.method == 'GET':
-        job_list = Job.objects.all(request.user)
+    if request.method == 'GET': 
+        job_list = Job.objects.filter(enterprise=request.user.company).filter(
+            Q(end_date__gt=date.today()) | Q(end_date__isnull=True))
 
     myContext = {"page_title": _("List jobs"), 'job_list': job_list}
     return render(request, 'job-list.html', myContext)
@@ -576,8 +579,8 @@ def export_job_data(request):
     if request.method == 'POST':
         file_format = request.POST['file-format']
         job_resource = JobResource()
-        queryset = Job.objects.all(request.user)
-        dataset = job_resource.export(queryset)
+        #queryset = Job.objects.all(request.user)
+        dataset = job_resource.export()
 
         if file_format == 'CSV':
             response = HttpResponse(dataset.csv, content_type='text/csv')
@@ -602,7 +605,8 @@ def export_job_data(request):
 @login_required(login_url='home:user-login')
 def listGradeView(request):
     if request.method == 'GET':
-        grade_list = Grade.objects.all(request.user)
+        grade_list = Grade.objects.filter(enterprise=request.user.company).filter(
+            Q(end_date__gt=date.today()) | Q(end_date__isnull=True))
 
     myContext = {"page_title": _("List grades"), 'grade_list': grade_list}
     return render(request, 'grade-list.html', myContext)
@@ -750,8 +754,8 @@ def export_grade_data(request):
     if request.method == 'POST':
         file_format = request.POST['file-format']
         grade_resource = GradeResource()
-        queryset = Grade.objects.all(request.user)
-        dataset = grade_resource.export(queryset)
+        #queryset = Grade.objects.all(request.user)
+        dataset = grade_resource.export()
 
         if file_format == 'CSV':
             response = HttpResponse(dataset.csv, content_type='text/csv')
@@ -775,7 +779,8 @@ def export_grade_data(request):
 @login_required(login_url='home:user-login')
 def listPositionView(request):
     if request.method == 'GET':
-        position_list = Position.objects.all(request.user)
+        position_list = Position.objects.filter(department__enterprise=request.user.company).filter(
+            Q(end_date__gt=date.today()) | Q(end_date__isnull=True))
 
     myContext = {"page_title": _("List positions"), 'position_list': position_list}
     return render(request, 'position-list.html', myContext)
@@ -932,8 +937,7 @@ def export_position_data(request):
     if request.method == 'POST':
         file_format = request.POST['file-format']
         position_resource = PositionResource()
-        queryset = Position.objects.all(request.user)
-        dataset = position_resource.export(queryset)
+        dataset = position_resource.export()
 
         if file_format == 'CSV':
             response = HttpResponse(dataset.csv, content_type='text/csv')
