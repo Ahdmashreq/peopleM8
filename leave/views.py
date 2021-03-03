@@ -363,3 +363,15 @@ def edit_employee_leaves_balance(request, leave_balance_id):
         'leave_balance_form': leave_balance_form,
     }
     return render(request, 'leave_balance_create.html', leave_balance_context)
+
+
+@login_required(login_url='home:user-login')
+def delete_leave_balance(request, leave_balance_id):
+    """
+    delete leave balance record
+    """
+    employee_leave_balance_instance = Employee_Leave_balance.objects.get(id=leave_balance_id)
+    employee_leave_balance_instance.delete()
+    messages.add_message(request, messages.SUCCESS,
+                         _('Leave Balance was deleted successfully'))
+    return redirect('leave:leave-balance')
