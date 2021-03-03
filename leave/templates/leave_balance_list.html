@@ -7,7 +7,6 @@
 {% block body %}
 <div class="row" style="margin-left:0px;">
 
-  {% include 'messages.html'%}
   <div class="col-md-8">
     <h4 class="c-grey-900">{% trans "Employee Leaves Balance List" %}</h4>
   </div>
@@ -33,9 +32,7 @@
               <th>{% trans "Usual Leave Balance" %}</th>
               <th>{% trans "Leaves Carried Forward" %}</th>
               <th>{% trans "Absence Balance" %}</th>
-              {% if is_manager %}
               <th>{% trans "Actions" %}</th>
-              {% endif %}
             </tr>
           </thead>
           <tbody>
@@ -47,17 +44,18 @@
               <td>{{i.usual}}</td>
               <td>{{i.carried_forward}}</td>
               <td>{{i.absence}}</td>
-              {% if is_manager %}
               <td class="Actions">
                 <div class="w-100 gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
                   <div class="peer">
-                    <a href="{% url 'leave:edit_leave' i.id %}">
-                      <button type="button" class="btn cur-p btn-outline-primary">{% trans "Respond" %}</button>
+                    <a href="{% url 'leave:leave_balance_edit' i.id %}">
+                      <button type="button" class="btn cur-p btn-outline-primary">&#9997</button>
+                    </a>
+                    <a href="#">
+                      <button type="button" class="btn cur-p btn-outline-danger">&#128465</button>
                     </a>
                   </div>
                 </div>
               </td>
-              {% endif %}
             </tr>
 
             <div class="modal fade in" id="delete-modal{{i.id}}" tabindex="-1" role="dialog" aria-labelledby="delete-modal" aria-hidden="true">

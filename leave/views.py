@@ -14,6 +14,7 @@ from django.template import loader
 import datetime
 from datetime import datetime
 from django.utils.translation import ugettext_lazy as _
+from custom_user.models import User
 
 
 
@@ -333,3 +334,32 @@ def view_employee_leaves_list(request, employee_id):
         'employee': employee,
     }
     return render(request, 'list_leave_by_employee.html', leave_balance_context)
+
+
+@login_required(login_url='home:user-login')
+def edit_employee_leaves_balance(request, leave_balance_id):
+    """
+    edit employee leaves balance
+    """
+    employee_leave_balance_instance = Employee_Leave_balance.objects.get(id=leave_balance_id)
+    if request.method == 'POST':
+        print(request.POST)
+        leave_balance_form = Leave_Balance_Form(request.user, request.POST,
+                                                instance=employee_leave_balance_instance)
+        if leave_balance_form.is_valid():
+            balance_edited_obj = leave_balance_form.save(commit=False)
+            balance_edited_obj.last_update_by = request.user
+            balance_edited_obj.save()
+            messages.success(request, _('Balance Updated Successfully'))
+            return redirect('leave:leave-balance')
+        else:
+            print('error: ', leave_balance_form.errors)
+            messages.error(request, leave_balance_form.errors)
+
+    else:
+        leave_balance_form = Leave_Balance_Form(user_v=request.user, instance=employee_leave_balance_instance)
+
+    leave_balance_context = {
+        'leave_balance_form': leave_balance_form,
+    }
+    return render(request, 'leave_balance_create.html', leave_balance_context)

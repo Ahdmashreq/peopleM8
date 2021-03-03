@@ -66,7 +66,6 @@
     </div>
     <div class="page-container">
 
-      {% include 'messages.html' %}
 
       <div class="header navbar">
         {% include 'top_nav.html' %}
@@ -74,6 +73,7 @@
       </div>
       <main class="main-content bgc-grey-100">
         <div id="mainContent">
+          {% include 'messages.html' %}
           {% block body %}
           {% endblock body %}
         </div>
