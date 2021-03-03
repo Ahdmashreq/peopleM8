@@ -21,7 +21,7 @@ from django.utils.translation import ugettext_lazy as _
 from cities_light.models import City, Country
 from django.core.exceptions import ObjectDoesNotExist
 from tablib import Dataset
-from .resources import *
+from .resources_two import *
 
 ########################################Enterprise views###################################################################
 from defenition.models import TaxRule, Tax_Sections, LookupType, LookupDet
