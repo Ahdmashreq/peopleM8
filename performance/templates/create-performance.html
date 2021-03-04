@@ -1,0 +1,79 @@
+{% extends 'master.html'%}
+{% load staticfiles%}
+{% load l10n %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% block body%}
+<style>
+
+</style>
+  <div class="container-fluid">
+    <form method="POST" id="myform" enctype="multipart/form-data">
+      {% csrf_token %}
+    <div class="row">
+      <div class="col-md-8">
+        <h4 class="c-grey-900">{{page_title|title}}</h4>
+      </div>
+      <div class="col-md-4">
+        <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
+          <div class="peer"><button type="submit" onclick="change_x()" id="button" class="btn cur-p btn-primary">{% trans "Save" %}</button></div>
+          <div class="peer"><a href="{% url 'employee:list-employee' %}"  onclick="change_x()" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-1">
+      <div class="bgc-white p-20 bd">
+        <h6 class="c-grey-900">{% trans "Performance " %}</h6>
+        <div class="mT-30">
+          <div class="form-row">
+            <div class="form-group col-md-3">
+              <label for="inputCity">{% trans "Performance Name" %}</label>
+              {{ performance_form.performance_name}}
+            </div>
+            <div class="form-group col-md-3">
+              <label for="inputCity">{% trans "Company" %}</label>
+              {{ performance_form.company}}
+            </div>
+            <div class="form-group col-md-3">
+              <label for="inputPassword4">{% trans "Department" %}</label>
+              {{ performance_form.department}}
+            </div>
+            <div class="form-group col-md-3">
+              <label for="inputCity">{% trans "Job" %}</label>
+              {{ performance_form.job}}
+            </div>
+            </div>
+
+            <div class="form-row">
+            <div class="form-group col-md-4">
+              <label for="inputCity">{% trans "Position" %}</label>
+              {{ performance_form.position}}
+            </div>
+            <div class="form-group col-md-4">
+              <label class="fw-500">{% trans "Start Date" %}</label>
+              <div class="timepicker-input input-icon form-group">
+                <div class="input-group">
+                  <div class="input-group-addon bgc-white bd bdwR-0">
+                    <i class="ti-calendar"></i></div>
+                  {{ performance_form.start_date}}
+                </div>
+              </div>
+            </div>
+          </div>
+            <div class="form-group col-md-4">
+              <label class="fw-500">{% trans "End Date" %}</label>
+              <div class="timepicker-input input-icon form-group">
+                <div class="input-group">
+                  <div class="input-group-addon bgc-white bd bdwR-0">
+                    <i class="ti-calendar"></i></div>
+                  {{ performance_form.end_date}}
+                </div>
+              </div>
+            </div>
+            </div>
+  </form>
+</div>
+
+
+{% endblock body%}

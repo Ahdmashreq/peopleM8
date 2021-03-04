@@ -23,6 +23,7 @@ urlpatterns = [
                   path('recruitment/', include('recruitment.urls')),
                   path('service/', include('service.urls')),
                   path('tasks/', include('task_management.urls')),
+                  path('perf/', include('performance.urls')),
                   path('inbox/notifications/', include(notifications.urls, namespace='notifications')),
 
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
