@@ -12,7 +12,11 @@
     </div>
     <div class="col-md-4">
       <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %} ">
-        <div class="peer"><a href="{% url 'defenition:lookup-create' %}" class="btn cur-p btn-primary">{% trans "Add" %}</a></div>
+        <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Add' %}">
+          <a href="{% url 'defenition:lookup-create' %}" class="btn cur-p btn-primary">
+            <i class="fas fa-plus-square"></i>
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -36,14 +40,14 @@
               <td>{{ x.lookup_type_description }}</td>
               <td class="Actions">
                 <div class="gap-10 peers">
-                  <div class="peer">
+                  <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Update' %}">
                     <a href="{% url 'defenition:update-lookup' pk=x.id %}">
-                      <button type="button" class="btn cur-p btn-outline-primary">{% trans "Update" %}</button>
+                      <button type="button" class="btn cur-p btn-outline-primary">&#9997</button>
                     </a>
                   </div>
-                  <div class="peer">
+                  <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Delete' %}">
                     <a href="#">
-                      <button type="button" class="btn cur-p btn-outline-danger" data-toggle="modal" data-target="#delete-modal{{x.pk}}">{% trans "Delete" %}</button>
+                      <button type="button" class="btn cur-p btn-outline-danger" data-toggle="modal" data-target="#delete-modal{{x.pk}}">&#128465</button>
                     </a>
                   </div>
                 </div>
@@ -55,8 +59,8 @@
                 <div class="modal-content">
                   <div class="modal-body">
                     <p>{% trans "Are you sure you want to delete this record?" %}</p>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
-                    <a href="{% url 'defenition:delete-lookup' pk=x.id %}" class="btn btn-danger" type="button">{% trans "Delete" %}</a>
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">&#x2718</button>
+                    <a href="{% url 'defenition:delete-lookup' pk=x.id %}" class="btn btn-outline-danger" type="button">&#128465</a>
                   </div>
                 </div>
               </div>
