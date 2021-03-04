@@ -12,9 +12,21 @@
     </div>
     <div class="col-md-4">
       <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
-        <div class="peer"><a href="{% url 'employee:employee-create' %}" class="btn cur-p btn-primary">{% trans "Add" %}</a></div>
-        <div class="peer"><a href="{% url 'employee:list-employee-card' %}" class="btn cur-p btn-secondary">{% trans "Card View" %}</a></div>
-        <div class="peer"><a href="{% url 'employee:employee-export' %}" class="btn cur-p btn-secondary">{% trans "Export" %}</a></div>
+        <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Add' %}">
+          <a href="{% url 'employee:employee-create' %}" class="btn cur-p btn-primary">
+            <i class="fas fa-plus-square"></i>
+          </a>
+        </div>
+        <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'View Card' %}">
+          <a href="{% url 'employee:list-employee-card' %}" class="btn cur-p btn-secondary">
+            <i class="far fa-id-card"></i>
+          </a>
+        </div>
+        <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Export' %}">
+          <a href="{% url 'employee:employee-export' %}" class="btn cur-p btn-secondary">
+            <i class="fas fa-file-export"></i>
+          </a>
+        </div>
 
       </div>
     </div>
@@ -49,21 +61,21 @@
               <td>{{ emp.emp_id.end_date }}</td>
               <td class="Actions">
                 <div class="w-100 gap-10 peers">
-                  <div class="peer">
+                  <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'View Info' %}">
                     <a href="{% url 'employee:view-employee' pk=emp.emp_id.id %}">
                       <button type="button" class="btn cur-p btn-outline-primary">
                         <i class="fas fa-search-plus"></i>
                       </button>
                     </a>
                   </div>
-                  <div class="peer">
+                  <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Update' %}">
                     <a href="{% url 'employee:update-employee' pk=emp.id %}">
                       <button type="button" class="btn cur-p btn-outline-success">
                         <i class="fas fa-user-edit"></i>
                       </button>
                     </a>
                   </div>
-                  <div class="peer">
+                  <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Delete' %}">
                     <a href="#">
                       <button type="button" class="btn cur-p btn-outline-danger" data-toggle="modal" data-target="#delete-modal{{emp.emp_id.pk}}">
                         <i class="fa fa-trash"></i>
