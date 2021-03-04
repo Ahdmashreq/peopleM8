@@ -1,0 +1,94 @@
+{% extends 'master.html'%}
+{% load staticfiles%}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+{% block body%}
+
+
+  <div class="row" style="margin-left:0px;">
+    <div class="col-md-8">
+      <h4 class="c-grey-900">{{page_title|title}}</h4>
+    </div>
+    <div class="col-md-4">
+      <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
+        <div class="peer"><a href="{% url 'performance:performance-create' %}" class="btn cur-p btn-primary">{% trans "Add" %}</a></div>
+      </div>
+    </div>
+  </div>
+  <div class="row" style="margin-left:0px;">
+    <div class="col-md-12">
+      <div class="bgc-white bd bdrs-3 p-20 mB-20">
+        <table class="table table-striped table-bordered" cellspacing="0" id="dataTable" width="100%">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>{% trans "Performance Name" %}</th>
+              <th>{% trans "Company" %}</th>
+              <th>{% trans "Department" %}</th>
+              <th>{% trans "Job" %}</th>
+              <th>{% trans " Position" %}</th>
+              <th>{% trans "Start Date" %}</th>
+              <th>{% trans "End Date" %}</th>
+              <th>{% trans "Actions" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for performance in performances_list %}
+            <tr>
+              <td scope="row">{{ forloop.counter }}</td>
+              <td>{{ performance.performance_name }}</td>
+              <td>{{ performance.company }}</td>
+              <td>{{ performance.department }}</td>
+              <td>{{ performance.position }}</td>
+              <td>{{ performance.job }}</td>
+              <td>{{ performance.start_date }}</td>
+              <td>{{ performance.end_date }}</td>
+              <td class="Actions">
+                <div class="w-100 gap-10 peers">
+                  <div class="peer">
+                    <a href="">
+                      <button type="button" class="btn cur-p btn-outline-primary">
+                        <i class="fas fa-search-plus"></i>
+                      </button>
+                    </a>
+                  </div>
+                  <div class="peer">
+                    <a href="">
+                      <button type="button" class="btn cur-p btn-outline-success">
+                        <i class="fas fa-user-edit"></i>
+                      </button>
+                    </a>
+                  </div>
+                  <div class="peer">
+                    <a href="#">
+                      <button type="button" class="btn cur-p btn-outline-danger" data-toggle="modal" data-target="#delete-modal{{performance.pk}}">
+                        <i class="fa fa-trash"></i>
+                      </button>
+                    </a>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <!-- Delete Modal -->
+            <div class="modal fade" id="delete-modal{{performance.pk}}" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-body">
+                    <p>{% trans "Are you sure you want to delete " %} {{ performance.performance_name }} ?</p>
+                    <button class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
+                    <a href=""  class="btn btn-warning" type="button">{% trans "Delete" %}</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+{% endblock body%}

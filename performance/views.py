@@ -14,7 +14,7 @@ from django.db.models import Q
 from company.models import *
 
 
-# Create your views here.
+# gehad : createPerformance
 @login_required(login_url='home:user-login')
 def createPerformance(request):
     performance_form = PerformanceForm()
@@ -38,3 +38,14 @@ def createPerformance(request):
 
 
    
+
+@login_required(login_url='home:user-login')
+def listPerformance(request):
+    performances_list = Performance.objects.all()
+    context = {
+        'page_title': _('User Companies List'),
+        'performances_list': performances_list,
+    }
+    return render(request, 'performance-list.html', context)
+
+                 

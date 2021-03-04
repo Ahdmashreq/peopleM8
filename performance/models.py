@@ -5,9 +5,7 @@ import datetime
 from django.utils.translation import ugettext_lazy as _
 
 
-# Create your models here.
- 
-
+# gehad : Performance models.
 class Performance(models.Model):
     performance_name = models.CharField(max_length=100, verbose_name=_('Performance Name'))
     company = models.ForeignKey(Enterprise, on_delete=models.CASCADE, blank=True, null=True,)
