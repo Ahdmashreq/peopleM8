@@ -71,8 +71,10 @@
               <div class="modal-content">
                 <div class="modal-body">
                   <p>{% trans "Are you sure you want to delete this record?" %}</p>
-                  <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">&#x2718</button>
-                  <a href="{% url 'company:department-delete' pk=dept.id %}" class="btn btn-outline-danger" type="button">&#128465</a>
+                  <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"
+                          data-toggle="tooltip" data-placement="bottom" title="{% trans 'Cancel' %}">&#x2718</button>
+                  <a href="{% url 'company:department-delete' pk=dept.id %}" class="btn btn-outline-danger" type="button"
+                     data-toggle="tooltip" data-placement="bottom" title="{% trans 'Delete' %}">&#128465</a>
                 </div>
               </div>
             </div>
