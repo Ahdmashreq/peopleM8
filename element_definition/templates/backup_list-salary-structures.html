@@ -39,7 +39,7 @@
               <td>{{ x.structure_name }}</td>
               <td>{{ x.start_date }}</td>
               <td class="Actions">
-                <div class="w-100 gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
+                <div class="w-100 gap-10 peers">
                   <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Update' %}">
                     <a href="{% url 'element_definition:update-batch' pk=x.id %}">
                       <button type="button" class="btn cur-p btn-outline-primary">&#9997</button>

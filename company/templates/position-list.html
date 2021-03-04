@@ -43,7 +43,7 @@
               <td scope="row">{{ forloop.counter }}</td>
               <td>{{ position.position_name }}</td>
               <td class="Actions">
-                <div class="w-100 gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
+                <div class="w-100 gap-10 peers ">
                   <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Update' %}">
                     <a href="{% url 'company:position-update' pk=position.id %}">
                       <button type="button" class="btn cur-p btn-outline-primary">&#9997</button>
