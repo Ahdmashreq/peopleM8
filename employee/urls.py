@@ -23,6 +23,7 @@ urlpatterns =[
             path('ajax/', views.change_element_value, name='change-element-value'),
             path('employee/export/', views.export_employee_data, name='employee-export'),
             path('jobroll/new/<int:job_id>', views.createJobROll, name='new-jobroll'),
+            path('leaves-history' , views.list_employee_leave_requests , name='leaves-history')
 
 
 
