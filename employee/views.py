@@ -21,6 +21,9 @@ from custom_user.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.http import JsonResponse
 from company.models import Position
+from .resources import *
+from leave.models import *
+from django.db.models import Count
 from .resources_two import *
 
 ############################Employee View #################################
@@ -151,10 +154,9 @@ def listEmployeeCardView(request):
 @login_required(login_url='home:user-login')
 def viewEmployeeView(request, pk):
     required_employee = get_object_or_404(Employee, pk=pk)
-    required_jobRoll = JobRoll.objects.filter(
-        Q(end_date__gte=date.today()) | Q(end_date__isnull=True)).get(emp_id=pk)
-    all_jobRoll = JobRoll.objects.filter(emp_id=pk)
-    all_payment = Payment.objects.filter(emp_id=pk, end_date__isnull=True)
+    required_jobRoll = JobRoll.objects.filter(emp_id=pk)
+    all_jobRoll = JobRoll.objects.filter(emp_id=pk).order_by('-id')
+    all_payment = Payment.objects.filter(emp_id=pk, end_date__isnull=True).order_by('-id')
     all_elements = Employee_Element.objects.filter(
         emp_id=pk, end_date__isnull=True)
     myContext = {
@@ -481,6 +483,38 @@ def createJobROll(request, job_id):
         , 'required_employee' :required_jobRoll.emp_id})
 
 
+@login_required(login_url='home:user-login')
+def list_employee_leave_requests(request):
+    """
+        view to list all approved leave requests for all employees
+        author: Ahmed Mamdouh
+        created at: 04/03/2021
+    """
+    employees = Employee.objects.all()
+    employees_leaves_approaved_requests = []
+    for employee in employees:
+        leave_requests = Leave.objects.filter(status='Approved',user=employee.user).values('leavetype__type').annotate(x=Count('leavetype__type'))
+        leave_masters = LeaveMaster.objects.all()
+        z = {
+            'employee':employee.emp_name,
+            'leave_requests':{}
+        }
+        z['leave_requests']['total'] = 0
+        for master in leave_masters:
+            leaves = [dictionary for dictionary in leave_requests if dictionary["leavetype__type"] == master.type]
+            if len(leaves) == 0:
+                b = 0
+            else:
+                b = leaves[0]['x']
+            z['leave_requests'][master.type] = b
+            z['leave_requests']['total'] = b + z['leave_requests']['total']
+        employees_leaves_approaved_requests.append(z)
+        
+    context = {
+        "leave_requests" : employees_leaves_approaved_requests,
+        "leave_masters" : leave_masters,
+    }
+    return render(request , "list-leaves-history.html" , context)
 
 @login_required(login_url='home:user-login')
 def create_employee_element(request, job_id):

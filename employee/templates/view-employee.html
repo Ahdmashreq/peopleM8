@@ -52,86 +52,87 @@
         <h2 class="TOrange">{% trans "Contact details" %}</h2>
 
         <div class="col-md-12 mT-10 {% if LANGUAGE_BIDI %} text-sm-right {% else %} text-sm-left {% endif %}">
-        <p><i class="fa fa-envelope {% if LANGUAGE_BIDI %} pR-10 {% else %} pL-10 {% endif %}"></i><strong>{% trans "Email" %}: </strong>{{required_employee.email}}</p>
-        <p><i class="fa fa-mobile {% if LANGUAGE_BIDI %} pR-10 {% else %} pL-10 {% endif %}"></i><strong>{% trans "Mobile" %}: </strong>{{required_employee.mobile}}</p>
-        <p><i class="fa fa-phone {% if LANGUAGE_BIDI %} pR-10 {% else %} pL-10 {% endif %}"></i><strong>{% trans "Home Phone" %}: </strong>{{required_employee.phone}}</p>
-        <p><i class="fa fa-user {% if LANGUAGE_BIDI %} pR-10 {% else %} pL-10 {% endif %}"></i><strong>{% trans "Gender" %}: </strong>{{required_employee.gender}}</p>
-        <p><i class="fa fa-map-marker {% if LANGUAGE_BIDI %} pR-10 {% else %} pL-10 {% endif %}"></i><strong>{% trans "Address1" %}: </strong>{{required_employee.address1}}</p>
-        <p><i class="fa fa-map-marker {% if LANGUAGE_BIDI %} pR-10 {% else %} pL-10 {% endif %}"></i><strong>{% trans "Address2" %}: </strong>{{required_employee.address2}}</p>
-
+        <p><i class="fa fa-envelope {% if LANGUAGE_BIDI %} pR-10 {% else %} pL-10 {% endif %}"></i><strong style="margin: 5px;">{% trans "Email" %}: </strong>{{required_employee.email}}</p>
+        <p><i class="fa fa-mobile {% if LANGUAGE_BIDI %} pR-10 {% else %} pL-10 {% endif %}"></i><strong style="margin: 5px;">{% trans "Mobile" %}: </strong>{{required_employee.mobile}}</p>
+        <p><i class="fa fa-phone {% if LANGUAGE_BIDI %} pR-10 {% else %} pL-10 {% endif %}"></i><strong style="margin: 5px;">{% trans "Home Phone" %}: </strong>{{required_employee.phone}}</p>
+        <p><i class="fa fa-user {% if LANGUAGE_BIDI %} pR-10 {% else %} pL-10 {% endif %}"></i><strong style="margin: 5px;">{% trans "Gender" %}: </strong>{{required_employee.get_gender_display}}</p>
+        <p><i class="fa fa-map-marker {% if LANGUAGE_BIDI %} pR-10 {% else %} pL-10 {% endif %}"></i><strong style="margin: 5px;">{% trans "Address" %}: </strong>{{required_employee.address1}}</p>
+        {% if required_employee.address2 %}
+        <p><i class="fa fa-map-marker {% if LANGUAGE_BIDI %} pR-10 {% else %} pL-10 {% endif %}"></i><strong style="margin: 5px;">{% trans "Address2" %}: </strong>{{required_employee.address2}}</p>
+        {% endif %}
       </div>
       </div>
     <hr>
       <!-- PROFILE CONTENT -->
       <div class="row">
-        <h2 class="TOrange">{% trans "Employee Profile" %}</h2>
+        <h2 class="TOrange">{% trans "Employee Profile " %}</h2>
       <div class="form-row gap-10 col-md-12 mT-10">
         <div class="col-md-6">
-          <strong>{% trans "Date Of Birth" %}:</strong>
+          <strong>{% trans "Date Of Birth " %}:</strong>
           {{required_employee.date_of_birth}}
         </div>
         <div class="col-sm-6">
-          <strong>{% trans "Hire Date" %}:</strong>
+          <strong>{% trans "Hire Date " %}:</strong>
           {{required_employee.hiredate}}
         </div>
         <div class="col-sm-6">
-          <strong>{% trans "Identification Type" %}:</strong>
+          <strong>{% trans "Identification Type " %}:</strong>
           {{required_employee.identification_type}}
         </div>
         <div class="col-sm-6">
-          <strong>{% trans "ID Number" %}:</strong>
+          <strong>{% trans "ID Number " %}:</strong>
           {{required_employee.id_number}}
         </div>
         <div class="col-sm-6">
-          <strong>{% trans "Place of Birth" %}:</strong>
+          <strong>{% trans "Place of Birth " %}:</strong>
           {{required_employee.place_of_birth}}
         </div>
         <div class="col-sm-6">
-          <strong>{% trans "Nationality" %}:</strong>
+          <strong>{% trans "Nationality " %}:</strong>
           {{required_employee.nationality}}
         </div>
         <div class="col-sm-6">
-          <strong>{% trans "Field of Study" %}:</strong>
+          <strong>{% trans "Field of Study " %}:</strong>
           {{required_employee.field_of_study}}
         </div>
         <div class="col-sm-6">
-          <strong>{% trans "Education Degree" %}:</strong>
+          <strong>{% trans "Education Degree " %}:</strong>
           {{required_employee.education_degree}}
         </div>
         <div class="col-sm-6">
-          <strong>{% trans "Social Status" %}:</strong>
+          <strong>{% trans "Social Status " %}:</strong>
           {{required_employee.social_status}}
         </div>
         <div class="col-sm-6">
-          <strong>{% trans "Military Status" %}:</strong>
-          {{required_employee.military_status}}
+          <strong>{% trans "Military Status " %}:</strong>
+          {{required_employee.get_military_status_display}}
         </div>
         <div class="col-sm-6">
-          <strong>{% trans "Religion" %}:</strong>
+          <strong>{% trans "Religion " %}:</strong>
           {{required_employee.religion}}
         </div>
         <div class="col-sm-6">
-          <strong>{% trans "Employee is insured?" %}:</strong>
+          <strong>{% trans "Employee is insured? " %}:</strong>
           {{required_employee.insured}}
         </div>
         <div class="col-sm-6">
-          <strong>{% trans "Insurance Number" %}:</strong>
+          <strong>{% trans "Insurance Number " %}:</strong>
           {{required_employee.insurance_number}}
         </div>
         <div class="col-sm-6">
-          <strong>{% trans "Insurance Date" %}:</strong>
+          <strong>{% trans "Insurance Date " %}:</strong>
           {{required_employee.insurance_date}}
         </div>
         <div class="col-sm-6">
-          <strong>{% trans "Employee has medical?" %}:</strong>
+          <strong>{% trans "Employee has medical? " %}:</strong>
           {{required_employee.has_medical}}
         </div>
         <div class="col-sm-6">
-          <strong>{% trans "Medical Number" %}:</strong>
+          <strong>{% trans "Medical Number " %}:</strong>
           {{required_employee.medical_number}}
         </div>
         <div class="col-sm-6">
-          <strong>{% trans "Medical Date" %}:</strong>
+          <strong>{% trans "Medical Date " %}:</strong>
           {{required_employee.medical_date}}
         </div>
       </div>

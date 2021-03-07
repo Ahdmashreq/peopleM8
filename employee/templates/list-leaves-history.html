@@ -1,0 +1,45 @@
+{% extends 'master.html'%}
+{% load staticfiles%}
+{% load crispy_forms_tags %}
+{% load l10n %}
+{% load i18n %}
+{% block body%}
+<div class="row" style="margin-left:0px;">
+    <div class="col-md-8">
+        <h4>Approved Leaves</h4>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row" style="margin-left:0px;">
+        <div class="col-md-12">
+            <div class="bgc-white bd bdrs-3 p-20 mB-20">
+                <table class="table table-striped table-bordered" id="dataTable" width="100%">
+                    <h5><strong>{% trans "Approved Leaves" %}</strong></h5>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>{% trans "Employee" %}</th>
+                            <th>Total</th>
+                            {% for leave_master in leave_masters %}
+                            <th>{{ leave_master.type }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for request in leave_requests %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ request.employee }}</td>
+                            {% for key ,values in request.leave_requests.items %}
+                            <td>{{values}}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock body %}
