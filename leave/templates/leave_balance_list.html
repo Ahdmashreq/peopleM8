@@ -12,8 +12,10 @@
   </div>
   <div class="col-md-4">
     <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
-      <div class="peer">
-        <a href="{% url 'leave:leave-balance-create' %}" class="btn cur-p btn-primary">{% trans "New Leave Balance" %}</a>
+      <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'New Leave Balance' %}">
+        <a href="{% url 'leave:leave-balance-create' %}" class="btn cur-p btn-primary">
+          <i class="fas fa-plus-square"></i>
+        </a>
       </div>
     </div>
   </div>
@@ -68,8 +70,10 @@
                   <p>{% trans "Are you sure you want to delete this record?" %}</p>
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
-                  <a href="{% url 'leave:leave_balance_delete' i.id %}" class="btn btn-danger" type="button">{% trans "Delete" %}</a>
+                  <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"
+                          data-toggle="tooltip" data-placement="bottom" title="{% trans 'Cancel' %}">&#x2718</button>
+                  <a href="{% url 'leave:leave_balance_delete' i.id %}" class="btn btn-outline-danger" type="button"
+                     data-toggle="tooltip" data-placement="bottom" title="{% trans 'Delete' %}">&#128465</a>
                 </div>
               </div>
             </div>
@@ -82,8 +86,10 @@
                   <div class="modal-content">
                     <div class="modal-body">
                       <p>{% trans "You are about to delete a record " %} {{i.leavetype}}.{% trans "Do you want to continue?" %} </p>
-                      <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
-                      <a href="{% url 'leave:del_leave' i.id %}" class="btn btn-danger" type="button">{% trans "Yes" %}</a>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                              data-toggle="tooltip" data-placement="bottom" title="{% trans 'Cancel' %}">&#x2718</button>
+                      <a href="{% url 'leave:del_leave' i.id %}" class="btn btn-danger" type="button"
+                              data-toggle="tooltip" data-placement="bottom" title="{% trans 'Delete' %}">&#128465</a>
                     </div>
                   </div>
                 </div>
