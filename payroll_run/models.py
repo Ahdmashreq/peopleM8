@@ -78,6 +78,35 @@ class Salary_elements(models.Model):
         return self.emp.emp_name
 
 
+
+class Taxes(models.Model):
+    percent = models.FloatField(default=0.0, null=False, blank=False, verbose_name=_('percent'))
+    start_range = models.IntegerField(default=0.0, null=False, blank=False, verbose_name=_('start'))
+    end_range = models.IntegerField(default=0.0, null=False, blank=False, verbose_name=_('end'))
+    diffrence = models.IntegerField(default=0.0, null=True, blank=True, verbose_name=_('diffrence'))
+    tax = models.IntegerField(default=0.0, null=True, blank=True, verbose_name=_('tax'))
+
+
+
+
+"""
+class TaxNetGross(models.Model):
+    emp = models.ForeignKey(Employee, on_delete=models.CASCADE,
+                            null=True, blank=True, verbose_name=_('Employee'))
+    element = models.ForeignKey(
+        Element, on_delete=models.CASCADE, null=True, blank=True, verbose_name=_('Element'))
+         
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False,
+                                   on_delete=models.CASCADE, related_name="salary_created_by")
+    creation_date = models.DateField(auto_now=True, auto_now_add=False)
+    last_update_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE, related_name="salary_last_update_by")
+    last_update_date = models.DateField(auto_now=False, auto_now_add=True)
+    """
+
+
+
+
 @receiver(pre_save, sender=Salary_elements)
 def employee_elements_history(sender, instance, *args, **kwargs):
     employee_old_elements = Employee_Element.objects.filter(emp_id=instance.emp)
@@ -98,3 +127,5 @@ def employee_elements_history(sender, instance, *args, **kwargs):
                 creation_date=date.today(),
             )
             element_history.save()
+
+

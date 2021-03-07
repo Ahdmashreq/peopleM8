@@ -21,8 +21,8 @@ from django.conf import settings
 from django.template import Context
 from django.template.loader import render_to_string
 from django.utils.text import slugify
-from weasyprint import HTML, CSS
-from weasyprint.fonts import FontConfiguration
+#from weasyprint import HTML, CSS
+#from weasyprint.fonts import FontConfiguration
 # ############################################################
 from .new_tax_rules import Tax_Deduction_Amount
 from payroll_run.salary_calculations import Salary_Calculator
@@ -153,8 +153,10 @@ def createSalaryView(request):
                     deductions=sc.calc_emp_deductions_amount(),
                     gross_salary=sc.calc_gross_salary(),
                     net_salary=sc.calc_net_salary(),
+
                 )
                 s.save()
+                gross= sc.net_to_gross()
             user_lang = to_locale(get_language())
             if user_lang == 'ar':
                 success_msg = 'تم تشغيل راتب شهر {} بنجاح'.format(
