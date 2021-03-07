@@ -141,9 +141,12 @@ def listEmployeeView(request):
 def listEmployeeCardView(request):
     emp_list = Employee.objects.filter(enterprise=request.user.company).filter(
         (Q(end_date__gt=date.today()) | Q(end_date__isnull=True)))
+    emp_job_roll_list = JobRoll.objects.filter(
+        emp_id__enterprise=request.user.company)
     myContext = {
         "page_title": _("List employees"),
         "emp_list": emp_list,
+        'emp_job_roll_list': emp_job_roll_list,
     }
     return render(request, 'list-employees-card.html', myContext)
 
@@ -171,7 +174,9 @@ def viewEmployeeView(request, pk):
 @login_required(login_url='home:user-login')
 def updateEmployeeView(request, pk):
     required_jobRoll = JobRoll.objects.get(id = pk)
+    print(f'emp id: {required_jobRoll.emp_id.id}')
     required_employee = get_object_or_404(Employee, pk=required_jobRoll.emp_id.id)
+    print(f'required employee is: {required_employee}')
     emp_form = EmployeeForm(instance=required_employee)
     files_formset = Employee_Files_inline(instance=required_employee)
     # filter the user fk list to show the company users only.

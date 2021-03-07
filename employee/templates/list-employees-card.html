@@ -28,12 +28,12 @@
   <div class="col-md-12">
     <div class="bgc-white bd bdrs-3 p-20 mB-20">
         <div class="row gap-20">
-                      {% for emp in emp_list %}
+                      {% for emp in emp_job_roll_list %}
                       <div class="col-md-3 card p-20 m-20">
-                          <h4 class="c-grey-900">{{ emp.emp_name }}</h4>
+                          <h4 class="c-grey-900">{{ emp.emp_id.emp_name }}</h4>
 
-                            <a class="list-group-item" href="#"> <span class="badge badge-pill fl-r badge-success lh-0 p-10">{{ emp.emp_number }}</span>{% trans "Employee Number" %}</a>
-                            <a class="list-group-item" href="#"> <span class="badge badge-pill fl-r badge-info lh-0 p-10">{{ emp.hiredate }}</span>{% trans "Hire Date" %}</a>
+                            <a class="list-group-item" href="#"> <span class="badge badge-pill fl-r badge-success lh-0 p-10">{{ emp.emp_id.emp_number }}</span>{% trans "Employee Number" %}</a>
+                            <a class="list-group-item" href="#"> <span class="badge badge-pill fl-r badge-info lh-0 p-10">{{ emp.emp_id.hiredate }}</span>{% trans "Hire Date" %}</a>
 
                           <div class="peers pT-10 mT-20 bdT fxw-nw@lg+ jc-sb ta-c gap-10">
                             <div class="peer">
