@@ -89,10 +89,10 @@ class Purchase_Request(models.Model):
 
 class Purchase_Item(models.Model):
     purchase_request = models.ForeignKey(Purchase_Request, on_delete=models.CASCADE)
-    item_description = models.CharField(max_length=250, blank=True, null=True)
-    vendor_name = models.CharField(max_length=250, blank=True, null=True)
-    unit_price = models.PositiveIntegerField(default=0, blank=True, null=True)
-    qnt = models.PositiveIntegerField(default=0, blank=True, null=True)
+    item_description = models.CharField(max_length=250, blank=False, null=False)
+    vendor_name = models.CharField(max_length=250, blank=False, null=False)
+    unit_price = models.PositiveIntegerField(blank=False, null=False)
+    qnt = models.PositiveIntegerField(blank=False, null=False)
 
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                                    blank=True, null=True, related_name='purchase_item_created_by')
