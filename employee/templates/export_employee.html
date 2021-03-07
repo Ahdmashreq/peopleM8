@@ -20,26 +20,28 @@
             <button type="submit" class="btn cur-p btn-primary">{% trans "Export" %}</button>
           </div>
           <div class="peer">
-            <a href="{% url 'company:list-department' %}"  onclick="change_x()" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
+            <a href="{% url 'employee:list-employee' %}"  onclick="change_x()" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
           </div>
         </div>
       </div>
     </div>
     <div class="mt-1">
-      <div class="bgc-white p-20 bd">
-        <div class="mT-30">
-          <div class="form-row">
-            <div class="form-group col-md-3">
-              <select name="file-format" class="form-control my-3">
-                <option selected>Choose format...</option>
-                <option>CSV</option>
-                <option>JSON</option>
-                <option>XLS (Excel)</option>
-              </select>
+        <div class="bgc-white p-20 bd">
+          <div class="mT-30">
+            <div class="form-row">
+              <div class="form-group col-md-3">
+                <select name="file-format" class="form-control my-3">
+                  <option selected>Choose format...</option>
+                  <option>CSV</option>
+                  <option>JSON</option>
+                  <option>XLS (Excel)</option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
       </div>
   </form>
 </div>
+
 {% endblock body%}

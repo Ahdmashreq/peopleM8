@@ -430,7 +430,7 @@ def export_department_data(request):
     'page_title':'Please select format of file.',
     }
     #context['fields'] = [f.column_name for f in department_resource.get_user_visible_fields()]
-    return render(request, 'export.html', export_context )
+    return render(request, 'export_company.html', export_context )
 ########################################Job views###################################################################
 @login_required(login_url='home:user-login')
 def listJobView(request):
@@ -598,7 +598,7 @@ def export_job_data(request):
     'page_title':'Please select format of file.',
     }
     #context['fields'] = [f.column_name for f in department_resource.get_user_visible_fields()]
-    return render(request, 'export.html', export_context )
+    return render(request, 'export_employee.html', export_context )
 #
 
 ########################################Grade views###################################################################
@@ -773,7 +773,7 @@ def export_grade_data(request):
     'page_title':'Please select format of file.',
     }
     #context['fields'] = [f.column_name for f in department_resource.get_user_visible_fields()]
-    return render(request, 'export.html', export_context )
+    return render(request, 'export_employee.html', export_context )
 
 ########################################Position views###################################################################
 @login_required(login_url='home:user-login')
@@ -955,7 +955,7 @@ def export_position_data(request):
     'page_title':'Please select format of file.',
     }
     #context['fields'] = [f.column_name for f in department_resource.get_user_visible_fields()]
-    return render(request, 'export.html', export_context )
+    return render(request, 'export_employee.html', export_context )
 
 
 ########################################Company Policies views###################################################################

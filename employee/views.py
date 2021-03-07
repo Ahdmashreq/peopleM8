@@ -457,7 +457,7 @@ def export_employee_data(request):
     'page_title':'Please select format of file.',
     }
     #context['fields'] = [f.column_name for f in department_resource.get_user_visible_fields()]
-    return render(request, 'export.html', export_context )
+    return render(request, 'export_employee.html', export_context )
 
 
 
