@@ -47,26 +47,28 @@ class FormAllowance(forms.ModelForm):
 
 class PurchaseRequestForm(forms.ModelForm):
     class Meta():
+        """
+        Ziad
+        7/3/2021
+        Delete payment method and vendor details 
+        """
         model = Purchase_Request
-        fields = '__all__'
+        fields = ['department' , 'date_of_purchase' , 'office' , 'purpose']
         exclude = ['ordered_by','created_by', 'creation_date', 'last_update_by', 'last_update_date']
         widgets = {
                  'date_of_purchase' : forms.DateInput(attrs={'class': 'form-control',
                                                              'data-provide':"datepicker",
-                                                             'wtx-context':"2A377B0C-58AD-4885-B9FB-B5AC9788D0F2"}),
+                                                             'wtx-context':"2A377B0C-58AD-4885-B9FB-B5AC9788D0F2",
+                                                             'required' : True }),
                  'order_number' : forms.TextInput(attrs={'class': 'form-control'}),
                  'ordered_by' : forms.Select(attrs={'class': 'form-control'}),
-                 'department' : forms.Select(attrs={'class': 'form-control'}),
-                 'office' : forms.TextInput(attrs={'class': 'form-control'}),
-                 'payment_method' : forms.Select(attrs={'class': 'form-control'}),
+                 'department' : forms.Select(attrs={'class': 'form-control', 'required' : True}),
+                 'office' : forms.TextInput(attrs={'class': 'form-control', 'required' : True}),
                  'purpose' : forms.Textarea(attrs={
                                                    'rows': 2,'cols': 40,
                                                    'style': 'height: 6em;',
-                                                   'class': 'form-control'}),
-                 'vendor_details' :forms.Textarea(attrs={
-                                                   'rows': 2,'cols': 40,
-                                                   'style': 'height: 6em;',
-                                                   'class': 'form-control'}),
+                                                   'class': 'form-control','required' : True}),
+                 
         }
     def __init__(self, *args, **kwargs):
         super(PurchaseRequestForm, self).__init__(*args, **kwargs)
