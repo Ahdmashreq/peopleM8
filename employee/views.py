@@ -24,6 +24,7 @@ from company.models import Position
 from .resources import *
 from leave.models import *
 from django.db.models import Count
+from .resources_two import *
 
 ############################Employee View #################################
 @login_required(login_url='home:user-login')
@@ -460,27 +461,18 @@ def export_employee_data(request):
 
 @login_required(login_url='home:user-login')
 def createJobROll(request, job_id):
-    emp_list = Employee.objects.filter(enterprise=request.user.company).filter(
-        (Q(end_date__gt=date.today()) | Q(end_date__isnull=True)))
-    emp_job_roll_list = JobRoll.objects.filter(
-        emp_id__enterprise=request.user.company)
-
-    try:
-        required_jobRoll = JobRoll.objects.get(id=job_id)
-        required_jobRoll.end_date = date.today()
-        required_jobRoll.save()
-    except JobRoll.DoesNotExist:
-        employee_has_job = False
-
     jobroll_form = JobRollForm(user_v=request.user)
+    required_jobRoll = JobRoll.objects.get(id=job_id)
     if request.method == "POST":
         jobroll_form = JobRollForm(request.user, request.POST)
         if jobroll_form.is_valid():
+            required_jobRoll.end_date = date.today()
+            required_jobRoll.save()
+            
             job_obj = jobroll_form.save(commit=False)
             job_obj.emp_id = required_jobRoll.emp_id
             job_obj.created_by = request.user
             job_obj.save()
-            print(job_obj.end_date)
         else:
             print(jobroll_form.errors)
         return redirect('employee:update-employee',
@@ -523,3 +515,22 @@ def list_employee_leave_requests(request):
         "leave_masters" : leave_masters,
     }
     return render(request , "list-leaves-history.html" , context)
+
+@login_required(login_url='home:user-login')
+def create_employee_element(request, job_id):
+    required_jobRoll = JobRoll.objects.get(id = job_id)
+    required_employee = get_object_or_404(Employee, pk=required_jobRoll.emp_id.id)
+    emp_element_form = EmployeeElementForm()
+    if request.method == "POST":
+        emp_element_form = EmployeeElementForm(request.POST)
+        if emp_element_form.is_valid():
+            emp_obj = emp_element_form.save(commit=False)
+            emp_obj.emp_id = required_employee
+            emp_obj.created_by = request.user
+            emp_obj.last_update_by = request.user
+            emp_obj.save()
+        else:
+            print(emp_element_form.errors)
+        return redirect('employee:update-employee',
+         pk = required_jobRoll.id)
+
