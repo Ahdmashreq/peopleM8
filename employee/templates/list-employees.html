@@ -12,12 +12,12 @@
     </div>
     <div class="col-md-4">
       <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
-        <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Add' %}">
+        <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Add Employee' %}">
           <a href="{% url 'employee:employee-create' %}" class="btn cur-p btn-primary">
             <i class="fas fa-plus-square"></i>
           </a>
         </div>
-        <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'View Card' %}">
+        <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Card View' %}">
           <a href="{% url 'employee:list-employee-card' %}" class="btn cur-p btn-secondary">
             <i class="far fa-id-card"></i>
           </a>
@@ -91,7 +91,7 @@
                 <div class="modal-content">
                   <div class="modal-body">
                     <p>{% trans "Are you sure you want to delete " %} {{ emp.emp_id.emp_name }} ?</p>
-                    <button class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
+                    <button class="btn btn-outline-secondary" data-dismiss="modal">{% trans "No" %}</button>
                     <a href="{% url 'employee:delete-employee' pk=emp.emp_id.pk %}"  class="btn btn-warning" type="button">{% trans "Delete and Keep Histort" %}</a>
                     
                     <button class="btn btn-danger" type="button" data-toggle="modal" data-target="#deleteforever-modal{{emp.emp_id.pk}}">{% trans "Delete permanently" %}</button>
