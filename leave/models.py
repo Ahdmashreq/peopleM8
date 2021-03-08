@@ -163,6 +163,19 @@ class Leave(models.Model):
                 return current_manger
         return current_manger
 
+class EmployeeAbsence(models.Model):
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='employee_absence_employee')
+    date = models.DateTimeField(auto_now_add=True)
+    num_of_days = models.IntegerField(null=False)
+    value = models.IntegerField(null=False)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                                   blank=True, null=True, related_name='employee_absence_created_by')
+    creation_date = models.DateField(auto_now_add=True)
+    last_update_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True,
+        related_name='employee_absence_last_updated_by')
+    last_update_date = models.DateField(blank=True, null=True,auto_now_add=True )
+
 
 class Employee_Leave_balance(models.Model):
     employee = models.OneToOneField(Employee, on_delete=models.CASCADE)
@@ -187,17 +200,20 @@ class Employee_Leave_balance(models.Model):
         return self.employee.emp_name
 
     def check_balance(emp_id, start_date, end_date):
+        month_absence=0
         employee_leave_balance = Employee_Leave_balance.objects.get(
             employee=emp_id)
         total_balance = employee_leave_balance.total_balance
-        needed_days = datetime.strptime(
-            end_date, '%m/%d/%Y')-datetime.strptime(start_date, '%m/%d/%Y')
+        employee = Employee.objects.get(id=emp_id.id)
+        needed_days = int((end_date.day - start_date.day)) +1
+        print(needed_days)
+
         print("casual", employee_leave_balance.casual,
               "usual", employee_leave_balance.usual, "total", total_balance, "needed", needed_days)
-        if total_balance >= needed_days.days:
+        if total_balance >= needed_days:
             if employee_leave_balance.casual > 0:
-                if employee_leave_balance.casual > needed_days.days:
-                    new_balance = employee_leave_balance.casual-needed_days.days
+                if employee_leave_balance.casual > needed_days:
+                    new_balance = employee_leave_balance.casual-needed_days 
                     Employee_Leave_balance.objects.filter(
                         employee=emp_id).update(casual=new_balance)
                     print("casual", employee_leave_balance.casual,
@@ -206,7 +222,8 @@ class Employee_Leave_balance(models.Model):
                 else:
                     new_balance = 0
                     # calcuate the new balance
-                    new_balance += needed_days.days-employee_leave_balance.casual
+                    new_balance += needed_days-employee_leave_balance.casual 
+            
                     # set cascual=0
                     Employee_Leave_balance.objects.filter(
                         employee=emp_id).update(casual=0)
@@ -219,13 +236,35 @@ class Employee_Leave_balance(models.Model):
                           "usual", employee_leave_balance.usual)
                     return True
             elif employee_leave_balance.usual > 0:
-                new_balance = employee_leave_balance.usual-needed_days.days
+                new_balance = employee_leave_balance.usual-needed_days
                 Employee_Leave_balance.objects.filter(
                     employee=emp_id).update(usual=new_balance)
                 print("casual", employee_leave_balance.casual,
                       "usual", employee_leave_balance.usual)
                 return True
-        return False
+        else:
+            
+            Employee_Leave_balance.objects.filter(
+                    employee=emp_id).update(usual=0)
+            Employee_Leave_balance.objects.filter(
+                    employee=emp_id).update(casual=0)
+            absence = needed_days - total_balance
+            obj = EmployeeAbsence(
+                employee = employee ,
+                num_of_days = absence , 
+                value = absence*10 , #We want change to the value of one day absence
+                #created_by = request.user
+            )
+            obj.save() 
+            total_absence_obj = EmployeeAbsence.objects.filter(
+               employee = employee 
+            )
+            total_absence=0
+            for i in total_absence_obj:
+                total_absence+=i.num_of_days
+            Employee_Leave_balance.objects.filter(
+                employee=emp_id).update(absence=total_absence)
+            return False
 
 
 @receiver(post_save, sender=Leave)
