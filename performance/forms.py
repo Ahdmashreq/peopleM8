@@ -16,6 +16,16 @@ class PerformanceForm(forms.ModelForm):
             self.fields[field].widget.attrs['class'] = 'form-control'
 
 
+class RatingForm(forms.ModelForm):
+    class Meta:
+        model = PerformanceRating
+        fields = ('rating', 'score_key' , 'score_value')
+    def __init__(self, *args, **kwargs):
+        super(RatingForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs['class'] = 'form-control'
+
+RatingInline = forms.modelformset_factory(PerformanceRating, form=RatingForm, extra=3, can_delete=False)
 
 
    

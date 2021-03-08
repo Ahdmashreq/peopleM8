@@ -10,7 +10,7 @@ urlpatterns =[
             ######################### Performance URLs ###################################
             path('create/', views.createPerformance, name='performance-create'),
             path('list/', views.listPerformance, name='performance-list'),
+            path('create/rating/<int:per_id>', views.createPerformanceRating, name='rating-create'),
               ])),
-
 ]
         

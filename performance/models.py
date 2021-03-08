@@ -3,6 +3,8 @@ from company.models import Enterprise , Department, Job, Position
 from datetime import date
 import datetime
 from django.utils.translation import ugettext_lazy as _
+from multiselectfield import MultiSelectField
+
 
 
 # gehad : Performance models.
@@ -17,6 +19,9 @@ class Performance(models.Model):
     end_date = models.DateField(
         auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=_('End Date'))
 
+
+    def __str__(self):
+        return self.performance_name
 
 
 class PerformanceRating(models.Model):
@@ -41,7 +46,8 @@ class PerformanceRating(models.Model):
     score_key = models.CharField(choices=ScoreKey,  max_length=25, default='1')
     score_value = models.CharField(max_length=255,blank=True, null=True, )
 
-
+    def __str__(self):
+        return self.rating
 
 
 class PerformanceTitle(models.Model):
@@ -49,11 +55,17 @@ class PerformanceTitle(models.Model):
     title = models.CharField(max_length=255)
     desc = models.TextField()
 
+    def __str__(self):
+        return self.title
+
 
 class Question(models.Model):
     title = models.ForeignKey(PerformanceTitle, on_delete=models.CASCADE)
     question = models.CharField(max_length=255)
-    help_text = models.TextField()    
+    help_text = models.TextField()   
+
+    def __str__(self):
+        return self.question 
 
 
 
