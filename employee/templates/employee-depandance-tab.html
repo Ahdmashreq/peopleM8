@@ -5,95 +5,39 @@
 
 <div id="form_set">
     <div class="form-row p-20">
-        {{depandance_formset.management_form}}
-        {% for form in depandance_formset %}
-        <div class="form-row col-md-12">
-            <div class="col-sm-3">
-                {{ form.name }}
-            </div>
-            <div class="col-sm-3">
-                {{ form.relation }}
-            </div>
-            <div class="col-sm-3">
-                {{ form.id_number }}
-            </div>
-            <div class="col-sm-3">
-                {{ form.mobile }}
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-</div>
-
-<button type="button" id="add_more" class="btn cur-p btn-success">{% trans "Add New Line"%}</button>
-<div id="empty_form" style="display:none">
-  <table class='no_error'>
-    <div class="form-row">
-      <div class="form-group col-md-3">
-        {{ depandance_formset.empty_form.name }}
-      </div>
-      <div class="form-group col-md-3">
-        {{ depandance_formset.empty_form.relation }}
-      </div>
-      <div class="form-group col-md-3">
-        {{ depandance_formset.empty_form.id_number }}
-      </div>
-      <div class="form-group col-md-3">
-        {{ depandance_formset.empty_form.mobile }}
-      </div>
-    </div>
-  </table>
-</div>
-
-</form>
-</div>
-
-
-{% endblock body%}
-{% block js %}
-<script>
-$('#add_more').click(function() {
-var form_idx = $('#id_form-TOTAL_FORMS').val();
-$('#form_set').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
-$('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
-});
-</script>
-{% endblock js %}
-
       
-
-
-
-<div class="mt-1">
-    <div class="bgc-white p-20 bd">
-      <h6 class="c-grey-900">{% trans "Performance " %}</h6>
-      <div class="mT-30">
-          {{ performance_rating_formset.management_form }}
         <div id="form_set">
-          <div class="form-row">
+          <div class="form-row p-20">
             <div class="form-group col-md-3">
-              <label>{% trans "Rating Type" %}</label>
+              <label>{% trans "Name" %}</label>
             </div>
             <div class="form-group col-md-3">
-              <label>{% trans "Score " %}</label>
+              <label>{% trans "Relation " %}</label>
             </div>
             <div class="form-group col-md-3">
-              <label>{% trans "Value" %}</label>
+              <label>{% trans "ID Number" %}</label>
             </div>
+            <div class="form-group col-md-3">
+                <label>{% trans "Mobile" %}</label>
+              </div>
           </div> 
-          {% for form in performance_rating_formset.forms %}
-          {{form.non_field_errors}}
-          {{form.errors}}
+          {{depandance_formset.management_form}}
+          {% for form in depandance_formset %}
+            {{form.non_field_errors}}
+            {{form.errors}}
         <div class="form-row">
 
           <div class="form-group col-md-3">
-            {{ form.rating}}
+            {{ form.name}}
           </div>
           <div class="form-group col-md-3">
-            {{ form.score_key}}
+            {{ form.relation}}
           </div>
           <div class="form-group col-md-3">
-            {{ form.score_value}}
+            {{ form.id_number}}
+          </div>
+          <div class="form-group col-md-3">
+            {{ form.mobile}}
           </div>
           </div>
           {% endfor %}
@@ -103,13 +47,16 @@ $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
           <table class='no_error'>
             <div class="form-row">
               <div class="form-group col-md-3">
-                {{ performance_rating_formset.empty_form.rating }}
+                {{ depandance_formset.empty_form.name }}
               </div>
               <div class="form-group col-md-3">
-                {{ performance_rating_formset.empty_form.score_key }}
+                {{ depandance_formset.empty_form.relation }}
               </div>
               <div class="form-group col-md-3">
-                {{ performance_rating_formset.empty_form.score_value }}
+                {{ depandance_formset.empty_form.id_number }}
+              </div>
+              <div class="form-group col-md-3">
+                {{ depandance_formset.empty_form.mobi;e }}
               </div>
             </div>
           </table>
