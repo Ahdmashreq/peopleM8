@@ -254,6 +254,7 @@ def create_task(request):
                 x.user = request.user
                 x.save()
             messages.success(request, 'Saved Successfully.')
+            return redirect('attendance:user-list-attendance')
     else:
         tasks_inline_formset = Tasks_inline_formset(queryset=Task.objects.none())
     task_context = {
