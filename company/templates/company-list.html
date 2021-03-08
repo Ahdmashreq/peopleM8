@@ -28,14 +28,14 @@
               <td>{{ bg.name }}</td>
               <td class="Actions">
                 <div class="w-100 gap-10 peers">
-                  <div class="peer">
+                  <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Update' %}">
                     <a href="{% url 'company:update-business-group' pk=bg.id %}">
-                      <button type="button" class="btn cur-p btn-outline-primary">{% trans "Update" %}</button>
+                      <button type="button" class="btn cur-p btn-outline-primary">&#9997</button>
                     </a>
                   </div>
-                  <div class="peer">
+                  <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Delete' %}">
                     <a href="#">
-                      <button type="button" class="btn cur-p btn-outline-danger" data-toggle="modal" data-target="#delete-modal{{bg.pk}}">{% trans "Delete" %}</button>
+                      <button type="button" class="btn cur-p btn-outline-danger" data-toggle="modal" data-target="#delete-modal{{bg.pk}}" >&#128465</button>
                     </a>
                   </div>
                 </div>
@@ -53,8 +53,10 @@
                   <p><strong>{{ bg.name }}</strong></p>
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
-                  <a href="{% url 'company:delete-enterprise' pk=bg.pk %}" class="btn btn-danger" type="button">{% trans "Delete" %}</a>
+                  <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"
+                          data-toggle="tooltip" data-placement="bottom" title="{% trans 'Cancel' %}">&#x2718</button>
+                  <a href="{% url 'company:delete-enterprise' pk=bg.pk %}" class="btn btn-outline-danger" type="button"
+                              data-toggle="tooltip" data-placement="bottom" title="{% trans 'Delete' %}" >&#128465</a>
                 </div>
               </div>
             </div>

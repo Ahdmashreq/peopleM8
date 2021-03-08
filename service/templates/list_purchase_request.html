@@ -11,8 +11,10 @@
   </div>
   <div class="col-md-4">
     <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
-      <div class="peer">
-        <a href="{% url 'service:purchase-request-create' %}" class="btn btn-primary" type="button">{% trans "Purchase Request Form" %}</a>
+      <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Purchase Request Form' %}">
+        <a href="{% url 'service:purchase-request-create' %}" class="btn btn-primary" type="button">
+          <i class="fas fa-money-check-alt fa-2x"></i>
+        </a>
       </div>
     </div>
   </div>
@@ -40,11 +42,11 @@
             <td>{{i.date_of_purchase}}</td>
             <td>{{i.status}}</td>
             <td class="Actions">
-              <div class="w-100 gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
+              <div class="w-100 gap-10 peers">
                 {% if i.ordered_by.user != request.user %}
-                <div class="peer">
+                <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Respond' %}">
                   <a href="{% url 'service:purchase-request-update' id=i.id %}">
-                    <button type="button" class="btn cur-p btn-outline-primary">{% trans "Respond" %}</button>
+                    <button type="button" class="btn cur-p btn-outline-primary"><i class="fas fa-reply-all"></i></button>
                   </a>
                 </div>
                 {% endif %}

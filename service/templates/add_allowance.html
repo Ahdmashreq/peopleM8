@@ -110,12 +110,12 @@
               {{service_form.hotel_name}}
             </div>
             <div class="form-group col-md-3">
-              <label>{{service_form.cost_per_night.label}}</label>
+              <label>Cost</label>
               {{service_form.cost_per_night}}
             </div>
           </div>
           <div class="form-group">
-            <strong><h3>{% trans "Total Cost: EGP " %}<output id="result"></output></h3></strong>
+            <strong><h3>Total Cost: <span id='Test'></span> EGP</h3></strong>
           </div>
 
           <div class="form-group row">
@@ -137,16 +137,31 @@
 
 {% block js %}
 <script>
-  $(document).ready(function (){
-    $('.form-group').on('input','.prc',function(){
+/* 
+Ziad 
+7/3/2021
+Display total cost when update travel request
+*/
+  $(document).ready(function (){ 
+     var totalSum = 0;
+      $('.form-group .prc').each(function(){
+        var inputVal = parseInt($(this).val());
+        totalSum += inputVal;
+      });
+
+    $('.form-group').on("input",'.prc',function (){
       var totalSum = 0;
       $('.form-group .prc').each(function(){
         var inputVal = parseInt($(this).val());
         totalSum += inputVal;
       });
       $('#result').text(totalSum);
-    })
-  });
+                document.getElementById('Test').innerHTML = totalSum
+
+    }) 
+          document.getElementById('Test').innerHTML = totalSum
+
+  })()  ;
 
 </script>
 <script>

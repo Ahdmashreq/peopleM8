@@ -11,8 +11,10 @@
   </div>
   <div class="col-md-4">
     <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
-      <div class="peer">
-        <a href="{% url 'company:hours-deduction-policy-create' %}" class="btn cur-p btn-primary">{% trans "Add Working Hours Policy" %}</a>
+      <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Add Working Hours Policy' %}">
+        <a href="{% url 'company:hours-deduction-policy-create' %}" class="btn cur-p btn-primary">
+          <i class="fas fa-plus-square"></i>
+        </a>
       </div>
     </div>
   </div>
@@ -35,14 +37,14 @@
             <td><a href="#" data-toggle="modal" data-target="#viewModal">{{request.user.company}}&emsp;{{ policy }}</a></td>
             <td class="Actions">
               <div class="w-100 gap-10 peers">
-                <div class="peer">
+                <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Update' %}">
                   <a href="{% url 'company:policy-correct' pk=policy.pk %}">
-                    <button type="button" class="btn cur-p btn-outline-primary">{% trans "Update" %}</button>
+                    <button type="button" class="btn cur-p btn-outline-primary">&#9997</button>
                   </a>
                 </div>
-                <div class="peer">
+                <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Delete' %}">
                   <a href="#">
-                    <button type="button" class="btn cur-p btn-outline-danger" data-toggle="modal" data-target="#delete-modal{{policy.pk}}">{% trans "Delete" %}</button>
+                    <button type="button" class="btn cur-p btn-outline-danger" data-toggle="modal" data-target="#delete-modal{{policy.pk}}">&#128465</button>
                   </a>
                 </div>
               </div>
@@ -60,8 +62,10 @@
                 <p><strong>{{ policy }}</strong></p>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
-                <a href="{% url 'company:working-hrs-policy-delete' pk=policy.pk %}" class="btn btn-danger" type="button">{% trans "Delete" %}</a>
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"
+                       data-toggle="tooltip" data-placement="bottom" title="{% trans 'Cancel' %}">&#x2718</button>
+                <a href="{% url 'company:working-hrs-policy-delete' pk=policy.pk %}" class="btn btn-outline-danger" type="button"
+                          data-toggle="tooltip" data-placement="bottom" title="{% trans 'Delete' %}">&#128465</a>
               </div>
             </div>
           </div>

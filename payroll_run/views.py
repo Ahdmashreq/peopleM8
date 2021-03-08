@@ -340,7 +340,7 @@ def changeSalaryToFinal(request, month, year):
 
 
 @login_required(login_url='home:user-login')
-def userSalaryInformation(request, month_number, salary_year, salary_id, emp_id):
+def userSalaryInformation(request, month_number, salary_year, salary_id, emp_id , tmp_format):
     salary_obj = get_object_or_404(
         Salary_elements,
         salary_month=month_number,
@@ -354,7 +354,6 @@ def userSalaryInformation(request, month_number, salary_year, salary_id, emp_id)
             (Q(start_date__lte=date.today()) & (
                     Q(end_date__gt=salary_obj.run_date) | Q(end_date__isnull=True)))).values('element_id')
     else:
-        print("HWYYYYYYYYYYYYYYYYYY")
         elements = Employee_Element.objects.filter(element_id__id=salary_obj.element.id,
                                                    element_id__appears_on_payslip=False).filter(
             (Q(start_date__lte=date.today()) & (
@@ -365,10 +364,10 @@ def userSalaryInformation(request, month_number, salary_year, salary_id, emp_id)
         emp_id=emp_id,
         element_id__classification__code='earn',
 
-    )
+    ).order_by('element_id__sequence')
     emp_elements_deductions = Employee_Element.objects.filter(element_id__in=elements, emp_id=emp_id,
                                                               element_id__classification__code='deduct',
-                                                              )
+                                                              ).order_by('element_id__sequence')
     emp_payment = Payment.objects.filter((Q(end_date__gte=date.today()) | Q(end_date__isnull=True)), emp_id=emp_id)
     monthSalaryContext = {
         'page_title': _('salary information for {}').format(salary_obj.emp),
@@ -381,7 +380,10 @@ def userSalaryInformation(request, month_number, salary_year, salary_id, emp_id)
 
     # sc = Salary_Calculator(company=request.user.company, employee=emp_id, elements=emp_elements)
     # test = sc.calc_emp_deductions_amount()
-    return render(request, 'emp-payslip.html', monthSalaryContext)
+    if tmp_format=="table":
+        return render(request, 'emp-payslip.html', monthSalaryContext)
+    elif tmp_format=="list":
+        return render(request, 'emp-payslip-report.html', monthSalaryContext)
 
 
 @login_required(login_url='home:user-login')

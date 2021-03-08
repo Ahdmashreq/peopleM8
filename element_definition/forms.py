@@ -55,6 +55,7 @@ class ElementForm(forms.ModelForm):
                 self.fields[field].widget.attrs['class'] = ''
             else:
                 self.fields[field].widget.attrs['class'] = 'form-control'
+        self.fields['code'].disabled = True
 
 
 class SalaryStructureForm(forms.ModelForm):
