@@ -48,10 +48,12 @@
               <td>{{i.absence}}</td>
               <td class="Actions">
                 <div class="w-100 gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
-                  <div class="peer">
+                  <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Update' %}">
                     <a href="{% url 'leave:leave_balance_edit' i.id %}">
                       <button type="button" class="btn cur-p btn-outline-primary">&#9997</button>
                     </a>
+                  </div>
+                  <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Delete' %}">
                     <a href="#">
                       <button type="button" class="btn cur-p btn-outline-danger" data-toggle="modal" data-target="#delete-balance-modal{{i.id}}">&#128465</button>
                     </a>
