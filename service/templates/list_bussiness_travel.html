@@ -30,6 +30,8 @@
             <th>{% trans "Department" %}</th>
             <th>{% trans "Destination" %}</th>
             <th>{% trans "Project Name/Client Name" %}</th>
+            <th>{% trans "From Date" %}</th>
+            <th>{% trans "To Date" %}</th>
             <th>{% trans "Status" %}</th>
             <th>{% trans "Actions" %}</th>
           </tr>
@@ -42,6 +44,8 @@
             <td>{{i.department}}</td>
             <td>{{i.destination}}</td>
             <td>{{i.project_name}}</td>
+            <td>{{i.estimated_date_of_travel_from}}</td>
+            <td>{{i.estimated_date_of_travel_to}}</td>
             <td>{{i.status}}</td>
             <td class="Actions">
               {% if i.status == "pending"%}
