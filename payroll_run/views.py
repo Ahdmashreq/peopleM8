@@ -364,10 +364,10 @@ def userSalaryInformation(request, month_number, salary_year, salary_id, emp_id 
         emp_id=emp_id,
         element_id__classification__code='earn',
 
-    )
+    ).order_by('element_id__sequence')
     emp_elements_deductions = Employee_Element.objects.filter(element_id__in=elements, emp_id=emp_id,
                                                               element_id__classification__code='deduct',
-                                                              )
+                                                              ).order_by('element_id__sequence')
     emp_payment = Payment.objects.filter((Q(end_date__gte=date.today()) | Q(end_date__isnull=True)), emp_id=emp_id)
     monthSalaryContext = {
         'page_title': _('salary information for {}').format(salary_obj.emp),
