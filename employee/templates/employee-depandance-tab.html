@@ -1,0 +1,32 @@
+{% load i18n %}
+{% load l10n %}
+{% load group_extra %}
+{% load staticfiles %}
+
+<div id="form_set">
+    <div class="form-row p-20">
+        {{depandance_formset.management_form}}
+        {% for form in depandance_formset %}
+        <div class="form-row col-md-12">
+            <div class="col-sm-3">
+                <label class="fw-500">{% trans "Name" %}</label>
+                {{ form.name }}
+            </div>
+            <div class="col-sm-3">
+                <label class="fw-500">{% trans "Relation" %}</label>
+                {{ form.relation }}
+            </div>
+            <div class="col-sm-3">
+                <label class="fw-500">ID Number</label>
+                {{ form.id_number }}
+            </div>
+            <div class="col-sm-3">
+                <label class="fw-500">Mobile Number</label>
+                {{ form.mobile }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+      
+

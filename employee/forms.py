@@ -3,7 +3,7 @@ from crispy_forms.helper import FormHelper
 from django.db.models import Q
 from company.models import Department, Job, Grade, Position
 from manage_payroll.models import Payroll_Master
-from employee.models import Employee, JobRoll, Payment, Employee_Element, EmployeeStructureLink, Employee_File
+from employee.models import Employee, JobRoll, Payment, Employee_Element, EmployeeStructureLink, Employee_File , Employee_Depandance
 from defenition.models import LookupType, LookupDet
 from element_definition.models import Element_Master, Element_Link, SalaryStructure
 from django.shortcuts import get_object_or_404, get_list_or_404
@@ -159,3 +159,20 @@ class EmployeeFileForm(forms.ModelForm):
         self.helper.form_show_labels = True
 
 Employee_Files_inline = forms.inlineformset_factory(Employee, Employee_File, form=EmployeeFileForm, extra=1)
+
+
+class EmployeeDepandanceForm(forms.ModelForm):
+    class Meta:
+        model = Employee_Depandance
+        fields = "__all__"
+        exclude = ('emp_id', 'last_updated_at' ,'created_by','last_updated_by')
+    def __init__(self , *args, **kwargs):
+        super(EmployeeDepandanceForm , self).__init__(*args , **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs['class'] = 'form-control parsley-validated'
+        self.helper = FormHelper()
+        self.helper.form_show_labels = True
+
+Employee_depandance_inline = forms.inlineformset_factory(Employee, Employee_Depandance, form=EmployeeDepandanceForm, extra=1)
+
+
