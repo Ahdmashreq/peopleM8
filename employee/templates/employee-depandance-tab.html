@@ -28,5 +28,41 @@
         {% endfor %}
     </div>
 </div>
+
+<button type="button" id="add_more" class="btn cur-p btn-success">{% trans "Add New Line"%}</button>
+<div id="empty_form" style="display:none">
+  <table class='no_error'>
+    <div class="form-row">
+      <div class="form-group col-md-3">
+        {{ depandance_formset.empty_form.name }}
+      </div>
+      <div class="form-group col-md-3">
+        {{ depandance_formset.empty_form.relation }}
+      </div>
+      <div class="form-group col-md-3">
+        {{ depandance_formset.empty_form.id_number }}
+      </div>
+      <div class="form-group col-md-3">
+        {{ depandance_formset.empty_form.mobile }}
+      </div>
+    </div>
+  </table>
+</div>
+
+</form>
+</div>
+
+
+{% endblock body%}
+{% block js %}
+<script>
+$('#add_more').click(function() {
+var form_idx = $('#id_form-TOTAL_FORMS').val();
+$('#form_set').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
+$('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+});
+</script>
+{% endblock js %}
+
       
 
