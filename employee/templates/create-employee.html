@@ -118,21 +118,25 @@
     </div>
   </form>
 </div>
-<div class="modal fade" id="element-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-        <p>{% trans "Which Other Element You Want To Assign?" %}</p>
-        <form method="POST" action="{% url 'employee:new-employee-element' job_id=required_jobRoll.id %}">
-          {% csrf_token %}
-          {{employee_element_form.as_p}}
-          <button type="submit" onclick="change_x()" class="btn btn-success" >{% trans "Save" %}</button>
-          <button type="button"  class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
-        </form>
+{% if not create_employee %}
+  {% if employee_has_structure %}
+    <div class="modal fade" id="element-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-body">
+            <p>{% trans "Which Other Element You Want To Assign?" %}</p>
+            <form method="POST" action="{% url 'employee:new-employee-element' job_id=required_jobRoll.id %}">
+              {% csrf_token %}
+              {{employee_element_form.as_p}}
+              <button type="submit" onclick="change_x()" class="btn btn-success" >{% trans "Save" %}</button>
+              <button type="button"  class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
+  {% endif %}
+{% endif %}
 
 {% endblock body%}
 

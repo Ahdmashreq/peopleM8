@@ -344,22 +344,18 @@ def update_link_employee_structure(request, pk):
 
 @login_required(login_url='home:user-login')
 def deleteEmployeeView(request, pk):
-    required_employee = get_object_or_404(Employee, pk=pk)
-    required_jobRoll = get_object_or_404(JobRoll, emp_id=pk)
+    required_jobRoll = get_object_or_404(JobRoll, pk=pk)
+    required_employee = required_jobRoll.emp_id
     try:
         jobroll_form = JobRollForm(user_v=request.user, instance=required_jobRoll)
         end_date_jobroll_obj = jobroll_form.save(commit=False)
         end_date_jobroll_obj.end_date = date.today()
         end_date_jobroll_obj.save(update_fields=['end_date'])
 
-
-
-
         emp_form = EmployeeForm(instance=required_employee)
         end_date_obj = emp_form.save(commit=False)
         end_date_obj.end_date = date.today()
         end_date_obj.save(update_fields=['end_date'])
-
 
         user_lang = to_locale(get_language())
         if user_lang == 'ar':
@@ -390,7 +386,6 @@ def deleteEmployeeView(request, pk):
 @login_required(login_url='home:user-login')
 def deleteEmployeePermanently(request, pk):
     required_employee = get_object_or_404(Employee, pk=pk)
-    required_jobRoll = get_object_or_404(JobRoll, emp_id=pk)
     try:
         required_employee.delete()
         user_lang = to_locale(get_language())

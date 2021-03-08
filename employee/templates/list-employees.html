@@ -77,7 +77,7 @@
                   </div>
                   <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Delete' %}">
                     <a href="#">
-                      <button type="button" class="btn cur-p btn-outline-danger" data-toggle="modal" data-target="#delete-modal{{emp.emp_id.pk}}">
+                      <button type="button" class="btn cur-p btn-outline-danger" data-toggle="modal" data-target="#delete-modal{{emp.id}}">
                         <i class="fa fa-trash"></i>
                       </button>
                     </a>
@@ -86,15 +86,15 @@
               </td>
             </tr>
             <!-- Delete Modal -->
-            <div class="modal fade" id="delete-modal{{emp.emp_id.pk}}" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+            <div class="modal fade" id="delete-modal{{emp.id}}" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-body">
                     <p>{% trans "Are you sure you want to delete " %} {{ emp.emp_id.emp_name }} ?</p>
                     <button class="btn btn-outline-secondary" data-dismiss="modal">{% trans "No" %}</button>
-                    <a href="{% url 'employee:delete-employee' pk=emp.emp_id.pk %}"  class="btn btn-warning" type="button">{% trans "Delete and Keep Histort" %}</a>
+                    <a href="{% url 'employee:delete-employee' pk=emp.id %}"  class="btn btn-warning" type="button">{% trans "Delete and Keep Histort" %}</a>
                     
-                    <button class="btn btn-danger" type="button" data-toggle="modal" data-target="#deleteforever-modal{{emp.emp_id.pk}}">{% trans "Delete permanently" %}</button>
+                    <button class="btn btn-danger" type="button" data-toggle="modal" data-target="#deleteforever-modal{{emp.id}}">{% trans "Delete permanently" %}</button>
                   </div>
                 </div>
               </div>
@@ -103,7 +103,7 @@
 
 
 
-            <div class="modal fade" id="deleteforever-modal{{emp.emp_id.pk}}" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+            <div class="modal fade" id="deleteforever-modal{{emp.id}}" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-body">
