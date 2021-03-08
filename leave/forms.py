@@ -29,6 +29,7 @@ class FormLeave(forms.ModelForm):
             'leavetype': forms.Select(attrs={'class': 'form-control'}),
             'reason': forms.Textarea(attrs={
                 'rows': 2, 'cols': 40,
+                'required': 'true',
                 'style': 'height: 8em;',
                 'class': 'form-control'}),
 
@@ -77,4 +78,4 @@ class Leave_Balance_Form(forms.ModelForm):
 
     class Meta():
         model = Employee_Leave_balance
-        exclude = ['absence','created_by', 'creation_date', 'last_update_by', 'last_update_date']
+        exclude = ['absence', 'created_by', 'creation_date', 'last_update_by', 'last_update_date']

@@ -40,7 +40,11 @@
     </div>
     <div class="col-md-4">
       <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
-        <div class="peer"><a href="{% url 'task_management:tasks-create' %}" class="btn cur-p btn-primary">{% trans "Add New Task" %}</a></div>
+        <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Add New Task' %}">
+          <a href="{% url 'task_management:tasks-create' %}" class="btn cur-p btn-primary">
+            <i class="fas fa-plus-square"></i>
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -81,9 +85,9 @@
                       <td>{{ x.total_hours }}</td>
                       <td class="Actions">
                         <div class="w-100 gap-10 peers">
-                          <div class="peer">
+                          <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Update' %}">
                             <a href="{% url 'task_management:task-update' task_id=x.id %}">
-                              <button type="button" class="btn cur-p btn-outline-primary">{% trans "Update" %}</button>
+                              <button type="button" class="btn cur-p btn-outline-primary">&#9997</button>
                             </a>
                           </div>
                         </div>

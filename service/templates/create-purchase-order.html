@@ -184,9 +184,40 @@
 </script>
 <script>
   $('#add_more').click(function() {
-    var form_idx = $('#id_purchase_items_form-TOTAL_FORMS').val();
+    var form_idx = $('#id_purchase_item_set-TOTAL_FORMS').val();
     $('#purchase_set').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
-    $('#id_purchase_items_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+    $('#id_purchase_item_set-TOTAL_FORMS').val(parseInt(form_idx) + 1);
   });
 </script>
 {% endblock js %}
+
+
+{% comment %} <table class="table table-striped m-b-none text-sm"> 
+            {{  purchase_items_form.management_form }}
+            {% for form in  purchase_items_form %}
+            {{ form.id }}
+            {% if forloop.first %}
+            <thead>
+              <tr>
+                {% for field in form.visible_fields %}
+                <th>{{ field.label|capfirst }}</th>
+                {% endfor %}
+              </tr>
+            </thead>
+            {% endif %}
+            <tr>
+              {% for field in form.visible_fields %}
+              <td>
+                {# exclude the hidden fields in the form #}
+                {% if forloop.first %}
+                {% for hidden in form.hidden_fields %}
+                {{ hidden }}
+                {% endfor %}
+                {% endif %}
+                {{ field.errors.as_ul }}
+                {{ field }}
+              </td>
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          </table> {% endcomment %}

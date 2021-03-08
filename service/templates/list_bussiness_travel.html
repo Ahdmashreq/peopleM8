@@ -11,8 +11,10 @@
   </div>
   <div class="col-md-4">
     <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
-      <div class="peer">
-        <a href="{% url 'service:services_create' %}" class="btn btn-primary" type="button">{% trans "Bussiness Travel Form" %}</a>
+      <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Business Travel Form' %}">
+        <a href="{% url 'service:services_create' %}" class="btn btn-primary" type="button">
+          <i class="fas fa-atlas fa-2x"></i>
+        </a>
       </div>
     </div>
   </div>
@@ -43,11 +45,11 @@
             <td>{{i.status}}</td>
             <td class="Actions">
               {% if i.status == "pending"%}
-              <div class="w-100 gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
+              <div class="w-100 gap-10 peers">
                 {% if i.emp.user != request.user %}
-                <div class="peer">
+                <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Respond' %}">
                   <a href="{% url 'service:services_edit' i.id %}">
-                    <button type="button" class="btn cur-p btn-outline-primary">{% trans "Respond" %}</button>
+                    <button type="button" class="btn cur-p btn-outline-primary"><i class="fas fa-reply-all"></i></button>
                   </a>
                 </div>
                 {% endif %}
