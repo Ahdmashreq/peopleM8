@@ -51,8 +51,15 @@ class FormAllowance(forms.ModelForm):
 
 class PurchaseRequestForm(forms.ModelForm):
     class Meta():
+        """
+        Ziad
+        7/3/2021
+        Delete payment method and vendor details
+        Make items not mandatory
+        """
+
         model = Purchase_Request
-        fields = '__all__'
+        fields = ['department' , 'date_of_purchase' , 'office' , 'purpose']
         exclude = ['ordered_by','created_by', 'creation_date', 'last_update_by', 'last_update_date']
         widgets = {
                  'date_of_purchase' : forms.DateInput(attrs={'class': 'form-control',
@@ -62,12 +69,7 @@ class PurchaseRequestForm(forms.ModelForm):
                  'ordered_by' : forms.Select(attrs={'class': 'form-control'}),
                  'department' : forms.Select(attrs={'class': 'form-control','required': 'true'}),
                  'office' : forms.TextInput(attrs={'class': 'form-control','required': 'true'}),
-                 'payment_method' : forms.Select(attrs={'class': 'form-control','required': 'true'}),
                  'purpose' : forms.Textarea(attrs={
-                                                   'rows': 2,'cols': 40,
-                                                   'style': 'height: 6em;',
-                                                   'class': 'form-control', 'required': 'true'}),
-                 'vendor_details' :forms.Textarea(attrs={
                                                    'rows': 2,'cols': 40,
                                                    'style': 'height: 6em;',
                                                    'class': 'form-control', 'required': 'true'}),
@@ -77,10 +79,6 @@ class PurchaseRequestForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_show_labels = True
 
-class RequiredFormSet(BaseInlineFormSet):
-    def __init__(self, *args, **kwargs):
-        super(RequiredFormSet, self).__init__(*args, **kwargs)
-        self.forms[0].empty_permitted = False
 
 class PurchaseItemsForm(forms.ModelForm):
     class Meta():
@@ -94,4 +92,4 @@ class PurchaseItemsForm(forms.ModelForm):
                  'qnt' : forms.NumberInput(attrs={'class': 'form-control'}),
         }
 
-Purchase_Item_formset = forms.inlineformset_factory(Purchase_Request, Purchase_Item,form=PurchaseItemsForm,formset = RequiredFormSet ,extra=1, can_delete=True)
+Purchase_Item_formset = forms.inlineformset_factory(Purchase_Request, Purchase_Item,form=PurchaseItemsForm ,extra=3, can_delete=True)
