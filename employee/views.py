@@ -105,6 +105,7 @@ def createEmployeeView(request):
                 depandance_obj.last_update_by = request.user
                 depandance_obj.emp_id = emp_obj
                 depandance_obj.save()
+                
             return redirect('employee:update-employee', pk=job_obj.id)
         else:
             messages.error(request, emp_form.errors)

@@ -173,7 +173,7 @@ class EmployeeDepandanceForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_show_labels = True
 
-Employee_depandance_inline = forms.inlineformset_factory(Employee, Employee_Depandance, form=EmployeeDepandanceForm, extra=1)
+Employee_depandance_inline = forms.inlineformset_factory(Employee, Employee_Depandance, form=EmployeeDepandanceForm, extra=0)
 
 
 

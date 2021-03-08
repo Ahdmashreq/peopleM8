@@ -91,7 +91,7 @@
                 <li style="width: 16%;"><a href="#nav-profile" id="nav-profile-tab" data-toggle="tab" role="tab" aria-controls="nav-profile" aria-selected="false">{% trans "Official" %}</a></li>
                 <li style="width: 16%;"><a href="#nav-contact" id="nav-contact-tab" data-toggle="tab" role="tab" aria-controls="nav-contact" aria-selected="false">{% trans "Payments" %}</a></li>
                 <li style="width: 16%;"><a href="#nav-elements" id="nav-elements-tab" data-toggle="tab" role="tab" aria-controls="nav-elements" aria-selected="false">{% trans "Pays" %}</a></li>
-                <li style="width: 16%;"><a href="#nav-depandance" id="nav-depandance-tab" data-toggle="tab" role="tab" aria-controls="nav-elements" aria-selected="false">{% trans "Dependencies" %}</a></li>
+                <li style="width: 16%;"><a href="#nav-depandance" id="nav-depandance-tab" data-toggle="tab" role="tab" aria-controls="nav-depandances" aria-selected="false">{% trans "Dependencies" %}</a></li>
 
               </ul>
             </header>
@@ -253,6 +253,14 @@ console.log(isDirty)}
      </script>
 
 
+<script>
+  $('#add_dep').click(function () {
+      var form_idx = $('#id_employee_depandance_set-TOTAL_FORMS').val();
+      $('#dep_form_set').append($('#dep_form').html().replace(/__prefix__/g, form_idx));
+      $('#id_employee_depandance_set-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+      var current_indx = Number(form_idx)
+  });
+ </script>
 
 
 {% endblock js %}

@@ -3,7 +3,7 @@
 {% load group_extra %}
 {% load staticfiles %}
 
-<div id="form_set">
+<div id="dep_form_set">
     <div class="form-row p-20">
         {{depandance_formset.management_form}}
         {% for form in depandance_formset %}
@@ -13,50 +13,44 @@
                 {{ form.name }}
             </div>
             <div class="col-sm-3">
-                <label class="fw-500"> {% trans "Relation" %} </label>
+                <label class="fw-500">Relation</label>
                 {{ form.relation }}
             </div>
             <div class="col-sm-3">
-                <label class="fw-500">{% trans "ID Number" %}</label>
+                <label class="fw-500">ID Number</label>
                 {{ form.id_number }}
             </div>
             <div class="col-sm-3">
-                <label class="fw-500">{% trans "Mobile" %}</label>
+                <label class="fw-500">Mobile</label>
                 {{ form.mobile }}
             </div>
         </div>
         {% endfor %}
     </div>
 </div>
-
         <div class="separator mb-5"></div>
-        <button type="button" id="add_line" class="btn cur-p btn-success">{% trans "Add"%}</button>
-        <div id="empty_form" style="display:none">
+        <button type="button" id="add_dep" class="btn cur-p btn-success">{% trans "Add Depandance"%}</button>
+        <div id="dep_form" style="display:none">
             <table class='no_error'>
                 <div class="form-row col-md-12 p-20">
-                <div class="col-sm-4">
+                <div class="col-sm-3">
+                    <label class="fw-500">{% trans "Name" %}</label>
                     {{ depandance_formset.empty_form.name }}
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-3">
+                    <label class="fw-500">Relation</label>
                     {{ depandance_formset.empty_form.relation }}
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-3">
+                    <label class="fw-500">ID Number</label>
                     {{ depandance_formset.empty_form.id_number }}
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-3">
+                    <label class="fw-500">Mobile</label>
                     {{ depandance_formset.empty_form.mobile }}
                 </div>
             </div>
             </table>
         </div>
-        {% block js %}
-        <script>
-            $('#add_line').click(function () { 
-                var form_idx = $('#id_employee_depandance_set-TOTAL_FORMS').val();
-                $('#form_set').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
-                $('#id_employee_depandance_set-TOTAL_FORMS').val(parseInt(form_idx) + 1);
-                var current_indx = Number(form_idx)
-            });
-           </script>
-{% endblock js %}
-          
+    <br>
+
