@@ -11,8 +11,10 @@
   </div>
   <div class="col-md-4">
     <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
-      <div class="peer">
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#yearModal">{% trans "Add Yearly Holidays" %}</button>
+      <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Add Yearly Holidays' %}">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#yearModal">
+          <i class="fas fa-plus-square"></i>
+        </button>
       </div>
       <div class="peer">
       </div>

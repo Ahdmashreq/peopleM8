@@ -13,9 +13,21 @@
     </div>
     <div class="col-md-4">
       <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %} ">
-        <div class="peer"><a href="{% url 'employee:employee-create' %}" class="btn cur-p btn-primary">{% trans "Add" %}</a></div>
-        <div class="peer"><a href="{% url 'employee:list-employee' %}" class="btn cur-p btn-secondary">{% trans "Table View" %}</a></div>
-        <div class="peer"><a href="{% url 'employee:employee-export' %}" class="btn cur-p btn-secondary">{% trans "Export" %}</a></div>
+        <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Add Employee' %}">
+            <a href="{% url 'employee:employee-create' %}" class="btn cur-p btn-primary">
+                <i class="fas fa-plus-square"></i>
+            </a>
+        </div>
+        <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Table View' %}">
+            <a href="{% url 'employee:list-employee' %}" class="btn cur-p btn-secondary">
+                <i class="fas fa-table"></i>
+            </a>
+        </div>
+        <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Export' %}">
+            <a href="{% url 'employee:employee-export' %}" class="btn cur-p btn-secondary">
+                <i class="fas fa-file-export"></i>
+            </a>
+        </div>
 
       </div>
     </div>
@@ -36,19 +48,25 @@
                             <a class="list-group-item" href="#"> <span class="badge badge-pill fl-r badge-info lh-0 p-10">{{ emp.hiredate }}</span>{% trans "Hire Date" %}</a>
 
                           <div class="peers pT-10 mT-20 bdT fxw-nw@lg+ jc-sb ta-c gap-10">
-                            <div class="peer">
+                            <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'View Info' %}">
                               <a href="{% url 'employee:view-employee' pk=emp.id %}">
-                                <button type="button" class="btn cur-p btn-outline-primary">{% trans "View" %}</button>
+                                <button type="button" class="btn cur-p btn-outline-primary">
+                                    <i class="fas fa-search-plus"></i>
+                                </button>
                               </a>
                             </div>
-                            <div class="peer">
+                            <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Update' %}">
                               <a href="{% url 'employee:update-employee' pk=emp.id %}">
-                                <button type="button" class="btn cur-p btn-outline-success">{% trans "Update" %}</button>
+                                <button type="button" class="btn cur-p btn-outline-success">
+                                    <i class="fas fa-user-edit"></i>
+                                </button>
                               </a>
                             </div>
-                            <div class="peer">
+                            <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Delete' %}">
                               <a href="{% url 'employee:delete-employee' pk=emp.pk %}">
-                                <button type="button" class="btn cur-p btn-outline-danger" data-toggle="modal" data-target="#delete-modal{{bg.pk}}">{% trans "Delete" %}</button>
+                                <button type="button" class="btn cur-p btn-outline-danger" data-toggle="modal" data-target="#delete-modal{{bg.pk}}">
+                                    <i class="fa fa-trash"></i>
+                                </button>
                               </a>
                             </div>
                           </div>

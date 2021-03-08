@@ -78,4 +78,4 @@ class Leave_Balance_Form(forms.ModelForm):
 
     class Meta():
         model = Employee_Leave_balance
-        exclude = ['absence','created_by', 'creation_date', 'last_update_by', 'last_update_date']
+        exclude = ['absence', 'created_by', 'creation_date', 'last_update_by', 'last_update_date']
