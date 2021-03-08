@@ -19,9 +19,14 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import to_locale, get_language
 from payroll_run.payslip_functions import PayslipFunction
 from django.http import JsonResponse
+import unicodedata
 
 
 ################################################################################
+'''
+    Element_Master is not used in models, views and forms
+    TODO delete Element_Master
+'''
 
 
 def installElementMaster(request):
@@ -56,70 +61,39 @@ def installElementMaster(request):
 
 def getDBSec(n, company_id):
     if n < 1:
-        return str(company_id) + str(1).zfill(5)
+        return str(company_id) + str(1).zfill(3)
     else:
-        return str(company_id) + str(n + 1).zfill(5)
+        return str(company_id) + str(n + 1).zfill(3)
 
 
-def createElementView(request):
-    element_master_form = ElementMasterForm()
-    rows_number = Element_Master.objects.all().count()
-    if request.method == 'POST':
-        element_master_form = ElementMasterForm(request.POST)
-        if element_master_form.is_valid():
-            element_obj = element_master_form.save(commit=False)
-            element_obj.enterprise = request.user.company
-            element_obj.created_by = request.user
-            element_obj.last_update_by = request.user
-            element_obj.db_name = getDBSec(
-                rows_number, request.user.company.id)
-            element_obj.basic_flag = False
-            element_obj.save()
-            return redirect('element_definition:list-element')
-            user_lang = to_locale(get_language())
-            if user_lang == 'ar':
-                success_msg = 'تمت العملية بنجاح'
-            else:
-                success_msg = 'Create Successfully'
-
-            # success_msg = 'Element Created Successfully'
-            messages.success(request, success_msg)
-        else:  # Form was not valid
-            # success_msg = 'The form is not valid.'
-            user_lang = to_locale(get_language())
-            if user_lang == 'ar':
-                success_msg = 'لم يتم الانشاء بنجاح'
-            else:
-                success_msg = 'The form is not valid.'
-            [messages.error(request, element_master_form.errors)]
-    myContext = {
-        "page_title": _("Create new Pay"),
-        'element_master_form': element_master_form,
-    }
-    return render(request, 'create-elements.html', myContext)
-
-
-def make_message(user_lang, success):
-    if success:
-        if user_lang == 'ar':
-            msg = 'تمت العملية بنجاح'
-        else:
-            msg = 'Create Successfully'
-    else:
-        if user_lang == 'ar':
-            msg = 'لم يتم الانشاء بنجاح'
-        else:
-            msg = 'The form is not valid.'
-    return msg
-
+def generate_element_code(word):
+    '''
+        generate code based on word to use it in element-code "called in create_new_element"
+        author: Mamdouh
+        created_at: 08/03/2021
+    '''
+    ar_string = ''
+    for c in word:
+        id = unicodedata.name(c).lower()
+        if 'arabic letter' in id:
+            ar_string += id.split()[2][0]
+        if 'space' in id:
+            ar_string += '-'
+        if 'latin' in id:
+            ar_string += c
+    return ar_string
 
 def create_new_element(request):
     element_form = ElementForm(user=request.user)
+    rows_number = Element_Master.objects.all().count()
     if request.method == "POST":
         user_lang = to_locale(get_language())
         element_form = ElementForm(request.POST, user=request.user)
         if element_form.is_valid():
             elem_obj = element_form.save(commit=False)
+            element_code = getDBSec(
+                    rows_number, request.user.company.id) + '-' + generate_element_code(elem_obj.element_name)
+            elem_obj.code = element_code
             elem_obj.created_by = request.user
             elem_obj.enterprise = request.user.company
             elem_obj.save()
@@ -137,6 +111,20 @@ def create_new_element(request):
     }
     return render(request, 'create-element2.html', myContext)
 
+
+
+def make_message(user_lang, success):
+    if success:
+        if user_lang == 'ar':
+            msg = 'تمت العملية بنجاح'
+        else:
+            msg = 'Create Successfully'
+    else:
+        if user_lang == 'ar':
+            msg = 'لم يتم الانشاء بنجاح'
+        else:
+            msg = 'The form is not valid.'
+    return msg
 
 def update_element_view(request, pk):
     element = get_object_or_404(Element, pk=pk)
@@ -211,40 +199,6 @@ def listElementView(request):
         'basic_flag': element_flag,
     }
     return render(request, 'list-elements.html', myContext)
-
-
-def updateElementView(request, pk):
-    element_master = get_object_or_404(Element_Master, pk=pk)
-    element_master_form = ElementMasterForm(instance=element_master)
-    if request.method == 'POST':
-        element_master_form = ElementMasterForm(
-            request.POST, instance=element_master)
-        if element_master_form.is_valid():
-            element_master_form.save()
-            success_msg = 'Element Updated Successfully'
-            messages.success(request, success_msg)
-            return redirect('element_definition:list-element')
-    myContext = {
-        "page_title": _("Update lookup"),
-        'element_master_form': element_master_form,
-    }
-    return render(request, 'create-elements.html', myContext)
-
-
-def deleteElementView(request, pk):
-    required_element = get_object_or_404(ElementMaster, pk=pk)
-    try:
-        element_form = ElementMasterForm(instance=required_element)
-        element_obj = element_form.save(commit=False)
-        element_obj.end_date = date.today()
-        element_obj.save(update_fields=['end_date'])
-        success_msg = '{} was deleted successfully'.format(required_element)
-        messages.success(request, success_msg)
-    except Exception as e:
-        error_msg = '{} cannot be deleted '.format(required_element)
-        messages.error(request, error_msg)
-        raise e
-    return redirect('element_definition:list-element')
 
 
 ######################################## ElementBatch view functions ##################################################
