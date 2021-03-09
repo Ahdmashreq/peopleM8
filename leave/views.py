@@ -151,7 +151,7 @@ def list_leave(request):
         employee_job = JobRoll.objects.get(
             end_date__isnull=True, emp_id=employee)
         if employee_job.manager == None:  # check if the loged in user is a manager
-            list_leaves = Leave.objects.all()
+            list_leaves = Leave.objects.all_pending_leaves()
             is_manager = True
         else:
             list_leaves = Leave.objects.filter(user=request.user)
