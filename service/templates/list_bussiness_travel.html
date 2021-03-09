@@ -48,15 +48,13 @@
             <td>{{i.estimated_date_of_travel_to}}</td>
             <td>{{i.status}}</td>
             <td class="Actions">
-              {% if i.status == "pending"%}
+              {% if request.user|has_group:"Admin"%}
               <div class="w-100 gap-10 peers">
-                {% if i.emp.user != request.user %}
                 <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Respond' %}">
                   <a href="{% url 'service:services_edit' i.id %}">
                     <button type="button" class="btn cur-p btn-outline-primary"><i class="fas fa-reply-all"></i></button>
                   </a>
                 </div>
-                {% endif %}
               </div>
               {% endif %}
             </td>
