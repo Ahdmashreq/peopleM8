@@ -119,7 +119,7 @@ def business_request_handler(sender, instance, created, update_fields, **kwargs)
     else:
         hr_users = User.objects.filter(groups__name='HR')
         manager_emp = hr_users
-        
+
     if created:  # check if this is a new Business_travel instance
         data = {"title": "Business Travel Request", "status": instance.status, "href": "service:services_edit"}
         notify.send(sender=requestor_emp.user,
@@ -131,7 +131,7 @@ def business_request_handler(sender, instance, created, update_fields, **kwargs)
         data = {"title": "Business Travel Request", "status": instance.status}
 
         # send notification to the requestor employee that his request status is updated
-        notify.send(sender=manager_emp.user,
+        notify.send(sender=manager_emp,
                     recipient=requestor_emp.user,
                     verb=instance.status, action_object=instance,
                     description="{employee} has {status} your Business Travel request".format(employee=manager_emp,
