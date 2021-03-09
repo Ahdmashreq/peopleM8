@@ -61,6 +61,10 @@ def message_composer(request, html_template, instance_name, result):
 def add_leave(request):
     employee = Employee.objects.get(user=request.user)
     employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
+    employee_leave_balance = Employee_Leave_balance.objects.get(
+            employee=employee)
+    total_balance = employee_leave_balance.total_balance
+    absence_days = employee_leave_balance.absence
     # print(have_leave_balance(request.user))
     if request.method == "POST":
         leave_form = FormLeave(data=request.POST, form_type=None)
@@ -104,7 +108,7 @@ def add_leave(request):
                 None, "You are not eligible for leave request")
     else:  # http request
         leave_form = FormLeave(form_type=None)
-    return render(request, 'add_leave.html', {'leave_form': leave_form})
+    return render(request, 'add_leave.html', {'leave_form': leave_form , 'total_balance' : total_balance , 'absence_days' : absence_days})
 
 
 def eligible_user_leave(user):
