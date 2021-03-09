@@ -174,33 +174,5 @@
     })
   });
 </script>
-<script>
-  $(document).ready(function() { //function will wait for the page to fully load before executing
-    $('#id_duration_of_hotel_from').attr('disabled', true);
-    $('#id_duration_of_hotel_to').attr('disabled', true);
-    $('#id_hotel_name').attr('disabled', true);
-    $('#id_cost_per_night').attr('disabled', true);
-    $("input[type=radio][name=accomodation]").change(function() { //specifying onchange function for input of type radio and name visibility
-      if (this.value != "H") { //if the new value is private
-        $('#id_duration_of_hotel_from').attr('disabled', true);
-        $('#id_duration_of_hotel_to').attr('disabled', true);
-        $('#id_hotel_name').attr('disabled', true);
-        $('#id_cost_per_night').attr('disabled', true);
-      } else { //if the new value is anything else
-        $('#id_duration_of_hotel_from').attr('disabled', false);
-        $('#id_duration_of_hotel_to').attr('disabled', false);
-        $('#id_hotel_name').attr('disabled', false);
-        $('#id_cost_per_night').attr('disabled', false);
-      }
-    });
 
-  });
-</script>
-<script>
-  $('#add_more').click(function() {
-    var form_idx = $('#id_purchase_items_form-TOTAL_FORMS').val();
-    $('#purchase_set').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
-    $('#id_purchase_items_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
-  });
-</script>
 {% endblock js %}
