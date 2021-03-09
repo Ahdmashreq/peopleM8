@@ -106,7 +106,7 @@
     <ul class="dropdown-menu">
       {% if request.user|has_group:"Admin" or request.user|has_group:"HR" %}
       <li class="nav-item dropdown">
-        <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-pink-500 ti-agenda"></i> </span><span class="title">{% trans "Employee Leaves" %}</span> <span class="arrow"><i class="ti-angle-right"></i></span></a>
+        <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"></span><span class="title">{% trans "Employee Leaves" %}</span> <span class="arrow"><i class="ti-angle-right"></i></span></a>
         <ul class="dropdown-menu">
           <li><a class="sidebar-link" href="{% url 'leave:list_leave' %}">{% trans 'Leaves List'%}</a></li>
           <li><a class="sidebar-link" href="{% url 'employee:leaves-history' %}">{% trans 'Leaves Board'%}</a></li>
