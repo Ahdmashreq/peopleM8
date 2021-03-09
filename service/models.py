@@ -141,7 +141,7 @@ def business_request_handler(sender, instance, created, update_fields, **kwargs)
 
         #  update the old notification for the manager with the new status
         content_type = ContentType.objects.get_for_model(Bussiness_Travel)
-        old_notification = manager_emp.user.notifications.filter(action_object_content_type=content_type,
+        old_notification = manager_emp.notifications.filter(action_object_content_type=content_type,
                                                                  action_object_object_id=instance.id)
         if len(old_notification) > 0:
             old_notification[0].data['data']['status'] = instance.status
