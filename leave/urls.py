@@ -21,6 +21,6 @@ urlpatterns = [
 
     path('leave-balance-add/', views.create_employee_leave_balance, name='leave-balance-create'),
     path('leave-balance-list/<int:employee_id>/', views.view_employee_leaves_list, name='employee-leave-list'),
-    path('amira/', views.get_leave_type, name='leave_type'),
+    path('leave-type/', views.get_leave_type, name='leave_type'),
 
 ]
