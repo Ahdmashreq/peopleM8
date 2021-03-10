@@ -21,8 +21,8 @@ from django.conf import settings
 from django.template import Context
 from django.template.loader import render_to_string
 from django.utils.text import slugify
-#from weasyprint import HTML, CSS
-#from weasyprint.fonts import FontConfiguration
+from weasyprint import HTML, CSS
+from weasyprint.fonts import FontConfiguration  # amira: fixing error on print
 # ############################################################
 from .new_tax_rules import Tax_Deduction_Amount
 from payroll_run.salary_calculations import Salary_Calculator

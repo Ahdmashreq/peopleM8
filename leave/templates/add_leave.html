@@ -5,6 +5,10 @@
 {% load i18n %}
 {% block body %}
 <!--  -->
+<style>
+         
+      </style>
+
 
 <div class="container-fluid">
   <div class="mt-1">
@@ -16,6 +20,46 @@
           </h1>
         </div>
       </div>
+      <div style="text-align:center">
+ <span class=" col-md-4 " id="message" style="padding: 12px 14px; margin: 0 0 20px;
+                background: #c7c3c3;  color: rgb(0, 0, 0);
+                border: 1px solid rgb(196, 19, 19); border-radius: 4px; display: none; font-style: oblique; text-align:center">
+                 <p  class="message">You have exceeded your allowed days.</p>
+                 <span >Your total balance is : </span>
+                 <span id="balance"></span>
+                 <br>
+                  <span>You will be absent</span>
+                  <span  id="days"></span>
+                  <br>
+                  <br>
+         <button id = "ok"   onclick="hide()" class="yes">OK</button>
+                </span>
+                </div>
+
+      <div style="text-align:center">
+ <span class=" col-md-4 " id="messagee" style="padding: 12px 14px; margin: 0 0 20px;
+                background: #c7c3c3;  color: rgb(0, 0, 0);
+                border: 1px solid rgb(196, 19, 19); border-radius: 4px; display: none; font-style: oblique; text-align:center">
+                 <p  class="message">You don't have enough absence days.</p>
+                 <span >Absence balance consumed : </span>
+                 <span id="absence"></span>
+                 <br>
+                  <span>You only have  </span>
+                  <span  id="absencedays"></span>
+                  <span>absence days</span>
+                  <br>
+                  <br>
+                <p>Please don't take days more than your allowed absence days</p>
+                </span>
+                </div>
+
+       <div style="text-align:center">
+ <span class=" col-md-4 " id="cant_create" style="padding: 6px 8px; margin: 0 0 10px;
+                background: #c7c3c3;  color: rgb(0, 0, 0);
+                border: 1px solid rgb(196, 19, 19); border-radius: 2px; display: none; font-style: oblique; text-align:center">
+                 <p  class="message">You can't take any leave</p>
+                 </span>
+                </div>                              
       <h5 class="c-grey-900">{% trans "Fill out the form" %}</h5>
       <div class="mT-30">
         <form method="POST" id="myform">
@@ -73,7 +117,7 @@
 
           <div class="form-group row">
             <div class="col-sm-10">
-              <button type="submit" onclick="change_x()" class="btn btn-primary">{% trans "Submit" %}</button>
+              <button type="submit" onclick="change_x()" id="submitt" class="btn btn-primary">{% trans "Submit" %}</button>
               <button type="button"  onclick="change_x()" class="btn btn-default">
                 <a href="{% url 'leave:list_leave' %}">{% trans "Cancel" %}</a>
               </button>
@@ -81,13 +125,81 @@
 
           </div>
         </form>
+      <div id="confirm"  >
+         <div id="message"  style="display : none;" class="message">This is a warning message.</div>
+         <button id = "ok"  style="display : none;" onclick="hide()" class="yes">OK</button>
+      </div>
 
       </div>
     </div>
   </div>
 </div>
 {% endblock body %}
+
+
 {% block js %}
+
+<script>
+function checkendbalance(){
+  absence_days = {{absence_days}}
+  if(absence_days == 21){
+      msg = document.getElementById("cant_create");
+      msg.style.display = "block";
+      butt = document.getElementById("submitt");
+      butt.disabled = "disabled";
+  }
+}
+window.onload = checkendbalance();
+</script>
+
+<script>
+function checkbalance(){
+      startdate1 = document.getElementById('id_startdate').value;
+      enddate1 = document.getElementById('id_enddate').value;
+      startdate = new Date(startdate1).getTime();
+      enddate = new Date(enddate1).getTime();
+      diffDays = (enddate - startdate) / (1000 * 60 * 60 * 24) +1;
+      total_balance = {{total_balance}}
+      absence_days = {{absence_days}}
+      allowed_absence = 21 - absence_days;
+      if (diffDays > total_balance && diffDays < allowed_absence)
+      {
+        balance = diffDays  - total_balance
+        document.getElementById("balance").innerHTML = total_balance
+        document.getElementById("days").innerHTML = balance
+        msg = document.getElementById("message");
+        msg.style.display = "block";
+        msg1 = document.getElementById("messagee");
+        msg1.style.display = "none";
+        butt = document.getElementById("submitt");
+        butt.disabled = "disabled";
+
+      }
+
+      if(diffDays > allowed_absence && allowed_absence != 0)
+      {
+        console.log("asdfjskdbsdd")
+        document.getElementById("absence").innerHTML = absence_days
+        document.getElementById("absencedays").innerHTML = allowed_absence
+         msg = document.getElementById("messagee");
+        msg.style.display = "block";
+        butt = document.getElementById("submitt");
+        butt.disabled = "disabled";
+      }
+
+  }
+
+function hide(){
+  msg = document.getElementById("message");
+        msg.style.display = "none";
+        butt = document.getElementById("submitt");
+        butt.disabled = false;
+}
+
+</script>
+
+
+
 <script>
   $(document).ready(function() {
     function parseDate(str) {

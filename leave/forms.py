@@ -19,9 +19,11 @@ class FormLeave(forms.ModelForm):
         widgets = {
             'startdate': forms.DateInput(attrs={'class': 'form-control',
                                                 'data-provide': "datepicker",
+                                                
                                                 'wtx-context': "2A377B0C-58AD-4885-B9FB-B5AC9788D0F2"}),
             'enddate': forms.DateInput(attrs={'class': 'form-control',
                                               'data-provide': "datepicker",
+                                              'onchange': 'checkbalance()' ,
                                               'wtx-context': "2A377B0C-58AD-4885-B9FB-B5AC9788D0F2"}),
             'resume_date': forms.DateInput(attrs={'class': 'form-control',
                                                   'data-provide': "datepicker",
@@ -32,6 +34,8 @@ class FormLeave(forms.ModelForm):
                 'required': 'true',
                 'style': 'height: 8em;',
                 'class': 'form-control'}),
+            
+            
 
         }
 

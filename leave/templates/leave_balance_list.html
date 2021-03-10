@@ -41,7 +41,12 @@
             {% for i in employee_leave_balance_list %}
             <tr>
               <td>{{ forloop.counter }}</td>
-              <td><a href="{% url 'leave:employee-leave-list' employee_id=i.employee.id %}">{{i.employee}}</a></td>
+              <td>
+                <a href="{% url 'leave:employee-leave-list' employee_id=i.employee.id %}"
+                  data-toggle="tooltip" data-placement="bottom" title="{% trans 'View Employee Leaves Detail' %}">
+                  {{i.employee}}
+                </a>
+              </td>
               <td>{{i.casual}}</td>
               <td>{{i.usual}}</td>
               <td>{{i.carried_forward}}</td>

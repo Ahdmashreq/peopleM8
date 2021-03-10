@@ -61,39 +61,43 @@ def message_composer(request, html_template, instance_name, result):
 def add_leave(request):
     employee = Employee.objects.get(user=request.user)
     employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
+    employee_leave_balance = Employee_Leave_balance.objects.get(
+            employee=employee)
+    total_balance = employee_leave_balance.total_balance
+    absence_days = employee_leave_balance.absence
     # print(have_leave_balance(request.user))
     if request.method == "POST":
         leave_form = FormLeave(data=request.POST, form_type=None)
-        if eligible_user_leave(request.user) and have_leave_balance(request.user):
+        if eligible_user_leave(request.user):
             if leave_form.is_valid():
                 if valid_leave(request.user, leave_form.cleaned_data['startdate'], leave_form.cleaned_data['enddate']):
                     leave = leave_form.save(commit=False)
                     leave.user = request.user
                     required_employee = Employee.objects.get(user=request.user)
-                    check_validate_balance=Employee_Leave_balance.check_balance(
-                        required_employee, leave_form.data['startdate'], leave_form.data['enddate'])
-                    if check_validate_balance:
-                        leave.save()
-                        team_leader_email = []
-                        check_manager = leave.check_manger(
-                            required_employee)
-                        for manager in check_manager:
-                            team_leader_email.append(manager.user.email)
+                    #check_validate_balance=Employee_Leave_balance.check_balance(
+                        #required_employee, leave_form.data['startdate'], leave_form.data['enddate'])
+                    #if check_validate_balance:
+                    leave.save()
+                    team_leader_email = []
+                    check_manager = leave.check_manger(
+                        required_employee)
+                    for manager in check_manager:
+                        team_leader_email.append(manager.user.email)
                        
                         # if employee_job.manager:
                         #     NotificationHelper(
                         #         employee, employee_job.manager, leave).send_notification()
-                        requestor_email = employee.email
+                    requestor_email = employee.email
                         
                         # print(team_leader_email)
-                        html_message = message_composer(request, html_template='leave_mail.html', instance_name=leave,
+                    html_message = message_composer(request, html_template='leave_mail.html', instance_name=leave,
                                                         result=None)
-                        email_sender('Applying for a leave', 'Applying for a leave', requestor_email,
+                    email_sender('Applying for a leave', 'Applying for a leave', requestor_email,
                                     team_leader_email, html_message)
 
-                        messages.add_message(request, messages.SUCCESS,
+                    messages.add_message(request, messages.SUCCESS,
                                             'Leave Request was created successfully')
-                        return redirect('leave:list_leave')
+                    return redirect('leave:list_leave')
                 else:
                     leave_form.add_error(
                         None, "Requested leave intersects with another leave")
@@ -104,7 +108,7 @@ def add_leave(request):
                 None, "You are not eligible for leave request")
     else:  # http request
         leave_form = FormLeave(form_type=None)
-    return render(request, 'add_leave.html', {'leave_form': leave_form})
+    return render(request, 'add_leave.html', {'leave_form': leave_form , 'total_balance' : total_balance , 'absence_days' : absence_days})
 
 
 def eligible_user_leave(user):
@@ -207,11 +211,16 @@ def leave_approve(request, leave_id, redirect_to):
     enddate = instance.enddate
     dates = (enddate - startdate)
     tottal_days = dates.days + 1
+    user = instance.user
+    
+    required_employee = Employee.objects.get(user=user)
     required_user = Employee.objects.get(user=instance.user)
     employee_leave_balance = Employee_Leave_balance.objects.get(
         employee=required_user)
-    employee_leave_balance.casual = employee_leave_balance.casual - tottal_days
-    employee_leave_balance.save(update_fields=['casual'])
+    leave_form = FormLeave(data=request.POST, form_type=None)
+    #print(leave_form.data['startdate'])
+    check_validate_balance=Employee_Leave_balance.check_balance(
+                    required_employee, startdate, enddate)
     approved_by_email = Employee.objects.get(user=request.user).email
     employee_email = Employee.objects.get(user=instance.user).email
     html_message = message_composer(request, html_template='reviewed_leave_mail.html', instance_name=instance,
