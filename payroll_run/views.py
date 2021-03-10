@@ -106,6 +106,8 @@ def excludeAssignmentEmployeeFunction(batch):
 @login_required(login_url='home:user-login')
 def createSalaryView(request):
     sal_form = SalaryElementForm(user=request.user)
+    employees_dont_have_structurelink = []
+    employees = 0
     if request.method == 'POST':
         sal_form = SalaryElementForm(request.POST, user=request.user)
         if sal_form.is_valid():
@@ -132,54 +134,57 @@ def createSalaryView(request):
                 emps = Employee.objects.filter(
                     (Q(end_date__gt=date.today()) | Q(end_date__isnull=True)))
             # TODO: review the include and exclude assignment batch
-            print(emps)
             for x in emps:
                 emp_elements = Employee_Element.objects.filter(element_id__in=elements, emp_id=x).values('element_id')
                 sc = Salary_Calculator(company=request.user.company, employee=x, elements=emp_elements)
                 # calculate all furmulas elements for 'x' employee
                 # Employee_Element.set_formula_amount(x)
-                emp = EmployeeStructureLink.objects.get(employee=x)
-                structure = emp.salary_structure.structure_type
-                #print(structure)
-                
-                if structure == 'Gross to Net' :
-                    s = Salary_elements(
-                        emp=x,
-                        elements_type_to_run=sal_obj.elements_type_to_run,
-                        salary_month=sal_obj.salary_month,
-                        salary_year=sal_obj.salary_year,
-                        run_date=sal_obj.run_date,
-                        created_by=request.user,
-                        incomes=sc.calc_emp_income(),
-                        element=element,
-                        insurance_amount=sc.calc_employee_insurance(),
-                        # TODO need to check if the tax is applied
-                        tax_amount=sc.calc_taxes_deduction(),
-                        deductions=sc.calc_emp_deductions_amount(),
-                        gross_salary=sc.calc_gross_salary(),
-                        net_salary=sc.calc_net_salary(),
-
-                    )
-                else :
+                try:
+                    emp = EmployeeStructureLink.objects.get(employee=x)
+                    structure = emp.salary_structure.structure_type
+                    #print(structure)
                     
-                    s = Salary_elements(
-                        emp=x,
-                        elements_type_to_run=sal_obj.elements_type_to_run,
-                        salary_month=sal_obj.salary_month,
-                        salary_year=sal_obj.salary_year,
-                        run_date=sal_obj.run_date,
-                        created_by=request.user,
-                        incomes=sc.calc_emp_income(),
-                        element=element,
-                        insurance_amount=sc.calc_employee_insurance(),
-                        # TODO need to check if the tax is applied
-                        tax_amount=sc.net_to_tax(),
-                        deductions=sc.calc_emp_deductions_amount(),
-                        gross_salary=sc.net_to_gross(),
-                        net_salary=sc.calc_basic_net(),
-                    )
-                            
-                s.save()
+                    if structure == 'Gross to Net' :
+                        s = Salary_elements(
+                            emp=x,
+                            elements_type_to_run=sal_obj.elements_type_to_run,
+                            salary_month=sal_obj.salary_month,
+                            salary_year=sal_obj.salary_year,
+                            run_date=sal_obj.run_date,
+                            created_by=request.user,
+                            incomes=sc.calc_emp_income(),
+                            element=element,
+                            insurance_amount=sc.calc_employee_insurance(),
+                            # TODO need to check if the tax is applied
+                            tax_amount=sc.calc_taxes_deduction(),
+                            deductions=sc.calc_emp_deductions_amount(),
+                            gross_salary=sc.calc_gross_salary(),
+                            net_salary=sc.calc_net_salary(),
+
+                        )
+                    else :
+                        
+                        s = Salary_elements(
+                            emp=x,
+                            elements_type_to_run=sal_obj.elements_type_to_run,
+                            salary_month=sal_obj.salary_month,
+                            salary_year=sal_obj.salary_year,
+                            run_date=sal_obj.run_date,
+                            created_by=request.user,
+                            incomes=sc.calc_emp_income(),
+                            element=element,
+                            insurance_amount=sc.calc_employee_insurance(),
+                            # TODO need to check if the tax is applied
+                            tax_amount=sc.net_to_tax(),
+                            deductions=sc.calc_emp_deductions_amount(),
+                            gross_salary=sc.net_to_gross(),
+                            net_salary=sc.calc_basic_net(),
+                        )
+                                
+                    s.save()
+                except Exception as e: 
+                    employees_dont_have_structurelink.append(x.emp_name)
+                    employees =  ', '.join(employees_dont_have_structurelink) + ': dont have structurelink, add structurelink to them'
                 #gross= sc.net_to_gross()
             user_lang = to_locale(get_language())
             if user_lang == 'ar':
@@ -187,7 +192,7 @@ def createSalaryView(request):
                     calendar.month_name[sal_obj.salary_month])
             else:
                 success_msg = 'Payroll for month {} done successfully'.format(
-                    calendar.month_name[sal_obj.salary_month])
+                    calendar.month_name[sal_obj.salary_month] ) 
             messages.success(request, success_msg)
             # # the user select element batch to run on without assignment batch.
             # elif sal_obj.element_batch and sal_obj.assignment_batch == None:
@@ -308,6 +313,7 @@ def createSalaryView(request):
     salContext = {
         'page_title': _('create salary'),
         'sal_form': sal_form,
+        'employees' :employees,
     }
     return render(request, 'create-salary.html', salContext)
 

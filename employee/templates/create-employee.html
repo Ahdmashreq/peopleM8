@@ -87,16 +87,21 @@
             <header class="panel-heading bg-light">
               <ul class="nav nav-tabs nav-justified ">
                 <li class="active" style="width: 20%;"><a href="#nav-home" data-toggle="tab" id="nav-home-tab" role="tab" aria-controls="nav-home" aria-selected="true">{% trans "Personal" %}</a></li>
-                <li style="width: 20%;"><a href="#nav-profile" id="nav-profile-tab" data-toggle="tab" role="tab" aria-controls="nav-profile" aria-selected="false">{% trans "Official" %}</a></li>
-                <li style="width: 20%;"><a href="#nav-contact" id="nav-contact-tab" data-toggle="tab" role="tab" aria-controls="nav-contact" aria-selected="false">{% trans "Payments" %}</a></li>
-                <li style="width: 20%;"><a href="#nav-elements" id="nav-elements-tab" data-toggle="tab" role="tab" aria-controls="nav-elements" aria-selected="false">{% trans "Pays" %}</a></li>
-                <li style="width: 20%;"><a href="#nav-files" id="nav-files-tab" data-toggle="tab" role="tab" aria-controls="nav-files" aria-selected="false">{% trans "Files" %}</a></li>
+                <li style="width: 16%;"><a href="#nav-files" id="nav-files-tab" data-toggle="tab" role="tab" aria-controls="nav-files" aria-selected="false">{% trans "Files" %}</a></li>
+                <li style="width: 16%;"><a href="#nav-profile" id="nav-profile-tab" data-toggle="tab" role="tab" aria-controls="nav-profile" aria-selected="false">{% trans "Official" %}</a></li>
+                <li style="width: 16%;"><a href="#nav-contact" id="nav-contact-tab" data-toggle="tab" role="tab" aria-controls="nav-contact" aria-selected="false">{% trans "Payments" %}</a></li>
+                <li style="width: 16%;"><a href="#nav-elements" id="nav-elements-tab" data-toggle="tab" role="tab" aria-controls="nav-elements" aria-selected="false">{% trans "Pays" %}</a></li>
+                <li style="width: 16%;"><a href="#nav-depandance" id="nav-depandance-tab" data-toggle="tab" role="tab" aria-controls="nav-depandances" aria-selected="false">{% trans "Dependencies" %}</a></li>
+
               </ul>
             </header>
             <div class="panel-body">
               <div class="tab-content">
                 <div class="tab-pane active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
                   {% include 'employee-personal-tab.html' %}
+                </div>
+                <div class="tab-pane" id="nav-files" role="tabpanel" aria-labelledby="nav-files-tab">
+                  {% include 'employee-files-tab.html' %}
                 </div>
                 <div class="tab-pane" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
                   {% include 'employee-official-tab.html' %}
@@ -107,8 +112,8 @@
                 <div class="tab-pane" id="nav-elements" role="tabpanel" aria-labelledby="nav-elements-tab">
                   {% include 'employee-salary-tab.html' %}
                 </div>
-                <div class="tab-pane" id="nav-files" role="tabpanel" aria-labelledby="nav-files-tab">
-                  {% include 'employee-files-tab.html' %}
+                <div class="tab-pane" id="nav-depandance" role="tabpanel" aria-labelledby="nav-elements-tab">
+                  {% include 'employee-depandance-tab.html' %}
                 </div>
               </div>
             </div>
@@ -119,24 +124,25 @@
   </form>
 </div>
 {% if not create_employee %}
-  {% if employee_has_structure %}
-    <div class="modal fade" id="element-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-body">
-            <p>{% trans "Which Other Element You Want To Assign?" %}</p>
-            <form method="POST" action="{% url 'employee:new-employee-element' job_id=required_jobRoll.id %}">
-              {% csrf_token %}
-              {{employee_element_form.as_p}}
-              <button type="submit" onclick="change_x()" class="btn btn-success" >{% trans "Save" %}</button>
-              <button type="button"  class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
-            </form>
-          </div>
-        </div>
+{% if employee_has_structure %}
+<div class="modal fade" id="element-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <p>{% trans "Which Other Element You Want To Assign?" %}</p>
+        <form method="POST" action="{% url 'employee:new-employee-element' job_id=required_jobRoll.id %}">
+          {% csrf_token %}
+          {{employee_element_form.as_p}}
+          <button type="submit" onclick="change_x()" class="btn btn-success" >{% trans "Save" %}</button>
+          <button type="button"  class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
+        </form>
       </div>
     </div>
-  {% endif %}
+  </div>
+</div>
 {% endif %}
+{% endif %}
+
 
 {% endblock body%}
 
@@ -245,5 +251,16 @@ console.log(isDirty)}
           var current_indx = Number(form_idx)
       });
      </script>
+
+
+<script>
+  $('#add_dep').click(function () {
+      var form_idx = $('#id_employee_depandance_set-TOTAL_FORMS').val();
+      $('#dep_form_set').append($('#dep_form').html().replace(/__prefix__/g, form_idx));
+      $('#id_employee_depandance_set-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+      var current_indx = Number(form_idx)
+  });
+ </script>
+
 
 {% endblock js %}
