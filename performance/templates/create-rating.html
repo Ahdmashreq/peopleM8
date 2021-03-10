@@ -14,9 +14,10 @@
       <div class="col-md-8">
         <h4 class="c-grey-900">{{page_title|title}}</h4>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-15">
         <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
-          <div class="peer"><button type="submit" onclick="change_x()" id="button" class="btn cur-p btn-primary">{% trans "Save" %}</button></div>
+          <div class="peer"><button type="submit" onclick="change_x()" id="button" class="btn cur-p btn-primary"  name ='Save and exit'>{% trans "Save and Exit" %}</button></div>
+          <div class="peer"><button type="submit" onclick="change_x()" id="button" class="btn cur-p btn-primary" name ='Save and add' >{% trans "Save and add new Rating" %}</button></div>
           <div class="peer"><a href="{% url 'performance:performance-list' %}"  onclick="change_x()" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a></div>
         </div>
       </div>

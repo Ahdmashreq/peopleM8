@@ -15,27 +15,6 @@ from company.models import *
 
 
 # gehad : createPerformance
-@login_required(login_url='home:user-login')
-def createPerformance(request):
-    performance_form = PerformanceForm()
-    if request.method == 'POST':
-        performance_form = PerformanceForm(request.POST)
-        if performance_form.is_valid():
-            performance_obj = performance_form.save()
-            print("created")
-            return redirect('performance:rating-create',
-                per_id = performance_obj.id)
-            
-        else:
-            print(performance_form.errors) 
-            return redirect('home:homepage')
-                        
-    else:
-        myContext = {
-        "page_title": _("create performance"),
-        "performance_form": performance_form,
-    }
-    return render(request, 'create-performance.html', myContext)
 
 
 @login_required(login_url='home:user-login')
@@ -47,6 +26,29 @@ def listPerformance(request):
     }
     return render(request, 'performance-list.html', context)
 
+
+
+@login_required(login_url='home:user-login')
+def createPerformance(request):
+    performance_form = PerformanceForm()
+    if request.method == 'POST':
+        performance_form = PerformanceForm(request.POST)
+        if performance_form.is_valid():
+            performance_obj = performance_form.save()
+            if 'Save and exit' in request.POST:
+                    return redirect('performance:performance-list')
+            elif 'Save and add' in request.POST:
+                    return redirect('performance:rating-create',
+                        per_id = performance_obj.id)
+        else:
+            print(performance_form.errors) 
+            return redirect('home:homepage')                 
+    else:
+        myContext = {
+        "page_title": _("create performance"),
+        "performance_form": performance_form,
+    }
+    return render(request, 'create-performance.html', myContext)
 
 
 
@@ -64,7 +66,11 @@ def createPerformanceRating(request,per_id):
                 obj.performance = performance
                 obj.save()
                 print("created")
-            return redirect('home:homepage')
+                if 'Save and exit' in request.POST:
+                    return redirect('performance:performance-list')
+                elif 'Save and add' in request.POST:
+                    return redirect('performance:rating-create',
+                        per_id = per_id)
         else:
             print(performance_rating_formset.errors) 
             return redirect('home:homepage')
@@ -76,3 +82,14 @@ def createPerformanceRating(request,per_id):
     }
     return render(request, 'create-rating.html', myContext)
 
+
+
+
+@login_required(login_url='home:user-login')
+def performanceManagement(request):
+    performances_list = Performance.objects.all()
+    context = {
+        'page_title': _('Performance Management'),
+        'performances_list': performances_list,
+    }
+    return render(request, 'performance-management.html', context)
