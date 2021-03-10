@@ -4,6 +4,7 @@
 {% load l10n %}
 {% load i18n %}
 {% load group_extra %}
+{% load leave_tags %}
 
 {% block body %}
 <div class="row" style="margin-left:0px;">
@@ -33,6 +34,8 @@
               <th>{% trans "Leave start date" %}</th>
               <th>{% trans "Leave end date" %}</th>
               <th>{% trans "status" %}</th>
+              <th>{% trans 'Leave Type' %}</th>
+              <th>{% trans 'Number of Leave Days' %}</th>
               {% if request.user|has_group:"Admin"%}
               <th>{% trans "Actions" %}</th>
               {% endif %}
@@ -46,6 +49,8 @@
               <td>{{i.startdate}}</td>
               <td>{{i.enddate}}</td>
               <td>{{i.status}}</td>
+              <td>{{i.leavetype.type}}</td>
+              <td>{% get_leave_days_number i.startdate i.enddate%}</td>
               {% if request.user|has_group:"Admin"%}
               <td class="Actions">
                 <div class="w-100 gap-10 peers">
