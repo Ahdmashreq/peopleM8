@@ -9,10 +9,10 @@ from django.contrib import messages
 from django.utils.translation import to_locale, get_language
 from element_definition.models import Element_Master, Element_Link, Element
 from employee.models import (
-    Employee, JobRoll, Payment, Employee_Element, EmployeeStructureLink, Employee_File)
+    Employee, JobRoll, Payment, Employee_Element, EmployeeStructureLink, Employee_File , Employee_Depandance)
 from employee.forms import (EmployeeForm, JobRollForm, Employee_Payment_formset,
                             EmployeeElementForm, Employee_Element_Inline, EmployeeStructureLinkForm
-                            ,EmployeeFileForm,Employee_Files_inline)
+                            ,EmployeeFileForm,Employee_Files_inline , Employee_depandance_inline)
 from payroll_run.models import Salary_elements
 from payroll_run.forms import SalaryElementForm
 from employee.fast_formula import FastFormula
@@ -21,6 +21,9 @@ from custom_user.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.http import JsonResponse
 from company.models import Position
+from .resources import *
+from leave.models import *
+from django.db.models import Count
 from .resources_two import *
 
 ############################Employee View #################################
@@ -32,6 +35,7 @@ def createEmployeeView(request):
     jobroll_form = JobRollForm(user_v=request.user)
     payment_form = Employee_Payment_formset(queryset=Payment.objects.none())
     files_formset = Employee_Files_inline()
+    depandance_formset = Employee_depandance_inline()
     for payment in payment_form:
         payment.fields['payment_method'].queryset = Payment_Method.objects.filter(
             payment_type__enterprise=request.user.company).filter(
@@ -45,8 +49,9 @@ def createEmployeeView(request):
         jobroll_form = JobRollForm(request.user, request.POST)
         payment_form = Employee_Payment_formset(request.POST)
         files_formset = Employee_Files_inline(request.POST , request.FILES)
+        depandance_formset = Employee_depandance_inline(request.POST)
 
-        if emp_form.is_valid() and jobroll_form.is_valid() and payment_form.is_valid() and files_formset.is_valid():
+        if emp_form.is_valid() and jobroll_form.is_valid() and payment_form.is_valid() and files_formset.is_valid() and depandance_formset.is_valid():
             emp_obj = emp_form.save(commit=False)
             emp_obj.enterprise = request.user.company
             emp_obj.created_by = request.user
@@ -92,20 +97,28 @@ def createEmployeeView(request):
                 file_obj.last_update_by = request.user
                 file_obj.emp_id = emp_obj
                 file_obj.save()
+    
+            # add depandances
+            depandances_obj = depandance_formset.save(commit=False)
+            for depandance_obj in depandances_obj:
+                depandance_obj.created_by = request.user
+                depandance_obj.last_update_by = request.user
+                depandance_obj.emp_id = emp_obj
+                depandance_obj.save()
 
-            return redirect('employee:update-employee', pk=emp_obj.id)
+            return redirect('employee:update-employee', pk=job_obj.id)
         else:
             messages.error(request, emp_form.errors)
             messages.error(request, jobroll_form.errors)
             messages.error(request, files_formset.errors)
-            messages.error(request,files_formset.errors)
-            messages.error(request, employee_element_form.errors)
+            messages.error(request,depandance_formset.errors)
     myContext = {
         "page_title": _("create employee"),
         "emp_form": emp_form,
         "jobroll_form": jobroll_form,
         "payment_form": payment_form,
         "files_formset" : files_formset,
+        "depandance_formset" : depandance_formset,
         "create_employee": True,
         "flage" : 0,
     }
@@ -151,10 +164,9 @@ def listEmployeeCardView(request):
 @login_required(login_url='home:user-login')
 def viewEmployeeView(request, pk):
     required_employee = get_object_or_404(Employee, pk=pk)
-    required_jobRoll = JobRoll.objects.filter(
-        Q(end_date__gte=date.today()) | Q(end_date__isnull=True)).get(emp_id=pk)
-    all_jobRoll = JobRoll.objects.filter(emp_id=pk)
-    all_payment = Payment.objects.filter(emp_id=pk, end_date__isnull=True)
+    required_jobRoll = JobRoll.objects.filter(emp_id=pk)
+    all_jobRoll = JobRoll.objects.filter(emp_id=pk).order_by('-id')
+    all_payment = Payment.objects.filter(emp_id=pk, end_date__isnull=True).order_by('-id')
     all_elements = Employee_Element.objects.filter(
         emp_id=pk, end_date__isnull=True)
     myContext = {
@@ -174,6 +186,7 @@ def updateEmployeeView(request, pk):
     required_employee = get_object_or_404(Employee, pk=required_jobRoll.emp_id.id)
     emp_form = EmployeeForm(instance=required_employee)
     files_formset = Employee_Files_inline(instance=required_employee)
+    depandance_formset = Employee_depandance_inline(instance=required_employee)
     # filter the user fk list to show the company users only.
     emp_form.fields['user'].queryset = User.objects.filter(
         company=request.user.company)
@@ -193,6 +206,7 @@ def updateEmployeeView(request, pk):
         emp_id=required_employee, end_date__isnull=True)
     employee_has_structure = False
     files = Employee_File.objects.filter(emp_id=required_employee)
+    
 
     try:
         employee_salary_structure = EmployeeStructureLink.objects.get(
@@ -213,6 +227,8 @@ def updateEmployeeView(request, pk):
             request.POST, instance=required_employee)
         files_formset = Employee_Files_inline(request.POST , request.FILES
         ,instance=required_employee)
+        depandance_formset = Employee_depandance_inline(request.POST
+        ,instance=required_employee)
 
         if EmployeeStructureLink.DoesNotExist:
             emp_link_structure_form = EmployeeStructureLinkForm(request.POST)
@@ -222,7 +238,7 @@ def updateEmployeeView(request, pk):
 
         employee_element_form = EmployeeElementForm(request.POST)
 
-        if emp_form.is_valid() and jobroll_form.is_valid() and payment_form.is_valid() and files_formset.is_valid() and employee_element_form.is_valid():
+        if emp_form.is_valid() and jobroll_form.is_valid() and payment_form.is_valid() and files_formset.is_valid() and depandance_formset.is_valid():
             emp_obj = emp_form.save(commit=False)
             emp_obj.created_by = request.user
             emp_obj.last_update_by = request.user
@@ -248,12 +264,20 @@ def updateEmployeeView(request, pk):
                 file_obj.emp_id = emp_obj
                 file_obj.save()
             #
+            depandances_obj = depandance_formset.save(commit=False)
+            for depandance_obj in depandances_obj:
+                depandance_obj.created_by = request.user
+                depandance_obj.last_update_by = request.user
+                depandance_obj.emp_id = emp_obj
+                depandance_obj.save()
+            #
+            """
             emp_element_obj = employee_element_form.save(commit=False)
             emp_element_obj.emp_id = required_employee
             emp_element_obj.created_by = request.user
             emp_element_obj.last_update_by = request.user
             emp_element_obj.save()
-            
+            """
             user_lang = to_locale(get_language())
 
             if user_lang == 'ar':
@@ -271,8 +295,8 @@ def updateEmployeeView(request, pk):
             messages.error(request, payment_form.errors)
         elif not files_formset.is_valid():
             messages.error(request,files_formset.errors)
-        elif not employee_element_form.is_valid():
-            messages.error(request, employee_element_form.errors)
+        elif not depandance_formset.is_valid():
+            messages.error(request, depandance_formset.errors)
 
 
     myContext = {
@@ -289,6 +313,7 @@ def updateEmployeeView(request, pk):
         "required_jobRoll" : required_jobRoll,
         "flage" : 1,
         "files_formset" : files_formset,
+        "depandance_formset" :  depandance_formset,
     }
     return render(request, 'create-employee.html', myContext)
 
@@ -344,22 +369,18 @@ def update_link_employee_structure(request, pk):
 
 @login_required(login_url='home:user-login')
 def deleteEmployeeView(request, pk):
-    required_employee = get_object_or_404(Employee, pk=pk)
-    required_jobRoll = get_object_or_404(JobRoll, emp_id=pk)
+    required_jobRoll = get_object_or_404(JobRoll, pk=pk)
+    required_employee = required_jobRoll.emp_id
     try:
         jobroll_form = JobRollForm(user_v=request.user, instance=required_jobRoll)
         end_date_jobroll_obj = jobroll_form.save(commit=False)
         end_date_jobroll_obj.end_date = date.today()
         end_date_jobroll_obj.save(update_fields=['end_date'])
 
-
-
-
         emp_form = EmployeeForm(instance=required_employee)
         end_date_obj = emp_form.save(commit=False)
         end_date_obj.end_date = date.today()
         end_date_obj.save(update_fields=['end_date'])
-
 
         user_lang = to_locale(get_language())
         if user_lang == 'ar':
@@ -481,6 +502,38 @@ def createJobROll(request, job_id):
         , 'required_employee' :required_jobRoll.emp_id})
 
 
+@login_required(login_url='home:user-login')
+def list_employee_leave_requests(request):
+    """
+        view to list all approved leave requests for all employees
+        author: Ahmed Mamdouh
+        created at: 04/03/2021
+    """
+    employees = Employee.objects.all()
+    employees_leaves_approaved_requests = []
+    for employee in employees:
+        leave_requests = Leave.objects.filter(status='Approved',user=employee.user).values('leavetype__type','startdate','enddate').annotate(x=Count('leavetype__type'))
+        leave_masters = LeaveMaster.objects.all()
+        z = {
+            'employee':employee.emp_name,
+            'leave_requests':{}
+        }
+        z['leave_requests']['total'] = 0
+        for master in leave_masters:
+            leaves = [dictionary for dictionary in leave_requests if dictionary["leavetype__type"] == master.type]
+            if len(leaves) == 0:
+                b = 0
+            else:
+                b = abs((leaves[0]['enddate']-leaves[0]['startdate']).days)
+            z['leave_requests'][master.type] = b
+            z['leave_requests']['total'] = b + z['leave_requests']['total']
+        employees_leaves_approaved_requests.append(z)
+        
+    context = {
+        "leave_requests" : employees_leaves_approaved_requests,
+        "leave_masters" : leave_masters,
+    }
+    return render(request , "list-leaves-history.html" , context)
 
 @login_required(login_url='home:user-login')
 def create_employee_element(request, job_id):

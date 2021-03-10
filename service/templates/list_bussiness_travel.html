@@ -3,6 +3,7 @@
 {% load crispy_forms_tags %}
 {% load l10n %}
 {% load i18n %}
+{% load group_extra %}
 
 {% block body %}
 <div class="row" style="margin-left:0px;">
@@ -11,8 +12,10 @@
   </div>
   <div class="col-md-4">
     <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
-      <div class="peer">
-        <a href="{% url 'service:services_create' %}" class="btn btn-primary" type="button">{% trans "Bussiness Travel Form" %}</a>
+      <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Business Travel Form' %}">
+        <a href="{% url 'service:services_create' %}" class="btn btn-primary" type="button">
+          <i class="fas fa-atlas fa-2x"></i>
+        </a>
       </div>
     </div>
   </div>
@@ -28,6 +31,8 @@
             <th>{% trans "Department" %}</th>
             <th>{% trans "Destination" %}</th>
             <th>{% trans "Project Name/Client Name" %}</th>
+            <th>{% trans "From Date" %}</th>
+            <th>{% trans "To Date" %}</th>
             <th>{% trans "Status" %}</th>
             <th>{% trans "Actions" %}</th>
           </tr>
@@ -40,17 +45,17 @@
             <td>{{i.department}}</td>
             <td>{{i.destination}}</td>
             <td>{{i.project_name}}</td>
+            <td>{{i.estimated_date_of_travel_from}}</td>
+            <td>{{i.estimated_date_of_travel_to}}</td>
             <td>{{i.status}}</td>
             <td class="Actions">
-              {% if i.status == "pending"%}
-              <div class="w-100 gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
-                {% if i.emp.user != request.user %}
-                <div class="peer">
+              {% if request.user|has_group:"Admin"%}
+              <div class="w-100 gap-10 peers">
+                <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Respond' %}">
                   <a href="{% url 'service:services_edit' i.id %}">
-                    <button type="button" class="btn cur-p btn-outline-primary">{% trans "Respond" %}</button>
+                    <button type="button" class="btn cur-p btn-outline-primary"><i class="fas fa-reply-all"></i></button>
                   </a>
                 </div>
-                {% endif %}
               </div>
               {% endif %}
             </td>

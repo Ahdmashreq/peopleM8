@@ -19,9 +19,11 @@ class FormLeave(forms.ModelForm):
         widgets = {
             'startdate': forms.DateInput(attrs={'class': 'form-control',
                                                 'data-provide': "datepicker",
+                                                
                                                 'wtx-context': "2A377B0C-58AD-4885-B9FB-B5AC9788D0F2"}),
             'enddate': forms.DateInput(attrs={'class': 'form-control',
                                               'data-provide': "datepicker",
+                                              'onchange': 'checkbalance()' ,
                                               'wtx-context': "2A377B0C-58AD-4885-B9FB-B5AC9788D0F2"}),
             'resume_date': forms.DateInput(attrs={'class': 'form-control',
                                                   'data-provide': "datepicker",
@@ -29,8 +31,11 @@ class FormLeave(forms.ModelForm):
             'leavetype': forms.Select(attrs={'class': 'form-control'}),
             'reason': forms.Textarea(attrs={
                 'rows': 2, 'cols': 40,
+                'required': 'true',
                 'style': 'height: 8em;',
                 'class': 'form-control'}),
+            
+            
 
         }
 
@@ -77,4 +82,4 @@ class Leave_Balance_Form(forms.ModelForm):
 
     class Meta():
         model = Employee_Leave_balance
-        exclude = ['absence','created_by', 'creation_date', 'last_update_by', 'last_update_date']
+        exclude = ['absence', 'created_by', 'creation_date', 'last_update_by', 'last_update_date']

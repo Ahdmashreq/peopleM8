@@ -14,6 +14,7 @@ from django.template import loader
 import datetime
 from datetime import datetime
 from django.utils.translation import ugettext_lazy as _
+from custom_user.models import User
 
 
 
@@ -60,39 +61,43 @@ def message_composer(request, html_template, instance_name, result):
 def add_leave(request):
     employee = Employee.objects.get(user=request.user)
     employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
+    employee_leave_balance = Employee_Leave_balance.objects.get(
+            employee=employee)
+    total_balance = employee_leave_balance.total_balance
+    absence_days = employee_leave_balance.absence
     # print(have_leave_balance(request.user))
     if request.method == "POST":
         leave_form = FormLeave(data=request.POST, form_type=None)
-        if eligible_user_leave(request.user) and have_leave_balance(request.user):
+        if eligible_user_leave(request.user):
             if leave_form.is_valid():
                 if valid_leave(request.user, leave_form.cleaned_data['startdate'], leave_form.cleaned_data['enddate']):
                     leave = leave_form.save(commit=False)
                     leave.user = request.user
                     required_employee = Employee.objects.get(user=request.user)
-                    check_validate_balance=Employee_Leave_balance.check_balance(
-                        required_employee, leave_form.data['startdate'], leave_form.data['enddate'])
-                    if check_validate_balance:
-                        leave.save()
-                        team_leader_email = []
-                        check_manager = leave.check_manger(
-                            required_employee)
-                        for manager in check_manager:
-                            team_leader_email.append(manager.user.email)
+                    #check_validate_balance=Employee_Leave_balance.check_balance(
+                        #required_employee, leave_form.data['startdate'], leave_form.data['enddate'])
+                    #if check_validate_balance:
+                    leave.save()
+                    team_leader_email = []
+                    check_manager = leave.check_manger(
+                        required_employee)
+                    for manager in check_manager:
+                        team_leader_email.append(manager.user.email)
                        
                         # if employee_job.manager:
                         #     NotificationHelper(
                         #         employee, employee_job.manager, leave).send_notification()
-                        requestor_email = employee.email
+                    requestor_email = employee.email
                         
                         # print(team_leader_email)
-                        html_message = message_composer(request, html_template='leave_mail.html', instance_name=leave,
+                    html_message = message_composer(request, html_template='leave_mail.html', instance_name=leave,
                                                         result=None)
-                        email_sender('Applying for a leave', 'Applying for a leave', requestor_email,
+                    email_sender('Applying for a leave', 'Applying for a leave', requestor_email,
                                     team_leader_email, html_message)
 
-                        messages.add_message(request, messages.SUCCESS,
+                    messages.add_message(request, messages.SUCCESS,
                                             'Leave Request was created successfully')
-                        return redirect('leave:list_leave')
+                    return redirect('leave:list_leave')
                 else:
                     leave_form.add_error(
                         None, "Requested leave intersects with another leave")
@@ -103,7 +108,7 @@ def add_leave(request):
                 None, "You are not eligible for leave request")
     else:  # http request
         leave_form = FormLeave(form_type=None)
-    return render(request, 'add_leave.html', {'leave_form': leave_form})
+    return render(request, 'add_leave.html', {'leave_form': leave_form , 'total_balance' : total_balance , 'absence_days' : absence_days})
 
 
 def eligible_user_leave(user):
@@ -206,11 +211,16 @@ def leave_approve(request, leave_id, redirect_to):
     enddate = instance.enddate
     dates = (enddate - startdate)
     tottal_days = dates.days + 1
+    user = instance.user
+    
+    required_employee = Employee.objects.get(user=user)
     required_user = Employee.objects.get(user=instance.user)
     employee_leave_balance = Employee_Leave_balance.objects.get(
         employee=required_user)
-    employee_leave_balance.casual = employee_leave_balance.casual - tottal_days
-    employee_leave_balance.save(update_fields=['casual'])
+    leave_form = FormLeave(data=request.POST, form_type=None)
+    #print(leave_form.data['startdate'])
+    check_validate_balance=Employee_Leave_balance.check_balance(
+                    required_employee, startdate, enddate)
     approved_by_email = Employee.objects.get(user=request.user).email
     employee_email = Employee.objects.get(user=instance.user).email
     html_message = message_composer(request, html_template='reviewed_leave_mail.html', instance_name=instance,
@@ -333,3 +343,44 @@ def view_employee_leaves_list(request, employee_id):
         'employee': employee,
     }
     return render(request, 'list_leave_by_employee.html', leave_balance_context)
+
+
+@login_required(login_url='home:user-login')
+def edit_employee_leaves_balance(request, leave_balance_id):
+    """
+    edit employee leaves balance
+    """
+    employee_leave_balance_instance = Employee_Leave_balance.objects.get(id=leave_balance_id)
+    if request.method == 'POST':
+        print(request.POST)
+        leave_balance_form = Leave_Balance_Form(request.user, request.POST,
+                                                instance=employee_leave_balance_instance)
+        if leave_balance_form.is_valid():
+            balance_edited_obj = leave_balance_form.save(commit=False)
+            balance_edited_obj.last_update_by = request.user
+            balance_edited_obj.save()
+            messages.success(request, _('Balance Updated Successfully'))
+            return redirect('leave:leave-balance')
+        else:
+            print('error: ', leave_balance_form.errors)
+            messages.error(request, leave_balance_form.errors)
+
+    else:
+        leave_balance_form = Leave_Balance_Form(user_v=request.user, instance=employee_leave_balance_instance)
+
+    leave_balance_context = {
+        'leave_balance_form': leave_balance_form,
+    }
+    return render(request, 'leave_balance_create.html', leave_balance_context)
+
+
+@login_required(login_url='home:user-login')
+def delete_leave_balance(request, leave_balance_id):
+    """
+    delete leave balance record
+    """
+    employee_leave_balance_instance = Employee_Leave_balance.objects.get(id=leave_balance_id)
+    employee_leave_balance_instance.delete()
+    messages.add_message(request, messages.SUCCESS,
+                         _('Leave Balance was deleted successfully'))
+    return redirect('leave:leave-balance')

@@ -66,6 +66,12 @@ def user_login(request):
         user = authenticate(username=username, password=password)
         if user is not None:
             if user.is_active:
+                # check if the user has employee record if not cannot login
+                employee = Employee.objects.get(user=user) if Employee.objects.filter(user=user) else None
+                if employee is None:
+                    messages.error(request, _(
+                        'These Credentials are not assigned to an Employee yet, Please Contact an admin '))
+                    return render(request, 'login.html')
                 login(request, user)
                 if next:
                     return redirect(next)
@@ -119,6 +125,23 @@ def user_home_page(request):
 
 @login_required(login_url='home:user-login')
 def admin_home_page(request):
+    
+    '''
+    Ziad
+    4/3/2021
+    Display total employees and today's absence and approved leaves in dashboard
+    '''
+    emp_list = Employee.objects.filter(enterprise=request.user.company).filter(
+        (Q(end_date__gt=date.today()) | Q(end_date__isnull=True)))
+    num_of_emp = len(emp_list) 
+    list_leaves = Leave.objects.filter(status='Approved')
+    now_date = datetime.date(datetime.now())
+    Today_Approved_Leaves = 0
+    for leave in list_leaves :
+        if leave.enddate >= now_date and leave.startdate <= now_date :
+            Today_Approved_Leaves+=1
+    today_present = num_of_emp - Today_Approved_Leaves
+    
     user_companies_count = UserCompany.objects.filter(
         user__company=request.user.company).count()
     if user_companies_count == 0:
@@ -130,7 +153,8 @@ def admin_home_page(request):
 
         my_notifications = request.user.notifications.filter(timestamp__year=datetime.now().year,
                                                              timestamp__month=datetime.now().month)
-        context = {'my_notifications': my_notifications, }
+        context = {'my_notifications': my_notifications, 'num_of_emp' : num_of_emp , 
+        'Today_Approved_Leaves' : Today_Approved_Leaves , 'today_present' : today_present ,}
 
         return render(request, 'index.html', context=context)
 

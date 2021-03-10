@@ -3,6 +3,7 @@
 {% load crispy_forms_tags %}
 {% load l10n %}
 {% load i18n %}
+{% load group_extra %}
 
 {% block body %}
 <!--  -->
@@ -62,12 +63,14 @@
                     <div class="form-group col-md-4 text-center">
                       <label>{% trans "Item Description" %}</label>
                     </div>
-                    <div class="form-group col-md-2 text-center">
-                      <label>{% trans "Vendor Name" %}</label>
-                    </div>
-                    <div class="form-group col-md-2 text-center">
-                      <label>{% trans "Unit Price" %}</label>
-                    </div>
+                    {% if request.user|has_group:"HR"%}
+                      <div class="form-group col-md-2 text-center">
+                        <label>{% trans "Vendor Name" %}</label>
+                      </div>
+                      <div class="form-group col-md-2 text-center">
+                        <label>{% trans "Unit Price" %}</label>
+                      </div>
+                    {% endif %}
                     <div class="form-group col-md-2 text-center">
                       <label>{% trans "Qnt" %}</label>
                     </div>
@@ -85,12 +88,14 @@
                     <div class="form-group col-md-4">
                       {{ form.item_description }}
                     </div>
-                    <div class="form-group col-md-2">
-                      {{ form.vendor_name }}
-                    </div>
-                    <div class="form-group col-md-2">
-                      {{ form.unit_price }}
-                    </div>
+                    {% if request.user|has_group:"HR"%}
+                      <div class="form-group col-md-2">
+                        {{ form.vendor_name }}
+                      </div>
+                      <div class="form-group col-md-2">
+                        {{ form.unit_price }}
+                      </div>
+                    {% endif %}
                     <div class="form-group col-md-2">
                       {{ form.qnt }}
                     </div>
@@ -107,12 +112,14 @@
                       <div class="form-group col-md-4">
                         {{ purchase_items_form.empty_form.item_description }}
                       </div>
-                      <div class="form-group col-md-2">
-                        {{ purchase_items_form.empty_form.vendor_name }}
-                      </div>
-                      <div class="form-group col-md-2">
-                        {{ purchase_items_form.empty_form.unit_price }}
-                      </div>
+                      {% if request.user|has_group:"HR"%}
+                        <div class="form-group col-md-2">
+                          {{ purchase_items_form.empty_form.vendor_name }}
+                        </div>
+                        <div class="form-group col-md-2">
+                          {{ purchase_items_form.empty_form.unit_price }}
+                        </div>
+                      {% endif %}
                       <div class="form-group col-md-2">
                         {{ purchase_items_form.empty_form.qnt }}
                       </div>
@@ -124,11 +131,6 @@
                 </div>
               </div>
             </div>
-          </div>
-          <div class="form-group">
-            <strong>
-              <h3>{% trans "Total Cost: EGP " %}<output id="result"></output></h3>
-            </strong>
           </div>
 
           <div class="form-group row">
@@ -149,44 +151,46 @@
 
 {% block js %}
 <script>
-  $(document).ready(function() {
-    $('.form-group').on('input', '.prc', function() {
-      var totalSum = 0;
-      $('.form-group .prc').each(function() {
-        var inputVal = parseInt($(this).val());
-        totalSum += inputVal;
-      });
-      $('#result').text(totalSum);
-    })
-  });
-</script>
-<script>
-  $(document).ready(function() { //function will wait for the page to fully load before executing
-    $('#id_duration_of_hotel_from').attr('disabled', true);
-    $('#id_duration_of_hotel_to').attr('disabled', true);
-    $('#id_hotel_name').attr('disabled', true);
-    $('#id_cost_per_night').attr('disabled', true);
-    $("input[type=radio][name=accomodation]").change(function() { //specifying onchange function for input of type radio and name visibility
-      if (this.value != "H") { //if the new value is private
-        $('#id_duration_of_hotel_from').attr('disabled', true);
-        $('#id_duration_of_hotel_to').attr('disabled', true);
-        $('#id_hotel_name').attr('disabled', true);
-        $('#id_cost_per_night').attr('disabled', true);
-      } else { //if the new value is anything else
-        $('#id_duration_of_hotel_from').attr('disabled', false);
-        $('#id_duration_of_hotel_to').attr('disabled', false);
-        $('#id_hotel_name').attr('disabled', false);
-        $('#id_cost_per_night').attr('disabled', false);
-      }
-    });
 
-  });
 </script>
+
+
 <script>
   $('#add_more').click(function() {
-    var form_idx = $('#id_purchase_items_form-TOTAL_FORMS').val();
+    var form_idx = $('#id_purchase_item_set-TOTAL_FORMS').val();
     $('#purchase_set').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
-    $('#id_purchase_items_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+    $('#id_purchase_item_set-TOTAL_FORMS').val(parseInt(form_idx) + 1);
   });
 </script>
 {% endblock js %}
+
+
+{% comment %} <table class="table table-striped m-b-none text-sm"> 
+            {{  purchase_items_form.management_form }}
+            {% for form in  purchase_items_form %}
+            {{ form.id }}
+            {% if forloop.first %}
+            <thead>
+              <tr>
+                {% for field in form.visible_fields %}
+                <th>{{ field.label|capfirst }}</th>
+                {% endfor %}
+              </tr>
+            </thead>
+            {% endif %}
+            <tr>
+              {% for field in form.visible_fields %}
+              <td>
+                {# exclude the hidden fields in the form #}
+                {% if forloop.first %}
+                {% for hidden in form.hidden_fields %}
+                {{ hidden }}
+                {% endfor %}
+                {% endif %}
+                {{ field.errors.as_ul }}
+                {{ field }}
+              </td>
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          </table> {% endcomment %}
