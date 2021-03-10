@@ -199,21 +199,26 @@ class Employee_Leave_balance(models.Model):
     def __str__(self):
         return self.employee.emp_name
 
-    def check_balance(emp_id, start_date, end_date):
+    def check_balance(emp_id, start_date, end_date , leave):
         month_absence=0
+        leave_type_id = Leave.objects.filter(id=leave).values()[0].get("leavetype_id")
+        leave_valuee = LeaveMaster.objects.get(id=leave_type_id).leave_value
+        print("#######")
+        print(leave_valuee)
         employee_leave_balance = Employee_Leave_balance.objects.get(
             employee=emp_id)
         total_balance = employee_leave_balance.total_balance
         employee = Employee.objects.get(id=emp_id.id)
         needed_days = int((end_date.day - start_date.day)) +1
-        print(needed_days)
+        balance_deductions = needed_days * leave_valuee
+        print(total_balance)
 
         print("casual", employee_leave_balance.casual,
               "usual", employee_leave_balance.usual, "total", total_balance, "needed", needed_days)
-        if total_balance >= needed_days:
+        if total_balance >= balance_deductions:
             if employee_leave_balance.casual > 0:
-                if employee_leave_balance.casual > needed_days:
-                    new_balance = employee_leave_balance.casual-needed_days 
+                if employee_leave_balance.casual > balance_deductions:
+                    new_balance = employee_leave_balance.casual-balance_deductions 
                     Employee_Leave_balance.objects.filter(
                         employee=emp_id).update(casual=new_balance)
                     print("casual", employee_leave_balance.casual,
@@ -222,7 +227,7 @@ class Employee_Leave_balance(models.Model):
                 else:
                     new_balance = 0
                     # calcuate the new balance
-                    new_balance += needed_days-employee_leave_balance.casual 
+                    new_balance += balance_deductions-employee_leave_balance.casual 
             
                     # set cascual=0
                     Employee_Leave_balance.objects.filter(
@@ -236,19 +241,41 @@ class Employee_Leave_balance(models.Model):
                           "usual", employee_leave_balance.usual)
                     return True
             elif employee_leave_balance.usual > 0:
-                new_balance = employee_leave_balance.usual-needed_days
+                if employee_leave_balance.usual > balance_deductions:
+                    new_balance = employee_leave_balance.usual-balance_deductions
+                    Employee_Leave_balance.objects.filter(
+                        employee=emp_id).update(usual=new_balance)
+                    print("casual", employee_leave_balance.casual,
+                        "usual", employee_leave_balance.usual)
+                else:
+                    new_balance = 0
+                    # calcuate the new balance
+                    new_balance += balance_deductions-employee_leave_balance.usual 
+            
+                    # set cascual=0
+                    Employee_Leave_balance.objects.filter(
+                        employee=emp_id).update(usual=0)
+                    # calcuate the usual balance
+                    new_forward_balance = employee_leave_balance.carried_forward-new_balance
+                    # update
+                    Employee_Leave_balance.objects.filter(
+                        employee=emp_id).update(carried_forward=new_forward_balance)
+
+                return True    
+            else : 
+                new_balance = employee_leave_balance.carried_forward-balance_deductions
                 Employee_Leave_balance.objects.filter(
-                    employee=emp_id).update(usual=new_balance)
-                print("casual", employee_leave_balance.casual,
-                      "usual", employee_leave_balance.usual)
-                return True
+                    employee=emp_id).update(carried_forward=new_balance)
+                return True    
         else:
             
             Employee_Leave_balance.objects.filter(
                     employee=emp_id).update(usual=0)
             Employee_Leave_balance.objects.filter(
                     employee=emp_id).update(casual=0)
-            absence = needed_days - total_balance
+            Employee_Leave_balance.objects.filter(
+                    employee=emp_id).update(carried_forward=0)
+            absence = balance_deductions - total_balance
             obj = EmployeeAbsence(
                 employee = employee ,
                 num_of_days = absence , 
