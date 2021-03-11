@@ -15,6 +15,8 @@ import datetime
 from datetime import datetime
 from django.utils.translation import ugettext_lazy as _
 from custom_user.models import User
+from django.http import JsonResponse
+
 
 
 
@@ -63,6 +65,7 @@ def add_leave(request):
     employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
     employee_leave_balance = Employee_Leave_balance.objects.get(
             employee=employee)
+    
     total_balance = employee_leave_balance.total_balance
     absence_days = employee_leave_balance.absence
     # print(have_leave_balance(request.user))
@@ -220,7 +223,7 @@ def leave_approve(request, leave_id, redirect_to):
     leave_form = FormLeave(data=request.POST, form_type=None)
     #print(leave_form.data['startdate'])
     check_validate_balance=Employee_Leave_balance.check_balance(
-                    required_employee, startdate, enddate)
+                    required_employee, startdate, enddate,leave_id)
     approved_by_email = Employee.objects.get(user=request.user).email
     employee_email = Employee.objects.get(user=instance.user).email
     html_message = message_composer(request, html_template='reviewed_leave_mail.html', instance_name=instance,
@@ -384,3 +387,12 @@ def delete_leave_balance(request, leave_balance_id):
     messages.add_message(request, messages.SUCCESS,
                          _('Leave Balance was deleted successfully'))
     return redirect('leave:leave-balance')
+
+def get_leave_type(request):
+    """
+    get leave value to be returned through ajax request
+    """
+    leave_type_id = request.META.get('QUERY_STRING')[request.META.get('QUERY_STRING').index('=')+1:] # +1 to exclude =
+    leave_value = LeaveMaster.objects.get(id=leave_type_id).leave_value
+    print(leave_value)
+    return JsonResponse({'leave_value':leave_value})
