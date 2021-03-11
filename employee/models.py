@@ -340,3 +340,21 @@ class Employee_File(models.Model):
 
     def __str__(self):
         return self.name
+
+
+
+class Employee_Depandance(models.Model):
+    emp_id = models.ForeignKey(Employee , on_delete=models.CASCADE)
+    name = models.CharField(max_length=60,)
+    relation = models.CharField(max_length=60, verbose_name=_('relationship'))
+    mobile = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name=_('depandance mobile'))
+    id_number = models.CharField(
+        max_length=50, blank=True, null=True, verbose_name=_('Depandance ID'))
+    last_updated_at = models.DateField(null=True, auto_now=True, auto_now_add=False)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True,
+                                   related_name="depandance_created_by")
+    last_updated_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+
+    def __str__(self):
+        return self.name

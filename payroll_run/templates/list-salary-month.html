@@ -46,8 +46,13 @@
           <td class="Actions">
               <div class="w-100 gap-10 peers">
                 <div class="peer">
-                  <a href="{% url 'payroll_run:emp-payslip' month_number=salary.salary_month salary_year=salary.salary_year salary_id=salary.id emp_id=salary.emp.id %}">
-                    <button type="button" class="btn cur-p btn-outline-primary">{% trans "View" %}</button>
+                  <a href="{% url 'payroll_run:emp-payslip' month_number=salary.salary_month salary_year=salary.salary_year salary_id=salary.id emp_id=salary.emp.id tmp_format='table' %}">
+                    <button type="button" class="btn cur-p btn-outline-primary">{% trans "View as Table" %}</button>
+                  </a>
+                </div>
+                <div class="peer">
+                  <a href="{% url 'payroll_run:emp-payslip' month_number=salary.salary_month salary_year=salary.salary_year salary_id=salary.id emp_id=salary.emp.id tmp_format='list' %}">
+                    <button type="button" class="btn cur-p btn-outline-primary">{% trans "View as List" %}</button>
                   </a>
                 </div>
                 <div class="peer">

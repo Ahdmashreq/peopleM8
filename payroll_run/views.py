@@ -21,8 +21,8 @@ from django.conf import settings
 from django.template import Context
 from django.template.loader import render_to_string
 from django.utils.text import slugify
-#from weasyprint import HTML, CSS
-#from weasyprint.fonts import FontConfiguration
+from weasyprint import HTML, CSS
+from weasyprint.fonts import FontConfiguration  # amira: fixing error on print
 # ############################################################
 from .new_tax_rules import Tax_Deduction_Amount
 from payroll_run.salary_calculations import Salary_Calculator
@@ -106,6 +106,8 @@ def excludeAssignmentEmployeeFunction(batch):
 @login_required(login_url='home:user-login')
 def createSalaryView(request):
     sal_form = SalaryElementForm(user=request.user)
+    employees_dont_have_structurelink = []
+    employees = 0
     if request.method == 'POST':
         sal_form = SalaryElementForm(request.POST, user=request.user)
         if sal_form.is_valid():
@@ -132,54 +134,57 @@ def createSalaryView(request):
                 emps = Employee.objects.filter(
                     (Q(end_date__gt=date.today()) | Q(end_date__isnull=True)))
             # TODO: review the include and exclude assignment batch
-            print(emps)
             for x in emps:
                 emp_elements = Employee_Element.objects.filter(element_id__in=elements, emp_id=x).values('element_id')
                 sc = Salary_Calculator(company=request.user.company, employee=x, elements=emp_elements)
                 # calculate all furmulas elements for 'x' employee
                 # Employee_Element.set_formula_amount(x)
-                emp = EmployeeStructureLink.objects.get(employee=x)
-                structure = emp.salary_structure.structure_type
-                #print(structure)
-                
-                if structure == 'Gross to Net' :
-                    s = Salary_elements(
-                        emp=x,
-                        elements_type_to_run=sal_obj.elements_type_to_run,
-                        salary_month=sal_obj.salary_month,
-                        salary_year=sal_obj.salary_year,
-                        run_date=sal_obj.run_date,
-                        created_by=request.user,
-                        incomes=sc.calc_emp_income(),
-                        element=element,
-                        insurance_amount=sc.calc_employee_insurance(),
-                        # TODO need to check if the tax is applied
-                        tax_amount=sc.calc_taxes_deduction(),
-                        deductions=sc.calc_emp_deductions_amount(),
-                        gross_salary=sc.calc_gross_salary(),
-                        net_salary=sc.calc_net_salary(),
-
-                    )
-                else :
+                try:
+                    emp = EmployeeStructureLink.objects.get(employee=x)
+                    structure = emp.salary_structure.structure_type
+                    #print(structure)
                     
-                    s = Salary_elements(
-                        emp=x,
-                        elements_type_to_run=sal_obj.elements_type_to_run,
-                        salary_month=sal_obj.salary_month,
-                        salary_year=sal_obj.salary_year,
-                        run_date=sal_obj.run_date,
-                        created_by=request.user,
-                        incomes=sc.calc_emp_income(),
-                        element=element,
-                        insurance_amount=sc.calc_employee_insurance(),
-                        # TODO need to check if the tax is applied
-                        tax_amount=sc.net_to_tax(),
-                        deductions=sc.calc_emp_deductions_amount(),
-                        gross_salary=sc.net_to_gross(),
-                        net_salary=sc.calc_basic_net(),
-                    )
-                            
-                s.save()
+                    if structure == 'Gross to Net' :
+                        s = Salary_elements(
+                            emp=x,
+                            elements_type_to_run=sal_obj.elements_type_to_run,
+                            salary_month=sal_obj.salary_month,
+                            salary_year=sal_obj.salary_year,
+                            run_date=sal_obj.run_date,
+                            created_by=request.user,
+                            incomes=sc.calc_emp_income(),
+                            element=element,
+                            insurance_amount=sc.calc_employee_insurance(),
+                            # TODO need to check if the tax is applied
+                            tax_amount=sc.calc_taxes_deduction(),
+                            deductions=sc.calc_emp_deductions_amount(),
+                            gross_salary=sc.calc_gross_salary(),
+                            net_salary=sc.calc_net_salary(),
+
+                        )
+                    else :
+                        
+                        s = Salary_elements(
+                            emp=x,
+                            elements_type_to_run=sal_obj.elements_type_to_run,
+                            salary_month=sal_obj.salary_month,
+                            salary_year=sal_obj.salary_year,
+                            run_date=sal_obj.run_date,
+                            created_by=request.user,
+                            incomes=sc.calc_emp_income(),
+                            element=element,
+                            insurance_amount=sc.calc_employee_insurance(),
+                            # TODO need to check if the tax is applied
+                            tax_amount=sc.net_to_tax(),
+                            deductions=sc.calc_emp_deductions_amount(),
+                            gross_salary=sc.net_to_gross(),
+                            net_salary=sc.calc_basic_net(),
+                        )
+                                
+                    s.save()
+                except Exception as e: 
+                    employees_dont_have_structurelink.append(x.emp_name)
+                    employees =  ', '.join(employees_dont_have_structurelink) + ': dont have structurelink, add structurelink to them'
                 #gross= sc.net_to_gross()
             user_lang = to_locale(get_language())
             if user_lang == 'ar':
@@ -187,7 +192,7 @@ def createSalaryView(request):
                     calendar.month_name[sal_obj.salary_month])
             else:
                 success_msg = 'Payroll for month {} done successfully'.format(
-                    calendar.month_name[sal_obj.salary_month])
+                    calendar.month_name[sal_obj.salary_month] ) 
             messages.success(request, success_msg)
             # # the user select element batch to run on without assignment batch.
             # elif sal_obj.element_batch and sal_obj.assignment_batch == None:
@@ -308,6 +313,7 @@ def createSalaryView(request):
     salContext = {
         'page_title': _('create salary'),
         'sal_form': sal_form,
+        'employees' :employees,
     }
     return render(request, 'create-salary.html', salContext)
 
@@ -340,7 +346,7 @@ def changeSalaryToFinal(request, month, year):
 
 
 @login_required(login_url='home:user-login')
-def userSalaryInformation(request, month_number, salary_year, salary_id, emp_id):
+def userSalaryInformation(request, month_number, salary_year, salary_id, emp_id , tmp_format):
     salary_obj = get_object_or_404(
         Salary_elements,
         salary_month=month_number,
@@ -354,7 +360,6 @@ def userSalaryInformation(request, month_number, salary_year, salary_id, emp_id)
             (Q(start_date__lte=date.today()) & (
                     Q(end_date__gt=salary_obj.run_date) | Q(end_date__isnull=True)))).values('element_id')
     else:
-        print("HWYYYYYYYYYYYYYYYYYY")
         elements = Employee_Element.objects.filter(element_id__id=salary_obj.element.id,
                                                    element_id__appears_on_payslip=False).filter(
             (Q(start_date__lte=date.today()) & (
@@ -365,10 +370,10 @@ def userSalaryInformation(request, month_number, salary_year, salary_id, emp_id)
         emp_id=emp_id,
         element_id__classification__code='earn',
 
-    )
+    ).order_by('element_id__sequence')
     emp_elements_deductions = Employee_Element.objects.filter(element_id__in=elements, emp_id=emp_id,
                                                               element_id__classification__code='deduct',
-                                                              )
+                                                              ).order_by('element_id__sequence')
     emp_payment = Payment.objects.filter((Q(end_date__gte=date.today()) | Q(end_date__isnull=True)), emp_id=emp_id)
     monthSalaryContext = {
         'page_title': _('salary information for {}').format(salary_obj.emp),
@@ -381,7 +386,10 @@ def userSalaryInformation(request, month_number, salary_year, salary_id, emp_id)
 
     # sc = Salary_Calculator(company=request.user.company, employee=emp_id, elements=emp_elements)
     # test = sc.calc_emp_deductions_amount()
-    return render(request, 'emp-payslip.html', monthSalaryContext)
+    if tmp_format=="table":
+        return render(request, 'emp-payslip.html', monthSalaryContext)
+    elif tmp_format=="list":
+        return render(request, 'emp-payslip-report.html', monthSalaryContext)
 
 
 @login_required(login_url='home:user-login')

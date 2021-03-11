@@ -41,17 +41,24 @@
             {% for i in employee_leave_balance_list %}
             <tr>
               <td>{{ forloop.counter }}</td>
-              <td><a href="{% url 'leave:employee-leave-list' employee_id=i.employee.id %}">{{i.employee}}</a></td>
+              <td>
+                <a href="{% url 'leave:employee-leave-list' employee_id=i.employee.id %}"
+                  data-toggle="tooltip" data-placement="bottom" title="{% trans 'View Employee Leaves Detail' %}">
+                  {{i.employee}}
+                </a>
+              </td>
               <td>{{i.casual}}</td>
               <td>{{i.usual}}</td>
               <td>{{i.carried_forward}}</td>
               <td>{{i.absence}}</td>
               <td class="Actions">
                 <div class="w-100 gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
-                  <div class="peer">
+                  <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Update' %}">
                     <a href="{% url 'leave:leave_balance_edit' i.id %}">
                       <button type="button" class="btn cur-p btn-outline-primary">&#9997</button>
                     </a>
+                  </div>
+                  <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Delete' %}">
                     <a href="#">
                       <button type="button" class="btn cur-p btn-outline-danger" data-toggle="modal" data-target="#delete-balance-modal{{i.id}}">&#128465</button>
                     </a>

@@ -89,10 +89,10 @@ class Purchase_Request(models.Model):
 
 class Purchase_Item(models.Model):
     purchase_request = models.ForeignKey(Purchase_Request, on_delete=models.CASCADE)
-    item_description = models.CharField(max_length=250, blank=False, null=False)
-    vendor_name = models.CharField(max_length=250, blank=False, null=False)
-    unit_price = models.PositiveIntegerField(blank=False, null=False)
-    qnt = models.PositiveIntegerField(blank=False, null=False)
+    item_description = models.CharField(max_length=250, blank=False, null=False , default="handel error")
+    vendor_name = models.CharField(max_length=250, blank=False, null=False , default="handel error")
+    unit_price = models.PositiveIntegerField(blank=False, null=False , default=1)
+    qnt = models.PositiveIntegerField(blank=False, null=False , default= 1)
 
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                                    blank=True, null=True, related_name='purchase_item_created_by')
@@ -119,7 +119,7 @@ def business_request_handler(sender, instance, created, update_fields, **kwargs)
     else:
         hr_users = User.objects.filter(groups__name='HR')
         manager_emp = hr_users
-        
+
     if created:  # check if this is a new Business_travel instance
         data = {"title": "Business Travel Request", "status": instance.status, "href": "service:services_edit"}
         notify.send(sender=requestor_emp.user,
@@ -131,7 +131,7 @@ def business_request_handler(sender, instance, created, update_fields, **kwargs)
         data = {"title": "Business Travel Request", "status": instance.status}
 
         # send notification to the requestor employee that his request status is updated
-        notify.send(sender=manager_emp.user,
+        notify.send(sender=manager_emp,
                     recipient=requestor_emp.user,
                     verb=instance.status, action_object=instance,
                     description="{employee} has {status} your Business Travel request".format(employee=manager_emp,
@@ -141,7 +141,7 @@ def business_request_handler(sender, instance, created, update_fields, **kwargs)
 
         #  update the old notification for the manager with the new status
         content_type = ContentType.objects.get_for_model(Bussiness_Travel)
-        old_notification = manager_emp.user.notifications.filter(action_object_content_type=content_type,
+        old_notification = manager_emp.notifications.filter(action_object_content_type=content_type,
                                                                  action_object_object_id=instance.id)
         if len(old_notification) > 0:
             old_notification[0].data['data']['status'] = instance.status
@@ -177,7 +177,7 @@ def purchase_request_handler(sender, instance, created, update_fields, **kwargs)
         data = {"title": "Purchase Request", "status": instance.status}
 
         # send notification to the requestor employee that his request status is updated
-        notify.send(sender=manager_emp.user,
+        notify.send(sender=manager_emp,  # Amira: remove user (manager_emp.user) as User has no attr user
                     recipient=instance.ordered_by.user,
                     verb=instance.status, action_object=instance,
                     description="{employee} has {status} your purchase request".format(employee=manager_emp,
@@ -186,7 +186,8 @@ def purchase_request_handler(sender, instance, created, update_fields, **kwargs)
 
         #  update the old notification for the manager with the new status
         content_type = ContentType.objects.get_for_model(Purchase_Request)
-        old_notification = manager_emp.user.notifications.filter(action_object_content_type=content_type,
+        # Amira: remove user (manager_emp.user) as User has no attr user
+        old_notification = manager_emp.notifications.filter(action_object_content_type=content_type,
                                                                  action_object_object_id=instance.id)
         if len(old_notification) > 0:
             old_notification[0].data['data']['status'] = instance.status
