@@ -1,7 +1,8 @@
 import os
 from django.shortcuts import render, redirect , HttpResponse
 from django.urls import reverse
-
+from leave.check_manager import Check_Manager
+from leave.check_balance import Check_Balance
 from employee.models import JobRoll, Employee
 from leave.models import LeaveMaster, Leave, Employee_Leave_balance
 from leave.forms import FormLeave, FormLeaveMaster, Leave_Balance_Form
@@ -82,7 +83,7 @@ def add_leave(request):
                     #if check_validate_balance:
                     leave.save()
                     team_leader_email = []
-                    check_manager = leave.check_manger(
+                    check_manager = Check_Manager.check_manger(
                         required_employee)
                     for manager in check_manager:
                         team_leader_email.append(manager.user.email)
@@ -206,9 +207,11 @@ def leave_approve(request, leave_id, redirect_to):
      :params:
          redirect_to : a string representing the redirection link name ex:'home:homepage'
      """
+    employee = Employee.objects.get(user=request.user)
     instance = get_object_or_404(Leave, id=leave_id)
     instance.status = 'Approved'
     instance.is_approved = True
+    instance.approval = employee
     instance.save(update_fields=['status', 'is_approved'])
     startdate = instance.startdate
     enddate = instance.enddate
@@ -222,7 +225,7 @@ def leave_approve(request, leave_id, redirect_to):
         employee=required_user)
     leave_form = FormLeave(data=request.POST, form_type=None)
     #print(leave_form.data['startdate'])
-    check_validate_balance=Employee_Leave_balance.check_balance(
+    check_validate_balance=Check_Balance.check_balance(
                     required_employee, startdate, enddate,leave_id)
     approved_by_email = Employee.objects.get(user=request.user).email
     employee_email = Employee.objects.get(user=instance.user).email
@@ -239,9 +242,11 @@ def leave_unapprove(request, leave_id, redirect_to):
     :params:
         redirect_to : a string representing the redirection link name ex:'home:homepage'
     """
+    employee = Employee.objects.get(user=request.user)
     instance = get_object_or_404(Leave, id=leave_id)
     instance.status = 'Rejected'
     instance.is_approved = False
+    instance.approval = employee
     instance.save(update_fields=['status', 'is_approved'])
     approved_by_email = Employee.objects.get(user=request.user).email
     employee_email = Employee.objects.get(user=instance.user).email
