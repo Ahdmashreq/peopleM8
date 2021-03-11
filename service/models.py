@@ -89,10 +89,10 @@ class Purchase_Request(models.Model):
 
 class Purchase_Item(models.Model):
     purchase_request = models.ForeignKey(Purchase_Request, on_delete=models.CASCADE)
-    item_description = models.CharField(max_length=250, blank=False, null=False , default="handel error")
-    vendor_name = models.CharField(max_length=250, blank=False, null=False , default="handel error")
-    unit_price = models.PositiveIntegerField(blank=False, null=False , default=1)
-    qnt = models.PositiveIntegerField(blank=False, null=False , default= 1)
+    item_description = models.CharField(max_length=250, blank=False, null=False)
+    vendor_name = models.CharField(max_length=250, blank=False, null=False)  # amira, remove all default values
+    unit_price = models.PositiveIntegerField(blank=True, null=True)  # amira, change null/blank value to True
+    qnt = models.PositiveIntegerField(blank=False, null=False)
 
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                                    blank=True, null=True, related_name='purchase_item_created_by')

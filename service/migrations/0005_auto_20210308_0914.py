@@ -13,21 +13,21 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='purchase_item',
             name='item_description',
-            field=models.CharField(default='handel error', max_length=250),
+            field=models.CharField(max_length=250),
         ),
         migrations.AlterField(
             model_name='purchase_item',
             name='qnt',
-            field=models.PositiveIntegerField(default='handel error'),
+            field=models.PositiveIntegerField(),
         ),
         migrations.AlterField(
             model_name='purchase_item',
             name='unit_price',
-            field=models.PositiveIntegerField(default='handel error'),
+            field=models.PositiveIntegerField(),
         ),
         migrations.AlterField(
             model_name='purchase_item',
             name='vendor_name',
-            field=models.CharField(default='handel error', max_length=250),
+            field=models.CharField(max_length=250),
         ),
     ]
