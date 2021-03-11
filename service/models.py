@@ -64,8 +64,6 @@ class Bussiness_Travel(models.Model):
 
 
 class Purchase_Request(models.Model):
-    emp = models.ForeignKey(Employee, related_name='emp', on_delete=models.CASCADE, blank=True,
-                            null=True, verbose_name='Employee Name')
     approval = models.ForeignKey(Employee, related_name='approval_emp', on_delete=models.CASCADE, blank=True,
                                 null=True) 
     payment_method_list = (('C', 'Cash'), ('V', 'Visa'))
