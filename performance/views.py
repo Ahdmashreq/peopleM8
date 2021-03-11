@@ -66,10 +66,10 @@ def createPerformanceRating(request,per_id):
                 obj.performance = performance
                 obj.save()
                 print("created")
-                if 'Save and exit' in request.POST:
-                    return redirect('performance:performance-list')
-                elif 'Save and add' in request.POST:
-                    return redirect('performance:rating-create',
+            if 'Save and exit' in request.POST:
+                return redirect('performance:performance-list')
+            elif 'Save and add' in request.POST:
+                return redirect('performance:rating-create',
                         per_id = per_id)
         else:
             print(performance_rating_formset.errors) 
@@ -117,7 +117,7 @@ def listRatingPerformance(request, ret_id):
 
 @login_required(login_url='home:user-login')
 def createSegment(request,per_id,ret_id):
-    print(per_id)
+    question_formset = QuestionInline(queryset=Question.objects.none())
     performance = Performance.objects.get(id = per_id)
     rating =""
 
@@ -130,21 +130,31 @@ def createSegment(request,per_id,ret_id):
     segment_form = SegmentForm()
     if request.method == 'POST':
         segment_form = SegmentForm(request.POST)
+        question_formset = QuestionInline(request.POST)
         if segment_form.is_valid():
             segment_obj = segment_form.save(commit=False)
             segment_obj.performance = performance
             segment_obj.rating = rating
-            segment_obj.save()
-            print("created")
-            return redirect('performance:performance-list')
-                        
+            segment_obj.save()    
+            if question_formset.is_valid():
+                for form in question_formset:
+                    obj = form.save(commit=False)
+                    obj.title = segment_obj
+                    obj.save()
+                    print("created")
+            else:
+                print(question_formset.errors)         
+                 
         else:
-            print(segment_form.errors) 
-            return redirect('home:homepage')                 
+            print(segment_form.errors)        
+        return redirect('performance:performance-list')
+                        
+                      
     else:
         myContext = {
         "page_title": _("Create Segment"),
         "segment_form": segment_form,
+        "question_formset": question_formset,
     }
     return render(request, 'create-segment.html', myContext)
 
