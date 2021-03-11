@@ -10,46 +10,51 @@
   <div class="container-fluid">
         <h4 class="c-grey-900">{{page_title|title}}</h4>
 
-      <div class="row">
-        <div class="card">
+        <div class="form-row col-md-12 p-20">
+        <div class="col-sm-4">
+          <div class="card">
+            <div class="card-header">
+              {% trans "Performance"%}
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">   
+                {% trans "Overall"%}
+              </h5>
+              <p class="card-text">{% trans "All Overall Performances"%}</p>
+              <a href="{% url 'performance:performance-rating-list' ret_id=1 %}"  class="btn btn-primary">Go to Performances</a>
+            </div>
+          </div>
+        </div>
+   
+
+    <div class="col-sm-4">
+      <div class="card">
         <div class="card-header">
-          Featured
+          {% trans "Performance"%}
         </div>
         <div class="card-body">
-          <h5 class="card-title">Special title treatment</h5>
-          <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-          <a href="#" class="btn btn-primary">Go somewhere</a>
+          <h5 class="card-title">
+            {% trans "Core"%}
+          </h5>
+          <p class="card-text">{% trans "All Core Performances"%}</p>
+          <a href="{% url 'performance:performance-rating-list' ret_id=2 %}" class="btn btn-primary">Go to Performances</a>
         </div>
       </div>
     </div>
 
-    <div class="row">
+  <div class="col-sm-4">
       <div class="card">
         <div class="card-header">
-          Featured
+          {% trans "Performance"%}
         </div>
         <div class="card-body">
-          <h5 class="card-title">Special title treatment</h5>
-          <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-          <a href="#" class="btn btn-primary">Go somewhere</a>
+          <h5 class="card-title">
+            {% trans "Job Role"%}
+          </h5>
+          <p class="card-text">{% trans "All Job Role Performances"%}</p>
+          <a href="{% url 'performance:performance-rating-list' ret_id=3 %}" class="btn btn-primary">Go to Performances</a>
         </div>
       </div>
-    </div>
-
-    <div class="row">
-      <div class="card">
-        <div class="card-header">
-          Featured
-        </div>
-        <div class="card-body">
-          <h5 class="card-title">Special title treatment</h5>
-          <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-          <a href="#" class="btn btn-primary">Go somewhere</a>
-        </div>
-      </div>
-    </div>
+  </div>
      
 {% endblock body%}
-{% block js %}
-
-{% endblock js %}

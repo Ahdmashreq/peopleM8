@@ -84,12 +84,67 @@ def createPerformanceRating(request,per_id):
 
 
 
-
 @login_required(login_url='home:user-login')
 def performanceManagement(request):
-    performances_list = Performance.objects.all()
     context = {
         'page_title': _('Performance Management'),
-        'performances_list': performances_list,
     }
     return render(request, 'performance-management.html', context)
+
+
+
+@login_required(login_url='home:user-login')
+def listRatingPerformance(request, ret_id):
+    page_title =""
+    performances_list =[]
+    if ret_id == 1:
+        performances_list = PerformanceRating.objects.filter(rating= 'Over all')
+        page_title: _('Overall Performances')
+    elif ret_id == 2:
+        performances_list = PerformanceRating.objects.filter(rating= 'Core')
+        page_title : _('Core Performances')
+    elif ret_id == 3:
+        performances_list = PerformanceRating.objects.filter(rating= 'Job')
+        page_title : _('Jobrole Performances')
+    context = {
+        'page_title': page_title,
+        'performances_list': performances_list,
+        'ret_id' : ret_id
+    }
+    return render(request, 'rating-performance-list.html', context)
+
+
+
+@login_required(login_url='home:user-login')
+def createSegment(request,per_id,ret_id):
+    print(per_id)
+    performance = Performance.objects.get(id = per_id)
+    rating =""
+
+    if ret_id == 1:
+        rating = 'Over all'
+    elif ret_id == 2:
+        rating = 'Core'
+    elif ret_id == 3:
+        rating = 'Job'    
+    segment_form = SegmentForm()
+    if request.method == 'POST':
+        segment_form = SegmentForm(request.POST)
+        if segment_form.is_valid():
+            segment_obj = segment_form.save(commit=False)
+            segment_obj.performance = performance
+            segment_obj.rating = rating
+            segment_obj.save()
+            print("created")
+            return redirect('performance:performance-list')
+                        
+        else:
+            print(segment_form.errors) 
+            return redirect('home:homepage')                 
+    else:
+        myContext = {
+        "page_title": _("Create Segment"),
+        "segment_form": segment_form,
+    }
+    return render(request, 'create-segment.html', myContext)
+

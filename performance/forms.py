@@ -28,4 +28,12 @@ class RatingForm(forms.ModelForm):
 RatingInline = forms.modelformset_factory(PerformanceRating, form=RatingForm, extra=1, can_delete=False)
 
 
-   
+
+class SegmentForm(forms.ModelForm):
+    class Meta:
+        model = Segment
+        fields = ('title','desc')
+    def __init__(self, *args, **kwargs):
+        super(SegmentForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs['class'] = 'form-control'

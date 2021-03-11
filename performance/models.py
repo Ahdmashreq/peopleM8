@@ -50,8 +50,9 @@ class PerformanceRating(models.Model):
         return self.rating
 
 
-class PerformanceTitle(models.Model):
+class Segment(models.Model):
     performance = models.ForeignKey(Performance, on_delete=models.CASCADE)
+    rating = models.CharField(max_length=255)
     title = models.CharField(max_length=255)
     desc = models.TextField()
 
@@ -60,7 +61,7 @@ class PerformanceTitle(models.Model):
 
 
 class Question(models.Model):
-    title = models.ForeignKey(PerformanceTitle, on_delete=models.CASCADE)
+    title = models.ForeignKey(Segment, on_delete=models.CASCADE)
     question = models.CharField(max_length=255)
     help_text = models.TextField()   
 
