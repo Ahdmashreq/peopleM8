@@ -10,12 +10,14 @@ class ProjectForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         for field in self.fields:
+            self.fields['start_date'].widget.input_type = 'date'
+            self.fields['end_date'].widget.input_type = 'date'
             self.fields[field].widget.attrs['class'] = 'form-control parsley-validated'
 
     class Meta():
         model = Project
         fields = '__all__'
-        exclude = ['created_by','creation_date','last_update_by','last_update_date']
+        exclude = ['created_by','creation_date','last_update_by','last_update_date', 'company']
 
 
 class ProjectTaskForm(forms.ModelForm):
