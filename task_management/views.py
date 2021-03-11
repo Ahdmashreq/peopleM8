@@ -112,3 +112,22 @@ def project_task_update_view(request, task_id):
                        'task_form':task_form,
     }
     return render(request, 'task-create.html', project_context)
+
+
+def load_parent_tasks(request):
+    """
+    function view to load parent tasks according to project tasks
+    By: amira
+    Date: 11/3
+    """
+    print(request.GET)
+    try:
+        project_id = request.GET.get('project')
+        parent_tasks = Project_Task.objects.filter(project=project_id)
+        context = {
+            'tasks': parent_tasks
+        }
+    except Exception as e:
+        print('load parent tasks error --> ', e)
+        context = {}
+    return render(request, 'tasks_dropdown_list_options.html', context)

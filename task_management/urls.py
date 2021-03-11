@@ -9,4 +9,6 @@ urlpatterns = [
                path('tasks/create/', views.project_task_create_view, name='tasks-create'),
                path('tasks/update/<int:task_id>/', views.project_task_update_view, name='task-update'),
 
+               path('ajax/load-tasks/', views.load_parent_tasks, name='ajax-load-tasks'),
+
 ]
