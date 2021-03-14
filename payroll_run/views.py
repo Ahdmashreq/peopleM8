@@ -189,10 +189,6 @@ def createSalaryView(request):
             if user_lang == 'ar':
                 success_msg = 'تم تشغيل راتب شهر {} بنجاح'.format(
                     calendar.month_name[sal_obj.salary_month])
-                else:
-                    success_msg = 'Payroll for month {} done successfully'.format(
-                    calendar.month_name[sal_obj.salary_month] ) 
-                    messages.success(request, success_msg)
 
             else:
                 success_msg = 'Payroll for month {} done successfully'.format(

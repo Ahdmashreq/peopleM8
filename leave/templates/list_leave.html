@@ -54,18 +54,20 @@
               {% if request.user|has_group:"Admin"%}
               <td class="Actions">
                 <div class="w-100 gap-10 peers">
-                  <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Respond' %}">
-                    <a href="{% url 'leave:edit_leave' i.id %}">
-                      <button type="button" class="btn cur-p btn-outline-primary"><i class="fas fa-reply-all"></i></button>
-                    </a>
-                  </div>
+                  {% if i.status == 'pending' %}
+                    <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Respond' %}">
+                      <a href="{% url 'leave:edit_leave' i.id %}">
+                        <button type="button" class="btn cur-p btn-outline-primary"><i class="fas fa-reply-all"></i></button>
+                      </a>
+                    </div>
 
-                  <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Delete' %}">
-                    <a href="#">
-                      <button type="button" class="btn cur-p btn-outline-danger" data-toggle="modal" data-target="#delete-modal-leave{{i.id}}">&#128465</button>
-                    </a>
-                  </div>
 
+                    <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Delete' %}">
+                      <a href="#">
+                        <button type="button" class="btn cur-p btn-outline-danger" data-toggle="modal" data-target="#delete-modal-leave{{i.id}}">&#128465</button>
+                      </a>
+                    </div>
+                  {% endif %}
                 </div>
               </td>
             </tr>

@@ -1,5 +1,5 @@
 import os
-from django.shortcuts import render, redirect , HttpResponse
+from django.shortcuts import render, redirect, HttpResponse
 from django.urls import reverse
 from leave.check_manager import Check_Manager
 from leave.check_balance import Check_Balance
@@ -17,8 +17,6 @@ from datetime import datetime
 from django.utils.translation import ugettext_lazy as _
 from custom_user.models import User
 from django.http import JsonResponse
-
-
 
 
 def email_sender(subject, message, from_email, recipient_list, html_message):
@@ -65,8 +63,8 @@ def add_leave(request):
     employee = Employee.objects.get(user=request.user)
     employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
     employee_leave_balance = Employee_Leave_balance.objects.get(
-            employee=employee)
-    
+        employee=employee)
+
     total_balance = employee_leave_balance.total_balance
     absence_days = employee_leave_balance.absence
     # print(have_leave_balance(request.user))
@@ -78,29 +76,29 @@ def add_leave(request):
                     leave = leave_form.save(commit=False)
                     leave.user = request.user
                     required_employee = Employee.objects.get(user=request.user)
-                    #check_validate_balance=Employee_Leave_balance.check_balance(
-                        #required_employee, leave_form.data['startdate'], leave_form.data['enddate'])
-                    #if check_validate_balance:
+                    # check_validate_balance=Employee_Leave_balance.check_balance(
+                    # required_employee, leave_form.data['startdate'], leave_form.data['enddate'])
+                    # if check_validate_balance:
                     leave.save()
                     team_leader_email = []
                     check_manager = Check_Manager.check_manger(
                         required_employee)
                     for manager in check_manager:
                         team_leader_email.append(manager.user.email)
-                       
+
                         # if employee_job.manager:
                         #     NotificationHelper(
                         #         employee, employee_job.manager, leave).send_notification()
                     requestor_email = employee.email
-                        
-                        # print(team_leader_email)
+
+                    # print(team_leader_email)
                     html_message = message_composer(request, html_template='leave_mail.html', instance_name=leave,
-                                                        result=None)
+                                                    result=None)
                     email_sender('Applying for a leave', 'Applying for a leave', requestor_email,
-                                    team_leader_email, html_message)
+                                 team_leader_email, html_message)
 
                     messages.add_message(request, messages.SUCCESS,
-                                            'Leave Request was created successfully')
+                                         'Leave Request was created successfully')
                     return redirect('leave:list_leave')
                 else:
                     leave_form.add_error(
@@ -112,7 +110,8 @@ def add_leave(request):
                 None, "You are not eligible for leave request")
     else:  # http request
         leave_form = FormLeave(form_type=None)
-    return render(request, 'add_leave.html', {'leave_form': leave_form , 'total_balance' : total_balance , 'absence_days' : absence_days})
+    return render(request, 'add_leave.html',
+                  {'leave_form': leave_form, 'total_balance': total_balance, 'absence_days': absence_days})
 
 
 def eligible_user_leave(user):
@@ -218,7 +217,7 @@ def leave_approve(request, leave_id, redirect_to):
     dates = (enddate - startdate)
     tottal_days = dates.days + 1
     user = instance.user
-    
+
     required_employee = Employee.objects.get(user=user)
     required_user = Employee.objects.get(user=instance.user)
     employee_leave_balance = Employee_Leave_balance.objects.get(
@@ -242,11 +241,9 @@ def leave_unapprove(request, leave_id, redirect_to):
     :params:
         redirect_to : a string representing the redirection link name ex:'home:homepage'
     """
-    employee = Employee.objects.get(user=request.user)
     instance = get_object_or_404(Leave, id=leave_id)
     instance.status = 'Rejected'
     instance.is_approved = False
-    instance.approval = employee
     instance.save(update_fields=['status', 'is_approved'])
     approved_by_email = Employee.objects.get(user=request.user).email
     employee_email = Employee.objects.get(user=instance.user).email
@@ -392,6 +389,7 @@ def delete_leave_balance(request, leave_balance_id):
     messages.add_message(request, messages.SUCCESS,
                          _('Leave Balance was deleted successfully'))
     return redirect('leave:leave-balance')
+
 
 def get_leave_type(request):
     """
