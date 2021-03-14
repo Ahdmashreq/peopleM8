@@ -13,11 +13,11 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='purchase_item',
             name='qnt',
-            field=models.PositiveIntegerField(),
+            field=models.PositiveIntegerField(default=1),
         ),
         migrations.AlterField(
             model_name='purchase_item',
             name='unit_price',
-            field=models.PositiveIntegerField(),
+            field=models.PositiveIntegerField(default=1),
         ),
     ]
