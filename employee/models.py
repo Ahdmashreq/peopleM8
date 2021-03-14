@@ -54,7 +54,7 @@ class Employee(models.Model):
     hiredate = models.DateField(
         auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Hire Date'))
     terminationdate = models.DateField(
-        auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Terminaton Date'),blank=True, null=True)    
+        auto_now=False, auto_now_add=False, verbose_name=_('Terminaton Date'),blank=True, null=True)    
     email = models.EmailField(blank=True, null=True, verbose_name=_('email'))
     picture = models.ImageField(
         upload_to = "avatars/",null=True, blank=True, verbose_name=_('picture'))

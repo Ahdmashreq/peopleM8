@@ -6,7 +6,7 @@ from django.db.models.signals import pre_save, post_save, post_init
 from django.dispatch import receiver
 from notifications.signals import notify
 
-from employee.models import JobRoll, Employee
+from employee.models import Employee, JobRoll, Employee_Element, Employee_Element_History
 from datetime import date
 from django.utils.translation import ugettext_lazy as _
 from .manager import LeaveManager
@@ -268,7 +268,11 @@ class Employee_Leave_balance(models.Model):
                     employee=emp_id).update(carried_forward=new_balance)
                 return True    
         else:
-            
+            emp_allowance = Employee_Element.objects.filter(element_id__classification__code='earn',
+                                                        emp_id=emp_id).filter(
+            (Q(end_date__gte=date.today()) | Q(end_date__isnull=True))).get(element_id__is_basic=True)
+            emp_basic = emp_allowance.element_value
+            day_rate = emp_basic / 30
             Employee_Leave_balance.objects.filter(
                     employee=emp_id).update(usual=0)
             Employee_Leave_balance.objects.filter(
@@ -276,10 +280,12 @@ class Employee_Leave_balance(models.Model):
             Employee_Leave_balance.objects.filter(
                     employee=emp_id).update(carried_forward=0)
             absence = balance_deductions - total_balance
+            total_absence_value = absence*day_rate
+            print(total_absence_value)
             obj = EmployeeAbsence(
                 employee = employee ,
                 num_of_days = absence , 
-                value = absence*10 , #We want change to the value of one day absence
+                value = absence*total_absence_value , #We want change to the value of one day absence
                 #created_by = request.user
             )
             obj.save() 

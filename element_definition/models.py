@@ -90,6 +90,8 @@ class Element(models.Model):
         'self', on_delete=models.CASCADE, null=True, blank=True, )
     appears_on_payslip = models.BooleanField(
         verbose_name=_('Appears on payslip'), default=True)
+    is_basic = models.BooleanField(
+        verbose_name=_('Is basic'), default=False)
     sequence = models.IntegerField(null=True, blank=True, )
     tax_flag = models.BooleanField(verbose_name=_('Tax Flag'), default=False)
     scheduled_pay = models.CharField(
