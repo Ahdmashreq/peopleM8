@@ -37,22 +37,8 @@
               <br>
               <p  class="form-control" id="formGroupExampleInput">{{ company }}</p>
             </div>
-            <div class="form-group col-md-3">
-              <label for="inputPassword4">{% trans "Department" %}</label>
-              {{ performance_form.department}}
-            </div>
-            <div class="form-group col-md-3">
-              <label for="inputCity">{% trans "Job" %}</label>
-              {{ performance_form.job}}
-            </div>
-            </div>
 
-            <div class="form-row">
-            <div class="form-group col-md-4">
-              <label for="inputCity">{% trans "Position" %}</label>
-              {{ performance_form.position}}
-            </div>
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-3">
               <label class="fw-500">{% trans "Start Date" %}</label>
               <div class="timepicker-input input-icon form-group">
                 <div class="input-group">
@@ -62,8 +48,7 @@
                 </div>
               </div>
             </div>
-          </div>
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-3">
               <label class="fw-500">{% trans "End Date" %}</label>
               <div class="timepicker-input input-icon form-group">
                 <div class="input-group">
@@ -73,7 +58,24 @@
                 </div>
               </div>
             </div>
+
+            <div class="form-row">
+            <div class="form-group col-md-4">
+              <label for="inputPassword4">{% trans "Department" %}</label>
+              {{ performance_form.department}}
             </div>
+            <div class="form-group col-md-4">
+              <label for="inputCity">{% trans "Job" %}</label>
+              {{ performance_form.job}}
+            </div>
+
+            <div class="form-group col-md-4">
+              <label for="inputCity">{% trans "Position" %}</label>
+              {{ performance_form.position}}
+            </div>
+            </div>
+
+
   </form>
 </div>
 

@@ -9,6 +9,8 @@ urlpatterns =[
     path('performance/', include([
             ######################### Performance URLs ###################################
             path('create/', views.createPerformance, name='performance-create'),
+            path('edit/<int:pk>/', views.updatePerformance, name='performance-edit'),
+            path('delete/<int:pk>/', views.deletePerformance, name='performance-delete'),
             path('list/', views.listPerformance, name='performance-list'),
             path('create/rating/<int:per_id>/', views.createPerformanceRating, name='rating-create'),
             path('management/', views.performanceManagement, name='management'),

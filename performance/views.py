@@ -37,7 +37,9 @@ def createPerformance(request):
     if request.method == 'POST':
         performance_form = PerformanceForm(company, request.POST)
         if performance_form.is_valid():
-            performance_obj = performance_form.save()
+            performance_obj = performance_form.save(commit=False)
+            performance_obj.company = company
+            performance_obj.save() 
             if 'Save and exit' in request.POST:
                     return redirect('performance:performance-list')
             elif 'Save and add' in request.POST:
@@ -53,6 +55,70 @@ def createPerformance(request):
         "company":company,
     }
     return render(request, 'create-performance.html', myContext)
+
+
+@login_required(login_url='home:user-login')
+def updatePerformance(request, pk):
+    performance = Performance.objects.get(id=pk)
+    user = User.objects.get(id=request.user.id)
+    company = user.company
+    performance_form = PerformanceForm(company, instance=performance)
+    if request.method == 'POST':
+        performance_form = PerformanceForm(company, request.POST, instance=performance)
+        if performance_form.is_valid() :
+            form.save()
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
+                success_msg = ' {},تم تعديل التقييم'.format(performance)
+            else:
+                success_msg = 'performance {}, has been updated successfully'.format(
+                    performance)
+            messages.success(request, success_msg)        
+            return redirect('performance:performance-list')
+        else:
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
+                success_msg = '{} لم يتم التعديل '.format(performance)
+            else:
+                success_msg = '{} cannot be updated '.format(performance)
+            messages.error(request, success_msg)
+            return redirect('performance:performance-edit',pk=pk )
+    else:
+        myContext = {
+        "page_title": _("update performance"),
+        "performance_form": performance_form,
+        "company":company,
+    }
+    return render(request, 'create-performance.html', myContext)   
+
+      
+
+@login_required(login_url='home:user-login')
+def deletePerformance(request, pk):
+    performance = Performance.objects.get(id=pk)
+    try:
+        performance.delete()
+        user_lang = to_locale(get_language())
+        if user_lang == 'ar':
+            success_msg = ' {},تم حذف التقييم'.format(performance)
+        else:
+            success_msg = 'Performance {} was deleted successfully'.format(
+                performance)
+        messages.success(request, success_msg)
+    except Exception as e:
+        user_lang = to_locale(get_language())
+        if user_lang == 'ar':
+            success_msg = '{} لم يتم حذف '.format(performance)
+        else:
+            success_msg = '{} cannot be deleted '.format(performance)
+        messages.error(request, success_msg)
+        raise e
+    return redirect('performance:performance-list')
+
+
+
+
+
 
 
 
