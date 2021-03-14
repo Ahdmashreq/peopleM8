@@ -1,7 +1,8 @@
 import os
 from django.shortcuts import render, redirect, HttpResponse
 from django.urls import reverse
-
+from leave.check_manager import Check_Manager
+from leave.check_balance import Check_Balance
 from employee.models import JobRoll, Employee
 from leave.models import LeaveMaster, Leave, Employee_Leave_balance
 from leave.forms import FormLeave, FormLeaveMaster, Leave_Balance_Form
@@ -80,7 +81,7 @@ def add_leave(request):
                     # if check_validate_balance:
                     leave.save()
                     team_leader_email = []
-                    check_manager = leave.check_manger(
+                    check_manager = Check_Manager.check_manger(
                         required_employee)
                     for manager in check_manager:
                         team_leader_email.append(manager.user.email)
@@ -205,9 +206,11 @@ def leave_approve(request, leave_id, redirect_to):
      :params:
          redirect_to : a string representing the redirection link name ex:'home:homepage'
      """
+    employee = Employee.objects.get(user=request.user)
     instance = get_object_or_404(Leave, id=leave_id)
     instance.status = 'Approved'
     instance.is_approved = True
+    instance.approval = employee
     instance.save(update_fields=['status', 'is_approved'])
     startdate = instance.startdate
     enddate = instance.enddate
@@ -220,9 +223,9 @@ def leave_approve(request, leave_id, redirect_to):
     employee_leave_balance = Employee_Leave_balance.objects.get(
         employee=required_user)
     leave_form = FormLeave(data=request.POST, form_type=None)
-    # print(leave_form.data['startdate'])
-    check_validate_balance = Employee_Leave_balance.check_balance(
-        required_employee, startdate, enddate, leave_id)
+    #print(leave_form.data['startdate'])
+    check_validate_balance=Check_Balance.check_balance(
+                    required_employee, startdate, enddate,leave_id)
     approved_by_email = Employee.objects.get(user=request.user).email
     employee_email = Employee.objects.get(user=instance.user).email
     html_message = message_composer(request, html_template='reviewed_leave_mail.html', instance_name=instance,
@@ -392,8 +395,7 @@ def get_leave_type(request):
     """
     get leave value to be returned through ajax request
     """
-    leave_type_id = request.META.get('QUERY_STRING')[
-                    request.META.get('QUERY_STRING').index('=') + 1:]  # +1 to exclude =
+    leave_type_id = request.META.get('QUERY_STRING')[request.META.get('QUERY_STRING').index('=')+1:] # +1 to exclude =
     leave_value = LeaveMaster.objects.get(id=leave_type_id).leave_value
     print(leave_value)
-    return JsonResponse({'leave_value': leave_value})
+    return JsonResponse({'leave_value':leave_value})
