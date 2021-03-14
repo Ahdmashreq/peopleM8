@@ -22,7 +22,7 @@ from custom_user.models import User
 def listPerformance(request):
     performances_list = Performance.objects.all()
     context = {
-        'page_title': _('User Companies List'),
+        'page_title': _('Performances List'),
         'performances_list': performances_list,
     }
     return render(request, 'performance-list.html', context)
@@ -66,7 +66,7 @@ def updatePerformance(request, pk):
     if request.method == 'POST':
         performance_form = PerformanceForm(company, request.POST, instance=performance)
         if performance_form.is_valid() :
-            form.save()
+            performance_form.save()
             user_lang = to_locale(get_language())
             if user_lang == 'ar':
                 success_msg = ' {},تم تعديل التقييم'.format(performance)
