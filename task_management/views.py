@@ -120,7 +120,6 @@ def load_parent_tasks(request):
     By: amira
     Date: 11/3
     """
-    print(request.GET)
     try:
         project_id = request.GET.get('project')
         parent_tasks = Project_Task.objects.filter(project=project_id)
