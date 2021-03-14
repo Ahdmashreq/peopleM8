@@ -143,10 +143,10 @@ def createSalaryView(request):
                     emp = EmployeeStructureLink.objects.get(employee=x)
                     structure = emp.salary_structure.structure_type
                     #print(structure)
-                except Exception as e: 
+                except Exception as e:
                     employees_dont_have_structurelink.append(x.emp_name)
                     employees =  ', '.join(employees_dont_have_structurelink) + ': dont have structurelink, add structurelink to them and create again'
-                #gross= sc.net_to_gross()    
+                #gross= sc.net_to_gross()
                     if len(employees_dont_have_structurelink) == 0:
                         if structure == 'Gross to Net' :
                             s = Salary_elements(
@@ -192,17 +192,17 @@ def createSalaryView(request):
                     error_msg = '{}, لم يتم التسجيل'.format(emp_payment_obj)
                     success_msg = 'تم تشغيل راتب شهر {} بنجاح'.format(
                     calendar.month_name[sal_obj.salary_month])
-                    messages.success(request, success_msg)                    
+                    messages.success(request, success_msg)
                 else:
                     error_msg = '{}, has somthig wrong'.format(emp_payment_obj)
                     success_msg = 'Payroll for month {} done successfully'.format(
-                    calendar.month_name[sal_obj.salary_month] ) 
+                    calendar.month_name[sal_obj.salary_month] )
                     messages.success(request, success_msg)
             else:
                     error_msg = 'Payroll for month {} dosent work'.format(
-                    calendar.month_name[sal_obj.salary_month] ) 
-                    messages.error(request, error_msg)          
-   
+                    calendar.month_name[sal_obj.salary_month] )
+                    messages.error(request, error_msg)
+
         else:  # Form was not valid
             messages.error(request, sal_form.errors)
     salContext = {
