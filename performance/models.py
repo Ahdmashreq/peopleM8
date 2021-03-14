@@ -47,7 +47,7 @@ class PerformanceRating(models.Model):
     score_value = models.CharField(max_length=255,blank=True, null=True, )
 
     def __str__(self):
-        return self.rating
+        return self.rating 
 
 
 class Segment(models.Model):
@@ -61,7 +61,7 @@ class Segment(models.Model):
 
 
 class Question(models.Model):
-    title = models.ForeignKey(Segment, on_delete=models.CASCADE)
+    title = models.ForeignKey(Segment, on_delete=models.CASCADE, related_name='questions')
     question = models.CharField(max_length=255)
     help_text = models.TextField()   
 

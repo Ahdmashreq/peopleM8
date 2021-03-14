@@ -4,9 +4,30 @@
 {% load i18n %}
 {% load crispy_forms_tags %}
 {% block body%}
-<style>
 
-</style>
+<div class="row" style="margin-left:0px;">
+  <div class="col-md-12">
+    <div class="bgc-white bd bdrs-3 p-20 mB-20">
+      <table class="table table-striped table-bordered" cellspacing="0" id="dataTable" width="100%">
+        <thead>
+          <tr>
+            <th>{% trans "Score" %}</th>
+            <th>{% trans "Value" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for score in scores %}
+          <tr>
+            <td>{{ score.score_key }}</td>
+            <td>{{ score.score_value }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
   <div class="container-fluid">
     <form method="POST" id="Myform" enctype="multipart/form-data">
       {% csrf_token %}
@@ -82,7 +103,7 @@
           {% endfor %}
           </div>
 
-          <button type="button" id="add_more" class="btn cur-p btn-success">{% trans "Add New Line"%}</button>
+          <button type="button" id="add_more" class="btn cur-p btn-success">{% trans "Add New Question"%}</button>
         <div id="empty_form" style="display:none">
           <table class='no_error'>
             <div class="form-row">

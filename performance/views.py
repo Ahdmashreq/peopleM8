@@ -12,6 +12,7 @@ from .models import *
 from .forms import *
 from django.db.models import Q
 from company.models import *
+from custom_user.models import User
 
 
 # gehad : createPerformance
@@ -30,9 +31,13 @@ def listPerformance(request):
 
 @login_required(login_url='home:user-login')
 def createPerformance(request):
-    performance_form = PerformanceForm()
+    user = User.objects.get(id=request.user.id)
+    company = user.company
+    #dept_list = Department.objects.filter(enterprise=request.user.company).filter(
+            #Q(end_date__gt=date.today()) | Q(end_date__isnull=True)).order_by('tree_id')
+    performance_form = PerformanceForm(request.user)
     if request.method == 'POST':
-        performance_form = PerformanceForm(request.POST)
+        performance_form = PerformanceForm(request.user, request.POST)
         if performance_form.is_valid():
             performance_obj = performance_form.save()
             if 'Save and exit' in request.POST:
@@ -47,6 +52,7 @@ def createPerformance(request):
         myContext = {
         "page_title": _("create performance"),
         "performance_form": performance_form,
+        "company":company,
     }
     return render(request, 'create-performance.html', myContext)
 
@@ -98,13 +104,21 @@ def listRatingPerformance(request, ret_id):
     page_title =""
     performances_list =[]
     if ret_id == 1:
-        performances_list = PerformanceRating.objects.filter(rating= 'Over all')
+        performances_list = PerformanceRating.objects.filter(rating= 'Over all').distinct()
         page_title: _('Overall Performances')
+
     elif ret_id == 2:
-        performances_list = PerformanceRating.objects.filter(rating= 'Core')
+        performances = PerformanceRating.objects.filter(rating= 'Core')
+        for performance in performances:
+            performance_type = PerformanceRating.objects.filter(performance = performance , rating= 'Core').first()
+            performances_list.append(performance_type)
         page_title : _('Core Performances')
+
     elif ret_id == 3:
-        performances_list = PerformanceRating.objects.filter(rating= 'Job')
+        performances = PerformanceRating.objects.filter(rating= 'Job')
+        for performance in performances:
+            performance_type = PerformanceRating.objects.filter(performance = performance , rating= 'Job').first()
+            performances_list.append(performance_type)
         page_title : _('Jobrole Performances')
     context = {
         'page_title': page_title,
@@ -120,13 +134,17 @@ def createSegment(request,per_id,ret_id):
     question_formset = QuestionInline(queryset=Question.objects.none())
     performance = Performance.objects.get(id = per_id)
     rating =""
+    scores = ""
 
     if ret_id == 1:
         rating = 'Over all'
+        scores = PerformanceRating.objects.filter(performance=performance , rating= 'Over all')
     elif ret_id == 2:
         rating = 'Core'
+        scores = PerformanceRating.objects.filter(performance=performance , rating= 'Core')
     elif ret_id == 3:
-        rating = 'Job'    
+        rating = 'Job'   
+        scores = PerformanceRating.objects.filter(performance=performance , rating= 'Job') 
     segment_form = SegmentForm()
     if request.method == 'POST':
         segment_form = SegmentForm(request.POST)
@@ -155,6 +173,31 @@ def createSegment(request,per_id,ret_id):
         "page_title": _("Create Segment"),
         "segment_form": segment_form,
         "question_formset": question_formset,
+        "scores": scores,
     }
     return render(request, 'create-segment.html', myContext)
 
+
+
+
+@login_required(login_url='home:user-login')
+def listSegmentperType(request, ret_id):
+    page_title =""
+    segment_list =[]
+    questions = Question.objects.all()
+    if ret_id == 1:
+        segment_list = Segment.objects.filter(rating= 'Over all')
+        page_title: _('Overall Segments')
+    elif ret_id == 2:
+        segment_list = Segment.objects.filter(rating= 'Core')
+        page_title : _('Core Segments')
+    elif ret_id == 3:
+        segment_list = Segment.objects.filter(rating= 'Job')
+        page_title : _('Jobrole Segments')
+    context = {
+        'page_title': page_title,
+        'segment_list': segment_list,
+        'questions': questions,
+        'ret_id' : ret_id
+    }
+    return render(request, 'segment-list.html', context)

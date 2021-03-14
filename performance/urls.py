@@ -14,6 +14,8 @@ urlpatterns =[
             path('management/', views.performanceManagement, name='management'),
             path('list/perf_rating/<int:ret_id>/', views.listRatingPerformance, name='performance-rating-list'),
             path('create/segment/<int:per_id>/<int:ret_id>/', views.createSegment, name='segment-create'),
+            path('list/segment/<int:ret_id>/', views.listSegmentperType, name='segment-list'),
+
               ])),
 ]
         
