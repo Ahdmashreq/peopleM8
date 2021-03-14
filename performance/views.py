@@ -33,11 +33,9 @@ def listPerformance(request):
 def createPerformance(request):
     user = User.objects.get(id=request.user.id)
     company = user.company
-    #dept_list = Department.objects.filter(enterprise=request.user.company).filter(
-            #Q(end_date__gt=date.today()) | Q(end_date__isnull=True)).order_by('tree_id')
-    performance_form = PerformanceForm(request.user)
+    performance_form = PerformanceForm(company)
     if request.method == 'POST':
-        performance_form = PerformanceForm(request.user, request.POST)
+        performance_form = PerformanceForm(company, request.POST)
         if performance_form.is_valid():
             performance_obj = performance_form.save()
             if 'Save and exit' in request.POST:
