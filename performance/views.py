@@ -66,7 +66,7 @@ def updatePerformance(request, pk):
     if request.method == 'POST':
         performance_form = PerformanceForm(company, request.POST, instance=performance)
         if performance_form.is_valid() :
-            form.save()
+            performance_form.save()
             user_lang = to_locale(get_language())
             if user_lang == 'ar':
                 success_msg = ' {},تم تعديل التقييم'.format(performance)
@@ -155,9 +155,10 @@ def createPerformanceRating(request,per_id):
 
 
 @login_required(login_url='home:user-login')
-def performanceManagement(request):
+def performanceManagement(request,pk):
     context = {
         'page_title': _('Performance Management'),
+        'pk' : pk,
     }
     return render(request, 'performance-management.html', context)
 

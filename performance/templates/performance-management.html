@@ -21,7 +21,7 @@
                 {% trans "Overall"%}
               </h5>
               <p class="card-text">{% trans "All Overall Performances"%}</p>
-              <a href="{% url 'performance:performance-rating-list' ret_id=1 %}"  class="btn btn-primary">Performances</a>
+              <a href="{% url 'performance:performance-rating-list' pk=pk ret_id=1 %}"  class="btn btn-primary">Performances</a>
               <a href="{% url 'performance:segment-list' ret_id=1 %}"  class="btn btn-primary">Segments</a>
 
             </div>
@@ -39,7 +39,7 @@
             {% trans "Core"%}
           </h5>
           <p class="card-text">{% trans "All Core Performances"%}</p>
-          <a href="{% url 'performance:performance-rating-list' ret_id=2 %}" class="btn btn-primary">Performances</a>
+          <a href="{% url 'performance:performance-rating-list' pk=pk ret_id=2 %}" class="btn btn-primary">Performances</a>
           <a href="{% url 'performance:segment-list' ret_id=2 %}"  class="btn btn-primary">Segments</a>
         </div>
       </div>
@@ -55,7 +55,7 @@
             {% trans "Job Role"%}
           </h5>
           <p class="card-text">{% trans "All Job Role Performances"%}</p>
-          <a href="{% url 'performance:performance-rating-list' ret_id=3 %}" class="btn btn-primary">Performances</a>
+          <a href="{% url 'performance:performance-rating-list'  pk=pk ret_id=3 %}" class="btn btn-primary">Performances</a>
           <a href="{% url 'performance:segment-list' ret_id=3 %}"  class="btn btn-primary">Segments</a>
         </div>
       </div>

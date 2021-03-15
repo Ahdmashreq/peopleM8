@@ -10,10 +10,9 @@
     <div class="col-md-8">
       <h4 class="c-grey-900">{{page_title|title}}</h4>
     </div>
-    <div class="col-md-15">
+    <div class="col-md-4">
       <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
         <div class="peer"><a href="{% url 'performance:performance-create' %}" class="btn cur-p btn-primary">{% trans "Add Performance" %}</a></div>
-        <div class="peer"><a href="{% url 'performance:management' %}" class="btn cur-p btn-primary">{% trans "Performance Management" %}</a></div>
 
       </div>
     </div>
@@ -49,14 +48,14 @@
               <td class="Actions">
                 <div class="w-100 gap-10 peers">
                   <div class="peer">
-                    <a href="">
+                    <a href="{% url 'performance:management' pk=performance.pk %}">
                       <button type="button" class="btn cur-p btn-outline-primary">
                         <i class="fas fa-search-plus"></i>
                       </button>
                     </a>
                   </div>
                   <div class="peer">
-                    <a href="">
+                    <a href="{% url 'performance:performance-edit' pk=performance.pk %}">
                       <button type="button" class="btn cur-p btn-outline-success">
                         <i class="fas fa-user-edit"></i>
                       </button>
