@@ -86,7 +86,7 @@ def generate_element_code(word):
 def create_new_element(request):
     element_form = ElementForm(user=request.user)
     element_formula_formset = element_formula_inline()
-    print(element_formula_formset)
+    print(element_formula_inline())
     rows_number = Element_Master.objects.all().count()
     if request.method == "POST":
         user_lang = to_locale(get_language())

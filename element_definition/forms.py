@@ -61,6 +61,7 @@ element_formula_inline = forms.modelformset_factory(ElementFormula, form=Element
 
 
 
+
 class SalaryStructureForm(forms.ModelForm):
     class Meta:
         model = SalaryStructure
