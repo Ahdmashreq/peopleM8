@@ -11,11 +11,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='element',
-            name='is_basic',
-            field=models.BooleanField(default=False, verbose_name='Is basic'),
-        ),
+       
+    
         migrations.CreateModel(
             name='ElementFormula',
             fields=[
