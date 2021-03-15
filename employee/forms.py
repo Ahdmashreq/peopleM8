@@ -45,8 +45,8 @@ class EmployeeForm(forms.ModelForm):
         super(EmployeeForm, self).__init__(*args, **kwargs)
         self.fields['date_of_birth'].widget.input_type = 'date'
         self.fields['hiredate'].widget.input_type = 'date'
-        self.fields['start_date'].widget.input_type = 'date'
-        self.fields['end_date'].widget.input_type = 'date'
+        self.fields['emp_start_date'].widget.input_type = 'date'
+        self.fields['emp_end_date'].widget.input_type = 'date'
         self.fields['insurance_date'].widget.input_type = 'date'
         self.fields['medical_date'].widget.input_type = 'date'
         for field in self.fields:
