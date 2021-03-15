@@ -57,7 +57,7 @@ class ElementFormulaForm(forms.ModelForm):
         for field in self.fields:
             self.fields[field].widget.attrs['class'] = 'form-control'
 
-element_formula_inline = forms.modelformset_factory(ElementFormula, form=ElementFormulaForm, extra=0, can_delete=False)
+element_formula_inline = forms.modelformset_factory(ElementFormula, form=ElementFormulaForm, extra=1, can_delete=False)
 
 
 

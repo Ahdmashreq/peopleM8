@@ -78,7 +78,80 @@
               {{ element_master_form.element_formula }}
             </div>
 
+<div id="formula-form">
+  <form method="post" id="form_formula">
+    {% csrf_token %}
+    <!--  -->
+          {{ element_formula_formset.management_form }}
+          <div id="form_set">
+            <div class="form-row">
+              <div class="form-group col-md-3" id="percentage">
+                <label>{% trans "Percentage" %}</label>
+              </div>
+              <div class="form-group col-md-3" id="sign">
+                <label>{% trans "Sign" %}</label>
+              </div>
+              <div class="form-group col-md-3" id="based_on2">
+                <label>{% trans "Based on" %}</label>
+              </div>
+              <div class="form-group col-md-3" id="sign2">
+                <label>{% trans "Sign" %}</label>
+              </div>
+            </div>
+            {% for form in element_formula_formset.forms %}
+            {{form.non_field_errors}}
+            {{form.errors}}
+            <div class="form-row">
+              <div class="form-group col-md-3" >
+                {{ form.percentage }}
+              </div>
+              <div class="form-group col-md-3">
+                {{ form.arithmetic_signs }}
+              </div>
+              <div class="form-group col-md-3">
+                {{ form.based_on }}
+              </div>
+              <div class="form-group col-md-3">
+                {{ form.arithmetic_signs_additional }}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+
+          <div class="row">
+            <div class="col-md-6" id="add">
+              <button type="button" class="btn btn-primary">{% trans "Add Line" %}</button>
+            </div>
+            <div class="col-md-6" id="done">
+              <button type="button" class="btn btn-primary">{% trans "Done" %}</button>
+            </div>
+          </div>
+
+          <div id="empty_form" style="display:none">
+            <table class='no_error'>
+              <div class="form-row">
+                <div class="form-group col-md-3">
+                  {{ element_formula_formset.empty_form.percentage }}
+                </div>
+                <div class="form-group col-md-3">
+                  {{ element_formula_formset.empty_form.arithmetic_signs }}
+                </div>
+                <div class="form-group col-md-3">
+                  {{ element_formula_formset.empty_form.based_on }}
+                </div>
+                <div class="form-group col-md-3">
+                  {{ element_formula_formset.empty_form.arithmetic_signs_additional }}
+                </div>
+              </div>
+            </table>
+          </div>
+  </form>
+  </div>
+
+  
+
        
+
 
             <hr>
             <div class="form-group col-md-12">
@@ -113,52 +186,31 @@
 <script>
   $(document).ready(function() {
       document.getElementById('based_on').style.display = 'none';
-      document.getElementById('based_on2').style.display = 'none';
-      document.getElementById('sign2').style.display = 'none';
       document.getElementById('amount_type').style.display = 'none';
-      document.getElementById('sign').style.display = 'none';
-      document.getElementById('percentage').style.display = 'none';   
       document.getElementById('fixed_amount').style.display = 'none';
-      document.getElementById('add').style.display = 'none';
-      document.getElementById('done').style.display = 'none';
+      $('#formula-form').css('display', 'none')
+  })
 
 
-  }) 
 </script>
 
 <script>
   function myFunction_2(object) {
     if (object.value === 'formula') {
-      document.getElementById('percentage').style.display = 'block';
-      document.getElementById('sign').style.display = 'block';
-      document.getElementById('based_on2').style.display = 'block';
-      document.getElementById('sign2').style.display = 'block';
-      document.getElementById('add').style.display = 'block';
-      document.getElementById('done').style.display = 'block';
+      $('#formula-form').css('display', 'block')
       document.getElementById('based_on').style.display = 'none';
       document.getElementById('amount_type').style.display = 'none';
       document.getElementById('fixed_amount').style.display = 'none';
-      
 
     } else if (object.value === 'payslip based') {
-      document.getElementById('based_on2').style.display = 'none';
-      document.getElementById('sign2').style.display = 'none';
-      document.getElementById('percentage').style.display = 'none';
-      document.getElementById('sign').style.display = 'none';
+      $('#formula-form').css('display', 'none')
       document.getElementById('based_on').style.display = 'none';
       document.getElementById('fixed_amount').style.display = 'none';
-      document.getElementById('add').style.display = 'none';
-      document.getElementById('done').style.display = 'none';
       document.getElementById('amount_type').style.display = 'block';
       
     }  else if (object.value === 'global value') {
-      document.getElementById('percentage').style.display = 'none';
-      document.getElementById('sign').style.display = 'none';
+      $('#formula-form').css('display', 'none')
       document.getElementById('based_on').style.display = 'none';
-      document.getElementById('based_on2').style.display = 'none';
-      document.getElementById('sign2').style.display = 'none';
-      document.getElementById('add').style.display = 'none';
-      document.getElementById('done').style.display = 'none';
       document.getElementById('fixed_amount').style.display = 'block';
       document.getElementById('amount_type').style.display = 'block';
 
@@ -174,35 +226,25 @@
     if (object.value === 'percentage') {
       document.getElementById('fixed_amount').style.display = 'block';
       document.getElementById('based_on').style.display = 'block';
-      document.getElementById('sign').style.display = 'none';
-      document.getElementById('percentage').style.display = 'none';
-      document.getElementById('based_on2').style.display = 'none';
-      document.getElementById('sign2').style.display = 'none';
-      document.getElementById('add').style.display = 'none';
-      document.getElementById('done').style.display = 'none';
+      $('#formula-form').css('display', 'none')
             }
     else  {      
       document.getElementById('fixed_amount').style.display = 'block';
       document.getElementById('based_on').style.display = 'none';
-      document.getElementById('sign').style.display = 'none';
-      document.getElementById('percentage').style.display = 'none';
-      document.getElementById('based_on2').style.display = 'none';
-      document.getElementById('sign2').style.display = 'none';
-      document.getElementById('add').style.display = 'none';
-      document.getElementById('done').style.display = 'none';
+      $('#formula-form').css('display', 'none')
+
   }
 }
   }
 </script>
-
 <script>
-  $('#add').click(function () {
-      var form_idx = $('#id_employee_depandance_set-TOTAL_FORMS').val();
-      $('#formula_form_set').append($('#formula_form_set').html().replace(/__prefix__/g, form_idx));
-      $('#id_employee_depandance_set-TOTAL_FORMS').val(parseInt(form_idx) + 1);
-      var current_indx = Number(form_idx)
+  $('#add').click(function() {
+    var form_idx = $('#id_form-TOTAL_FORMS').val();
+    $('#form_set').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
+    $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
   });
- </script>
+</script>
+
 
 <script>
   $('#id_based_on').change(function() {

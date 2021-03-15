@@ -11,7 +11,7 @@ from element_definition.forms import (ElementMasterForm, ElementMasterInlineForm
                                       ElementLinkForm, CustomPythonRuleForm, ElementForm, SalaryStructureForm,
                                       ElementInlineFormset , ElementFormulaForm , element_formula_inline)
 from element_definition.models import (
-    Element_Batch, Element_Master, Element_Batch_Master, Element_Link, Element, SalaryStructure, StructureElementLink)
+    Element_Batch, Element_Master, Element_Batch_Master, Element_Link, Element, SalaryStructure, StructureElementLink, ElementFormula)
 from employee.models import Employee, Employee_Element, JobRoll, EmployeeStructureLink
 from manage_payroll.models import Payroll_Master
 from defenition.models import LookupDet
@@ -85,8 +85,7 @@ def generate_element_code(word):
 
 def create_new_element(request):
     element_form = ElementForm(user=request.user)
-    element_formula_formset = element_formula_inline()
-    print(element_formula_inline())
+    element_formula_formset = element_formula_inline(queryset=ElementFormula.objects.none())
     rows_number = Element_Master.objects.all().count()
     if request.method == "POST":
         user_lang = to_locale(get_language())
