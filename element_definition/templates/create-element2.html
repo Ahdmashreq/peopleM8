@@ -49,6 +49,10 @@
               {{ element_master_form.element_type }}
             </div>
             <div class="form-group col-md-4">
+              <label>{{ element_master_form.is_basic.label }}</label>
+              {{ element_master_form.is_basic}}
+            </div>
+            <div class="form-group col-md-4">
               <label>{{ element_master_form.appears_on_payslip.label }}</label>
               {{ element_master_form.appears_on_payslip}}
             </div>
@@ -200,15 +204,15 @@
   x = false
   console.log(isDirty)
   document.getElementById("myform").onchange = function() {myFunction()};
- 
+
  function myFunction() {
    x= true
  }
-  
+
   function change_x()
   {isDirty = false
  console.log(isDirty)}
- 
+
   window.onbeforeunload = function () {
              if (isDirty && x ) {
                  return "There are unsaved data.";

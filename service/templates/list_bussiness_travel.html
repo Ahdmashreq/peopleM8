@@ -50,6 +50,7 @@
             <td>{{i.status}}</td>
             <td class="Actions">
               {% if request.user|has_group:"Admin"%}
+              {% if i.status == 'pending' %}
               <div class="w-100 gap-10 peers">
                 <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Respond' %}">
                   <a href="{% url 'service:services_edit' i.id %}">
@@ -57,6 +58,7 @@
                   </a>
                 </div>
               </div>
+              {% endif %}
               {% endif %}
             </td>
           </tr>

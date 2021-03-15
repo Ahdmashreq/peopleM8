@@ -47,7 +47,9 @@ class Leave(models.Model):
                        ("W", _("Excuse")), ]
     # ###########################################################################################
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE, default=1)
+                             on_delete=models.CASCADE, default=1)   
+    approval = models.ForeignKey(Employee, related_name='approvall', on_delete=models.CASCADE, blank=True,
+                                null=True)       
     startdate = models.DateField(verbose_name=_(
         'Start Date'), null=True, blank=False)
     enddate = models.DateField(verbose_name=_(
@@ -128,41 +130,6 @@ class Leave(models.Model):
     def is_rejected(self):
         return self.status == 'rejected'
 
-    def check_manger(self, emp):
-        # get manger of employee
-        employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=emp)
-        if employee_job.manager:
-            current_manger =[]
-            current_manger.append(employee_job.manager)
-        else:
-             hr_users = User.objects.filter(groups__name='HR')
-             hr_employees = Employee.objects.filter(user__in=hr_users)
-             return hr_employees
-        # get the leaves of manger
-        in_leave = Leave.objects.filter(user=current_manger[0].user)
-        if in_leave.exists() is True:
-            # reverse the leaves to get the last leave
-            # get end date of last leave
-            end_date = in_leave.last().enddate
-            start_date = in_leave.last().startdate
-            today = date.today()
-            status = in_leave.last().status
-            # if in leave
-            if start_date <= today <= end_date and status == "Approved":
-                # get the parent manger
-                employee_job = JobRoll.objects.filter(
-                    end_date__isnull=True, emp_id=current_manger[0])
-                # if not have parent manger "CEO"
-                if not employee_job.exists():
-                    return current_manger
-                else:
-                    # check if parent manger in leave or not
-                    return self.check_manger(current_manger[0])
-            else:
-                # return the manger
-                return current_manger
-        return current_manger
-
 class EmployeeAbsence(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='employee_absence_employee')
     date = models.DateTimeField(auto_now_add=True)
@@ -199,74 +166,7 @@ class Employee_Leave_balance(models.Model):
     def __str__(self):
         return self.employee.emp_name
 
-    def check_balance(emp_id, start_date, end_date):
-        month_absence=0
-        employee_leave_balance = Employee_Leave_balance.objects.get(
-            employee=emp_id)
-        total_balance = employee_leave_balance.total_balance
-        employee = Employee.objects.get(id=emp_id.id)
-        needed_days = int((end_date.day - start_date.day)) +1
-        print(needed_days)
-
-        print("casual", employee_leave_balance.casual,
-              "usual", employee_leave_balance.usual, "total", total_balance, "needed", needed_days)
-        if total_balance >= needed_days:
-            if employee_leave_balance.casual > 0:
-                if employee_leave_balance.casual > needed_days:
-                    new_balance = employee_leave_balance.casual-needed_days 
-                    Employee_Leave_balance.objects.filter(
-                        employee=emp_id).update(casual=new_balance)
-                    print("casual", employee_leave_balance.casual,
-                          "usual", employee_leave_balance.usual)
-                    return True
-                else:
-                    new_balance = 0
-                    # calcuate the new balance
-                    new_balance += needed_days-employee_leave_balance.casual 
-            
-                    # set cascual=0
-                    Employee_Leave_balance.objects.filter(
-                        employee=emp_id).update(casual=0)
-                    # calcuate the usual balance
-                    new_usual_balance = employee_leave_balance.usual-new_balance
-                    # update
-                    Employee_Leave_balance.objects.filter(
-                        employee=emp_id).update(usual=new_usual_balance)
-                    print("casual", employee_leave_balance.casual,
-                          "usual", employee_leave_balance.usual)
-                    return True
-            elif employee_leave_balance.usual > 0:
-                new_balance = employee_leave_balance.usual-needed_days
-                Employee_Leave_balance.objects.filter(
-                    employee=emp_id).update(usual=new_balance)
-                print("casual", employee_leave_balance.casual,
-                      "usual", employee_leave_balance.usual)
-                return True
-        else:
-            
-            Employee_Leave_balance.objects.filter(
-                    employee=emp_id).update(usual=0)
-            Employee_Leave_balance.objects.filter(
-                    employee=emp_id).update(casual=0)
-            absence = needed_days - total_balance
-            obj = EmployeeAbsence(
-                employee = employee ,
-                num_of_days = absence , 
-                value = absence*10 , #We want change to the value of one day absence
-                #created_by = request.user
-            )
-            obj.save() 
-            total_absence_obj = EmployeeAbsence.objects.filter(
-               employee = employee 
-            )
-            total_absence=0
-            for i in total_absence_obj:
-                total_absence+=i.num_of_days
-            Employee_Leave_balance.objects.filter(
-                employee=emp_id).update(absence=total_absence)
-            return False
-
-
+    
 @receiver(post_save, sender=Leave)
 def leave_creation(sender, instance, created, update_fields, **kwargs):
     """
@@ -280,6 +180,7 @@ def leave_creation(sender, instance, created, update_fields, **kwargs):
     #     Q(end_date__gt=date.today()) | Q(end_date__isnull=True))[0].manager
 
     # requestor_emp = instance.ordered_by
+    approval_emp = instance.approval
     required_job_roll = JobRoll.objects.get(emp_id = requestor_emp, end_date__isnull=True)
     if required_job_roll.manager:
         manager_emp = required_job_roll.manager.user
@@ -302,7 +203,7 @@ def leave_creation(sender, instance, created, update_fields, **kwargs):
         notify.send(sender=manager_emp,
                     recipient=instance.user,
                     verb=instance.status,
-                    description="{employee} has {verb} your {leave}".format(employee=manager_emp, verb=instance.status,
+                    description="{employee} has {verb} your {leave}".format(employee=approval_emp, verb=instance.status,
                                                                             leave=instance.leavetype.type),
                     action_object=instance, level='info', data=data)
 

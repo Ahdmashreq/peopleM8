@@ -153,18 +153,44 @@ window.onload = checkendbalance();
 </script>
 
 <script>
+function get_leave_type(leave_type_id){
+  var leave_val;
+  $.ajax({
+    type: 'get',
+    url: "{% url 'leave:leave_type' %}",
+    async: false,
+    dataType : "json",
+    contentType: "application/json",
+    data: {'leave_id': leave_type_id},
+    success: function(result){
+      console.log('success: ', result.leave_value)
+      leave_val = result.leave_value
+    },
+    error: function(result){
+      console.log('error')
+    }
+  })
+  return leave_val
+
+}
 function checkbalance(){
       startdate1 = document.getElementById('id_startdate').value;
       enddate1 = document.getElementById('id_enddate').value;
+      leave_type = document.getElementById('id_leavetype').value;
+      console.log("#########")
+      leave_value = get_leave_type(leave_type)
+      console.log("#########: ", leave_value)
       startdate = new Date(startdate1).getTime();
       enddate = new Date(enddate1).getTime();
+
       diffDays = (enddate - startdate) / (1000 * 60 * 60 * 24) +1;
+      deduction_days = leave_value * diffDays
       total_balance = {{total_balance}}
       absence_days = {{absence_days}}
       allowed_absence = 21 - absence_days;
-      if (diffDays > total_balance && diffDays < allowed_absence)
+      if (deduction_days > total_balance && deduction_days < allowed_absence)
       {
-        balance = diffDays  - total_balance
+        balance = deduction_days  - total_balance
         document.getElementById("balance").innerHTML = total_balance
         document.getElementById("days").innerHTML = balance
         msg = document.getElementById("message");
@@ -176,7 +202,7 @@ function checkbalance(){
 
       }
 
-      if(diffDays > allowed_absence && allowed_absence != 0)
+      if(deduction_days > allowed_absence && allowed_absence != 0)
       {
         console.log("asdfjskdbsdd")
         document.getElementById("absence").innerHTML = absence_days

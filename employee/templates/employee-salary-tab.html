@@ -134,10 +134,10 @@
   <div class="peer">
     {% if not create_employee %}
       {% if employee_has_structure %}
-        <a href="{% url 'employee:link-structure-update' pk=required_employee.id %}" class="btn cur-p btn-primary">{% trans "Assign Salary Structure" %}</a>
+        <a href="{% url 'employee:link-structure-update' pk=required_jobRoll.id %}" class="btn cur-p btn-primary">{% trans "Assign Salary Structure" %}</a>
         <a href="#" class="btn cur-p btn-primary" data-toggle="modal" data-target="#element-modal">{% trans "Assign Other Element" %}</a>
         {% else %}
-        <a href="{% url 'employee:link-structure-create' pk=required_employee.id %}" class="btn cur-p btn-primary" >{% trans "Assign Salary Structure" %}</a>
+        <a href="{% url 'employee:link-structure-create' pk=required_jobRoll.id %}" class="btn cur-p btn-primary" >{% trans "Assign Salary Structure" %}</a>
         {% endif %}
     {% endif %}
   </div>

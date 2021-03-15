@@ -18,13 +18,13 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='purchase_item',
             name='unit_price',
-            field=models.PositiveIntegerField(default='try'),
+            field=models.PositiveIntegerField(),
             preserve_default=False,
         ),
         migrations.AlterField(
             model_name='purchase_item',
             name='vendor_name',
-            field=models.CharField(default='try', max_length=250),
+            field=models.CharField(max_length=250),
             preserve_default=False,
         ),
     ]

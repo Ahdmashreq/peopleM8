@@ -319,7 +319,8 @@ def updateEmployeeView(request, pk):
 
 @login_required(login_url='home:user-login')
 def create_link_employee_structure(request, pk):
-    required_employee = get_object_or_404(Employee, pk=pk)
+    required_jobRoll = JobRoll.objects.get(id = pk)
+    required_employee = get_object_or_404(Employee, pk=required_jobRoll.emp_id.id)
     emp_link_structure_form = EmployeeStructureLinkForm()
     if request.method == 'POST':
         emp_link_structure_form = EmployeeStructureLinkForm(request.POST)
@@ -342,7 +343,8 @@ def create_link_employee_structure(request, pk):
 
 @login_required(login_url='home:user-login')
 def update_link_employee_structure(request, pk):
-    required_employee = get_object_or_404(Employee, pk=pk)
+    required_jobRoll = JobRoll.objects.get(id = pk)
+    required_employee = get_object_or_404(Employee, pk=required_jobRoll.emp_id.id)
     employee_salary_structure = EmployeeStructureLink.objects.get(
         employee=required_employee)
     emp_link_structure_form = EmployeeStructureLinkForm(
@@ -552,4 +554,3 @@ def create_employee_element(request, job_id):
             print(emp_element_form.errors)
         return redirect('employee:update-employee',
          pk = required_jobRoll.id)
-
