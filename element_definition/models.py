@@ -110,6 +110,30 @@ class Element(models.Model):
     def __str__(self):
         return self.element_name
 
+class ElementFormula(models.Model):
+    Arithmetic_Signs= [
+        ('%', '%'),
+        ('+', '+'),
+        ('-', '-'),
+        ('*', '*'),
+        ('/', '/'),
+        ]
+    element = models.ForeignKey(Element, on_delete=models.CASCADE , null=True, blank=True)
+    percentage = models.DecimalField(max_digits=200, decimal_places=20 , blank=True , null=True)
+    arithmetic_signs = models.CharField( max_length=100, choices=Arithmetic_Signs , blank=True , null=True)
+    arithmetic_signs_additional = models.CharField( max_length=100, choices=Arithmetic_Signs , blank=True , null=True)
+   
+    start_date = models.DateField(
+        auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
+    end_date = models.DateField(
+        auto_now=False, auto_now_add=False, null=True, blank=True, verbose_name=_('End Date'))
+
+    def __str__(self):
+        return self.element
+
+
+
+
 
 @receiver(pre_save, sender='element_definition.Element')
 def backup_elements(sender, instance, **kwargs):
