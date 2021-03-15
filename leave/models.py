@@ -132,7 +132,8 @@ class Leave(models.Model):
 
 class EmployeeAbsence(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='employee_absence_employee')
-    date = models.DateTimeField(auto_now_add=True)
+    start_date = models.DateTimeField(auto_now_add=False)
+    end_date = models.DateTimeField(auto_now_add=False)
     num_of_days = models.IntegerField(null=False)
     value = models.IntegerField(null=False)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
