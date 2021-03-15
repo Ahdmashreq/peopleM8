@@ -9,7 +9,7 @@ from django.core.management.commands import loaddata
 from company.models import Department, Grade, Position, Job
 from element_definition.forms import (ElementMasterForm, ElementMasterInlineFormset, ElementBatchForm,
                                       ElementLinkForm, CustomPythonRuleForm, ElementForm, SalaryStructureForm,
-                                      ElementInlineFormset)
+                                      ElementInlineFormset , ElementFormulaForm , element_formula_inline)
 from element_definition.models import (
     Element_Batch, Element_Master, Element_Batch_Master, Element_Link, Element, SalaryStructure, StructureElementLink)
 from employee.models import Employee, Employee_Element, JobRoll, EmployeeStructureLink
@@ -85,11 +85,14 @@ def generate_element_code(word):
 
 def create_new_element(request):
     element_form = ElementForm(user=request.user)
+    element_formula_formset = element_formula_inline()
+    print(element_formula_formset)
     rows_number = Element_Master.objects.all().count()
     if request.method == "POST":
         user_lang = to_locale(get_language())
         element_form = ElementForm(request.POST, user=request.user)
-        if element_form.is_valid():
+        element_formula_formset = element_formula_inline(request.POST)
+        if element_form.is_valid() and element_formula_formset.is_valid():
             elem_obj = element_form.save(commit=False)
             element_code = getDBSec(
                     rows_number, request.user.company.id) + '-' + generate_element_code(elem_obj.element_name)
@@ -97,6 +100,13 @@ def create_new_element(request):
             elem_obj.created_by = request.user
             elem_obj.enterprise = request.user.company
             elem_obj.save()
+
+            # add element_formula
+            elements_formula_obj = element_formula_formset.save(commit=False)
+            for obj in elements_formula_obj:
+                obj.element = elem_obj
+                obj.save()
+
             success_msg = make_message(user_lang, True)
             messages.success(request, success_msg)
             return redirect('element_definition:list-element')
@@ -104,10 +114,11 @@ def create_new_element(request):
             failure_msg = make_message(user_lang, False)
             messages.error(request, failure_msg)
             print(element_form.errors)
-
+            print(element_formula_formset.errors)
     myContext = {
         "page_title": _("Create new Pay"),
         'element_master_form': element_form,
+        "element_formula_formset":element_formula_formset,
     }
     return render(request, 'create-element2.html', myContext)
 
