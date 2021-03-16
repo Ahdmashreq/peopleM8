@@ -73,10 +73,14 @@
               <label>{{ element_master_form.based_on.label }}</label>
               {{ element_master_form.based_on }}
             </div>
-            <div class="form-group col-md-2" id="formula" style="display: none;">
+            {% if flag != 0 %}
+            {% if element_master_form.element_formula != null %}
+            <div class="form-group col-md-2" id="formula">
               <label>formula</label>
               {{ element_master_form.element_formula }}
             </div>
+            {% endif %}
+            {% endif %}
 
 <div id="formula-form">
   <form method="post" id="form_formula">
@@ -121,9 +125,6 @@
           <div class="row">
             <div class="col-md-6" id="add">
               <button type="button" class="btn btn-primary">{% trans "Add Line" %}</button>
-            </div>
-            <div class="col-md-6" id="done">
-              <button type="button" class="btn btn-primary">{% trans "Done" %}</button>
             </div>
           </div>
 

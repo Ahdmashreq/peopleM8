@@ -87,11 +87,11 @@ def create_new_element(request):
     element_form = ElementForm(user=request.user)
     element_formula_formset = element_formula_inline(queryset=ElementFormula.objects.none())
     rows_number = Element_Master.objects.all().count()
+    formula =[]
     if request.method == "POST":
         user_lang = to_locale(get_language())
         element_form = ElementForm(request.POST, user=request.user)
         element_formula_formset = element_formula_inline(request.POST)
-        print(len(element_formula_formset.forms))
         if element_form.is_valid():
             elem_obj = element_form.save(commit=False)
             element_code = getDBSec(
@@ -102,17 +102,21 @@ def create_new_element(request):
             elem_obj.save()
             if element_formula_formset.is_valid():
                 # add element_formula
-                print(len(element_formula_formset))
                 objs = element_formula_formset.save(commit=False)
                 for obj in objs:
                     obj.element = elem_obj
                     obj.save()
-                    print("created")
             else :
                 print(element_formula_formset.errors)  
 
-            codes = ElementFormula.objects.filter(element=elem_obj)    
-            print(codes)
+            codes = ElementFormula.objects.filter(element=elem_obj)  
+            for code in codes :
+                formula.append(code.formula_code())
+
+            element_formula = ' '.join(formula)
+            print(type(element_formula))
+            elem_obj.element_formula = element_formula
+            elem_obj.save()
 
             success_msg = make_message(user_lang, True)
             messages.success(request, success_msg)
@@ -126,6 +130,7 @@ def create_new_element(request):
         "page_title": _("Create new Pay"),
         'element_master_form': element_form,
         "element_formula_formset":element_formula_formset,
+        "flag" : 0,
     }
     return render(request, 'create-element2.html', myContext)
 
@@ -147,14 +152,25 @@ def make_message(user_lang, success):
 def update_element_view(request, pk):
     element = get_object_or_404(Element, pk=pk)
     element_master_form = ElementForm(instance=element, user=request.user)
+    element_formula_formset = element_formula_inline(instance=element)
     if request.method == 'POST':
         user_lang = to_locale(get_language())
         element_master_form = ElementForm(
             request.POST, instance=element, user=request.user)
-        if element_master_form.is_valid():
+        element_formula_formset = element_formula_inline(
+            request.POST, instance=element)
+
+        if element_master_form.is_valid() and element_formula_formset.s_valid() :
             element_obj = element_master_form.save(commit=False)
             element_obj.last_update_by = request.user
             element_obj.save()
+
+            # add element_formula
+            objs = element_formula_formset.save(commit=False)
+            for obj in objs:
+                obj.element = elem_obj
+                obj.save()
+
             success_msg = make_message(user_lang, True)
             messages.success(request, success_msg)
             return redirect('element_definition:list-element')
@@ -166,6 +182,8 @@ def update_element_view(request, pk):
     myContext = {
         "page_title": _("Update Element"),
         'element_master_form': element_master_form,
+        "element_formula_formset" :element_formula_formset,
+        "flag" :1,
     }
     return render(request, 'create-element2.html', myContext)
 
