@@ -10,13 +10,18 @@
     <div class="col-md-8">
       <h4 class="c-grey-900">{{page_title|title}}</h4>
     </div>
-    <div class="col-md-4">
-      <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
-        <div class="peer"><a href="{% url 'performance:management' %}" class="btn cur-p btn-primary">{% trans "Back to List" %}</a></div>
+  </div>
 
+  <div class="row" style="margin-right:0px;" >
+    <div class="col-md-12">
+      <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
+        <div class="peer"><a href="{% url 'performance:management' pk=pk%}" class="btn cur-p btn-primary">{% trans "Back to List" %}</a></div>
+        <div class="peer"><a href="{% url 'performance:segment-create' per_id=pk  ret_id=ret_id %}" class="btn cur-p btn-primary">{% trans "Add Segment" %}</a></div>
       </div>
     </div>
   </div>
+  <br>
+
   <div class="row" style="margin-left:0px;">
     <div class="col-md-12">
       <div class="bgc-white bd bdrs-3 p-20 mB-20">
@@ -32,7 +37,7 @@
             </tr>
           </thead>
           <tbody>
-            {% for segment in segment_list %}
+            {% for segment in segments %}
             <tr>
               <td scope="row">{{ forloop.counter }}</td>
               <td>{{ segment.title }}</td>
@@ -42,7 +47,7 @@
               <td class="Actions">
                 <div class="w-100 gap-10 peers">
                   <div class="peer">
-                    <a href="">
+                    <a href="{% url 'performance:segment-edit' pk=segment.id  ret_id=ret_id %}">
                       <button type="button" class="btn cur-p btn-outline-success">
                         <i class="fas fa-user-edit"></i>
                       </button>
@@ -65,7 +70,7 @@
                   <div class="modal-body">
                     <p>{% trans "Are you sure you want to delete " %} {{ segment.title }} ?</p>
                     <button class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
-                    <a href=""  class="btn btn-warning" type="button">{% trans "Delete" %}</a>
+                    <a href="{% url 'performance:segment-delete' pk=segment.id  ret_id=ret_id %}" class="btn btn-warning" type="button">{% trans "Delete" %}</a>
                   </div>
                 </div>
               </div>

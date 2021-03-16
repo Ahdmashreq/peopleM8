@@ -70,5 +70,5 @@ class QuestionForm(forms.ModelForm):
         for field in self.fields:
             self.fields[field].widget.attrs['class'] = 'form-control'
 
-QuestionInline = forms.modelformset_factory(Question, form=QuestionForm, extra=1, can_delete=False)
+QuestionInline = forms.modelformset_factory(Question, form=QuestionForm, extra=0, can_delete=False)
 

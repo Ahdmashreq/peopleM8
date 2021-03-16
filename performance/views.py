@@ -13,21 +13,17 @@ from .forms import *
 from django.db.models import Q
 from company.models import *
 from custom_user.models import User
-
-
-# gehad : createPerformance
+from django.core.exceptions import ObjectDoesNotExist
 
 
 @login_required(login_url='home:user-login')
 def listPerformance(request):
     performances_list = Performance.objects.all()
     context = {
-        'page_title': _('User Companies List'),
+        'page_title': _('Performances List'),
         'performances_list': performances_list,
     }
     return render(request, 'performance-list.html', context)
-
-
 
 @login_required(login_url='home:user-login')
 def createPerformance(request):
@@ -40,14 +36,28 @@ def createPerformance(request):
             performance_obj = performance_form.save(commit=False)
             performance_obj.company = company
             performance_obj.save() 
+
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
+                success_msg = ' {},تم إنشاء التقييم'.format(performance_obj)
+            else:
+                success_msg = 'performance {}, has been updated successfully'.format(
+                    performance_obj)
+            messages.success(request, success_msg)        
             if 'Save and exit' in request.POST:
                     return redirect('performance:performance-list')
             elif 'Save and add' in request.POST:
                     return redirect('performance:rating-create',
                         per_id = performance_obj.id)
         else:
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
+                success_msg = '{} لم يتم الإنشاء '.format(performance_obj)
+            else:
+                success_msg = '{} cannot be created '.format(performance_obj)
+            messages.error(request, success_msg)
             print(performance_form.errors) 
-            return redirect('home:homepage')                 
+            return redirect('performance:performance-list')                 
     else:
         myContext = {
         "page_title": _("create performance"),
@@ -55,7 +65,6 @@ def createPerformance(request):
         "company":company,
     }
     return render(request, 'create-performance.html', myContext)
-
 
 @login_required(login_url='home:user-login')
 def updatePerformance(request, pk):
@@ -91,8 +100,6 @@ def updatePerformance(request, pk):
     }
     return render(request, 'create-performance.html', myContext)   
 
-      
-
 @login_required(login_url='home:user-login')
 def deletePerformance(request, pk):
     performance = Performance.objects.get(id=pk)
@@ -116,11 +123,7 @@ def deletePerformance(request, pk):
     return redirect('performance:performance-list')
 
 
-
-
-
-
-
+############################################################
 
 @login_required(login_url='home:user-login')
 def createPerformanceRating(request,per_id):
@@ -135,15 +138,31 @@ def createPerformanceRating(request,per_id):
                 obj = form.save(commit=False)
                 obj.performance = performance
                 obj.save()
-                print("created")
+                
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
+                success_msg = ' {},تم إنشاء التقييم'.format(obj)
+            else:
+                success_msg = 'rating {}, has been updated successfully'.format(
+                    obj)
+            messages.success(request, success_msg)        
             if 'Save and exit' in request.POST:
-                return redirect('performance:performance-list')
+                return redirect('performance:management',
+                        pk = performance.id)
             elif 'Save and add' in request.POST:
                 return redirect('performance:rating-create',
                         per_id = per_id)
         else:
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
+                success_msg = '{} لم يتم الإنشاء '.format(obj)
+            else:
+                success_msg = '{} cannot be updated '.format(obj)
+            messages.error(request, success_msg)
+
             print(performance_rating_formset.errors) 
-            return redirect('home:homepage')
+            return redirect('performance:rating-create',
+                        per_id = per_id)
                         
     else:
         myContext = {
@@ -156,41 +175,47 @@ def createPerformanceRating(request,per_id):
 
 @login_required(login_url='home:user-login')
 def performanceManagement(request,pk):
+    try:
+        performance = Performance.objects.get(id=pk)
+    except ObjectDoesNotExist as e:
+        return False 
+
     context = {
-        'page_title': _('Performance Management'),
+        'page_title': performance.performance_name,
         'pk' : pk,
     }
     return render(request, 'performance-management.html', context)
 
-
+############################################################################
 
 @login_required(login_url='home:user-login')
-def listRatingPerformance(request, ret_id):
-    page_title =""
-    performances_list =[]
+def listSegment(request,pk, ret_id):
+    try:
+        performance = Performance.objects.get(id=pk)
+    except ObjectDoesNotExist as e:
+        return False
+    page_title = ''
+    segments =[]
     if ret_id == 1:
-        performances_list = PerformanceRating.objects.filter(rating= 'Over all').distinct()
-        page_title: _('Overall Performances')
+        segments = Segment.objects.filter(performance = performance ,rating= 'Over all')
+        page_title = 'Overall Segments'
 
     elif ret_id == 2:
-        performances = PerformanceRating.objects.filter(rating= 'Core')
-        for performance in performances:
-            performance_type = PerformanceRating.objects.filter(performance = performance , rating= 'Core').first()
-            performances_list.append(performance_type)
-        page_title : _('Core Performances')
+        segments = Segment.objects.filter(performance = performance ,rating= 'Core')
+        page_title  = 'Core Segments'
 
     elif ret_id == 3:
-        performances = PerformanceRating.objects.filter(rating= 'Job')
-        for performance in performances:
-            performance_type = PerformanceRating.objects.filter(performance = performance , rating= 'Job').first()
-            performances_list.append(performance_type)
-        page_title : _('Jobrole Performances')
+        segments = Segment.objects.filter(performance = performance ,rating= 'Job')
+        page_title  =  'Jobrole Segments'
+
+
     context = {
         'page_title': page_title,
-        'performances_list': performances_list,
-        'ret_id' : ret_id
+        'segments': segments,
+        'ret_id' : ret_id,
+        'pk' : pk,
     }
-    return render(request, 'rating-performance-list.html', context)
+    return render(request, 'segment-list.html', context)
 
 
 
@@ -224,21 +249,103 @@ def createSegment(request,per_id,ret_id):
                     obj = form.save(commit=False)
                     obj.title = segment_obj
                     obj.save()
-                    print("created")
             else:
                 print(question_formset.errors)         
+                    
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
+                success_msg = ' {},تم إنشاء الشريحة'.format(segment_obj)
+            else:
+                success_msg = 'segment {}, has been updated successfully'.format(
+                        segment_obj)
+            messages.success(request, success_msg)                  
                  
         else:
-            print(segment_form.errors)        
-        return redirect('performance:performance-list')
-                        
-                      
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
+                success_msg = '{} لم يتم الإنشاء '.format(segment_obj)
+            else:
+                success_msg = '{} cannot be updated '.format(segment_obj)
+            messages.error(request, success_msg)
+            print(segment_form.errors)
+
+        return redirect('performance:segments',
+                        pk = per_id,ret_id=ret_id )
+                
     else:
         myContext = {
         "page_title": _("Create Segment"),
         "segment_form": segment_form,
         "question_formset": question_formset,
         "scores": scores,
+        "per_id":per_id,
+        "ret_id":ret_id,
+    }
+    return render(request, 'create-segment.html', myContext)
+
+
+@login_required(login_url='home:user-login')
+def updateSegment(request,pk,ret_id):
+    segment = Segment.objects.get(id=pk)
+    performance = segment.performance
+    segment_form = SegmentForm(instance=segment)
+    question_formset = QuestionInline(queryset=Question.objects.filter(title=segment))
+    rating =""
+    scores = ""
+    if ret_id == 1:
+        rating = 'Over all'
+        scores = PerformanceRating.objects.filter(performance=performance , rating= 'Over all')
+    elif ret_id == 2:
+        rating = 'Core'
+        scores = PerformanceRating.objects.filter(performance=performance , rating= 'Core')
+    elif ret_id == 3:
+        rating = 'Job'   
+        scores = PerformanceRating.objects.filter(performance=performance , rating= 'Job') 
+
+    if request.method == 'POST':
+        segment_form = SegmentForm(request.POST, instance=segment)
+        question_formset = QuestionInline(request.POST ,queryset=Question.objects.filter(title=segment))
+        print(request.POST.values)
+        if segment_form.is_valid() and question_formset.is_valid():
+            segment_obj = segment_form.save(commit=False)
+            segment_obj.performance = performance
+            segment_obj.rating = rating
+            segment_obj.save() 
+
+            for form in question_formset:
+                obj = form.save(commit=False)
+                obj.title = segment_obj
+                obj.save()
+
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
+                success_msg = ' {},تم تعديل الشريحة'.format(segment_obj)
+            else:
+                success_msg = 'segment {}, has been updated successfully'.format(
+                        segment_obj)
+            messages.success(request, success_msg) 
+                
+        else:
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
+                success_msg = '{} لم يتم الإنشاء '.format(segment_obj)
+            else:
+                success_msg = '{} cannot be updated '.format(segment_obj)
+            messages.error(request, success_msg)
+            print(segment_form.errors) 
+            print(question_formset.errors) 
+            
+        return redirect('performance:segments',
+                        pk = performance.id,ret_id=ret_id )
+                
+    else:
+        myContext = {
+        "page_title": _("Update Segment"),
+        "segment_form": segment_form,
+        "question_formset": question_formset,
+        "scores": scores,
+        "per_id":performance.id,
+        "ret_id":ret_id,
     }
     return render(request, 'create-segment.html', myContext)
 
@@ -246,23 +353,25 @@ def createSegment(request,per_id,ret_id):
 
 
 @login_required(login_url='home:user-login')
-def listSegmentperType(request, ret_id):
-    page_title =""
-    segment_list =[]
-    questions = Question.objects.all()
-    if ret_id == 1:
-        segment_list = Segment.objects.filter(rating= 'Over all')
-        page_title: _('Overall Segments')
-    elif ret_id == 2:
-        segment_list = Segment.objects.filter(rating= 'Core')
-        page_title : _('Core Segments')
-    elif ret_id == 3:
-        segment_list = Segment.objects.filter(rating= 'Job')
-        page_title : _('Jobrole Segments')
-    context = {
-        'page_title': page_title,
-        'segment_list': segment_list,
-        'questions': questions,
-        'ret_id' : ret_id
-    }
-    return render(request, 'segment-list.html', context)
+def deleteSegment(request, pk, ret_id):
+    segment = Segment.objects.get(id=pk)
+    performance = segment.performance
+    try:
+        segment.delete()
+        user_lang = to_locale(get_language())
+        if user_lang == 'ar':
+            success_msg = ' {},تم حذف الشريحة '.format(segment)
+        else:
+            success_msg = 'segment {} was deleted successfully'.format(
+                segment)
+        messages.success(request, success_msg)
+    except Exception as e:
+        user_lang = to_locale(get_language())
+        if user_lang == 'ar':
+            success_msg = '{} لم يتم حذف '.format(segment)
+        else:
+            success_msg = '{} cannot be deleted '.format(segment)
+        messages.error(request, success_msg)
+        raise e
+    return redirect('performance:segments',
+                        pk = performance.id,ret_id=ret_id )

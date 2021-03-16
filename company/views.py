@@ -411,7 +411,7 @@ def export_department_data(request):
     if request.method == 'POST':
         file_format = request.POST['file-format']
         department_resource = DepartmentResource()
-        #queryset = Department.objects.all(request.user)
+        #queryset = Department.objects.none()
         dataset = department_resource.export()
 
         if file_format == 'CSV':

@@ -8,7 +8,7 @@
 <div class="row" style="margin-left:0px;">
   <div class="col-md-12">
     <div class="bgc-white bd bdrs-3 p-20 mB-20">
-      <table class="table table-striped table-bordered" cellspacing="0" id="dataTable" width="100%">
+      <table class="table table-striped table-bordered" cellspacing="0"  width="100%">
         <thead>
           <tr>
             <th>{% trans "Score" %}</th>
@@ -29,6 +29,8 @@
 </div>
 
   <div class="container-fluid">
+   
+
     <form method="POST" id="Myform" enctype="multipart/form-data">
       {% csrf_token %}
     <div class="row">
@@ -38,6 +40,9 @@
       <div class="col-md-15">
         <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
           <div class="peer"><button type="submit" onclick="change_x()" id="button" class="btn cur-p btn-primary"  name ='Save and exit'>{% trans "Save" %}</button></div>
+          <div class="peer"><a href="{% url 'performance:segments' pk=per_id  ret_id=ret_id %}"  onclick="change_x()" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a></div>
+
+
         </div>
       </div>
     </div>
@@ -99,6 +104,10 @@
           <div class="form-group col-md-6">
             {{ form.help_text}}
           </div>
+          <div class="hidden">
+            {{ form.id}}
+          </div>
+
           </div>
           {% endfor %}
           </div>
