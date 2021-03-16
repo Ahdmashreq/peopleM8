@@ -74,6 +74,18 @@
                 </div>
               </div>
             </div>
+            {%if flage == 1%}
+            <div class="form-group col-md-4">
+              <label class="fw-500">{% trans "Termination Date" %}</label>
+              <div class="timepicker-input input-icon form-group">
+                <div class="input-group">
+                  <div class="input-group-addon bgc-white bd bdwR-0">
+                    <i class="ti-calendar"></i></div>
+                  {{ emp_form.terminationdate}}
+                </div>
+              </div>
+            </div>
+            {%endif%}
             <div class="form-group col-md-4">
               <label for="inputEmail4">{% trans "Email" %}</label>
               {{ emp_form.email}}

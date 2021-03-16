@@ -121,8 +121,10 @@ def send_allowance_notification(request):
 
 @login_required(login_url='home:user-login')
 def service_approve(request, service_id,redirect_to):
+    employee = Employee.objects.get(user=request.user)
     instance = get_object_or_404(Bussiness_Travel, id=service_id)
     instance.status = 'Approved'
+    instance.approval = employee
     instance.is_approved = True
     instance.save(update_fields=['status'])
     return redirect(redirect_to)
@@ -130,9 +132,11 @@ def service_approve(request, service_id,redirect_to):
 
 @login_required(login_url='home:user-login')
 def service_unapprove(request, service_id,redirect_to):
+    employee = Employee.objects.get(user=request.user)
     instance = get_object_or_404(Bussiness_Travel, id=service_id)
     instance.status = 'Rejected'
     instance.is_approved = False
+    instance.approval = employee
     instance.save(update_fields=['status'])
     return redirect(redirect_to)
 
@@ -227,8 +231,10 @@ def purchase_request_update(request, id):
 
 @login_required(login_url='home:user-login')
 def purchase_request_approve(request, order_id):
+    employee = Employee.objects.get(user=request.user)
     instance = Purchase_Request.objects.get(pk=order_id)
     instance.status = 'Approved'
+    instance.approval = employee
     # instance.is_approved = True
     instance.save(update_fields=['status'])
     return redirect('home:homepage')
@@ -236,8 +242,10 @@ def purchase_request_approve(request, order_id):
 
 @login_required(login_url='home:user-login')
 def purchase_request_unapprove(request, order_id):
+    employee = Employee.objects.get(user=request.user)
     instance = Purchase_Request.objects.get(pk=order_id)
     instance.status = 'Rejected'
+    instance.approval = employee
     # instance.is_approved = False
     instance.save(update_fields=['status'])
     return redirect('home:homepage')

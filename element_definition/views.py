@@ -9,9 +9,9 @@ from django.core.management.commands import loaddata
 from company.models import Department, Grade, Position, Job
 from element_definition.forms import (ElementMasterForm, ElementMasterInlineFormset, ElementBatchForm,
                                       ElementLinkForm, CustomPythonRuleForm, ElementForm, SalaryStructureForm,
-                                      ElementInlineFormset)
+                                      ElementInlineFormset , ElementFormulaForm , element_formula_model)
 from element_definition.models import (
-    Element_Batch, Element_Master, Element_Batch_Master, Element_Link, Element, SalaryStructure, StructureElementLink)
+    Element_Batch, Element_Master, Element_Batch_Master, Element_Link, Element, SalaryStructure, StructureElementLink, ElementFormula)
 from employee.models import Employee, Employee_Element, JobRoll, EmployeeStructureLink
 from manage_payroll.models import Payroll_Master
 from defenition.models import LookupDet
@@ -85,10 +85,13 @@ def generate_element_code(word):
 
 def create_new_element(request):
     element_form = ElementForm(user=request.user)
+    element_formula_formset = element_formula_model(queryset=ElementFormula.objects.none())
     rows_number = Element_Master.objects.all().count()
+    formula =[]
     if request.method == "POST":
         user_lang = to_locale(get_language())
         element_form = ElementForm(request.POST, user=request.user)
+        element_formula_formset = element_formula_model(request.POST)
         if element_form.is_valid():
             elem_obj = element_form.save(commit=False)
             element_code = getDBSec(
@@ -97,6 +100,23 @@ def create_new_element(request):
             elem_obj.created_by = request.user
             elem_obj.enterprise = request.user.company
             elem_obj.save()
+            if element_formula_formset.is_valid():
+                # add element_formula
+                objs = element_formula_formset.save(commit=False)
+                for obj in objs:
+                    obj.element = elem_obj
+                    obj.save()
+            else :
+                print(element_formula_formset.errors)  
+
+            codes = ElementFormula.objects.filter(element=elem_obj)  
+            for code in codes :
+                formula.append(code.formula_code())
+
+            element_formula = ' '.join(formula)
+            elem_obj.element_formula = element_formula
+            elem_obj.save()
+
             success_msg = make_message(user_lang, True)
             messages.success(request, success_msg)
             return redirect('element_definition:list-element')
@@ -104,10 +124,11 @@ def create_new_element(request):
             failure_msg = make_message(user_lang, False)
             messages.error(request, failure_msg)
             print(element_form.errors)
-
+            print(element_formula_formset.errors)
     myContext = {
         "page_title": _("Create new Pay"),
         'element_master_form': element_form,
+        "element_formula_formset":element_formula_formset,
     }
     return render(request, 'create-element2.html', myContext)
 
@@ -129,14 +150,25 @@ def make_message(user_lang, success):
 def update_element_view(request, pk):
     element = get_object_or_404(Element, pk=pk)
     element_master_form = ElementForm(instance=element, user=request.user)
+    element_formula_formset = element_formula_model(queryset=ElementFormula.objects.filter(element=element))
     if request.method == 'POST':
         user_lang = to_locale(get_language())
         element_master_form = ElementForm(
             request.POST, instance=element, user=request.user)
-        if element_master_form.is_valid():
+        element_formula_formset = element_formula_model(
+            request.POST, queryset=ElementFormula.objects.filter(element=element))
+
+        if element_master_form.is_valid() and element_formula_formset.s_valid() :
             element_obj = element_master_form.save(commit=False)
             element_obj.last_update_by = request.user
             element_obj.save()
+
+            # add element_formula
+            objs = element_formula_formset.save(commit=False)
+            for obj in objs:
+                obj.element = elem_obj
+                obj.save()
+
             success_msg = make_message(user_lang, True)
             messages.success(request, success_msg)
             return redirect('element_definition:list-element')
@@ -148,6 +180,7 @@ def update_element_view(request, pk):
     myContext = {
         "page_title": _("Update Element"),
         'element_master_form': element_master_form,
+        "element_formula_formset" :element_formula_formset,
     }
     return render(request, 'create-element2.html', myContext)
 

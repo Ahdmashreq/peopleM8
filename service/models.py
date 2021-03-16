@@ -23,8 +23,8 @@ class Bussiness_Travel(models.Model):
     # ##############################################################################################
     emp = models.ForeignKey(Employee, related_name='allowance_employee', on_delete=models.CASCADE, blank=True,
                             null=True, verbose_name='Employee Name')
-    manager = models.ForeignKey(Employee, related_name='allowance_manager', on_delete=models.CASCADE, blank=True,
-                                null=True, verbose_name='Manager Name')
+    approval = models.ForeignKey(Employee, related_name='approval_user', on_delete=models.CASCADE, blank=True,
+                                null=True) 
     date_requested = models.DateField(auto_now_add=True, editable=False, verbose_name='Date Requested')
     department = models.ForeignKey(Department, related_name='allowance_department', on_delete=models.CASCADE,
                                    blank=True, null=True, verbose_name='Department')
@@ -64,6 +64,8 @@ class Bussiness_Travel(models.Model):
 
 
 class Purchase_Request(models.Model):
+    approval = models.ForeignKey(Employee, related_name='approval_emp', on_delete=models.CASCADE, blank=True,
+                                null=True) 
     payment_method_list = (('C', 'Cash'), ('V', 'Visa'))
     # ##############################################################################################
     order_number = models.CharField(max_length=100, blank=True, null=True)
@@ -89,10 +91,10 @@ class Purchase_Request(models.Model):
 
 class Purchase_Item(models.Model):
     purchase_request = models.ForeignKey(Purchase_Request, on_delete=models.CASCADE)
-    item_description = models.CharField(max_length=250, blank=False, null=False , default="handel error")
-    vendor_name = models.CharField(max_length=250, blank=False, null=False , default="handel error")
-    unit_price = models.PositiveIntegerField(blank=False, null=False , default=1)
-    qnt = models.PositiveIntegerField(blank=False, null=False , default= 1)
+    item_description = models.CharField(max_length=250, blank=False, null=False)
+    vendor_name = models.CharField(max_length=250, blank=False, null=False)  # amira, remove all default values
+    unit_price = models.PositiveIntegerField(blank=True, null=True)  # amira, change null/blank value to True
+    qnt = models.PositiveIntegerField(blank=False, null=False)
 
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                                    blank=True, null=True, related_name='purchase_item_created_by')
@@ -113,9 +115,12 @@ def business_request_handler(sender, instance, created, update_fields, **kwargs)
            or send a notification to the person who created the Travel, if his request is processed .
     """
     requestor_emp = instance.emp
+    approval_emp = instance.approval
+    print(approval_emp)
     required_job_roll = JobRoll.objects.get(emp_id = instance.emp.id, end_date__isnull=True)
     if required_job_roll.manager:
-        manager_emp = required_job_roll.manager.user
+        manager_user = required_job_roll.manager.user
+        manager_emp = required_job_roll.manager
     else:
         hr_users = User.objects.filter(groups__name='HR')
         manager_emp = hr_users
@@ -134,14 +139,15 @@ def business_request_handler(sender, instance, created, update_fields, **kwargs)
         notify.send(sender=manager_emp,
                     recipient=requestor_emp.user,
                     verb=instance.status, action_object=instance,
-                    description="{employee} has {status} your Business Travel request".format(employee=manager_emp,
+                    description="{employee} has {status} your Business Travel request".format(employee=approval_emp,
                                                                                               status=instance.status),
                     level='info',
                     data=data)
+        print(manager_emp)            
 
         #  update the old notification for the manager with the new status
         content_type = ContentType.objects.get_for_model(Bussiness_Travel)
-        old_notification = manager_emp.notifications.filter(action_object_content_type=content_type,
+        old_notification = manager_user.notifications.filter(action_object_content_type=content_type,
                                                                  action_object_object_id=instance.id)
         if len(old_notification) > 0:
             old_notification[0].data['data']['status'] = instance.status
@@ -158,6 +164,7 @@ def purchase_request_handler(sender, instance, created, update_fields, **kwargs)
        or send a notification to the person who created the request, if his request is processed .
     """
     requestor_emp = instance.ordered_by
+    approval_emp = instance.approval
     required_job_roll = JobRoll.objects.get(emp_id = instance.ordered_by, end_date__isnull=True)
     if required_job_roll.manager:
         manager_emp = required_job_roll.manager.user
@@ -180,7 +187,7 @@ def purchase_request_handler(sender, instance, created, update_fields, **kwargs)
         notify.send(sender=manager_emp,  # Amira: remove user (manager_emp.user) as User has no attr user
                     recipient=instance.ordered_by.user,
                     verb=instance.status, action_object=instance,
-                    description="{employee} has {status} your purchase request".format(employee=manager_emp,
+                    description="{employee} has {status} your purchase request".format(employee=approval_emp,
                                                                                        status=instance.status),
                     level='info', data=data)
 

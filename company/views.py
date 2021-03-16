@@ -1181,8 +1181,10 @@ def listYearsView(request):
 
 @login_required(login_url='home:user-login')
 def list_working_hours_deductions_view(request):
+    print(request.user.company.id)
     working_deductions_list = Working_Hours_Deductions_Policy.objects.filter(
-        working_days_policy__enterprise=request.user.company)
+        working_days_policy__enterprise_id=request.user.company.id)
+    print(working_deductions_list)
     working_hrs_deduction_form = WorkingHoursDeductionForm()
     context = {
         "page_title": _("Work Hours Deduction Policy"),
@@ -1202,7 +1204,8 @@ def create_working_hours_deductions_view(request):
             try:
                 formset_obj = working_deductions_formset.save(commit=False)
                 for form in formset_obj:
-                    form.Working_Days_Policy_id = company_working_policy.id
+                    
+                    form.working_days_policy_id = company_working_policy.id
                     form.created_by = request.user
                     form.save()
                 messages.success(request, _('Working Hours Deductions Created Successfully'))

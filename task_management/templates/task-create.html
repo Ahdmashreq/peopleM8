@@ -6,7 +6,7 @@
 {% block body%}
 
 <div class="container-fluid">
-  <form method="post">
+  <form method="post" id="tasks_form" data-tasks-url="{% url 'task_management:ajax-load-tasks' %}">
     {% csrf_token %}
     <!--  -->
     <div class="row">
@@ -16,10 +16,10 @@
       <div class="col-md-4">
         <div class="gap-10 peers push-right">
           <div class="peer">
-            <button type="submit" class="btn cur-p btn-primary">{% trans "Save" %}</button>
+            <button type="submit" onclick="change_x()" class="btn cur-p btn-primary">{% trans "Save" %}</button>
           </div>
           <div class="peer">
-            <a href="{% url 'task_management:task-list' %}" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
+            <a href="{% url 'task_management:task-list' %}" onclick="change_x()" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a>
           </div>
         </div>
       </div>
@@ -30,7 +30,14 @@
           <div class="form-row">
             <div class="form-group col-md-4">
               <label>{{ task_form.project.label }}</label>
-              {{ task_form.project }}
+              <div class="input-group">
+                {{ task_form.project }}
+                <a href="{% url 'task_management:project-create' %}" class="btn cur-p btn-primary"
+                   data-toggle="tooltip" data-placement="bottom" title="{% trans 'Create New Project' %}">
+                  <i class="fas fa-plus-square"></i>
+                </a>
+              </div>
+
             </div>
             <div class="form-group col-md-4">
               <label>{{ task_form.task_name.label }}</label>
@@ -109,14 +116,55 @@
     </div>
   </form>
 </div>
-<script>
-  window.addEventListener("beforeunload", function (e) {
-    var confirmationMessage = 'It looks like you have been editing something. '
-                            + 'If you leave before saving, your changes will be lost.';
 
-    (e || window.event).returnValue = confirmationMessage; //Gecko + IE
-    return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
-});
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script>
+<!--  ajax request to filter parent tasks according to project by amira -->
+
+  $("#id_project").change(function(){
+    var url = $("#tasks_form").attr("data-tasks-url");
+     var project_id = $(this).val();
+    $.ajax({
+      url: url,
+      data: {
+        'project': project_id
+      },
+      success: function(result){
+      console.log('success')
+        $('#id_parent_task').html(result);
+      },
+      error: function(result){
+        console.log('An Error Occurred while loading tasks');
+        alert('An Error Occurred while loading tasks');
+      }
+    });
+  });
+</script>
+<script>
+ isDirty = true
+ x = false
+ console.log(isDirty)
+ document.getElementById("tasks_form").onchange = function() {myFunction()};
+
+function myFunction() {
+  x= true
+}
+
+ function change_x()
+ {isDirty = false
+console.log(isDirty)}
+
+ window.onbeforeunload = function () {
+            if (isDirty && x ) {
+                return "There are unsaved data.";
+                console.log(isDirty)
+            }
+            return undefined;
+        }
 </script>
 
+
+
 {% endblock body%}
+
+

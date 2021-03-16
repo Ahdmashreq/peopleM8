@@ -139,7 +139,7 @@ def copy_element_values():
 @login_required(login_url='home:user-login')
 def listEmployeeView(request):
     emp_list = Employee.objects.filter(enterprise=request.user.company).filter(
-        (Q(end_date__gt=date.today()) | Q(end_date__isnull=True)))
+        (Q(emp_end_date__gt=date.today()) | Q(emp_end_date__isnull=True)))
     emp_job_roll_list = JobRoll.objects.filter(
         emp_id__enterprise=request.user.company)
     myContext = {
@@ -153,7 +153,7 @@ def listEmployeeView(request):
 @login_required(login_url='home:user-login')
 def listEmployeeCardView(request):
     emp_list = Employee.objects.filter(enterprise=request.user.company).filter(
-        (Q(end_date__gt=date.today()) | Q(end_date__isnull=True)))
+        (Q(emp_end_date__gt=date.today()) | Q(emp_end_date__isnull=True)))
     myContext = {
         "page_title": _("List employees"),
         "emp_list": emp_list,
@@ -168,7 +168,7 @@ def viewEmployeeView(request, pk):
     all_jobRoll = JobRoll.objects.filter(emp_id=pk).order_by('-id')
     all_payment = Payment.objects.filter(emp_id=pk, end_date__isnull=True).order_by('-id')
     all_elements = Employee_Element.objects.filter(
-        emp_id=pk, end_date__isnull=True)
+        emp_id=pk, emp_end_date__isnull=True)
     myContext = {
         "page_title": _("view employee"),
         "required_employee": required_employee,
@@ -240,6 +240,7 @@ def updateEmployeeView(request, pk):
 
         if emp_form.is_valid() and jobroll_form.is_valid() and payment_form.is_valid() and files_formset.is_valid() and depandance_formset.is_valid():
             emp_obj = emp_form.save(commit=False)
+            print(emp_form)
             emp_obj.created_by = request.user
             emp_obj.last_update_by = request.user
             emp_obj.save()
@@ -319,7 +320,8 @@ def updateEmployeeView(request, pk):
 
 @login_required(login_url='home:user-login')
 def create_link_employee_structure(request, pk):
-    required_employee = get_object_or_404(Employee, pk=pk)
+    required_jobRoll = JobRoll.objects.get(id = pk)
+    required_employee = get_object_or_404(Employee, pk=required_jobRoll.emp_id.id)
     emp_link_structure_form = EmployeeStructureLinkForm()
     if request.method == 'POST':
         emp_link_structure_form = EmployeeStructureLinkForm(request.POST)
@@ -342,7 +344,8 @@ def create_link_employee_structure(request, pk):
 
 @login_required(login_url='home:user-login')
 def update_link_employee_structure(request, pk):
-    required_employee = get_object_or_404(Employee, pk=pk)
+    required_jobRoll = JobRoll.objects.get(id = pk)
+    required_employee = get_object_or_404(Employee, pk=required_jobRoll.emp_id.id)
     employee_salary_structure = EmployeeStructureLink.objects.get(
         employee=required_employee)
     emp_link_structure_form = EmployeeStructureLinkForm(
@@ -379,8 +382,8 @@ def deleteEmployeeView(request, pk):
 
         emp_form = EmployeeForm(instance=required_employee)
         end_date_obj = emp_form.save(commit=False)
-        end_date_obj.end_date = date.today()
-        end_date_obj.save(update_fields=['end_date'])
+        end_date_obj.emp_end_date = date.today()
+        end_date_obj.save(update_fields=['emp_end_date'])
 
         user_lang = to_locale(get_language())
         if user_lang == 'ar':
@@ -552,4 +555,3 @@ def create_employee_element(request, job_id):
             print(emp_element_form.errors)
         return redirect('employee:update-employee',
          pk = required_jobRoll.id)
-

@@ -53,6 +53,8 @@ class Employee(models.Model):
                                      verbose_name=_('Birthdate'))
     hiredate = models.DateField(
         auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Hire Date'))
+    terminationdate = models.DateField(
+        auto_now=False, auto_now_add=False, verbose_name=_('Terminaton Date'),blank=True, null=True)    
     email = models.EmailField(blank=True, null=True, verbose_name=_('email'))
     picture = models.ImageField(
         upload_to = "avatars/",null=True, blank=True, verbose_name=_('picture'))
@@ -88,9 +90,9 @@ class Employee(models.Model):
     medical_number = models.CharField(
         max_length=30, blank=True, null=True, verbose_name=_('Medical Number'))
     medical_date = models.DateField(blank=True, null=True, verbose_name=_('Medical Date'))
-    start_date = models.DateField(
+    emp_start_date = models.DateField(
         auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
-    end_date = models.DateField(
+    emp_end_date = models.DateField(
         auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=_('End Date'))
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
                                    related_name="emp_created_by")
