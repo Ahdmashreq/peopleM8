@@ -5,7 +5,7 @@ from crispy_forms.helper import FormHelper
 from datetime import date
 from element_definition.models import (Element_Master,
                                        Element_Batch, Element_Batch_Master, Element_Link, Custom_Python_Rule, Element,
-                                       SalaryStructure, StructureElementLink)
+                                       SalaryStructure, StructureElementLink, ElementFormula)
 from company.models import Department, Job, Grade, Position
 from manage_payroll.models import Payroll_Master
 from defenition.models import LookupType, LookupDet
@@ -22,18 +22,7 @@ common_items_to_execlude = ('id',
                             'attribute13', 'attribute14', 'attribute15',
                             )
 
-Arithmetic_Signs= [
-    ('%', '%'),
-    ('+', '+'),
-    ('-', '-'),
-    ('*', '*'),
-    ('/', '/'),
-    ]
-
-
 class ElementForm(forms.ModelForm):
-    percentage = forms.DecimalField(max_digits=200, decimal_places=20, initial=0)
-    arithmetic_signs = forms.CharField(widget=forms.Select(choices=Arithmetic_Signs))
     class Meta:
         model = Element
         exclude = common_items_to_execlude
@@ -56,6 +45,22 @@ class ElementForm(forms.ModelForm):
             else:
                 self.fields[field].widget.attrs['class'] = 'form-control'
         self.fields['code'].disabled = True
+
+
+class ElementFormulaForm(forms.ModelForm):
+    class Meta:
+        model = ElementFormula
+        exclude = ('element',)
+
+    def __init__(self, *args, **kwargs):
+        super(ElementFormulaForm, self).__init__(*args, **kwargs)
+        #self.fields['arithmetic_signs_additional'].widget.attrs['onchange'] = 'add_line(this)'
+        for field in self.fields:
+            self.fields[field].widget.attrs['class'] = 'form-control'
+
+element_formula_model = forms.modelformset_factory(ElementFormula, form=ElementFormulaForm, extra=1, can_delete=False)
+
+
 
 
 class SalaryStructureForm(forms.ModelForm):

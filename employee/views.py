@@ -240,6 +240,7 @@ def updateEmployeeView(request, pk):
 
         if emp_form.is_valid() and jobroll_form.is_valid() and payment_form.is_valid() and files_formset.is_valid() and depandance_formset.is_valid():
             emp_obj = emp_form.save(commit=False)
+            print(emp_form)
             emp_obj.created_by = request.user
             emp_obj.last_update_by = request.user
             emp_obj.save()
