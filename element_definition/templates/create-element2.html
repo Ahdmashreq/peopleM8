@@ -73,14 +73,7 @@
               <label>{{ element_master_form.based_on.label }}</label>
               {{ element_master_form.based_on }}
             </div>
-            {% if flag != 0 %}
-            {% if element_master_form.element_formula != null %}
-            <div class="form-group col-md-2" id="formula">
-              <label>formula</label>
-              {{ element_master_form.element_formula }}
-            </div>
-            {% endif %}
-            {% endif %}
+            
 
 <div id="formula-form">
   <form method="post" id="form_formula">
@@ -149,8 +142,6 @@
   </form>
   </div>
 
-  
-
        
 
 
@@ -190,6 +181,27 @@
       document.getElementById('amount_type').style.display = 'none';
       document.getElementById('fixed_amount').style.display = 'none';
       $('#formula-form').css('display', 'none')
+
+
+      element_type= document.getElementById('id_element_type').value 
+      if (element_type == "formula"){
+        $('#formula-form').css('display', 'block')
+        document.getElementById('based_on').style.display = 'none';
+        document.getElementById('amount_type').style.display = 'none';
+        document.getElementById('fixed_amount').style.display = 'none';
+      }
+      else if(element_type= "payslip based"){
+      $('#formula-form').css('display', 'none')
+      document.getElementById('based_on').style.display = 'none';
+      document.getElementById('fixed_amount').style.display = 'none';
+      document.getElementById('amount_type').style.display = 'block';
+      }
+      else if (element_type === 'global value') {
+      $('#formula-form').css('display', 'none')
+      document.getElementById('based_on').style.display = 'none';
+      document.getElementById('fixed_amount').style.display = 'block';
+      document.getElementById('amount_type').style.display = 'block';
+    }
   })
 
 
@@ -247,21 +259,6 @@
 </script>
 
 
-<script>
-  $('#id_based_on').change(function() {
-    base = $(this).val();
-    var sign = $('#id_arithmetic_signs').val();
-    var percentage = $('#id_percentage').val();
-
-    sign_string = String(sign)
-    percentage_string = String(percentage)
-    base_string = String(base)
-    code = percentage_string + " " + sign_string + " " + base_string
-    formula.innerh = code
-
-    document.getElementById("id_element_formula").innerHTML = code;
-  });
-</script>
 
 
 

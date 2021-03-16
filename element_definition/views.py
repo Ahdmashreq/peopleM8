@@ -9,7 +9,7 @@ from django.core.management.commands import loaddata
 from company.models import Department, Grade, Position, Job
 from element_definition.forms import (ElementMasterForm, ElementMasterInlineFormset, ElementBatchForm,
                                       ElementLinkForm, CustomPythonRuleForm, ElementForm, SalaryStructureForm,
-                                      ElementInlineFormset , ElementFormulaForm , element_formula_inline)
+                                      ElementInlineFormset , ElementFormulaForm , element_formula_model)
 from element_definition.models import (
     Element_Batch, Element_Master, Element_Batch_Master, Element_Link, Element, SalaryStructure, StructureElementLink, ElementFormula)
 from employee.models import Employee, Employee_Element, JobRoll, EmployeeStructureLink
@@ -85,13 +85,13 @@ def generate_element_code(word):
 
 def create_new_element(request):
     element_form = ElementForm(user=request.user)
-    element_formula_formset = element_formula_inline(queryset=ElementFormula.objects.none())
+    element_formula_formset = element_formula_model(queryset=ElementFormula.objects.none())
     rows_number = Element_Master.objects.all().count()
     formula =[]
     if request.method == "POST":
         user_lang = to_locale(get_language())
         element_form = ElementForm(request.POST, user=request.user)
-        element_formula_formset = element_formula_inline(request.POST)
+        element_formula_formset = element_formula_model(request.POST)
         if element_form.is_valid():
             elem_obj = element_form.save(commit=False)
             element_code = getDBSec(
@@ -114,7 +114,6 @@ def create_new_element(request):
                 formula.append(code.formula_code())
 
             element_formula = ' '.join(formula)
-            print(type(element_formula))
             elem_obj.element_formula = element_formula
             elem_obj.save()
 
@@ -130,7 +129,6 @@ def create_new_element(request):
         "page_title": _("Create new Pay"),
         'element_master_form': element_form,
         "element_formula_formset":element_formula_formset,
-        "flag" : 0,
     }
     return render(request, 'create-element2.html', myContext)
 
@@ -152,13 +150,13 @@ def make_message(user_lang, success):
 def update_element_view(request, pk):
     element = get_object_or_404(Element, pk=pk)
     element_master_form = ElementForm(instance=element, user=request.user)
-    element_formula_formset = element_formula_inline(instance=element)
+    element_formula_formset = element_formula_model(queryset=ElementFormula.objects.filter(element=element))
     if request.method == 'POST':
         user_lang = to_locale(get_language())
         element_master_form = ElementForm(
             request.POST, instance=element, user=request.user)
-        element_formula_formset = element_formula_inline(
-            request.POST, instance=element)
+        element_formula_formset = element_formula_model(
+            request.POST, queryset=ElementFormula.objects.filter(element=element))
 
         if element_master_form.is_valid() and element_formula_formset.s_valid() :
             element_obj = element_master_form.save(commit=False)
@@ -183,7 +181,6 @@ def update_element_view(request, pk):
         "page_title": _("Update Element"),
         'element_master_form': element_master_form,
         "element_formula_formset" :element_formula_formset,
-        "flag" :1,
     }
     return render(request, 'create-element2.html', myContext)
 
