@@ -132,7 +132,7 @@ def admin_home_page(request):
     Display total employees and today's absence and approved leaves in dashboard
     '''
     emp_list = Employee.objects.filter(enterprise=request.user.company).filter(
-        (Q(end_date__gt=date.today()) | Q(end_date__isnull=True)))
+        (Q(emp_end_date__gt=date.today()) | Q(emp_end_date__isnull=True)))
     num_of_emp = len(emp_list) 
     list_leaves = Leave.objects.filter(status='Approved')
     now_date = datetime.date(datetime.now())
