@@ -90,9 +90,9 @@ class Employee(models.Model):
     medical_number = models.CharField(
         max_length=30, blank=True, null=True, verbose_name=_('Medical Number'))
     medical_date = models.DateField(blank=True, null=True, verbose_name=_('Medical Date'))
-    start_date = models.DateField(
+    emp_start_date = models.DateField(
         auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
-    end_date = models.DateField(
+    emp_end_date = models.DateField(
         auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=_('End Date'))
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
                                    related_name="emp_created_by")

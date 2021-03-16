@@ -118,7 +118,6 @@ def createSalaryView(request):
                     (Q(start_date__lte=date.today()) & (
                             Q(end_date__gt=date.today()) | Q(end_date__isnull=True)))).values('element_id')
             else:
-                user_lang = user_lang = to_locale(get_language())
                 elements = Employee_Element.objects.filter(element_id=sal_obj.element).filter(
                     Q(start_date__lte=date.today()) & (
                         (Q(end_date__gt=date.today()) | Q(end_date__isnull=True)))).values('element_id')
@@ -137,55 +136,64 @@ def createSalaryView(request):
             for x in emps:
                 emp_elements = Employee_Element.objects.filter(element_id__in=elements, emp_id=x).values('element_id')
                 sc = Salary_Calculator(company=request.user.company, employee=x, elements=emp_elements)
-                # calculate all furmulas elements for 'x' employee
-                # Employee_Element.set_formula_amount(x)
                 try:
                     emp = EmployeeStructureLink.objects.get(employee=x)
                     structure = emp.salary_structure.structure_type
                     #print(structure)
-                except Exception as e:
+                except Exception as e: 
                     employees_dont_have_structurelink.append(x.emp_name)
                     employees =  ', '.join(employees_dont_have_structurelink) + ': dont have structurelink, add structurelink to them and create again'
-                #gross= sc.net_to_gross()
-                    if len(employees_dont_have_structurelink) == 0:
-                        if structure == 'Gross to Net' :
-                            s = Salary_elements(
-                                emp=x,
-                                elements_type_to_run=sal_obj.elements_type_to_run,
-                                salary_month=sal_obj.salary_month,
-                                salary_year=sal_obj.salary_year,
-                                run_date=sal_obj.run_date,
-                                created_by=request.user,
-                                incomes=sc.calc_emp_income(),
-                                element=element,
-                                insurance_amount=sc.calc_employee_insurance(),
-                                # TODO need to check if the tax is applied
-                                tax_amount=sc.calc_taxes_deduction(),
-                                deductions=sc.calc_emp_deductions_amount(),
-                                gross_salary=sc.calc_gross_salary(),
-                                net_salary=sc.calc_net_salary(),
+                
+                #print(total_absence_value)
+                #print(absence_value)
+                # calculate all furmulas elements for 'x' employee
+                # Employee_Element.set_formula_amount(x)
+                
+                if len(employees_dont_have_structurelink) == 0:
+                    absence_value_obj = EmployeeAbsence.objects.filter(employee_id=x.id).filter(end_date__year=sal_obj.salary_year).filter(end_date__month=sal_obj.salary_month)
+                    total_absence_value = 0
+                    for i in absence_value_obj :
+                        total_absence_value+= i.value
+                    if structure == 'Gross to Net' :
+                        s = Salary_elements(
+                            emp=x,
+                            elements_type_to_run=sal_obj.elements_type_to_run,
+                            salary_month=sal_obj.salary_month,
+                            salary_year=sal_obj.salary_year,
+                            run_date=sal_obj.run_date,
+                            created_by=request.user,
+                            incomes=sc.calc_emp_income(),
+                            element=element,
+                            insurance_amount=sc.calc_employee_insurance(),
+                            # TODO need to check if the tax is applied
+                            tax_amount=sc.calc_taxes_deduction(),
+                            deductions=sc.calc_emp_deductions_amount(),
+                            gross_salary=sc.calc_gross_salary(),
+                            net_salary=sc.calc_net_salary(),
+                            penalties = total_absence_value,
 
-                            )
-                        else :
-
-                            s = Salary_elements(
-                                emp=x,
-                                elements_type_to_run=sal_obj.elements_type_to_run,
-                                salary_month=sal_obj.salary_month,
-                                salary_year=sal_obj.salary_year,
-                                run_date=sal_obj.run_date,
-                                created_by=request.user,
-                                incomes=sc.calc_emp_income(),
-                                element=element,
-                                insurance_amount=sc.calc_employee_insurance(),
-                                # TODO need to check if the tax is applied
-                                tax_amount=sc.net_to_tax(),
-                                deductions=sc.calc_emp_deductions_amount(),
-                                gross_salary=sc.net_to_gross(),
-                                net_salary=sc.calc_basic_net(),
-                            )
-
-                        s.save()
+                        )
+                    else :
+                        
+                        s = Salary_elements(
+                            emp=x,
+                            elements_type_to_run=sal_obj.elements_type_to_run,
+                            salary_month=sal_obj.salary_month,
+                            salary_year=sal_obj.salary_year,
+                            run_date=sal_obj.run_date,
+                            created_by=request.user,
+                            incomes=sc.calc_emp_income(),
+                            element=element,
+                            insurance_amount=sc.calc_employee_insurance(),
+                            # TODO need to check if the tax is applied
+                            tax_amount=sc.net_to_tax(),
+                            deductions=sc.calc_emp_deductions_amount(),
+                            gross_salary=sc.net_to_gross(),
+                            net_salary=sc.calc_basic_net(),
+                            penalties = total_absence_value,
+                        )
+                                
+                    s.save()
             if len(employees_dont_have_structurelink) == 0:
                 user_lang = to_locale(get_language())
                 if user_lang == 'ar':

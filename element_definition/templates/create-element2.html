@@ -44,6 +44,7 @@
               <label>{{ element_master_form.scheduled_pay.label }}</label>
               {{ element_master_form.scheduled_pay }}
             </div>
+
             <div class="form-group col-md-3" id="element_type">
               <label>{{ element_master_form.element_type.label }}</label>
               {{ element_master_form.element_type }}
@@ -201,7 +202,7 @@
     }
   })
 
-
+  }) 
 </script>
 
 <script>
@@ -209,6 +210,7 @@
     if (object.value === 'formula') {
       $('#formula-form').css('display', 'block')
       document.getElementById('based_on').style.display = 'none';
+
       document.getElementById('amount_type').style.display = 'none';
       document.getElementById('fixed_amount').style.display = 'none';
 
@@ -242,6 +244,7 @@
       document.getElementById('fixed_amount').style.display = 'block';
       document.getElementById('based_on').style.display = 'none';
       $('#formula-form').css('display', 'none')
+
 
   }
 }
