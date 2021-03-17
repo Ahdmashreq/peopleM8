@@ -61,9 +61,15 @@ class Segment(models.Model):
 
 
 class Question(models.Model):
+    Type = [
+        ('text' , 'text'),
+        ('slider' , 'slider'),
+    ]
     title = models.ForeignKey(Segment, on_delete=models.CASCADE, related_name='questions')
     question = models.CharField(max_length=255)
-    help_text = models.TextField()   
+    help_text = models.TextField() 
+    type = models.CharField(choices=Type,  max_length=25, default='slider')
+  
 
     def __str__(self):
         return self.question 
