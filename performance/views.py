@@ -14,6 +14,7 @@ from django.db.models import Q
 from company.models import *
 from custom_user.models import User
 from django.core.exceptions import ObjectDoesNotExist
+from employee.models import Employee, JobRoll
 
 
 @login_required(login_url='home:user-login')
@@ -24,6 +25,28 @@ def listPerformance(request):
         'performances_list': performances_list,
     }
     return render(request, 'performance-list.html', context)
+
+@login_required(login_url='home:user-login')
+def performanceView(request,pk):
+    try:
+        performance = Performance.objects.get(id=pk)
+    except ObjectDoesNotExist as e:
+        return False
+    page_title = ''
+    overall_segments = Segment.objects.filter(performance = performance ,rating= 'Over all')
+    core_segments = Segment.objects.filter(performance = performance ,rating= 'Core')
+    job_segments = Segment.objects.filter(performance = performance ,rating= 'Job')
+
+
+    context = {
+        'page_title': 'Performance Overview',
+        'performance' :performance,
+        'overall_segments': overall_segments,
+        'core_segments' : core_segments,
+        'job_segments' : job_segments,
+    }
+    return render(request, 'performances.html', context)
+    
 
 @login_required(login_url='home:user-login')
 def createPerformance(request):
@@ -379,22 +402,25 @@ def deleteSegment(request, pk, ret_id):
 #####################################################
 
 @login_required(login_url='home:user-login')
-def performanceView(request,pk):
+def employeesperformance(request):
+    user = request.user
     try:
-        performance = Performance.objects.get(id=pk)
+        employee = Employee.objects.get(user = user)
     except ObjectDoesNotExist as e:
         return False
-    page_title = ''
-    overall_segments = Segment.objects.filter(performance = performance ,rating= 'Over all')
-    core_segments = Segment.objects.filter(performance = performance ,rating= 'Core')
-    job_segments = Segment.objects.filter(performance = performance ,rating= 'Job')
-
-
+    employees = JobRoll.objects.filter(manager=employee)
     context = {
-        'page_title': 'Performance Overview',
-        'performance' :performance,
-        'overall_segments': overall_segments,
-        'core_segments' : core_segments,
-        'job_segments' : job_segments,
-    }
-    return render(request, 'performances.html', context)
+        'employees': employees, 
+        }
+    return render(request, 'employees-performance.html', context)
+
+
+
+@login_required(login_url='home:user-login')
+def employeeSegments(request,emp_pos):
+    position = Position.objects.get(id=emp_pos)
+    segments = Segment.objects.filter(performance__position = position)
+    context = {
+        'segments': segments, 
+        }
+    return render(request, 'employees-segments.html', context)

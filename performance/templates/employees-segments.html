@@ -1,0 +1,58 @@
+{% extends 'master.html'%}
+{% load staticfiles%}
+{% load l10n %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% block body%}
+<style>
+.card{
+    max-width: 18rem;
+    margin:0 20px;
+    padding: 0;
+}
+</style>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-8">
+        <h4 class="c-grey-900">Segments</h4>
+      </div>
+      <div class="col-md-15">
+        <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
+          <div class="peer"><a href=""  onclick="change_x()" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a></div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-1">
+      <div class="bgc-white p-20 bd">
+        <h6 class="c-grey-900"></h6>
+        <div class="mT-30">
+
+        <div class="form-row">
+            {% for segment in segments%}
+                <div class="form-group col-md-4">
+                    <div class="card text-center">
+                        <div class="card-header">
+                          <ul class="nav nav-tabs card-header-tabs">
+                            <li class="nav-item">
+                              <a   href="#">Questions:{{ segment.questions.all.count }}</a>
+                            </li>
+                          </ul>
+                        </div>
+                        <div class="card-body">
+                          <h5 class="card-title">{{ segment.title}}</h5>
+                          <p class="card-text">{{ segment.desc}}</p>
+                        </div>
+                      </div>
+              </div>
+
+{% endfor %}
+</div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock body%}
+

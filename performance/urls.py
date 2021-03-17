@@ -19,6 +19,10 @@ urlpatterns =[
             path('create/segment/<int:per_id>/<int:ret_id>/', views.createSegment, name='segment-create'),
             path('edit/segment/<int:pk>/<int:ret_id>/', views.updateSegment, name='segment-edit'),
             path('delete/segment/<int:pk>/<int:ret_id>/', views.deleteSegment, name='segment-delete'),
+            path('employees/performance/', views.employeesperformance, name='employees-performance'),
+            path('employee/segments/<int:emp_pos>/', views.employeeSegments, name='employee-segments'),
+
+
 
 
 

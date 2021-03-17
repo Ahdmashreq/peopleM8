@@ -180,4 +180,14 @@
       <li><a class="sidebar-link" href="{% url 'performance:performance-list' %}">{% trans 'Performances' %}</a></li>
     </ul>
   </li>
+
+
+  <li class="nav-item dropdown">
+    <a class="dropdown-toggle" href="javascript:void(0);"><span class="icon-holder"><i class="c-blue-500 ti-alarm-clock"></i> </span><span class="title">{% trans "Employee Performance" %}</span> <span class="arrow"><i
+          class="ti-angle-right"></i></span></a>
+    <ul class="dropdown-menu">
+      <li><a class="sidebar-link" href="{% url 'performance:employees-performance' %}">{% trans 'Employees' %}</a></li>
+    </ul>
+  </li>
+
 </div>
