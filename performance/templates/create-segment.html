@@ -85,10 +85,13 @@
         <div id="form_set">
 
           <div class="form-row">
-            <div class="form-group col-md-6">
+            <div class="form-group col-md-4">
               <label>{% trans "Question " %}</label>
             </div>
-            <div class="form-group col-md-6">
+            <div class="form-group col-md-4">
+              <label>{% trans "Type " %}</label>
+            </div>
+            <div class="form-group col-md-4">
               <label>{% trans "Help Text " %}</label>
             </div>
           </div> 
@@ -98,10 +101,13 @@
           {{form.errors}}
 
         <div class="form-row">
-          <div class="form-group col-md-6">
+          <div class="form-group col-md-4">
             {{ form.question}}
           </div>
-          <div class="form-group col-md-6">
+          <div class="form-group col-md-4">
+            {{ form.question_type }}
+          </div>
+          <div class="form-group col-md-4">
             {{ form.help_text}}
           </div>
           <div class="hidden">
@@ -116,10 +122,13 @@
         <div id="empty_form" style="display:none">
           <table class='no_error'>
             <div class="form-row">
-              <div class="form-group col-md-6">
+              <div class="form-group col-md-4">
                 {{ question_formset.empty_form.question }}
               </div>
-              <div class="form-group col-md-6">
+              <div class="form-group col-md-4">
+                {{ question_formset.empty_form.question_type }}
+              </div>
+              <div class="form-group col-md-4">
                 {{ question_formset.empty_form.help_text }}
               </div>
             </div>

@@ -38,7 +38,10 @@
             {% for performance in performances_list %}
             <tr>
               <td scope="row">{{ forloop.counter }}</td>
-              <td>{{ performance.performance_name }}</td>
+              <td>
+                 <a href="{% url 'performance:performance' pk=performance.id%}">
+                {{ performance.performance_name }}</a>
+              </td>
               <td>{{ performance.company }}</td>
               <td>{{ performance.department }}</td>
               <td>{{ performance.position }}</td>

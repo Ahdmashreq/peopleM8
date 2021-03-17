@@ -63,12 +63,12 @@ class SegmentForm(forms.ModelForm):
 class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
-        fields = ('question','help_text')
+        fields = ('question','help_text','question_type')
 
     def __init__(self, *args, **kwargs):
         super(QuestionForm, self).__init__(*args, **kwargs)
         for field in self.fields:
             self.fields[field].widget.attrs['class'] = 'form-control'
 
-QuestionInline = forms.modelformset_factory(Question, form=QuestionForm, extra=0, can_delete=False)
+QuestionInline = forms.modelformset_factory(Question, form=QuestionForm, extra=1, can_delete=False)
 

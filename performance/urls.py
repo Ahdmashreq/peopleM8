@@ -12,6 +12,7 @@ urlpatterns =[
             path('edit/<int:pk>/', views.updatePerformance, name='performance-edit'),
             path('delete/<int:pk>/', views.deletePerformance, name='performance-delete'),
             path('list/', views.listPerformance, name='performance-list'),
+            path('performance/<int:pk>/', views.performanceView, name='performance'),
             path('create/rating/<int:per_id>/', views.createPerformanceRating, name='rating-create'),
             path('management/<int:pk>/', views.performanceManagement, name='management'),
             path('segments/<int:pk>/<int:ret_id>/', views.listSegment, name='segments'),

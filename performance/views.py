@@ -375,3 +375,26 @@ def deleteSegment(request, pk, ret_id):
         raise e
     return redirect('performance:segments',
                         pk = performance.id,ret_id=ret_id )
+
+#####################################################
+
+@login_required(login_url='home:user-login')
+def performanceView(request,pk):
+    try:
+        performance = Performance.objects.get(id=pk)
+    except ObjectDoesNotExist as e:
+        return False
+    page_title = ''
+    overall_segments = Segment.objects.filter(performance = performance ,rating= 'Over all')
+    core_segments = Segment.objects.filter(performance = performance ,rating= 'Core')
+    job_segments = Segment.objects.filter(performance = performance ,rating= 'Job')
+
+
+    context = {
+        'page_title': 'Performance Overview',
+        'performance' :performance,
+        'overall_segments': overall_segments,
+        'core_segments' : core_segments,
+        'job_segments' : job_segments,
+    }
+    return render(request, 'performances.html', context)

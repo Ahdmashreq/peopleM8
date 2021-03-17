@@ -9,10 +9,4 @@ class Migration(migrations.Migration):
         ('element_definition', '0020_merge_20210316_1455'),
     ]
 
-    operations = [
-        migrations.AlterField(
-            model_name='elementformula',
-            name='percentage',
-            field=models.DecimalField(blank=True, decimal_places=2, max_digits=200, null=True),
-        ),
-    ]
+    
