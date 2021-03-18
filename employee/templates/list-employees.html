@@ -68,10 +68,17 @@
                       </button>
                     </a>
                   </div>
+                  <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Correct' %}">
+                    <a href="{% url 'employee:correct-employee' pk=emp.id %}">
+                      <button type="button" class="btn cur-p btn-outline-success">
+                       &#x270E
+                      </button>
+                    </a>
+                  </div>
                   <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Update' %}">
                     <a href="{% url 'employee:update-employee' pk=emp.id %}">
                       <button type="button" class="btn cur-p btn-outline-success">
-                        <i class="fas fa-user-edit"></i>
+                       &#9997
                       </button>
                     </a>
                   </div>
