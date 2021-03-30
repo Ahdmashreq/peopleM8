@@ -44,7 +44,6 @@
               <th>{% trans "Position" %}</th>
               <th>{% trans "Contract Type" %}</th>
               <th>{% trans "Hire Date" %}</th>
-              <th>{% trans "End Date" %}</th>
               <th>{% trans "Actions" %}</th>
             </tr>
           </thead>
@@ -58,7 +57,6 @@
               <td>{{ emp.position }}</td>
               <td>{{ emp.contract_type }}</td>
               <td>{{ emp.emp_id.hiredate }}</td>
-              <td>{{ emp.emp_id.emp_end_date }}</td>
               <td class="Actions">
                 <div class="w-100 gap-10 peers">
                   <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'View Info' %}">
@@ -68,10 +66,17 @@
                       </button>
                     </a>
                   </div>
+                  <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Correct' %}">
+                    <a href="{% url 'employee:correct-employee' pk=emp.id %}">
+                      <button type="button" class="btn cur-p btn-outline-success">
+                       &#x270E
+                      </button>
+                    </a>
+                  </div>
                   <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Update' %}">
                     <a href="{% url 'employee:update-employee' pk=emp.id %}">
                       <button type="button" class="btn cur-p btn-outline-success">
-                        <i class="fas fa-user-edit"></i>
+                       &#9997
                       </button>
                     </a>
                   </div>
