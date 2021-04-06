@@ -38,6 +38,9 @@
               <div class="form-group col-md-3">
                 <label>{% trans "Value" %}</label>
               </div>
+              <div class="form-group col-md-3">
+                <label>{% trans "Delete" %}</label>
+              </div>
             </div> 
             {% for form in performance_rating_formset.forms %}
             {{form.non_field_errors}}
@@ -52,6 +55,12 @@
             </div>
             <div class="form-group col-md-3">
               {{ form.score_value}}
+            </div>
+            <div class="form-group col-md-3" style="display: none;">
+              {{ form.id}}
+            </div>
+            <div class="form-group col-md-3">
+              {{ form.DELETE}}
             </div>
             </div>
             {% endfor %}
@@ -69,6 +78,9 @@
                 <div class="form-group col-md-3">
                   {{ performance_rating_formset.empty_form.score_value }}
                 </div>
+                <div class="form-group col-md-3">
+                  {{ performance_rating_formset.empty_form.DELETE }}
+                </div>
               </div>
             </table>
           </div>
@@ -76,7 +88,9 @@
           <br>
           <div class="form-row" style="text-align: right;">
             <div class="form-group col-md-12">
+              {% if flag %}
               <div class="peer"><button type="submit" onclick="change_x()" id="button" class="btn cur-p btn-primary" name ='Save and add' >{% trans "Next" %}</button></div>
+              {% endif %}
           </div>
           </div>
 

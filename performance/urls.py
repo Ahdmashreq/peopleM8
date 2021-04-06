@@ -13,12 +13,17 @@ urlpatterns =[
             path('delete/<int:pk>/', views.deletePerformance, name='performance-delete'),
             path('list/', views.listPerformance, name='performance-list'),
             path('performance/<int:pk>/', views.performanceView, name='performance'),
+            #performanceRating
             path('create/rating/<int:per_id>/', views.createPerformanceRating, name='rating-create'),
+            path('update/rating/<int:pk>/', views.updatePerformanceRating, name='rating-update'),
+            #management
             path('management/<int:pk>/', views.performanceManagement, name='management'),
+            #segments
             path('segments/<int:pk>/<int:ret_id>/', views.listSegment, name='segments'),
             path('create/segment/<int:per_id>/<int:ret_id>/', views.createSegment, name='segment-create'),
             path('edit/segment/<int:pk>/<int:ret_id>/', views.updateSegment, name='segment-edit'),
             path('delete/segment/<int:pk>/<int:ret_id>/', views.deleteSegment, name='segment-delete'),
+            #employeeRate
             path('employees/', views.employees, name='employees'),
             path('performances/', views.employeePerformances), #ajax
             path('employee/<per_name>/<int:emp_id>/', views.employee_rates, name='employee-rate'),

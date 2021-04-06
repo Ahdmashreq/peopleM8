@@ -21,6 +21,7 @@ from django.db.models import Count
 
 
 
+################## Performance ##########################################
 
 @login_required(login_url='home:user-login')
 def listPerformance(request):
@@ -114,8 +115,8 @@ def updatePerformance(request, pk):
             if 'Save and exit' in request.POST:
                     return redirect('performance:performance-list')
             elif 'Save and add' in request.POST:
-                    return redirect('performance:rating-create',
-                        per_id = pk)
+                    return redirect('performance:rating-update',
+                        pk = pk)
         else:
             user_lang = to_locale(get_language())
             if user_lang == 'ar':
@@ -155,7 +156,7 @@ def deletePerformance(request, pk):
     return redirect('performance:performance-list')
 
 
-############################################################
+################## Performance Rating ##########################################
 
 @login_required(login_url='home:user-login')
 def createPerformanceRating(request,per_id):
@@ -200,10 +201,56 @@ def createPerformanceRating(request,per_id):
         myContext = {
         "page_title": _("create rating"),
         "performance_rating_formset": performance_rating_formset,
+        "flag" :1,
     }
     return render(request, 'create-rating.html', myContext)
 
 
+
+@login_required(login_url='home:user-login')
+def updatePerformanceRating(request,pk):
+    performance = Performance.objects.get(id=pk)
+    performance_rating_modelformset = RatingInline(queryset=PerformanceRating.objects.filter(performance=performance))
+    if request.method == 'POST':
+        obj=""
+        performance_rating_modelformset = RatingInline(request.POST, queryset=PerformanceRating.objects.filter(performance=performance))
+        if performance_rating_modelformset.is_valid():
+            for form in performance_rating_modelformset:
+                obj = form.save(commit=False)
+                obj.performance = performance
+                obj.save()
+                
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
+                success_msg = ' {},تم تعديل التقييم'.format(obj)
+            else:
+                success_msg = 'rating {}, has been updated successfully'.format(
+                    obj)
+            messages.success(request, success_msg)        
+            if 'Save and exit' in request.POST:
+                return redirect('performance:management',
+                        pk = pk)
+
+        else:
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
+                success_msg = '{} لم يتم الإنشاء '.format(obj)
+            else:
+                success_msg = '{} cannot be updated '.format(obj)
+            messages.error(request, success_msg)
+
+            print(performance_rating_modelformset.errors) 
+            return redirect('performance:rating-create',
+                        per_id = performance.id)
+                        
+    else:
+        myContext = {
+        "page_title": _("create rating"),
+        "performance_rating_formset": performance_rating_modelformset,
+    }
+    return render(request, 'create-rating.html', myContext)
+
+################## performance Management ##########################################
 
 @login_required(login_url='home:user-login')
 def performanceManagement(request,pk):
@@ -225,7 +272,7 @@ def performanceManagement(request,pk):
     }
     return render(request, 'performance-management.html', context)
 
-############################################################################
+################## Segment ##########################################
 
 @login_required(login_url='home:user-login')
 def listSegment(request,pk, ret_id):
@@ -415,7 +462,7 @@ def deleteSegment(request, pk, ret_id):
     return redirect('performance:segments',
                         pk = performance.id,ret_id=ret_id )
 
-#####################################################
+################ Employee performance  #####################################
 
 @login_required(login_url='home:user-login')
 def employees(request):
@@ -481,9 +528,9 @@ def employee_rates(request, per_name,emp_id):
     "comleted_segments" : comleted_segments,
                 }
     return render(request, 'employee-rate.html', myContext)   
-########################################################################
 
-
+################ Employee Rate  #####################################
+ 
 @login_required(login_url='home:user-login')
 def create_employee_overview_rate(request, per_id,emp_id):
     employee = Employee.objects.get(id=emp_id)
@@ -726,9 +773,20 @@ def employee_performances(request, pk):
 
 
 def related_segments(emp_id,per_id):
-    completed_segments = 0 
+    segments = []
+    questions = []
     performance = Performance.objects.get(id=per_id)
-    segments_count = Segment.objects.filter(performance=performance).count()
     employee_segments = EmployeeRating.objects.filter(employee_id= emp_id, question__title__performance=performance).distinct('question__title').count()
-    related_segments = segments_count - employee_segments
-    return related_segments
+    """
+    emp_segments = EmployeeRating.objects.filter(employee_id= emp_id, question__title__performance=performance).distinct('question__title')
+    for value in emp_segments.iterator():
+        segment_title = (value.question.title)
+        segment =Segment.objects.get(title=segment_title)
+        questions = segment.questions.all()
+        segments = EmployeeRating.objects.filter(employee_id= emp_id, question__title=segment_title)
+        if len(segments) == len(questions):
+            employee_segments = EmployeeRating.objects.filter(employee_id= emp_id, question__title__performance=performance).distinct('question__title').count()
+            return employee_segments
+        """
+    return employee_segments
+    

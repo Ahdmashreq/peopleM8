@@ -44,7 +44,7 @@ class RatingForm(forms.ModelForm):
         for field in self.fields:
             self.fields[field].widget.attrs['class'] = 'form-control'
 
-RatingInline = forms.modelformset_factory(PerformanceRating, form=RatingForm, extra=1, can_delete=False)
+RatingInline = forms.modelformset_factory(PerformanceRating, form=RatingForm, extra=1, can_delete=True)
 
 
 
