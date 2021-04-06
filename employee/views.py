@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from datetime import date
 from django.db.models import Q
 from django.urls import reverse
+from django.utils.translation import to_locale, get_language
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.utils.translation import to_locale, get_language
@@ -30,6 +31,7 @@ from .resources_two import *
 ############################Employee View #################################
 @login_required(login_url='home:user-login')
 def createEmployeeView(request):
+    user_lang = to_locale(get_language())
     emp_form = EmployeeForm()
     emp_form.fields['user'].queryset = User.objects.filter(
         company=request.user.company)
@@ -85,6 +87,7 @@ def createEmployeeView(request):
                 # error_msg = '{}, has somthig wrong'.format(emp_payment_obj)
                 messages.error(request, error_msg)
 
+
             files_obj = files_formset.save(commit=False)
             for file_obj in files_obj:
                 file_obj.created_by = request.user
@@ -100,12 +103,28 @@ def createEmployeeView(request):
                 depandance_obj.emp_id = emp_obj
                 depandance_obj.save()
 
-            return redirect('employee:correct-employee', pk=job_obj.id)
+            if user_lang == 'ar':
+                success_msg = ' {},تم تسجيل الموظف'.format(
+                    emp_obj.emp_name)
+            else:
+                success_msg = 'Employee {}, has been created successfully'.format(
+                    emp_obj.emp_name)    
+            messages.success(request, success_msg)        
+            return redirect('employee:update-employee', pk=job_obj.id)
+    
+
         else:
+            if user_lang == 'ar':
+                error_msg = ' لم يتم التسجيل الموظف'
+            else:
+                error_msg = 'somthig wrong, employee coudnt be created'
+
+            messages.error(request, error_msg)
             messages.error(request, emp_form.errors)
             messages.error(request, jobroll_form.errors)
             messages.error(request, files_formset.errors)
             messages.error(request, depandance_formset.errors)
+
     myContext = {
         "page_title": _("create employee"),
         "emp_form": emp_form,
@@ -135,7 +154,7 @@ def listEmployeeView(request):
     emp_list = Employee.objects.filter(enterprise=request.user.company).filter(
         (Q(emp_end_date__gt=date.today()) | Q(emp_end_date__isnull=True)))
     emp_job_roll_list = JobRoll.objects.filter(
-        emp_id__enterprise=request.user.company).filter(Q(end_date__gt=date.today()) | Q(end_date__isnull=True))
+        emp_id__enterprise=request.user.company)
     myContext = {
         "page_title": _("List employees"),
         "emp_list": emp_list,
@@ -347,6 +366,7 @@ def correctEmployeeView(request, pk):
     required_employee = get_object_or_404(Employee, pk=required_jobRoll.emp_id.id)
     emp_form = EmployeeForm(instance=required_employee)
     files_formset = Employee_Files_inline(instance=required_employee)
+
     depandance_formset = Employee_depandance_inline(instance=required_employee)
     # filter the user fk list to show the company users only.
     emp_form.fields['user'].queryset = User.objects.filter(
@@ -397,8 +417,8 @@ def correctEmployeeView(request, pk):
         employee_element_form = EmployeeElementForm(request.POST)
 
         if emp_form.is_valid() and jobroll_form.is_valid() and payment_form.is_valid() and files_formset.is_valid() and depandance_formset.is_valid():
+
             emp_obj = emp_form.save(commit=False)
-            print(emp_form)
             emp_obj.created_by = request.user
             emp_obj.last_update_by = request.user
             emp_obj.save()
@@ -430,7 +450,6 @@ def correctEmployeeView(request, pk):
                 depandance_obj.emp_id = emp_obj
                 depandance_obj.save()
             #
-
             user_lang = to_locale(get_language())
 
             if user_lang == 'ar':
@@ -438,6 +457,7 @@ def correctEmployeeView(request, pk):
             else:
                 success_msg = 'Employee {}, has been created successfully'.format(
                     required_employee)
+            messages.success(request, success_msg)         
             return redirect('employee:list-employee')
 
         elif not emp_form.is_valid():
@@ -452,7 +472,7 @@ def correctEmployeeView(request, pk):
             messages.error(request, depandance_formset.errors)
 
     myContext = {
-        "page_title": _("correct employee"),
+        "page_title": _("update employee"),
         "emp_form": emp_form,
         "jobroll_form": jobroll_form,
         "payment_form": payment_form,
@@ -469,7 +489,6 @@ def correctEmployeeView(request, pk):
     }
     return render(request, 'create-employee.html', myContext)
 
-
 @login_required(login_url='home:user-login')
 def create_link_employee_structure(request, pk):
     required_jobRoll = JobRoll.objects.get(id=pk)
@@ -483,7 +502,7 @@ def create_link_employee_structure(request, pk):
             emp_structure_obj.created_by = request.user
             emp_structure_obj.last_update_by = request.user
             emp_structure_obj.save()
-            return redirect('employee:correct-employee', pk=pk)
+            return redirect('employee:update-employee', pk=pk)
         else:
             print('Form is not valid')
     my_context = {
@@ -511,7 +530,7 @@ def update_link_employee_structure(request, pk):
             emp_structure_obj.created_by = request.user
             emp_structure_obj.last_update_by = request.user
             emp_structure_obj.save()
-            return redirect('employee:correct-employee', pk=pk)
+            return redirect('employee:update-employee', pk=pk)
         else:
             print('Form is not valid')
     my_context = {
@@ -649,6 +668,7 @@ def createJobROll(request, job_id):
         return redirect('employee:correct-employee',
                         pk=job_obj.id)
 
+
     else:
         return render(request, 'create-jobroll.html', {'jobroll_form': jobroll_form
             , 'required_employee': required_jobRoll.emp_id})
@@ -708,3 +728,4 @@ def create_employee_element(request, job_id):
             print(emp_element_form.errors)
         return redirect('employee:correct-employee',
                         pk=required_jobRoll.id)
+
