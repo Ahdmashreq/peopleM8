@@ -1,0 +1,51 @@
+{% extends 'employee-segment-questions.html'%}
+{% load staticfiles%}
+{% load l10n %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% block question %}
+
+<form method="POST" id="myform" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="bgc-white p-20 bd">
+        <div class="offset-col-10">
+            <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
+              <div class="peer"><button type="submit" onclick="change_x()" id="button" class="btn cur-p btn-primary"  name ='Save and exit'>{% trans "Save" %}</button></div>
+            </div>
+          </div>
+
+<br>
+<br>
+      <h6 class="c-grey-900" style="text-align: center;">Question : {{ question }}</h6>
+      <h6 class="c-grey-900" style="text-align: center;">Help Text : {{ question.help_text }}</h6>
+            {% if question.question_type == "text" %}
+              <div class="col-6" style="margin: auto;">
+                  <label for="inputCity"></label>
+                  {{ employee_rating_form.text}}
+              </div>
+              {% elif question.question_type  == "slider" %}
+              <div class="col-6" style="margin: auto;">
+                  <label for="inputCity"></label>
+                  {{ employee_rating_form.score}}
+              </div>
+              {% endif %}
+<br>
+<br>
+</div>
+</form>
+{% endblock question %}
+{% block js %}
+<script>
+  id = {{question.id}}
+  element_id = "question"+id
+  element = document.getElementById(element_id);
+  element.classList.add("active");
+</script>
+<script>
+  id = {{segment.id}}
+  element_id = "active"+id
+  element = document.getElementById(element_id);
+  element.classList.add("active");
+</script>
+{% endblock js%}
+

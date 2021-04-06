@@ -4,12 +4,12 @@ from datetime import date
 import datetime
 from django.utils.translation import ugettext_lazy as _
 from multiselectfield import MultiSelectField
+from employee.models import Employee
+from django.conf import settings
 
 
-
-# gehad : Performance models.
 class Performance(models.Model):
-    performance_name = models.CharField(max_length=100, verbose_name=_('Performance Name'))
+    performance_name = models.CharField(max_length=100,  unique=True ,verbose_name=_('Performance Name'))
     company = models.ForeignKey(Enterprise, on_delete=models.CASCADE, blank=True, null=True,)
     department = models.ForeignKey(Department, on_delete=models.CASCADE, blank=True, null=True,)
     job = models.ForeignKey(Job, on_delete=models.CASCADE, blank=True, null=True,)
@@ -19,9 +19,10 @@ class Performance(models.Model):
     end_date = models.DateField(
         auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=_('End Date'))
 
-
     def __str__(self):
         return self.performance_name
+
+
 
 
 class PerformanceRating(models.Model):
@@ -47,18 +48,17 @@ class PerformanceRating(models.Model):
     score_value = models.CharField(max_length=255,blank=True, null=True)
 
     def __str__(self):
-        return self.rating 
+        return self.score_key + " - " +  self.score_value 
 
 
 class Segment(models.Model):
-    performance = models.ForeignKey(Performance, on_delete=models.CASCADE, related_name='Segments')
+    performance = models.ForeignKey(Performance, on_delete=models.CASCADE, related_name='segments')
     rating = models.CharField(max_length=255)
     title = models.CharField(max_length=255)
     desc = models.TextField()
 
     def __str__(self):
         return self.title
-
 
 
 
@@ -78,3 +78,37 @@ class Question(models.Model):
 
 
 
+class EmployeePerformance(models.Model):
+    performance = models.ForeignKey(Performance, on_delete=models.CASCADE)
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    overall_score = models.ForeignKey(PerformanceRating, on_delete=models.CASCADE, related_name='overall')
+    core_score = models.ForeignKey(PerformanceRating, on_delete=models.CASCADE, related_name='core')
+    job_score = models.ForeignKey(PerformanceRating, on_delete=models.CASCADE, related_name='job')
+    comment = models.TextField( blank=True, null=True) 
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                                   blank=True, null=True, related_name='EmployeePerformance_created_by')
+    creation_date = models.DateField(auto_now_add=True)
+    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                                       blank=True, null=True, related_name='EmployeePerformance_last_updated_by')
+    last_update_date = models.DateField(auto_now=True)
+   
+    def __str__(self):
+        return self.employee.emp_name +  self.performance.performance_name
+
+
+
+
+class EmployeeRating(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    text = models.TextField(blank=True, null=True)
+    score = models.ForeignKey(PerformanceRating, on_delete=models.CASCADE, blank=True, null=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                                   blank=True, null=True, related_name='EmployeeRating_created_by')
+    creation_date = models.DateField(auto_now_add=True)
+    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                                       blank=True, null=True, related_name='EmployeeRating_last_updated_by')
+    last_update_date = models.DateField(auto_now=True)
+   
+    def __str__(self):
+        return self.employee.emp_name +  self.question.question

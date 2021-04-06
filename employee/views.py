@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from datetime import date
 from django.db.models import Q
 from django.urls import reverse
+from django.utils.translation import to_locale, get_language
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.utils.translation import to_locale, get_language
@@ -29,6 +30,7 @@ from .resources_two import *
 ############################Employee View #################################
 @login_required(login_url='home:user-login')
 def createEmployeeView(request):
+    user_lang = to_locale(get_language())
     emp_form = EmployeeForm()
     emp_form.fields['user'].queryset = User.objects.filter(
         company=request.user.company)
@@ -70,27 +72,7 @@ def createEmployeeView(request):
                     x.created_by = request.user
                     x.last_update_by = request.user
                     x.save()
-            else:
-                user_lang = user_lang = to_locale(get_language())
-                if user_lang == 'ar':
-                    error_msg = '{}, لم يتم التسجيل'.format(emp_payment_obj)
-                else:
-                    error_msg = '{}, has somthig wrong'.format(emp_payment_obj)
-                # error_msg = '{}, has somthig wrong'.format(emp_payment_obj)
-                messages.success(request, success_msg)
 
-                user_lang = to_locale(get_language())
-                if user_lang == 'ar':
-                    error_msg = '{}, لم يتم التسجيل'.format(element_obj)
-                    success_msg = ' {},تم تسجيل الموظف'.format(
-                        emp_obj.emp_name)
-                else:
-                    error_msg = '{}, has somthig wrong'.format(element_obj)
-                    success_msg = 'Employee {}, has been created successfully'.format(
-                        emp_obj.emp_name)
-
-                    messages.success(request, success_msg)
-            
             files_obj = files_formset.save(commit=False)
             for file_obj in files_obj:
                 file_obj.created_by = request.user
@@ -106,12 +88,30 @@ def createEmployeeView(request):
                 depandance_obj.emp_id = emp_obj
                 depandance_obj.save()
 
+            if user_lang == 'ar':
+                success_msg = ' {},تم تسجيل الموظف'.format(
+                    emp_obj.emp_name)
+            else:
+                success_msg = 'Employee {}, has been created successfully'.format(
+                    emp_obj.emp_name)    
+            messages.success(request, success_msg)        
             return redirect('employee:update-employee', pk=job_obj.id)
+    
+
         else:
+            if user_lang == 'ar':
+                error_msg = ' لم يتم التسجيل الموظف'
+            else:
+                error_msg = 'somthig wrong, employee coudnt be created'
+
+            messages.error(request, error_msg)
             messages.error(request, emp_form.errors)
             messages.error(request, jobroll_form.errors)
             messages.error(request, files_formset.errors)
             messages.error(request,depandance_formset.errors)
+            return redirect('employee:update-employee', pk=job_obj.id)
+
+           
     myContext = {
         "page_title": _("create employee"),
         "emp_form": emp_form,
@@ -186,6 +186,7 @@ def updateEmployeeView(request, pk):
     required_employee = get_object_or_404(Employee, pk=required_jobRoll.emp_id.id)
     emp_form = EmployeeForm(instance=required_employee)
     files_formset = Employee_Files_inline(instance=required_employee)
+
     depandance_formset = Employee_depandance_inline(instance=required_employee)
     # filter the user fk list to show the company users only.
     emp_form.fields['user'].queryset = User.objects.filter(
@@ -239,8 +240,8 @@ def updateEmployeeView(request, pk):
         employee_element_form = EmployeeElementForm(request.POST)
 
         if emp_form.is_valid() and jobroll_form.is_valid() and payment_form.is_valid() and files_formset.is_valid() and depandance_formset.is_valid():
+
             emp_obj = emp_form.save(commit=False)
-            print(emp_form)
             emp_obj.created_by = request.user
             emp_obj.last_update_by = request.user
             emp_obj.save()
@@ -286,6 +287,7 @@ def updateEmployeeView(request, pk):
             else:
                 success_msg = 'Employee {}, has been created successfully'.format(
                     required_employee)
+            messages.success(request, success_msg)         
             return redirect('employee:list-employee')
 
         elif not emp_form.is_valid():
@@ -298,6 +300,7 @@ def updateEmployeeView(request, pk):
             messages.error(request,files_formset.errors)
         elif not depandance_formset.is_valid():
             messages.error(request, depandance_formset.errors)
+
 
 
     myContext = {

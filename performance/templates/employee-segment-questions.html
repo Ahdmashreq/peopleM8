@@ -1,0 +1,61 @@
+{% extends 'employee-rate.html'%}
+{% load staticfiles%}
+{% load l10n %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% block rate %}
+</secrion>
+</div>
+<div class="col-8" style="margin: auto;">
+{% if segment.desc != null %}
+<h4 style="text-align: center;">Description : {{segment.desc}}</h4>
+{% endif %}
+<h4 style="text-align: center;">Questions..</h4>
+
+
+<section class="panel panel-default">
+    <header class="panel-heading bg-light">
+      <ul class="nav nav-tabs nav-justified ">
+        {% if segment.questions.count == 1 %}
+        {% for question in segment.questions.all %}
+        <li id="question{{question.id}}" style="width: 100%;"><a href="{% url 'performance:create-employee-question-rate' pk=question.id emp_id=employee.id %}"  aria-selected="false">{{segment}}</a></li>
+        {% endfor %}
+        {% elif segment.questions.count == 2 %}
+        {% for question in segment.questions.all %}
+        <li id="question{{question.id}}" style="width: 50%;"><a href="{% url 'performance:create-employee-question-rate' pk=question.id emp_id=employee.id %}"  aria-selected="false">{{segment}}</a></li>
+        {% endfor %}
+        {% elif segment.questions.count == 3 %}
+        {% for question in segment.questions.all %}
+        <li id="question{{question.id}}"  style="width: 33%;"><a href="{% url 'performance:create-employee-question-rate' pk=question.id emp_id=employee.id %}"  aria-selected="false">{{segment}}</a></li>
+        {% endfor %}
+        {% elif segment.questions.count == 4   %}
+        {% for question in segment.questions.all %}
+        <li id="question{{question.id}}" style="width: 24%;"><a href="{% url 'performance:create-employee-question-rate' pk=question.id emp_id=employee.id %}"  aria-selected="false">{{segment}}</a></li>
+        {% endfor %}
+        {% elif segment.questions.count == 5 %}
+        {% for question in segment.questions.all %}
+        <li id="question{{question.id}}" style="width: 20%;"><a href="{% url 'performance:create-employee-question-rate' pk=question.id emp_id=employee.id %}"  aria-selected="false">{{segment}}</a></li>
+        {% endfor %}
+        {% else  %}
+        {% for question in segment.questions.all %}
+        <li id="question{{question.id}}"  style="width: 10%;"><a href="{% url 'performance:create-employee-question-rate' pk=question.id emp_id=employee.id %}"  aria-selected="false">{{segment}}</a></li>
+        {% endfor %}
+        {% endif %}
+      </ul>
+    </header>
+    
+  <!-- qustion -->
+  {% block question %}
+  {% endblock question %}
+
+  </section>
+  </div>
+{% endblock rate %}
+{% block js %}
+<script>
+  id = {{segment.id}}
+  element_id = "active"+id
+  element = document.getElementById(element_id);
+  element.classList.add("active");
+</script>
+{% endblock js%}

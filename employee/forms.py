@@ -148,8 +148,7 @@ class EmployeeStructureLinkForm(forms.ModelForm):
 class EmployeeFileForm(forms.ModelForm):
     class Meta:
         model = Employee_File
-        fields = "__all__"
-        exclude = common_items_to_execlude + ('emp_id',)
+        exclude = common_items_to_execlude + ('emp_id',) 
 
     def __init__(self , *args, **kwargs):
         super(EmployeeFileForm , self).__init__(*args , **kwargs)
@@ -158,7 +157,7 @@ class EmployeeFileForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_show_labels = True
 
-Employee_Files_inline = forms.inlineformset_factory(Employee, Employee_File, form=EmployeeFileForm, extra=1)
+Employee_Files_inline = forms.inlineformset_factory(Employee, Employee_File, form=EmployeeFileForm, extra=0)
 
 
 class EmployeeDepandanceForm(forms.ModelForm):

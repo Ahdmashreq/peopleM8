@@ -15,6 +15,11 @@ from company.models import *
 from custom_user.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from employee.models import Employee, JobRoll
+from django.http import JsonResponse
+import numpy as np
+from django.db.models import Count
+
+
 
 
 @login_required(login_url='home:user-login')
@@ -106,7 +111,11 @@ def updatePerformance(request, pk):
                 success_msg = 'performance {}, has been updated successfully'.format(
                     performance)
             messages.success(request, success_msg)        
-            return redirect('performance:performance-list')
+            if 'Save and exit' in request.POST:
+                    return redirect('performance:performance-list')
+            elif 'Save and add' in request.POST:
+                    return redirect('performance:rating-create',
+                        per_id = pk)
         else:
             user_lang = to_locale(get_language())
             if user_lang == 'ar':
@@ -200,11 +209,18 @@ def createPerformanceRating(request,per_id):
 def performanceManagement(request,pk):
     try:
         performance = Performance.objects.get(id=pk)
+        overall_rating = PerformanceRating.objects.filter(performance=performance , rating = 'Over all')
+        core_rating = PerformanceRating.objects.filter(performance=performance , rating = 'Core')
+        job_rating = PerformanceRating.objects.filter(performance=performance , rating = 'Job')
+
     except ObjectDoesNotExist as e:
         return False 
 
     context = {
         'page_title': performance.performance_name,
+        'overall_rating' :overall_rating,
+        'core_rating' :core_rating,
+        'job_rating' :job_rating,
         'pk' : pk,
     }
     return render(request, 'performance-management.html', context)
@@ -402,7 +418,7 @@ def deleteSegment(request, pk, ret_id):
 #####################################################
 
 @login_required(login_url='home:user-login')
-def employeesperformance(request):
+def employees(request):
     user = request.user
     try:
         employee = Employee.objects.get(user = user)
@@ -412,15 +428,307 @@ def employeesperformance(request):
     context = {
         'employees': employees, 
         }
-    return render(request, 'employees-performance.html', context)
+    return render(request, 'employees.html', context)
+
+@login_required(login_url='home:user-login')
+def employeePerformances(request):
+    position_id = request.GET.get('position_id')
+    employee_performances =[]
+    position = Position.objects.get(id=position_id)
+    performances = Performance.objects.all()
+
+    all_performances = performances.filter(department = None ,job = None, position = None) 
+    positions = performances.filter(position = position).exclude(position=None) 
+    departments  = performances.filter(department= position.department).exclude(department=None)
+    jobs = performances.filter(job = position.job).exclude(job=None)
+  
+    employee_performance =[all_performances,positions, departments, jobs ]
+    count = 1
+    category= ""
+    for queryset in employee_performance:
+        for value in queryset.iterator():
+            if count == 1:
+                category = "for all employees"
+            elif count==2 : 
+                category = "for Position"
+            elif count==3:
+                category = "for Department"
+            elif count==4 : 
+                category = "for Job"        
+            employee_performances.append(category+' : '+value.performance_name)
+            count +=1
+
+    my_array = ','.join(employee_performances)
+     
+    data = {
+        "my_array" :my_array
+        }
+    return JsonResponse(data) 
+
+
+@login_required(login_url='home:user-login')
+def employee_rates(request, per_name,emp_id):
+    completed_segments = 0
+    employee = Employee.objects.get(id=emp_id) 
+    performance = Performance.objects.get(performance_name =per_name)
+    segments = Segment.objects.filter(performance=performance)
+    comleted_segments = related_segments(emp_id,performance.id)
+    myContext = {
+    "employee":employee,
+    "performance":performance,
+    "segments":segments,
+    "completed_segments":completed_segments,
+    "comleted_segments" : comleted_segments,
+                }
+    return render(request, 'employee-rate.html', myContext)   
+########################################################################
+
+
+@login_required(login_url='home:user-login')
+def create_employee_overview_rate(request, per_id,emp_id):
+    employee = Employee.objects.get(id=emp_id)
+    performance = Performance.objects.get(id=per_id)
+    comleted_segments = related_segments(emp_id,per_id)
+    segments = Segment.objects.filter(performance=performance)
+    employee_performance_form = EmployeePerformanceForm(performance)
+    try:
+        employee_performance = EmployeePerformance.objects.get(employee = employee )
+        return redirect('performance:update-employee-overview',per_id = performance.id ,emp_id=employee.id )
+        print("employee_performance.id")
+    except :
+        if request.method == 'POST':
+            employee_performance_form = EmployeePerformanceForm(performance, request.POST)
+            if employee_performance_form.is_valid():
+                performance_obj = employee_performance_form.save(commit=False)
+                performance_obj.employee = employee
+                performance_obj.performance = performance 
+                performance_obj.created_by = request.user
+                performance_obj.last_update_by = request.user
+                performance_obj.save()
+
+                user_lang = to_locale(get_language())
+                if user_lang == 'ar':
+                    success_msg = ' {},تم بنجاح'.format(performance_obj)
+                else:
+                    success_msg = '{} created successfully'.format(
+                        performance_obj)
+                messages.success(request, success_msg)        
+                return redirect('performance:update-employee-overview',
+                            per_id = performance.id ,emp_id=employee.id )
+                
+            else:
+                user_lang = to_locale(get_language())
+                if user_lang == 'ar':
+                    success_msg = '{} لم يتم الإنشاء '.format(performance_obj)
+                else:
+                    success_msg = '{} cannot be created '.format(performance_obj)
+                messages.error(request, success_msg)
+                print(employee_performance_form.errors) 
+                return redirect('performance:create-employee-overview',
+                            per_id = performance.id ,emp_id=employee.id)
+        else:
+            myContext = {
+            "employee":employee,
+            "employee_performance_form": employee_performance_form,
+            "performance":performance,
+            "segments":segments,
+            "comleted_segments" :comleted_segments, 
+        }
+        return render(request, 'create-employee-overview.html', myContext)            
+                            
+
+@login_required(login_url='home:user-login')
+def update_employee_overview_rate(request, per_id,emp_id):
+    employee = Employee.objects.get(id=emp_id)
+    performance = Performance.objects.get(id=per_id)
+    segments = Segment.objects.filter(performance=performance)
+    employee_performance = EmployeePerformance.objects.get(employee = employee )
+    employee_performance_form = EmployeePerformanceForm(performance, instance=employee_performance)
+    comleted_segments = related_segments(emp_id,per_id)
+    if request.method == 'POST':
+        employee_performance_form = EmployeePerformanceForm(performance, request.POST , instance=employee_performance)
+        if employee_performance_form.is_valid():
+            performance_obj = employee_performance_form.save(commit=False)
+            performance_obj.employee = employee
+            performance_obj.performance = performance 
+            performance_obj.created_by = request.user
+            performance_obj.last_update_by = request.user
+            performance_obj.save()
+
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
+                success_msg = ' {},تم بنجاح'.format(performance_obj)
+            else:
+                success_msg = '{} Updated successfully'.format(
+                    performance_obj)
+            messages.success(request, success_msg)        
+            return redirect('performance:update-employee-overview',per_id = performance.id ,emp_id=employee.id )
+
+        else:
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
+                success_msg = '{} لم يتم الإنشاء '.format(performance_obj)
+            else:
+                success_msg = '{} cannot be Updated '.format(performance_obj)
+            messages.error(request, success_msg)
+            print(employee_performance_form.errors) 
+            return redirect('performance:update-employee-overview',per_id = performance.id ,emp_id=employee.id )
+    else:
+        myContext = {
+        "employee":employee,
+        "employee_performance_form": employee_performance_form,
+        "performance":performance,
+        "segments":segments,
+        "comleted_segments":comleted_segments,
+    }
+    return render(request, 'create-employee-overview.html', myContext)            
 
 
 
 @login_required(login_url='home:user-login')
-def employeeSegments(request,emp_pos):
-    position = Position.objects.get(id=emp_pos)
-    segments = Segment.objects.filter(performance__position = position)
-    context = {
-        'segments': segments, 
-        }
-    return render(request, 'employees-segments.html', context)
+def employee_segment_questions(request, pk, emp_id):
+    segment = Segment.objects.get(id = pk)
+    performance = segment.performance
+    employee = Employee.objects.get(id=emp_id) 
+    segments = Segment.objects.filter(performance=performance)
+    comleted_segments = related_segments(emp_id,performance.id)
+    myContext = {
+    "segment":segment,
+    "employee":employee,
+    "performance":performance,
+    "segments":segments,
+    "comleted_segments" : comleted_segments,
+                }
+    return render(request, 'employee-segment-questions.html', myContext) 
+
+
+@login_required(login_url='home:user-login')
+def create_employee_question_rate(request, pk,emp_id):
+    question = Question.objects.get(id=pk)
+    segment = question.title
+    performance = segment.performance
+    segments = Segment.objects.filter(performance=performance)
+    employee = Employee.objects.get(id=emp_id) 
+    employee_rating_form = EmployeeRatingForm(segment)
+    comleted_segments= related_segments(emp_id,performance.id)
+    try:
+        employee_performance = EmployeeRating.objects.get(question = question )
+        return redirect('performance:update-employee-question-rate', pk =pk  ,emp_id=employee.id )
+    except :
+        if request.method == 'POST':
+            employee_rating_form = EmployeeRatingForm(segment, request.POST)
+            if employee_rating_form.is_valid():
+                performance_rating_obj = employee_rating_form.save(commit=False)
+                performance_rating_obj.employee = employee
+                performance_rating_obj.question = question
+                performance_rating_obj.created_by = request.user
+                performance_rating_obj.last_update_by = request.user
+                performance_rating_obj.save()
+
+                user_lang = to_locale(get_language())
+                if user_lang == 'ar':
+                    success_msg = ' {},تم بنجاح'.format(performance_rating_obj)
+                else:
+                    success_msg = '{} created successfully'.format(
+                        performance_rating_obj)
+                messages.success(request, success_msg)
+                return redirect('performance:update-employee-question-rate',
+                                pk =pk  ,emp_id=employee.id )  
+            else:
+                user_lang = to_locale(get_language())
+                if user_lang == 'ar':
+                    success_msg = '{} لم يتم الإنشاء '.format(performance_rating_obj)
+                else:
+                    success_msg = '{} cannot be created '.format(performance_rating_obj)
+                messages.error(request, success_msg)
+                print(employee_rating_form.errors)
+                return redirect('performance:update-employee-question-rate',
+                                pk =pk  ,emp_id=employee.id )
+    myContext = {
+            "segment":segment,
+            "employee":employee,
+            "performance":performance,
+            "segments":segments,
+            "question":question,
+            "employee_rating_form":employee_rating_form,
+            "comleted_segments" : comleted_segments,
+                        }
+    return render(request, 'create-employee-question-rate.html', myContext)            
+
+@login_required(login_url='home:user-login')
+def update_employee_question_rate(request, pk, emp_id):
+    question = Question.objects.get(id=pk)
+    segment = question.title
+    performance = segment.performance
+    segments = Segment.objects.filter(performance=performance)
+    employee = Employee.objects.get(id=emp_id) 
+    employee_performance = EmployeeRating.objects.get(question = question )
+    employee_rating_form = EmployeeRatingForm(segment, instance=employee_performance)
+    comleted_segments = related_segments(emp_id,performance.id)
+    if request.method == 'POST':
+        employee_rating_form = EmployeeRatingForm(segment, request.POST, instance=employee_performance)
+        if employee_rating_form.is_valid():
+            performance_rating_obj = employee_rating_form.save(commit=False)
+            performance_rating_obj.employee = employee
+            performance_rating_obj.question = question
+            performance_rating_obj.created_by = request.user
+            performance_rating_obj.last_update_by = request.user
+            performance_rating_obj.save()
+
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
+                success_msg = ' {},تم بنجاح'.format(performance_rating_obj)
+            else:
+                success_msg = '{} Updated successfully'.format(
+                    performance_rating_obj)
+            messages.success(request, success_msg)
+            return redirect('performance:update-employee-question-rate',
+                            pk =pk  ,emp_id=employee.id )  
+        else:
+            user_lang = to_locale(get_language())
+            if user_lang == 'ar':
+                success_msg = '{} لم يتم الإنشاء '.format(performance_rating_obj)
+            else:
+                success_msg = '{} cannot be updated '.format(performance_rating_obj)
+            messages.error(request, success_msg)
+            print(employee_rating_form.errors)
+            return redirect('performance:update-employee-question-rate',
+                                pk =pk  ,emp_id=employee.id )
+    myContext = {
+            "segment":segment,
+            "employee":employee,
+            "performance":performance,
+            "segments":segments,
+            "question":question,
+            "employee_rating_form":employee_rating_form,
+            "comleted_segments" :comleted_segments,
+                        }
+    return render(request, 'create-employee-question-rate.html', myContext)            
+
+
+@login_required(login_url='home:user-login')
+def employee_performances(request, pk):
+    employee = Employee.objects.get(id=pk)
+    employee_perfomances = EmployeePerformance.objects.filter(employee=employee)
+    employee_questions = EmployeeRating.objects.filter(employee=employee)
+    if len(employee_perfomances) is not 0:
+        page_title = "Performances for" +" " + employee.emp_name
+    else:
+        page_title = "No Performances for" +" " + employee.emp_name  
+    myContext = {
+        "employee_perfomances":employee_perfomances,
+        "employee_questions":employee_questions,
+        "page_title": page_title,
+        "emp_id":employee.id,
+
+                }
+    return render(request, 'employee-performances.html', myContext)  
+
+
+def related_segments(emp_id,per_id):
+    completed_segments = 0 
+    performance = Performance.objects.get(id=per_id)
+    segments_count = Segment.objects.filter(performance=performance).count()
+    employee_segments = EmployeeRating.objects.filter(employee_id= emp_id, question__title__performance=performance).distinct('question__title').count()
+    related_segments = segments_count - employee_segments
+    return related_segments

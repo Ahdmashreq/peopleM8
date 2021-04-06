@@ -11,6 +11,7 @@
         <h4 class="c-grey-900">{{page_title|title}}</h4>
 
         <div class="form-row col-md-12 p-20">
+          {% if overall_rating.count != 0 %}
         <div class="col-sm-4">
           <div class="card">
             <div class="card-header">
@@ -25,8 +26,9 @@
             </div>
           </div>
         </div>
-   
+        {% endif %}
 
+    {% if core_rating.count != 0 %}
     <div class="col-sm-4">
       <div class="card">
         <div class="card-header">
@@ -41,7 +43,9 @@
         </div>
       </div>
     </div>
+    {% endif %}
 
+  {% if job_rating.count != 0 %}
   <div class="col-sm-4">
       <div class="card">
         <div class="card-header">
@@ -56,5 +60,7 @@
         </div>
       </div>
   </div>
+  {% endif %}
+
      
 {% endblock body%}

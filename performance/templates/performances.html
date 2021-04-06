@@ -99,9 +99,24 @@
                           </ul>
                         </div>
                         <div class="card-body">
-                          <h5 class="card-title">{{ segment.title}}</h5>
-                          <p class="card-text">{{ segment.desc}}</p>
-                        </div>
+                          <h5 class="card-title" style="text-align: left;">Questions</h5>
+                            <table class="table table-striped table-bordered" cellspacing="0"  width="70%">
+                              <thead>
+                                <tr>
+                                  <th>{% trans "Question" %}</th>
+                                  <th>{% trans "Question Type" %}</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {% for question in  segment.questions.all %}</a>
+                                <tr>
+                                  <td>{{ question.question }}</td>
+                                  <td>{{ question.question_type }}</td>
+                                </tr>
+                                {% endfor %}
+                              </tbody>
+                            </table>
+                          </div>
                       </div>
               </div>
 
@@ -162,11 +177,27 @@
                   </ul>
                 </div>
                 <div class="card-body">
-                  <h5 class="card-title">{{ segment.title}}</h5>
-                  <p class="card-text">{{ segment.desc}}</p>
+                  <h5 class="card-title" style="text-align: left;">Questions</h5>
+                  <table class="table table-striped table-bordered" cellspacing="0"  width="70%">
+                    <thead>
+                      <tr>
+                        <th>{% trans "Question" %}</th>
+                        <th>{% trans "Question Type" %}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for question in  segment.questions.all %}</a>
+                      <tr>
+                        <td>{{ question.question }}</td>
+                        <td>{{ question.question_type }}</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
                 </div>
-              </div>
-      </div>
+            </div>
+    </div>
+
 
        <!-- Delete Modal -->
     <div class="modal fade" id="delete-modal{{segment.pk}}" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
@@ -226,11 +257,27 @@
                   </ul>
                 </div>
                 <div class="card-body">
-                  <h5 class="card-title">{{ segment.title}}</h5>
-                  <p class="card-text">{{ segment.desc}}</p>
-                </div>
+                  <h5 class="card-title" style="text-align: left;">Questions</h5>
+                            <table class="table table-striped table-bordered" cellspacing="0"  width="70%">
+                              <thead>
+                                <tr>
+                                  <th>{% trans "Question" %}</th>
+                                  <th>{% trans "Question Type" %}</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {% for question in  segment.questions.all %}</a>
+                                <tr>
+                                  <td>{{ question.question }}</td>
+                                  <td>{{ question.question_type }}</td>
+                                </tr>
+                                {% endfor %}
+                              </tbody>
+                            </table>
+                          </div>
+                      </div>
               </div>
-      </div>
+
 
        <!-- Delete Modal -->
     <div class="modal fade" id="delete-modal{{segment.pk}}" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
@@ -256,13 +303,6 @@
 {% endfor %}
 </div>
 {% endif %}
-
-
-
-
-
-
-
 
             </div>
         </div>

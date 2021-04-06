@@ -1,0 +1,64 @@
+{% extends 'master.html'%}
+{% load staticfiles%}
+{% load l10n %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% block body%} 
+
+
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-8">
+        <h4 class="c-grey-900">
+        <span  style="color: #ed9943;">{{employee.emp_name}}</span> Rate for 
+        <span  style="color: #ed9943;">{{ performance.performance_name }}</span> performance 
+        </h4>
+      </div>
+      <div class="col-md-15">
+        <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
+          <div class="peer"><a href="{% url 'performance:employees' %}" onclick="change_x()" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a></div>
+        </div>
+      </div>
+    </div>
+    <br>
+ 
+    <h4 style="text-align: center;">{{ comleted_segments }} Completed Segments of {{  segments.all.count }} Segments</h4> 
+    <section class="panel panel-default">
+      <header class="panel-heading bg-light">
+        <ul class="nav nav-tabs nav-justified ">
+          <li id="overview"   style="width: 20%;"><a href="{% url 'performance:create-employee-overview' per_id=performance.id emp_id=employee.id %}" aria-selected="true">{% trans "Over View" %}</a></li>
+          {% if segments.count == 1 %}
+          {% for segment in segments %}
+          <li id="active{{segment.id}}" style="width: 80%;"><a href="{% url 'performance:employee-segment-questions' pk=segment.id emp_id=employee.id %}"  aria-selected="false">{{segment}}</a></li>
+          {% endfor %}
+          {% elif segments.count == 2  %}
+          {% for segment in segments %}
+          <li id="active{{segment.id}}"  style="width: 40%;"><a href="{% url 'performance:employee-segment-questions' pk=segment.id emp_id=employee.id %}"   aria-selected="false">{{segment}}</a></li>
+          {% endfor %}
+          {% elif segments.count == 3  %}
+          {% for segment in segments %}
+          <li id="active{{segment.id}}"  style="width: 26%;"><a href="{% url 'performance:employee-segment-questions' pk=segment.id emp_id=employee.id %}"   aria-selected="false">{{segment}}</a></li>
+          {% endfor %}
+          {% elif segments.count == 4  %}
+          {% for segment in segments %}
+          <li id="active{{segment.id}}" style="width: 20%;"><a href="{% url 'performance:employee-segment-questions' pk=segment.id emp_id=employee.id %}"   aria-selected="false">{{segment}}</a></li>
+          {% endfor %}
+          {% elif segments.count == 5  %}
+          {% for segment in segments %}
+          <li id="active{{segment.id}}"  style="width: 16%;"><a href="{% url 'performance:employee-segment-questions' pk=segment.id emp_id=employee.id %}"   aria-selected="false">{{segment}}</a></li>
+          {% endfor %}
+          {% else  %}
+          {% for segment in segments %}
+          <li id="active{{segment.id}}"  style="width: 10%;"><a href="{% url 'performance:employee-segment-questions' pk=segment.id emp_id=employee.id %}"   aria-selected="false">{{segment}}</a></li>
+          {% endfor %}
+          {% endif %}
+        </ul>
+      </header>
+  <!-- rate -->
+  {% block rate %}
+  {% endblock rate %}
+</section>
+    </div>
+
+{% endblock body%}

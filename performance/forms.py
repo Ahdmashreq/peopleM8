@@ -59,7 +59,6 @@ class SegmentForm(forms.ModelForm):
             self.fields[field].widget.attrs['class'] = 'form-control'
 
 
-
 class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
@@ -72,3 +71,29 @@ class QuestionForm(forms.ModelForm):
 
 QuestionInline = forms.modelformset_factory(Question, form=QuestionForm, extra=1, can_delete=False)
 
+
+
+class EmployeePerformanceForm(forms.ModelForm):
+    class Meta:
+        model = EmployeePerformance
+        fields = ('overall_score','core_score','job_score','comment')
+
+    def __init__(self, performance, *args, **kwargs):
+        super(EmployeePerformanceForm, self).__init__(*args, **kwargs)
+        self.fields['overall_score'].queryset = PerformanceRating.objects.filter(performance=performance, rating= 'Over all')
+        self.fields['core_score'].queryset = PerformanceRating.objects.filter(performance=performance, rating= 'Core')
+        self.fields['job_score'].queryset = PerformanceRating.objects.filter(performance=performance, rating= 'Job')
+        for field in self.fields:
+            self.fields[field].widget.attrs['class'] = 'form-control'
+
+
+class EmployeeRatingForm(forms.ModelForm): 
+    class Meta:
+        model = EmployeeRating
+        fields = ('text','score')
+
+    def __init__(self, segment, *args, **kwargs):
+        super(EmployeeRatingForm, self).__init__(*args, **kwargs)
+        self.fields['score'].queryset = PerformanceRating.objects.filter(performance=segment.performance)
+        for field in self.fields:
+            self.fields[field].widget.attrs['class'] = 'form-control'
