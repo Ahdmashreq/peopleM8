@@ -141,7 +141,7 @@ class JobRoll(models.Model):
     manager = models.ForeignKey(
         Employee, on_delete=models.CASCADE, null=True, blank=True, related_name='manager_id', verbose_name=_('Manager'))
     position = models.ForeignKey(
-        Position, on_delete=models.CASCADE, null=True, blank=True, verbose_name=_('Position'))
+        Position, on_delete=models.CASCADE, verbose_name=_('Position'))
     contract_type = models.ForeignKey(LookupDet, on_delete=models.CASCADE, null=True, blank=True,
                                       related_name='jobroll_contract_type', verbose_name=_('Contract Type'))
     payroll = models.ForeignKey(Payroll_Master, on_delete=models.CASCADE, null=True, blank=True,

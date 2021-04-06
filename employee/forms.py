@@ -70,6 +70,8 @@ class JobRollForm(forms.ModelForm):
         self.fields['end_date'].widget.input_type = 'date'
         for field in self.fields:
             self.fields[field].widget.attrs['class'] = 'form-control parsley-validated'
+            self.fields['position'].required = True
+
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.fields['contract_type'].queryset = LookupDet.objects.filter(
