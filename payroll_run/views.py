@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404, get_list_or_404, redirect , HttpResponse
+from django.shortcuts import render, get_object_or_404, get_list_or_404, redirect, HttpResponse
 from django.views.generic import DetailView, ListView, View
 from django.contrib import messages
 from django.template.loader import get_template
@@ -11,9 +11,10 @@ import calendar
 from django.db.models import Avg, Count
 from payroll_run.models import Salary_elements
 from payroll_run.forms import SalaryElementForm, Salary_Element_Inline
-from element_definition.models import Element_Master, Element_Batch, Element_Batch_Master, Element , SalaryStructure
+from element_definition.models import Element_Master, Element_Batch, Element_Batch_Master, Element, SalaryStructure
 from manage_payroll.models import Assignment_Batch, Assignment_Batch_Include, Assignment_Batch_Exclude
 from employee.models import Employee_Element, Employee, JobRoll, Payment, EmployeeStructureLink
+from leave.models import  EmployeeAbsence
 from employee.forms import Employee_Element_Inline
 from django.utils.translation import ugettext_lazy as _
 # ############################################################
@@ -62,10 +63,10 @@ def includeAssignmentEmployeeFunction(batch):
             emp_set.add(x.emp_id.id)
     filtered_emps = JobRoll.objects.filter(
         (
-                Q(position__department__id__in=dept_set) |
-                Q(position__id__in=position_set) |
-                Q(position__job__id__in=job_set) |
-                Q(emp_id__id__in=emp_set))
+            Q(position__department__id__in=dept_set) |
+            Q(position__id__in=position_set) |
+            Q(position__job__id__in=job_set) |
+            Q(emp_id__id__in=emp_set))
     )
     for emp in filtered_emps:
         included_emps.add(emp.emp_id.id)
@@ -93,17 +94,19 @@ def excludeAssignmentEmployeeFunction(batch):
             emp_set.add(x.emp_id.id)
     filtered_emps = JobRoll.objects.filter(
         (
-                Q(position__department__id__in=dept_set) |
-                Q(position__id__in=position_set) |
-                Q(position__job__id__in=job_set) |
-                Q(emp_id__id__in=emp_set))
+            Q(position__department__id__in=dept_set) |
+            Q(position__id__in=position_set) |
+            Q(position__job__id__in=job_set) |
+            Q(emp_id__id__in=emp_set))
     )
     for emp in filtered_emps:
         excluded_emps.add(emp.emp_id.id)
     return excluded_emps
 
+
 @login_required(login_url='home:user-login')
 def createSalaryView(request):
+    user_lang = to_locale(get_language())
     sal_form = SalaryElementForm(user=request.user)
     employees_dont_have_structurelink = []
     employees = 0
@@ -131,28 +134,29 @@ def createSalaryView(request):
                         sal_obj.assignment_batch))
             else:
                 emps = Employee.objects.filter(
-                    (Q(end_date__gt=date.today()) | Q(end_date__isnull=True)))
+                    (Q(emp_end_date__gt=date.today()) | Q(emp_end_date__isnull=True)))
             # TODO: review the include and exclude assignment batch
+            #to check every employee have structure link
             for x in emps:
                 emp_elements = Employee_Element.objects.filter(element_id__in=elements, emp_id=x).values('element_id')
                 sc = Salary_Calculator(company=request.user.company, employee=x, elements=emp_elements)
                 try:
                     emp = EmployeeStructureLink.objects.get(employee=x)
                     structure = emp.salary_structure.structure_type
-                    #print(structure)
-                except Exception as e: 
+                except EmployeeStructureLink.DoesNotExist:
                     employees_dont_have_structurelink.append(x.emp_name)
                     employees =  ', '.join(employees_dont_have_structurelink) + ': dont have structurelink, add structurelink to them and create again'
-                
-                #print(total_absence_value)
-                #print(absence_value)
-                # calculate all furmulas elements for 'x' employee
-                # Employee_Element.set_formula_amount(x)
-                
-                if len(employees_dont_have_structurelink) == 0:
+            #if all employees have structure link
+            if len(employees_dont_have_structurelink) == 0:
+                for x in emps:
+                    print("first")
+                    emp_elements = Employee_Element.objects.filter(element_id__in=elements, emp_id=x).values('element_id')
+                    sc = Salary_Calculator(company=request.user.company, employee=x, elements=emp_elements)
                     absence_value_obj = EmployeeAbsence.objects.filter(employee_id=x.id).filter(end_date__year=sal_obj.salary_year).filter(end_date__month=sal_obj.salary_month)
                     total_absence_value = 0
+                    print(absence_value_obj)
                     for i in absence_value_obj :
+                        print("secand")
                         total_absence_value+= i.value
                     if structure == 'Gross to Net' :
                         s = Salary_elements(
@@ -172,9 +176,8 @@ def createSalaryView(request):
                             net_salary=sc.calc_net_salary(),
                             penalties = total_absence_value,
 
-                        )
+                            )
                     else :
-                        
                         s = Salary_elements(
                             emp=x,
                             elements_type_to_run=sal_obj.elements_type_to_run,
@@ -192,25 +195,22 @@ def createSalaryView(request):
                             net_salary=sc.calc_basic_net(),
                             penalties = total_absence_value,
                         )
-                                
+
                     s.save()
-            if len(employees_dont_have_structurelink) == 0:
-                user_lang = to_locale(get_language())
+                    print('sssssssssssssss')
+                    print(s)
                 if user_lang == 'ar':
-                    error_msg = '{}, لم يتم التسجيل'.format(emp_payment_obj)
                     success_msg = 'تم تشغيل راتب شهر {} بنجاح'.format(
                     calendar.month_name[sal_obj.salary_month])
                     messages.success(request, success_msg)
                 else:
-                    error_msg = '{}, has somthig wrong'.format(emp_payment_obj)
                     success_msg = 'Payroll for month {} done successfully'.format(
                     calendar.month_name[sal_obj.salary_month] )
-                    messages.success(request, success_msg)
-            else:
-                    error_msg = 'Payroll for month {} dosent work'.format(
-                    calendar.month_name[sal_obj.salary_month] )
-                    messages.error(request, error_msg)
+                return redirect('payroll_run:list-salary')
 
+            else:
+                print(employees)
+               
         else:  # Form was not valid
             messages.error(request, sal_form.errors)
     salContext = {
@@ -228,7 +228,7 @@ def month_name(month_number):
 @login_required(login_url='home:user-login')
 def listSalaryFromMonth(request, month, year):
     salaries_list = Salary_elements.objects.filter(
-        salary_month=month, salary_year=year)
+        salary_month=month, salary_year=year, end_date__isnull=True)
     monthSalaryContext = {
         'page_title': _('salaries for month {}').format(month_name(month)),
         'salaries_list': salaries_list,
@@ -249,7 +249,7 @@ def changeSalaryToFinal(request, month, year):
 
 
 @login_required(login_url='home:user-login')
-def userSalaryInformation(request, month_number, salary_year, salary_id, emp_id , tmp_format):
+def userSalaryInformation(request, month_number, salary_year, salary_id, emp_id, tmp_format):
     salary_obj = get_object_or_404(
         Salary_elements,
         salary_month=month_number,
@@ -261,12 +261,12 @@ def userSalaryInformation(request, month_number, salary_year, salary_id, emp_id 
 
         elements = Employee_Element.objects.filter(element_id__appears_on_payslip=True).filter(
             (Q(start_date__lte=date.today()) & (
-                    Q(end_date__gt=salary_obj.run_date) | Q(end_date__isnull=True)))).values('element_id')
+                Q(end_date__gt=salary_obj.run_date) | Q(end_date__isnull=True)))).values('element_id')
     else:
         elements = Employee_Element.objects.filter(element_id__id=salary_obj.element.id,
                                                    element_id__appears_on_payslip=False).filter(
             (Q(start_date__lte=date.today()) & (
-                    Q(end_date__gt=salary_obj.run_date) | Q(end_date__isnull=True)))).values('element_id')
+                Q(end_date__gt=salary_obj.run_date) | Q(end_date__isnull=True)))).values('element_id')
 
     emp_elements_incomes = Employee_Element.objects.filter(
         element_id__in=elements,
@@ -277,7 +277,8 @@ def userSalaryInformation(request, month_number, salary_year, salary_id, emp_id 
     emp_elements_deductions = Employee_Element.objects.filter(element_id__in=elements, emp_id=emp_id,
                                                               element_id__classification__code='deduct',
                                                               ).order_by('element_id__sequence')
-    emp_payment = Payment.objects.filter((Q(end_date__gte=date.today()) | Q(end_date__isnull=True)), emp_id=emp_id)
+    emp_payment = Payment.objects.filter(
+        (Q(end_date__gte=date.today()) | Q(end_date__isnull=True)), emp_id=emp_id)
     monthSalaryContext = {
         'page_title': _('salary information for {}').format(salary_obj.emp),
         'salary_obj': salary_obj,
@@ -289,9 +290,9 @@ def userSalaryInformation(request, month_number, salary_year, salary_id, emp_id 
 
     # sc = Salary_Calculator(company=request.user.company, employee=emp_id, elements=emp_elements)
     # test = sc.calc_emp_deductions_amount()
-    if tmp_format=="table":
+    if tmp_format == "table":
         return render(request, 'emp-payslip.html', monthSalaryContext)
-    elif tmp_format=="list":
+    elif tmp_format == "list":
         return render(request, 'emp-payslip-report.html', monthSalaryContext)
 
 
@@ -343,7 +344,8 @@ def render_all_payslip(request, month, year):
 
 @login_required(login_url='home:user-login')
 def delete_salary_view(request, month, year):
-    required_salary = Salary_elements.objects.filter(salary_month=month, salary_year=year)
+    required_salary = Salary_elements.objects.filter(
+        salary_month=month, salary_year=year)
     for sal in required_salary:
         sal.end_date = date.today()
         sal.save()

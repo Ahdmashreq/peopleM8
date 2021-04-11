@@ -67,7 +67,7 @@ def user_login(request):
         if user is not None:
             if user.is_active:
                 # check if the user has employee record if not cannot login
-                employee = Employee.objects.get(user=user) if Employee.objects.filter(user=user) else None
+                employee = Employee.objects.filter(user=user) if Employee.objects.filter(user=user) else None
                 if employee is None:
                     messages.error(request, _(
                         'These Credentials are not assigned to an Employee yet, Please Contact an admin '))
@@ -92,7 +92,7 @@ def user_login(request):
 
 @login_required(login_url='home:user-login')
 def user_home_page(request):
-    employee = Employee.objects.get(user=request.user)
+    employee = Employee.objects.get(user=request.user, emp_end_date__isnull=True)
     employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
 
     leave_count = Leave.objects.filter(
@@ -125,7 +125,7 @@ def user_home_page(request):
 
 @login_required(login_url='home:user-login')
 def admin_home_page(request):
-    
+
     '''
     Ziad
     4/3/2021
@@ -133,7 +133,7 @@ def admin_home_page(request):
     '''
     emp_list = Employee.objects.filter(enterprise=request.user.company).filter(
         (Q(emp_end_date__gt=date.today()) | Q(emp_end_date__isnull=True)))
-    num_of_emp = len(emp_list) 
+    num_of_emp = len(emp_list)
     list_leaves = Leave.objects.filter(status='Approved')
     now_date = datetime.date(datetime.now())
     Today_Approved_Leaves = 0
@@ -141,7 +141,7 @@ def admin_home_page(request):
         if leave.enddate >= now_date and leave.startdate <= now_date :
             Today_Approved_Leaves+=1
     today_present = num_of_emp - Today_Approved_Leaves
-    
+
     user_companies_count = UserCompany.objects.filter(
         user__company=request.user.company).count()
     if user_companies_count == 0:
@@ -153,7 +153,7 @@ def admin_home_page(request):
 
         my_notifications = request.user.notifications.filter(timestamp__year=datetime.now().year,
                                                              timestamp__month=datetime.now().month)
-        context = {'my_notifications': my_notifications, 'num_of_emp' : num_of_emp , 
+        context = {'my_notifications': my_notifications, 'num_of_emp' : num_of_emp ,
         'Today_Approved_Leaves' : Today_Approved_Leaves , 'today_present' : today_present ,}
 
         return render(request, 'index.html', context=context)

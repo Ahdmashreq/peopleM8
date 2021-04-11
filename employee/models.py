@@ -54,7 +54,7 @@ class Employee(models.Model):
     hiredate = models.DateField(
         auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Hire Date'))
     terminationdate = models.DateField(
-        auto_now=False, auto_now_add=False, verbose_name=_('Terminaton Date'),blank=True, null=True)    
+        auto_now=False, auto_now_add=False, verbose_name=_('Terminaton Date'),blank=True, null=True)
     email = models.EmailField(blank=True, null=True, verbose_name=_('email'))
     picture = models.ImageField(
         upload_to = "avatars/",null=True, blank=True, verbose_name=_('picture'))
@@ -141,7 +141,7 @@ class JobRoll(models.Model):
     manager = models.ForeignKey(
         Employee, on_delete=models.CASCADE, null=True, blank=True, related_name='manager_id', verbose_name=_('Manager'))
     position = models.ForeignKey(
-        Position, on_delete=models.CASCADE, verbose_name=_('Position'))
+        Position, on_delete=models.CASCADE, null=True, blank=True, verbose_name=_('Position'))
     contract_type = models.ForeignKey(LookupDet, on_delete=models.CASCADE, null=True, blank=True,
                                       related_name='jobroll_contract_type', verbose_name=_('Contract Type'))
     payroll = models.ForeignKey(Payroll_Master, on_delete=models.CASCADE, null=True, blank=True,
@@ -158,6 +158,8 @@ class JobRoll(models.Model):
         related_name="jobroll_last_updated_by")
     last_update_date = models.DateField(auto_now=False, auto_now_add=True)
 
+    def __str__(self):
+        return self.emp_id.emp_name
 
 class Payment(models.Model):
     emp_id = models.ForeignKey(
@@ -216,16 +218,16 @@ class Employee_Element(models.Model):
         if instance.end_date is not None and instance.end_date <= date.today():
             instance.delete()
 
-    # def set_formula_amount(emp):
-    #     formula_element = Employee_Element.objects.filter(emp_id=emp.id, element_id__element_formula__isnull=False)
-    #     for x in formula_element:
-    #         if x.element_value is None:
-    #             x.element_value = 0
-    #             x.save()
-    #         if x.element_value == 0:
-    #             value = FastFormula(emp.id, x.element_id, Employee_Element)
-    #             x.element_value = value.get_formula_amount()
-    #             x.save()
+    def set_formula_amount(emp):
+        formula_element = Employee_Element.objects.filter(emp_id=emp.id, element_id__element_formula__isnull=False)
+        for x in formula_element:
+            if x.element_value is None:
+                x.element_value = 0
+                x.save()
+            if x.element_value == 0:
+                value = FastFormula(emp.id, x.element_id, Employee_Element)
+                x.element_value = value.get_formula_amount()
+                x.save()
 
     def get_element_value(self):
         element_dic = {}
@@ -240,7 +242,6 @@ class Employee_Element(models.Model):
     def save(self):
         # self.get_element_value()
         super().save()
-
 
 class EmployeeStructureLink(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, )
@@ -328,15 +329,17 @@ class Employee_Element_History(models.Model):
     def __str__(self):
         return self.emp_id.emp_name + ' / ' + self.element_id.element_name
 
+
 class Employee_File(models.Model):
-    emp_id = models.ForeignKey(Employee , on_delete=models.CASCADE)
-    name = models.CharField(max_length=60, verbose_name=_('File Name'))
+    emp_id = models.ForeignKey(Employee , on_delete=models.CASCADE, blank=True , null=True)
+    name = models.CharField(max_length=60, verbose_name=_('File Name'), blank=True , null=True)
     emp_file = models.FileField(upload_to="uploads/" , blank=True , null=True)
-    created_at = models.DateField(auto_now_add=True, null=True)
-    last_updated_at = models.DateField(null=True, auto_now=True, auto_now_add=False)
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True,
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
                                    related_name="file_created_by")
-    last_updated_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    creation_date = models.DateField(auto_now=True, auto_now_add=False)
+    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE,
+                                       related_name="file_last_update_by")
+    last_update_date = models.DateField(auto_now=False, auto_now_add=True)
 
     def __str__(self):
         return self.name
@@ -351,10 +354,12 @@ class Employee_Depandance(models.Model):
         max_length=255, blank=True, null=True, verbose_name=_('depandance mobile'))
     id_number = models.CharField(
         max_length=50, blank=True, null=True, verbose_name=_('Depandance ID'))
-    last_updated_at = models.DateField(null=True, auto_now=True, auto_now_add=False)
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True,
-                                   related_name="depandance_created_by")
-    last_updated_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
+                                   related_name="emp_depeandancy_created_by")
+    creation_date = models.DateField(auto_now=True, auto_now_add=False)
+    last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE,
+                                       related_name="emp_depeandancy_last_update_by")
+    last_update_date = models.DateField(auto_now=False, auto_now_add=True)
 
     def __str__(self):
         return self.name

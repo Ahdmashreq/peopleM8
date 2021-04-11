@@ -60,7 +60,7 @@ def message_composer(request, html_template, instance_name, result):
 
 @login_required(login_url='home:user-login')
 def add_leave(request):
-    employee = Employee.objects.get(user=request.user)
+    employee = Employee.objects.get(user=request.user, emp_end_date__isnull=True)
     employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
     employee_leave_balance = Employee_Leave_balance.objects.get(
         employee=employee)
@@ -150,7 +150,7 @@ def valid_leave(user, req_startdate, req_enddate):
 def list_leave(request):
     is_manager = False
     try:
-        employee = Employee.objects.get(user=request.user)
+        employee = Employee.objects.get(user=request.user, emp_end_date__isnull=True)
         employee_job = JobRoll.objects.get(
             end_date__isnull=True, emp_id=employee)
         if employee_job.manager == None:  # check if the loged in user is a manager
@@ -179,7 +179,7 @@ def delete_leave_view(request, id):
 @login_required(login_url='home:user-login')
 def edit_leave(request, id):
     instance = get_object_or_404(Leave, id=id)
-    employee = Employee.objects.get(user=instance.user)
+    employee = Employee.objects.get(user=instance.user,  emp_end_date__isnull=True)
     home = False  # a variable indicating whether the request is from homepage or other link
     if request.method == "POST":
         leave_form = FormLeave(
@@ -206,7 +206,7 @@ def leave_approve(request, leave_id, redirect_to):
      :params:
          redirect_to : a string representing the redirection link name ex:'home:homepage'
      """
-    employee = Employee.objects.get(user=request.user)
+    employee = Employee.objects.get(user=request.user, emp_end_date__isnull=True)
     instance = get_object_or_404(Leave, id=leave_id)
     instance.status = 'Approved'
     instance.is_approved = True
@@ -218,16 +218,16 @@ def leave_approve(request, leave_id, redirect_to):
     tottal_days = dates.days + 1
     user = instance.user
 
-    required_employee = Employee.objects.get(user=user)
-    required_user = Employee.objects.get(user=instance.user)
+    required_employee = Employee.objects.get(user=user,emp_end_date__isnull=True)
+    required_user = Employee.objects.get(user=request.user, emp_end_date__isnull=True)
     employee_leave_balance = Employee_Leave_balance.objects.get(
         employee=required_user)
     leave_form = FormLeave(data=request.POST, form_type=None)
     #print(leave_form.data['startdate'])
     check_validate_balance=Check_Balance.check_balance(
                     required_employee, startdate, enddate,leave_id)
-    approved_by_email = Employee.objects.get(user=request.user).email
-    employee_email = Employee.objects.get(user=instance.user).email
+    approved_by_email = Employee.objects.get(user=request.user, emp_end_date__isnull=True).email
+    employee_email = Employee.objects.get(user=request.user, emp_end_date__isnull=True).email
     html_message = message_composer(request, html_template='reviewed_leave_mail.html', instance_name=instance,
                                     result='approved')
     email_sender('Submitted leave reviewed', 'Submitted leave reviewed', approved_by_email, employee_email,
@@ -245,8 +245,8 @@ def leave_unapprove(request, leave_id, redirect_to):
     instance.status = 'Rejected'
     instance.is_approved = False
     instance.save(update_fields=['status', 'is_approved'])
-    approved_by_email = Employee.objects.get(user=request.user).email
-    employee_email = Employee.objects.get(user=instance.user).email
+    approved_by_email = Employee.objects.get(user=request.user, emp_end_date__isnull=True).email
+    employee_email = Employee.objects.get(user=request.user, emp_end_date__isnull=True).email
     html_message = message_composer(request, html_template='reviewed_leave_mail.html', instance_name=instance,
                                     result='rejected')
     email_sender('Submitted leave reviewed', 'Submitted leave reviewed', approved_by_email, employee_email,
@@ -341,7 +341,7 @@ def create_employee_leave_balance(request):
 
 @login_required(login_url='home:user-login')
 def view_employee_leaves_list(request, employee_id):
-    employee = Employee.objects.get(id=employee_id)
+    employee = Employee.objects.get(id=employee_id, emp_end_date__isnull=True)
     list_leaves = Leave.objects.filter(user=employee.user)
     leave_balance_context = {
         'list_leaves': list_leaves,

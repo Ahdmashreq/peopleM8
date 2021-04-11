@@ -15,6 +15,7 @@ class ProjectTasksInline(admin.TabularInline):
         'assigned_to',
         'status',
         'percentage',
+        'attachment',
         'task_start_date',
         'task_end_date',
     )

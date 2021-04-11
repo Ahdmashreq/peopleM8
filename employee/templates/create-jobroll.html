@@ -14,7 +14,7 @@
     <label class="fw-500">manager</label>
        {{ jobroll_form.manager }}
 
-    <label class="fw-500">Position</label> 
+    <label class="fw-500">Position</label>
     {{ jobroll_form.position }}
 
     <label class="fw-500">Contract Type</label>
@@ -32,21 +32,21 @@
   </div>
 </div>
 </div>
-</div>    
+</div>
 <script>
   isDirty = true
   x = false
   console.log(isDirty)
   document.getElementById("myform").onchange = function() {myFunction()};
- 
+
  function myFunction() {
    x= true
  }
-  
+
   function change_x()
   {isDirty = false
  console.log(isDirty)}
- 
+
   window.onbeforeunload = function () {
              if (isDirty && x ) {
                  return "There are unsaved data.";
@@ -55,5 +55,5 @@
              return undefined;
          }
  </script>
- 
+
 {% endblock body%}

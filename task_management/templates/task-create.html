@@ -6,7 +6,7 @@
 {% block body%}
 
 <div class="container-fluid">
-  <form method="post" id="tasks_form" data-tasks-url="{% url 'task_management:ajax-load-tasks' %}">
+  <form method="post" id="tasks_form" enctype="multipart/form-data" data-tasks-url="{% url 'task_management:ajax-load-tasks' %}">
     {% csrf_token %}
     <!--  -->
     <div class="row">
@@ -166,5 +166,3 @@ console.log(isDirty)}
 
 
 {% endblock body%}
-
-

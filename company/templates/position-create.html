@@ -30,13 +30,13 @@
           {{ position_formset.management_form }}
           <div id="form_set">
             <div class="form-row">
-              <div class="form-group col-md-1.5">
-                <label>{% trans "department Name" %}</label>
+              <div class="form-group col-md-2">
+                <label>{% trans "Department Name" %}</label>
               </div>
-              <div class="form-group col-md-1.5">
+              <div class="form-group col-md-2">
                 <label>{% trans "Job Name" %}</label>
               </div>
-              <div class="form-group col-md-1.5">
+              <div class="form-group col-md-2">
                 <label>{% trans "Grade Name" %}</label>
               </div>
               <div class="form-group col-md-2">
@@ -45,24 +45,24 @@
               <div class="form-group col-md-2">
                 <label>{% trans "Position Description" %}</label>
               </div>
-              <div class="form-group col-md-1.5">
-                <label>{% trans "Position Start Date" %}</label>
+              <div class="form-group col-md-1">
+                <label>{% trans "Start Date" %}</label>
               </div>
-              <div class="form-group col-md-1.5">
-                <label>{% trans "Position End Date" %}</label>
+              <div class="form-group col-md-1">
+                <label>{% trans "End Date" %}</label>
               </div>
             </div>
             {% for form in position_formset.forms %}
             {{form.non_field_errors}}
             {{form.errors}}
             <div class="form-row">
-              <div class="form-group col-md-1.5">
+              <div class="form-group col-md-2">
                 {{ form.department }}
               </div>
-              <div class="form-group col-md-1.5">
+              <div class="form-group col-md-2">
                 {{ form.job }}
               </div>
-              <div class="form-group col-md-1.5">
+              <div class="form-group col-md-2">
                 {{ form.grade }}
               </div>
               <div class="form-group col-md-2">
@@ -71,10 +71,10 @@
               <div class="form-group col-md-2">
                 {{ form.position_description }}
               </div>
-              <div class="form-group col-md-1.5">
+              <div class="form-group col-md-1">
                 {{ form.start_date }}
               </div>
-              <div class="form-group col-md-1.5">
+              <div class="form-group col-md-1">
                 {{ form.end_date }}
               </div>
             </div>
@@ -84,13 +84,13 @@
           <div id="empty_form" style="display:none">
             <table class='no_error'>
               <div class="form-row">
-                <div class="form-group col-md-1.5">
+                <div class="form-group col-md-2">
                   {{ position_formset.empty_form.department }}
                 </div>
-                <div class="form-group col-md-1.5">
+                <div class="form-group col-md-2">
                   {{ position_formset.empty_form.job }}
                 </div>
-                <div class="form-group col-md-1.5">
+                <div class="form-group col-md-2">
                   {{ position_formset.empty_form.grade }}
                 </div>
                 <div class="form-group col-md-2">
@@ -99,10 +99,10 @@
                 <div class="form-group col-md-2">
                   {{ position_formset.empty_form.position_description }}
                 </div>
-                <div class="form-group col-md-1.5">
+                <div class="form-group col-md-1">
                   {{ position_formset.empty_form.start_date }}
                 </div>
-                <div class="form-group col-md-1.5">
+                <div class="form-group col-md-1">
                   {{ position_formset.empty_form.end_date }}
                 </div>
               </div>

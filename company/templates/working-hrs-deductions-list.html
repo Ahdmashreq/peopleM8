@@ -38,7 +38,7 @@
             <td class="Actions">
               <div class="w-100 gap-10 peers">
                 <div class="peer" data-toggle="tooltip" data-placement="bottom" title="{% trans 'Update' %}">
-                  <a href="{% url 'company:policy-correct' pk=policy.pk %}">
+                  <a href="{% url 'company:working-hrs-deductions-update' deduction_id=policy.pk %}">
                     <button type="button" class="btn cur-p btn-outline-primary">&#9997</button>
                   </a>
                 </div>

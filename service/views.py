@@ -19,7 +19,7 @@ from datetime import date, datetime
 
 @login_required(login_url='/user_login/')
 def services_list(request):
-    request_employee = Employee.objects.get(user=request.user)
+    request_employee = Employee.objects.get(user=request.user, emp_end_date__isnull=True)
     bussiness_travel_list = Bussiness_Travel.objects.filter(emp=request_employee).order_by('-creation_date')
     servicesContext = {
         'services': bussiness_travel_list,
@@ -31,7 +31,7 @@ def services_list(request):
 def services_edit(request, id):
     instance = get_object_or_404(Bussiness_Travel, id=id)
     service_form = FormAllowance(instance=instance)
-    employee = Employee.objects.get(user=request.user)
+    employee = Employee.objects.get(user=request.user, emp_end_date__isnull=True)
     home = False
     if request.method == "POST":
         service_form = FormAllowance(data=request.POST, instance=instance)
@@ -56,7 +56,7 @@ def services_edit(request, id):
 def services_update(request, id):
     instance = get_object_or_404(Bussiness_Travel, id=id)
     service_form = FormAllowance(instance=instance)
-    employee = Employee.objects.get(user=request.user)
+    employee = Employee.objects.get(user=request.user, emp_end_date__isnull=True)
     if request.method == "POST":
         service_form = FormAllowance(data=request.POST, instance=instance)
         if service_form.is_valid():
@@ -85,7 +85,7 @@ def services_delete(request, id):
 @login_required(login_url='/user_login/')
 def services_create(request):
     flag = False
-    employee = Employee.objects.get(user=request.user)
+    employee = Employee.objects.get(user=request.user, emp_end_date__isnull=True)
     employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
     if request.method == "POST":
         service_form = FormAllowance(data=request.POST)
@@ -115,13 +115,13 @@ def send_allowance_notification(request):
     if manager is not None:  # check is signed in user is manager
         pending = Bussiness_Travel.objects.filter(status='pending').order_by('creation_date')
         for request in pending:
-            emp = Employee.objects.get(user=request.user)
+            emp = Employee.objects.get(user=request.user, emp_end_date__isnull=True)
         return
 
 
 @login_required(login_url='home:user-login')
 def service_approve(request, service_id,redirect_to):
-    employee = Employee.objects.get(user=request.user)
+    employee = Employee.objects.get(user=request.user, emp_end_date__isnull=True)
     instance = get_object_or_404(Bussiness_Travel, id=service_id)
     instance.status = 'Approved'
     instance.approval = employee
@@ -132,7 +132,7 @@ def service_approve(request, service_id,redirect_to):
 
 @login_required(login_url='home:user-login')
 def service_unapprove(request, service_id,redirect_to):
-    employee = Employee.objects.get(user=request.user)
+    employee = Employee.objects.get(user=request.user, emp_end_date__isnull=True)
     instance = get_object_or_404(Bussiness_Travel, id=service_id)
     instance.status = 'Rejected'
     instance.is_approved = False
@@ -145,7 +145,7 @@ def service_unapprove(request, service_id,redirect_to):
 
 @login_required(login_url='/user_login/')
 def purchase_request_list(request):
-    request_employee = Employee.objects.get(user=request.user)
+    request_employee = Employee.objects.get(user=request.user, emp_end_date__isnull=True)
     purchase_request_list = Purchase_Request.objects.filter(ordered_by=request_employee).order_by('-creation_date')
     servicesContext = {
         'purchase_request_list': purchase_request_list
@@ -167,7 +167,7 @@ def purchase_request_create(request):
         enterprise=request.user.company).filter(Q(end_date__gte=date.today()) | Q(end_date__isnull=True))
     purchase_items_form = Purchase_Item_formset()
     rows_num = Purchase_Request.objects.all().count()
-    request_employee = Employee.objects.get(user=request.user)
+    request_employee = Employee.objects.get(user=request.user, emp_end_date__isnull=True)
     employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=request_employee)
     if request.method == 'POST':
         purchase_form = PurchaseRequestForm(request.POST)
@@ -205,7 +205,7 @@ def purchase_request_update(request, id):
     required_request = Purchase_Request.objects.get(pk=id)
     purchase_form = PurchaseRequestForm(instance=required_request)
     purchase_items_form = Purchase_Item_formset(instance=required_request)
-    employee = Employee.objects.get(user=request.user)
+    employee = Employee.objects.get(user=request.user, emp_end_date__isnull=True)
     employee_job = JobRoll.objects.get(end_date__isnull=True, emp_id=employee)
     if request.method == 'POST':
         purchase_form = PurchaseRequestForm(request.POST)
@@ -231,7 +231,7 @@ def purchase_request_update(request, id):
 
 @login_required(login_url='home:user-login')
 def purchase_request_approve(request, order_id):
-    employee = Employee.objects.get(user=request.user)
+    employee = Employee.objects.get(user=request.user, emp_end_date__isnull=True)
     instance = Purchase_Request.objects.get(pk=order_id)
     instance.status = 'Approved'
     instance.approval = employee
@@ -242,7 +242,7 @@ def purchase_request_approve(request, order_id):
 
 @login_required(login_url='home:user-login')
 def purchase_request_unapprove(request, order_id):
-    employee = Employee.objects.get(user=request.user)
+    employee = Employee.objects.get(user=request.user, emp_end_date__isnull=True)
     instance = Purchase_Request.objects.get(pk=order_id)
     instance.status = 'Rejected'
     instance.approval = employee

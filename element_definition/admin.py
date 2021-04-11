@@ -3,6 +3,7 @@ from element_definition.models import (Element_Batch,
                                        Element_Master, Element_Batch_Master, Element_Link, SalaryStructure, Element,
                                        StructureElementLink, ElementHistory,
                                        )
+from import_export.admin import ImportExportModelAdmin, ImportMixin
 
 
 ####################################### Inlines Goes Here #############################################
@@ -22,24 +23,24 @@ class StructureElementLinkInline(admin.TabularInline):
 
 ####################################### Admin Forms #############################################
 @admin.register(Element_Master)
-class ElementMasterAdmin(admin.ModelAdmin):
+class ElementMasterAdmin(ImportExportModelAdmin):
     class Meta:
         model = Element_Master
 
-    fields = (
-        'enterprise',
-        'element_name',
-        'db_name',
-        'element_type',
-        'classification',
-        'effective_date',
-        'retro_flag',
-        'tax_flag',
-        'fixed_amount',
-        'element_formula',
-        'start_date',
-        'end_date',
-    )
+    # fields = (
+    #     'enterprise',
+    #     'element_name',
+    #     'db_name',
+    #     'element_type',
+    #     'classification',
+    #     'effective_date',
+    #     'retro_flag',
+    #     'tax_flag',
+    #     'fixed_amount',
+    #     'element_formula',
+    #     'start_date',
+    #     'end_date',
+    # )
     list_display = (
         'element_name',
         'element_type',
@@ -95,7 +96,7 @@ class Element_Link_Admin(admin.ModelAdmin):
 
 
 @admin.register(Element)
-class ElementAdmin(admin.ModelAdmin):
+class ElementAdmin(ImportExportModelAdmin):
     class Meta:
         model = Element
 

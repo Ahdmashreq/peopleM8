@@ -76,7 +76,7 @@ def project_task_create_view(request):
     task_form.fields['assigned_to'].queryset = User.objects.filter(
         company=request.user.company)
     if request.method == 'POST':
-        task_form = ProjectTaskForm(request.POST)
+        task_form = ProjectTaskForm(request.POST ,request.FILES)
         if task_form.is_valid():
             task_obj = task_form.save(commit=False)
             # for task in task_obj:
@@ -100,7 +100,7 @@ def project_task_update_view(request, task_id):
     task_form.fields['assigned_to'].queryset = User.objects.filter(
         company=request.user.company)
     if request.method == 'POST':
-        task_form = ProjectTaskForm(request.POST, instance=required_task)
+        task_form = ProjectTaskForm(request.POST, request.FILES, instance=required_task)
         if task_form.is_valid():
             task_obj = task_form.save(commit=False)
             # for task in task_obj:

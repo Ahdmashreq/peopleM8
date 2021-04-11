@@ -11,6 +11,8 @@ from defenition.models import LookupType, LookupDet, TaxRule, InsuranceRule, Tax
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import to_locale, get_language
 
+from company.models import Enterprise
+
 
 ###############################################################################
 def copy_insurance_rule(request):
@@ -350,6 +352,7 @@ def runningManagementCommand(request):
 @login_required(login_url='home:user-login')
 def create_tax_rules(request):
     form = TaxRuleForm()
+    form.fields['enterprise'].queryset = Enterprise.objects.filter(id = request.user.company.id).filter(Q(end_date__gte=date.today())|Q(end_date__isnull=True))
     formset = TaxSectionFormSet()
     if request.method == "POST":
         form = TaxRuleForm(request.POST)

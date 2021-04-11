@@ -44,21 +44,6 @@ class Enterprise(models.Model):
     last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE,
                                        related_name="company_last_update_by")
     last_update_date = models.DateField(auto_now=False, auto_now_add=True)
-    attribute1 = models.CharField(max_length=255)
-    attribute2 = models.CharField(max_length=255)
-    attribute3 = models.CharField(max_length=255)
-    attribute4 = models.CharField(max_length=255)
-    attribute5 = models.CharField(max_length=255)
-    attribute6 = models.CharField(max_length=255)
-    attribute7 = models.CharField(max_length=255)
-    attribute8 = models.CharField(max_length=255)
-    attribute9 = models.CharField(max_length=255)
-    attribute10 = models.CharField(max_length=255)
-    attribute11 = models.CharField(max_length=255)
-    attribute12 = models.CharField(max_length=255)
-    attribute13 = models.CharField(max_length=255)
-    attribute14 = models.CharField(max_length=255)
-    attribute15 = models.CharField(max_length=255)
 
     def __str__(self):
         return self.name
@@ -85,21 +70,6 @@ class Department(MPTTModel):
     last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
                                        related_name="department_last_update_by")
     last_update_date = models.DateField(auto_now=False, auto_now_add=True)
-    attribute1 = models.CharField(max_length=255)
-    attribute2 = models.CharField(max_length=255)
-    attribute3 = models.CharField(max_length=255)
-    attribute4 = models.CharField(max_length=255)
-    attribute5 = models.CharField(max_length=255)
-    attribute6 = models.CharField(max_length=255)
-    attribute7 = models.CharField(max_length=255)
-    attribute8 = models.CharField(max_length=255)
-    attribute9 = models.CharField(max_length=255)
-    attribute10 = models.CharField(max_length=255)
-    attribute11 = models.CharField(max_length=255)
-    attribute12 = models.CharField(max_length=255)
-    attribute13 = models.CharField(max_length=255)
-    attribute14 = models.CharField(max_length=255)
-    attribute15 = models.CharField(max_length=255)
 
     class MPTTMeta:
         order_insertion_by = ['dept_name']
@@ -128,21 +98,6 @@ class Job(models.Model):
     last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
                                        related_name="job_last_update_by")
     last_update_date = models.DateField(auto_now=False, auto_now_add=True)
-    attribute1 = models.CharField(max_length=255)
-    attribute2 = models.CharField(max_length=255)
-    attribute3 = models.CharField(max_length=255)
-    attribute4 = models.CharField(max_length=255)
-    attribute5 = models.CharField(max_length=255)
-    attribute6 = models.CharField(max_length=255)
-    attribute7 = models.CharField(max_length=255)
-    attribute8 = models.CharField(max_length=255)
-    attribute9 = models.CharField(max_length=255)
-    attribute10 = models.CharField(max_length=255)
-    attribute11 = models.CharField(max_length=255)
-    attribute12 = models.CharField(max_length=255)
-    attribute13 = models.CharField(max_length=255)
-    attribute14 = models.CharField(max_length=255)
-    attribute15 = models.CharField(max_length=255)
 
     def __str__(self):
         return self.job_name
@@ -168,21 +123,6 @@ class Grade(models.Model):
     last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
                                        related_name="grade_last_update_by")
     last_update_date = models.DateField(auto_now=False, auto_now_add=True)
-    attribute1 = models.CharField(max_length=255)
-    attribute2 = models.CharField(max_length=255)
-    attribute3 = models.CharField(max_length=255)
-    attribute4 = models.CharField(max_length=255)
-    attribute5 = models.CharField(max_length=255)
-    attribute6 = models.CharField(max_length=255)
-    attribute7 = models.CharField(max_length=255)
-    attribute8 = models.CharField(max_length=255)
-    attribute9 = models.CharField(max_length=255)
-    attribute10 = models.CharField(max_length=255)
-    attribute11 = models.CharField(max_length=255)
-    attribute12 = models.CharField(max_length=255)
-    attribute13 = models.CharField(max_length=255)
-    attribute14 = models.CharField(max_length=255)
-    attribute15 = models.CharField(max_length=255)
 
     def __str__(self):
         return self.grade_name
@@ -211,21 +151,6 @@ class Position(models.Model):
     last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
                                        related_name="position_last_update_by")
     last_update_date = models.DateField(auto_now=False, auto_now_add=True)
-    attribute1 = models.CharField(max_length=255)
-    attribute2 = models.CharField(max_length=255)
-    attribute3 = models.CharField(max_length=255)
-    attribute4 = models.CharField(max_length=255)
-    attribute5 = models.CharField(max_length=255)
-    attribute6 = models.CharField(max_length=255)
-    attribute7 = models.CharField(max_length=255)
-    attribute8 = models.CharField(max_length=255)
-    attribute9 = models.CharField(max_length=255)
-    attribute10 = models.CharField(max_length=255)
-    attribute11 = models.CharField(max_length=255)
-    attribute12 = models.CharField(max_length=255)
-    attribute13 = models.CharField(max_length=255)
-    attribute14 = models.CharField(max_length=255)
-    attribute15 = models.CharField(max_length=255)
 
     def __str__(self):
         return self.position_name
@@ -255,21 +180,6 @@ class Enterprise_Policies(models.Model):
     last_update_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False, on_delete=models.CASCADE,
                                        related_name="policy_last_update_by")
     last_update_date = models.DateField(auto_now=False, auto_now_add=True)
-    attribute1 = models.CharField(max_length=255)
-    attribute2 = models.CharField(max_length=255)
-    attribute3 = models.CharField(max_length=255)
-    attribute4 = models.CharField(max_length=255)
-    attribute5 = models.CharField(max_length=255)
-    attribute6 = models.CharField(max_length=255)
-    attribute7 = models.CharField(max_length=255)
-    attribute8 = models.CharField(max_length=255)
-    attribute9 = models.CharField(max_length=255)
-    attribute10 = models.CharField(max_length=255)
-    attribute11 = models.CharField(max_length=255)
-    attribute12 = models.CharField(max_length=255)
-    attribute13 = models.CharField(max_length=255)
-    attribute14 = models.CharField(max_length=255)
-    attribute15 = models.CharField(max_length=255)
 
     def __str__(self):
         return self.position_name

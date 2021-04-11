@@ -13,13 +13,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='employeeabsence',
             name='end_date',
-            field=models.DateTimeField(),
+            field=models.DateTimeField(blank=True, null=True),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='employeeabsence',
             name='start_date',
-            field=models.DateTimeField(),
+            field=models.DateTimeField(blank=True, null=True),
             preserve_default=False,
         ),
     ]

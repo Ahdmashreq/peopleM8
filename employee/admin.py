@@ -1,7 +1,7 @@
 from django.contrib import admin
 from import_export.forms import ImportForm, ConfirmImportForm
-from employee.models import Employee, Medical, JobRoll, Payment, Employee_Element, Employee_Element_History, \
-    EmployeeStructureLink
+from employee.models import (Employee, Medical, JobRoll, Payment, Employee_Element, Employee_Element_History,
+                                EmployeeStructureLink, Employee_File)
 from import_export.admin import ImportExportModelAdmin, ImportMixin
 from .resources import *
 
@@ -33,7 +33,7 @@ class JobRollAsmin(ImportExportModelAdmin):
         'start_date',
         'end_date',
     )
-   
+
 
 
 @admin.register(Employee)
@@ -46,6 +46,7 @@ class EmployeeAdmin(ImportExportModelAdmin):
         'emp_name',
         'date_of_birth',
         'hiredate',
+        'terminationdate',
         'email',
         'picture',
         'is_active',
@@ -65,8 +66,8 @@ class EmployeeAdmin(ImportExportModelAdmin):
         'has_medical',
         'medical_number',
         'medical_date',
-        'start_date',
-        'end_date',
+        'emp_start_date',
+        'emp_end_date',
     )
     inlines = [
         JobRollInlineAdmin
@@ -130,3 +131,7 @@ class EmployeeStructureLinkAdmin(admin.ModelAdmin):
         model = EmployeeStructureLink
 
 
+@admin.register(Employee_File)
+class Employee_FileAdmin(admin.ModelAdmin):
+    class Meta:
+        model = Employee_File

@@ -67,6 +67,7 @@ urlpatterns = [
 
         path('working-hrs-deduction-policy/new/', views.create_working_hours_deductions_view, name='hours-deduction-policy-create'),
         path('working-hrs-deductions/list/', views.list_working_hours_deductions_view, name='working-hrs-deductions-list'),
+        path('working-hrs-deductions/update/<int:deduction_id>', views.update_working_hours_deductions_view, name='working-hrs-deductions-update'),
 
     ]
     )),

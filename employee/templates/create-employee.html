@@ -4,20 +4,19 @@
 {% load i18n %}
 {% load crispy_forms_tags %}
 {% block body%}
-<style>
 
-</style>
-  <div class="container-fluid">
-    <form method="POST" id="myform" enctype="multipart/form-data">
-      {% csrf_token %}
+<div class="container-fluid">
+  <form method="POST" id="myform" enctype="multipart/form-data">
+    {% csrf_token %}
     <div class="row">
       <div class="col-md-8">
         <h4 class="c-grey-900">{{page_title|title}}</h4>
       </div>
       <div class="col-md-4">
         <div class="gap-10 peers {% if LANGUAGE_BIDI %} push-left {% else %} push-right {% endif %}">
-          <div class="peer"><button type="submit" onclick="change_x()" id="button" class="btn cur-p btn-primary">{% trans "Save" %}</button></div>
-          <div class="peer"><a href="{% url 'employee:list-employee' %}"  onclick="change_x()" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a></div>
+          <div class="peer">
+            <button type="submit" onclick="change_x()" id="button" class="btn cur-p btn-primary">{% trans "Save" %}</button></div>
+          <div class="peer"><a href="{% url 'employee:list-employee' %}" onclick="change_x()" class="btn cur-p btn-secondary">{% trans "Back to List" %}</a></div>
         </div>
       </div>
     </div>
@@ -49,19 +48,19 @@
               </div>
             </div>
             {% if emp_form.picture.value %}
-    <div class="form-group col-md-6">
-      <label class="fw-500">{% trans "Picture" %}</label>
-      {{ emp_form.picture }}
-    </div>
-    <div class="form-group col-md-6">
-      <img src="/media/{{ emp_form.picture.value }}" style="width: 20%;">
-    </div>
-    {% else %}
-    <div class="form-group col-md-12">
-      <label class="fw-500">{% trans "Picture" %}</label>
-      {{ emp_form.picture }}
-    </div>
-    {% endif %}
+            <div class="form-group col-md-6">
+              <label class="fw-500">{% trans "Picture" %}</label>
+              {{ emp_form.picture }}
+            </div>
+            <div class="form-group col-md-6">
+              <img src="/media/{{ emp_form.picture.value }}" style="width: 20%;">
+            </div>
+            {% else %}
+            <div class="form-group col-md-12">
+              <label class="fw-500">{% trans "Picture" %}</label>
+              {{ emp_form.picture }}
+            </div>
+            {% endif %}
           </div>
           <div class="form-row">
             <div class="form-group col-md-4">
@@ -145,8 +144,8 @@
         <form method="POST" action="{% url 'employee:new-employee-element' job_id=required_jobRoll.id %}">
           {% csrf_token %}
           {{employee_element_form.as_p}}
-          <button type="submit" onclick="change_x()" class="btn btn-success" >{% trans "Save" %}</button>
-          <button type="button"  class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
+          <button type="submit" onclick="change_x()" class="btn btn-success">{% trans "Save" %}</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "No" %}</button>
         </form>
       </div>
     </div>
@@ -174,10 +173,10 @@
     return vala
   });
 
-  function myFunction_3(id){
+  function myFunction_3(id) {
     var value = vala
     var element = id
-   
+
     $.ajax({
       url: '/emp/employee/ajax/',
       data: {
@@ -232,47 +231,49 @@
   };
 </script>
 <script>
+  isDirty = true
+  x = false
+  console.log(isDirty)
+  document.getElementById("myform").onchange = function() {
+    myFunction()
+  };
 
- isDirty = true
- x = false
- console.log(isDirty)
- document.getElementById("myform").onchange = function() {myFunction()};
+  function myFunction() {
+    x = true
+  }
 
-function myFunction() {
-  x= true
-}
+  function change_x() {
+    isDirty = false
+    console.log(isDirty)
+  }
 
- function change_x()
- {isDirty = false
-console.log(isDirty)}
-
- window.onbeforeunload = function () {
-            if (isDirty && x ) {
-                return "There are unsaved data.";
-                console.log(isDirty)
-            }
-            return undefined;
-        }
+  window.onbeforeunload = function() {
+    if (isDirty && x) {
+      return "There are unsaved data.";
+      console.log(isDirty)
+    }
+    return undefined;
+  }
 </script>
 
-     <script>
-      $('#add_file').click(function () {
-          var form_idx = $('#id_employee_file_set-TOTAL_FORMS').val();
-          $('#form_set').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
-          $('#id_employee_file_set-TOTAL_FORMS').val(parseInt(form_idx) + 1);
-          var current_indx = Number(form_idx)
-      });
-     </script>
+<script>
+  $('#add_file').click(function() {
+    var form_idx = $('#id_employee_file_set-TOTAL_FORMS').val();
+    $('#file_form_set').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
+    $('#id_employee_file_set-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+    var current_indx = Number(form_idx)
+  });
+</script>
 
 
 <script>
-  $('#add_dep').click(function () {
-      var form_idx = $('#id_employee_depandance_set-TOTAL_FORMS').val();
-      $('#dep_form_set').append($('#dep_form').html().replace(/__prefix__/g, form_idx));
-      $('#id_employee_depandance_set-TOTAL_FORMS').val(parseInt(form_idx) + 1);
-      var current_indx = Number(form_idx)
+  $('#add_dep').click(function() {
+    var form_idx = $('#id_employee_depandance_set-TOTAL_FORMS').val();
+    $('#dep_form_set').append($('#dep_form').html().replace(/__prefix__/g, form_idx));
+    $('#id_employee_depandance_set-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+    var current_indx = Number(form_idx)
   });
- </script>
+</script>
 
 
 {% endblock js %}

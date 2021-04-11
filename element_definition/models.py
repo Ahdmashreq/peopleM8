@@ -71,11 +71,9 @@ class Element(models.Model):
     enterprise = models.ForeignKey(Enterprise, on_delete=models.CASCADE, related_name='enterprise_salary_elements',
                                    verbose_name=_('Enterprise Name'))
     classification = models.ForeignKey(LookupDet, on_delete=models.CASCADE,
-                                       related_name='element_lookup_classification', verbose_name=_('classification'),
-                                       blank=True, null=True)
-    element_name = models.CharField(max_length=100, verbose_name=_('Pay Name'))
-    db_name = models.CharField(
-        max_length=4, null=True, blank=True, verbose_name=_('db Name'))
+                                       related_name='element_lookup_classification', verbose_name=_('classification'))
+    element_name = models.CharField(
+        max_length=100, verbose_name=_('Pay Name'))
     code = models.CharField(max_length=50, null=True,
                             blank=True, verbose_name=_('code'))
     element_type = models.CharField(
@@ -94,8 +92,7 @@ class Element(models.Model):
         verbose_name=_('Is basic'), default=False)
     sequence = models.IntegerField(null=True, blank=True, )
     tax_flag = models.BooleanField(verbose_name=_('Tax Flag'), default=False)
-    scheduled_pay = models.CharField(
-        max_length=100, choices=scheduled_pay_choices)
+    scheduled_pay = models.CharField(max_length=100, choices=scheduled_pay_choices)
     start_date = models.DateField(
         auto_now=False, auto_now_add=False, default=date.today, verbose_name=_('Start Date'))
     end_date = models.DateField(
@@ -131,7 +128,7 @@ class ElementFormula(models.Model):
             return str(self.percentage) + " "+ self.arithmetic_signs + " "+ str(self.based_on.code) + " "+ self.arithmetic_signs_additional
         else:
             return str(self.percentage) + " "+ self.arithmetic_signs + " "+ str(self.based_on.code)
-    
+
 
 
 
