@@ -12,11 +12,6 @@ common_items_to_execlude = (
     'enterprise_user',
     'created_by', 'creation_date',
     'last_update_by', 'last_update_date',
-    'attribute1', 'attribute2', 'attribute3',
-    'attribute4', 'attribute5', 'attribute6',
-    'attribute7', 'attribute8', 'attribute9',
-    'attribute10', 'attribute11', 'attribute12',
-    'attribute13', 'attribute14', 'attribute15',
 )
 
 
@@ -125,7 +120,7 @@ class PositionForm(forms.ModelForm):
             else:
                 self.fields[field].widget.attrs['class'] = 'form-control parsley-validated'
         self.helper = FormHelper()
-        self.helper.form_show_labels = False
+        self.helper.form_show_labels = True
 
 
 PositionInline = forms.modelformset_factory(Position, form=PositionForm, extra=5, can_delete=True)

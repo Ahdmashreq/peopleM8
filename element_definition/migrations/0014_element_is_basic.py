@@ -9,10 +9,4 @@ class Migration(migrations.Migration):
         ('element_definition', '0013_salarystructure_structure_type'),
     ]
 
-    operations = [
-        migrations.AddField(
-            model_name='element',
-            name='is_basic',
-            field=models.BooleanField(default=False, verbose_name='Is basic'),
-        ),
-    ]
+    operations = [    ]

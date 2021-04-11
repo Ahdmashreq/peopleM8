@@ -64,7 +64,7 @@ class Project_Task(models.Model):
     task_start_date = models.DateField(default=date.today)
     task_end_date = models.DateField(blank=True, null=True)
     comments = models.TextField(blank=True, null=True)
-    attachment = models.ImageField(blank=True, null=True)
+    attachment = models.ImageField(upload_to="uploads/" ,blank=True, null=True)
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='project_task_created_by')
     creation_date = models.DateField(auto_now_add=True)

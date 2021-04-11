@@ -36,7 +36,7 @@ class Salary_elements(models.Model):
     run_date = models.DateField(auto_now=False, auto_now_add=False,
                                 default=date.today, blank=True, null=True, verbose_name=_('Run Date'))
     elements_type_to_run = models.CharField(max_length=50, verbose_name=_('Run on'), choices=elements_to_run_choices,
-                                            default='appear')
+                                            default='appear',blank=True, null=True,)
     element = models.ForeignKey(
         Element, on_delete=models.CASCADE, null=True, blank=True, verbose_name=_('Element'))
     assignment_batch = models.ForeignKey(

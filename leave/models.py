@@ -47,9 +47,9 @@ class Leave(models.Model):
                        ("W", _("Excuse")), ]
     # ###########################################################################################
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE, default=1)   
+                             on_delete=models.CASCADE, default=1)
     approval = models.ForeignKey(Employee, related_name='approvall', on_delete=models.CASCADE, blank=True,
-                                null=True)       
+                                null=True)
     startdate = models.DateField(verbose_name=_(
         'Start Date'), null=True, blank=False)
     enddate = models.DateField(verbose_name=_(
@@ -132,8 +132,8 @@ class Leave(models.Model):
 
 class EmployeeAbsence(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='employee_absence_employee')
-    start_date = models.DateTimeField(auto_now_add=False)
-    end_date = models.DateTimeField(auto_now_add=False)
+    start_date = models.DateTimeField(auto_now_add=False, blank=True, null=True,)
+    end_date = models.DateTimeField(auto_now_add=False, blank=True, null=True,)
     num_of_days = models.IntegerField(null=False)
     value = models.IntegerField(null=False)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
@@ -147,10 +147,10 @@ class EmployeeAbsence(models.Model):
 
 class Employee_Leave_balance(models.Model):
     employee = models.OneToOneField(Employee, on_delete=models.CASCADE)
-    casual = models.PositiveSmallIntegerField()  # رصيد الاجازات الاعتيادية
-    usual = models.PositiveSmallIntegerField()  # رصيد الاجازات العارضة
-    carried_forward = models.PositiveSmallIntegerField()  # رصيد الاجازات المرحلة
-    absence = models.PositiveSmallIntegerField()  # عدد ايايم الغياب
+    casual = models.PositiveSmallIntegerField(verbose_name=_('Casual'))     # رصيد الاجازات الاعتيادية
+    usual = models.PositiveSmallIntegerField(verbose_name=_('Usual'))      # رصيد الاجازات العارضة
+    carried_forward = models.PositiveSmallIntegerField(verbose_name=_('Carried forward'))        # رصيد الاجازات المرحلة
+    absence = models.PositiveSmallIntegerField(verbose_name=_('Absence'))        # عدد ايايم الغياب
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                                    blank=True, null=True, related_name='Leave_balance_created_by')
     creation_date = models.DateField(auto_now_add=True)
@@ -167,7 +167,7 @@ class Employee_Leave_balance(models.Model):
     def __str__(self):
         return self.employee.emp_name
 
-    
+
 @receiver(post_save, sender=Leave)
 def leave_creation(sender, instance, created, update_fields, **kwargs):
     """

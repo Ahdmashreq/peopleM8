@@ -10,9 +10,9 @@
       "maximum_insurable_basic_salary": 1250,
       "maximum_insurable_variable_salary": 1650,
       "start_date": "2000-01-01",
-      "created_by": 1,
+      "created_by": 39,
       "creation_date": "2000-01-01",
-      "last_update_by": 1,
+      "last_update_by": 39,
       "last_update_date": "2000-01-01"
     }
   },

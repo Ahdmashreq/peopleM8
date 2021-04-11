@@ -76,7 +76,7 @@ class Leave_Balance_Form(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_show_labels = True
         self.fields['employee'].queryset = Employee.objects.filter((Q(enterprise=user_v.company)), (
-                    Q(end_date__gte=date.today()) | Q(end_date__isnull=True)))
+                    Q(emp_end_date__gte=date.today()) | Q(emp_end_date__isnull=True)))
         for field in self.fields:
             self.fields[field].widget.attrs['class'] = 'form-control parsley-validated'
 

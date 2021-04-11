@@ -45,6 +45,7 @@ class EmployeeForm(forms.ModelForm):
         super(EmployeeForm, self).__init__(*args, **kwargs)
         self.fields['date_of_birth'].widget.input_type = 'date'
         self.fields['hiredate'].widget.input_type = 'date'
+        self.fields['terminationdate'].widget.input_type = 'date'
         self.fields['emp_start_date'].widget.input_type = 'date'
         self.fields['emp_end_date'].widget.input_type = 'date'
         self.fields['insurance_date'].widget.input_type = 'date'
@@ -148,7 +149,8 @@ class EmployeeStructureLinkForm(forms.ModelForm):
 class EmployeeFileForm(forms.ModelForm):
     class Meta:
         model = Employee_File
-        exclude = common_items_to_execlude + ('emp_id',) 
+        fields = "__all__"
+        exclude = common_items_to_execlude
 
     def __init__(self , *args, **kwargs):
         super(EmployeeFileForm , self).__init__(*args , **kwargs)
@@ -173,6 +175,3 @@ class EmployeeDepandanceForm(forms.ModelForm):
         self.helper.form_show_labels = True
 
 Employee_depandance_inline = forms.inlineformset_factory(Employee, Employee_Depandance, form=EmployeeDepandanceForm, extra=0)
-
-
-

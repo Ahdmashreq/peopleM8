@@ -74,7 +74,7 @@
               <label>{{ element_master_form.based_on.label }}</label>
               {{ element_master_form.based_on }}
             </div>
-            
+
 
 <div id="formula-form">
   <form method="post" id="form_formula">
@@ -83,34 +83,43 @@
           {{ element_formula_formset.management_form }}
           <div id="form_set">
             <div class="form-row">
-              <div class="form-group col-md-3" id="percentage">
+              <div class="form-group col-md-2" id="percentage">
                 <label>{% trans "Percentage" %}</label>
               </div>
-              <div class="form-group col-md-3" id="sign">
+              <div class="form-group col-md-2" id="sign">
                 <label>{% trans "Sign" %}</label>
               </div>
-              <div class="form-group col-md-3" id="based_on2">
+              <div class="form-group col-md-2" id="based_on2">
                 <label>{% trans "Based on" %}</label>
               </div>
-              <div class="form-group col-md-3" id="sign2">
+              <div class="form-group col-md-2" id="sign2">
                 <label>{% trans "Sign" %}</label>
+              </div>
+              <div class="form-group col-md-2" id="sign2">
+                <label>{% trans "Delete" %}</label>
               </div>
             </div>
             {% for form in element_formula_formset.forms %}
             {{form.non_field_errors}}
             {{form.errors}}
             <div class="form-row">
-              <div class="form-group col-md-3" >
+              <div class="form-group col-md-2" style="display:none;">
+                {{ form.id }}
+              </div>
+              <div class="form-group col-md-2" >
                 {{ form.percentage }}
               </div>
-              <div class="form-group col-md-3">
+              <div class="form-group col-md-2">
                 {{ form.arithmetic_signs }}
               </div>
-              <div class="form-group col-md-3">
+              <div class="form-group col-md-2">
                 {{ form.based_on }}
               </div>
-              <div class="form-group col-md-3">
+              <div class="form-group col-md-2">
                 {{ form.arithmetic_signs_additional }}
+              </div>
+              <div class="form-group col-md-2">
+                {{ form.DELETE }}
               </div>
             </div>
             {% endfor %}
@@ -125,17 +134,20 @@
           <div id="empty_form" style="display:none">
             <table class='no_error'>
               <div class="form-row">
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-2">
                   {{ element_formula_formset.empty_form.percentage }}
                 </div>
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-2">
                   {{ element_formula_formset.empty_form.arithmetic_signs }}
                 </div>
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-2">
                   {{ element_formula_formset.empty_form.based_on }}
                 </div>
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-2">
                   {{ element_formula_formset.empty_form.arithmetic_signs_additional }}
+                </div>
+                <div class="form-group col-md-2">
+                  {{ element_formula_formset.empty_form.DELETE }}
                 </div>
               </div>
             </table>
@@ -143,12 +155,12 @@
   </form>
   </div>
 
-       
+
 
 
             <hr>
             <div class="form-group col-md-12">
-             
+
             </div>
             <div class="form-group col-md-4">
               <label>{{ element_master_form.classification.label }}</label>
@@ -181,7 +193,7 @@
       $('#formula-form').css('display', 'none')
 
 
-      element_type= document.getElementById('id_element_type').value 
+      element_type= document.getElementById('id_element_type').value
       if (element_type == "formula"){
         $('#formula-form').css('display', 'block')
         document.getElementById('based_on').style.display = 'none';
@@ -202,7 +214,6 @@
     }
   })
 
-  }) 
 </script>
 
 <script>
@@ -219,7 +230,7 @@
       document.getElementById('based_on').style.display = 'none';
       document.getElementById('fixed_amount').style.display = 'none';
       document.getElementById('amount_type').style.display = 'block';
-      
+
     }  else if (object.value === 'global value') {
       $('#formula-form').css('display', 'none')
       document.getElementById('based_on').style.display = 'none';
@@ -240,7 +251,7 @@
       document.getElementById('based_on').style.display = 'block';
       $('#formula-form').css('display', 'none')
             }
-    else  {      
+    else  {
       document.getElementById('fixed_amount').style.display = 'block';
       document.getElementById('based_on').style.display = 'none';
       $('#formula-form').css('display', 'none')

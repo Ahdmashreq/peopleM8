@@ -88,7 +88,7 @@ def populate_attendance_table(date):
         data = {}
         for att in atts:
             try:
-                Employee.objects.get(emp_number=att.user_id)
+                Employee.objects.get(user=request.user, emp_end_date__isnull=True)
             except Employee.DoesNotExist:
                 continue
             # initialize the dictionary that hold attendance check in and check out
@@ -98,7 +98,7 @@ def populate_attendance_table(date):
             elif att.punch == '1':
                 data[att.user_id]["check_out"] = att.date.time()
         for key, value in data.items():
-            emp = Employee.objects.get(emp_number=key)
+            emp = Employee.objects.get(emp_number=key, emp_end_date__isnull=True)
             try:
                 attendance = Attendance.objects.filter(date=date).get(employee=emp)
                 attendance.check_in = value.get("check_in", None)
@@ -116,7 +116,7 @@ def populate_attendance_table(date):
         employees = Employee.objects.all().values_list("id", flat=True)
         for employee in employees:
             if employee not in att_employees:
-                employee = Employee.objects.get(id=employee)
+                employee = Employee.objects.get(id=employee, emp_end_date__isnull=True)
                 attendance = Attendance(
                     employee=employee,
                     date=date,
@@ -160,11 +160,11 @@ def list_machine_logs(request):
 
 @login_required(login_url='home:user-login')
 def list_attendance(request):
-    employee = Employee.objects.get(user=request.user)
+    employee = Employee.objects.get(user=request.user, emp_end_date__isnull=True)
     attendance_list = Attendance.objects.filter(employee=employee)
     work_time = []
     att_form = FormAttendance(form_type='check_in')
-    employee = Employee.objects.get(user=request.user)
+    employee = Employee.objects.get(user=request.user, emp_end_date__isnull=True)
     att_context = {
         'attendances': attendance_list,
         'work_time': work_time,
@@ -176,7 +176,7 @@ def list_attendance(request):
 @login_required(login_url='home:user-login')
 def check_in_time(request):
     company_policy = Working_Days_Policy.objects.get(enterprise=request.user.company)
-    current_employee = Employee.objects.get(user=request.user)
+    current_employee = Employee.objects.get(user=request.user, emp_end_date__isnull=True)
     attendance_list = Attendance.objects.filter(employee=current_employee)
 
     current_date = datetime.now().date()
@@ -203,7 +203,7 @@ def check_in_time(request):
 
 @login_required(login_url='home:user-login')
 def check_out_time(request):
-    employee = Employee.objects.get(user=request.user)
+    employee = Employee.objects.get(user=request.user, emp_end_date__isnull=True)
     attendance_obj = Attendance.objects.get(employee=employee, check_out__isnull=True)
     user_tasks = Task.objects.filter(attendance=attendance_obj)
 
@@ -242,7 +242,7 @@ def list_tasks_view(request, attendance_slug):
 
 @login_required(login_url='home:user-login')
 def create_task(request):
-    employee = Employee.objects.get(user=request.user)
+    employee = Employee.objects.get(user=request.user, emp_end_date__isnull=True)
     user_last_attendance = Attendance.objects.filter(employee=employee, check_out__isnull=True).latest('id')
     list_tasks = Task.objects.filter(attendance=user_last_attendance)
     if request.method == "POST":
@@ -521,7 +521,7 @@ def delete_attendance(request, att_delete_slug):
 def calculate_deduction_days(month, year, employee_id):
     # return the number of days to be deducted from a given employee in a given month and year
     # days that are either weekends,holidays ,leaves or services are not deduced
-    employee = Employee.objects.get(id=employee_id)
+    employee = Employee.objects.get(id=employee_id, emp_end_date__isnull=True)
     attendances = Attendance.objects.filter(date__month=month, date__year=year, employee__id=employee_id)
     absence_day_rate = \
         Working_Days_Policy.objects.filter(enterprise=employee.enterprise).values('absence_days_rate')[0][

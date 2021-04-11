@@ -3,40 +3,39 @@
 {% load group_extra %}
 {% load staticfiles %}
 
-<div id="form_set">
-    <div class="form-row p-20">
-        {{files_formset.management_form}}
-        {% for form in files_formset %}
-        <div class="form-row col-md-12">
-            <div class="col-sm-4">
-                <label class="fw-500">{% trans "Name" %}</label>
-                {{ form.name }}
-            </div>
-            <div class="col-sm-4">
-                <label class="fw-500">File</label>
-                {{ form.emp_file }}
-            </div>
-            <div class="col-sm-4" style="display: none;">
-                <label class="fw-500">File</label>
-                {{ form.id }}
-            </div>
-        </div>
-        {% endfor %}
+<div id="file_form_set">
+  <div class="form-row p-20">
+    {{files_formset.management_form}}
+    {% for form in files_formset %}
+    <div class="form-row col-md-12">
+      <div class="col-sm-4">
+        <label class="fw-500">{% trans "Name" %}</label>
+        {{ form.name }}
+      </div>
+      <div class="col-sm-4">
+        <label class="fw-500">File</label>
+        {{ form.emp_file }}
+      </div>
+      <div class="col-sm-4" style="display: none;">
+        <label class="fw-500"></label>
+        {{ form.id }}
+      </div>
     </div>
+    {% endfor %}
+  </div>
 </div>
-        <div class="separator mb-5"></div>
-        <button type="button" id="add_file" class="btn cur-p btn-success">{% trans "Add File"%}</button>
-        <div id="empty_form" style="display:none">
-            <table class='no_error'>
-                <div class="form-row col-md-12 p-20">
-                <div class="col-sm-4">
-                    {{ files_formset.empty_form.name }}
-                </div>
-                <div class="col-sm-4">
-                    {{ files_formset.empty_form.emp_file }}
-                </div>
-            </div>
-            </table>
-        </div>
-    
+<div class="separator mb-5"></div>
+<button type="button" id="add_file" class="btn cur-p btn-success">{% trans "Add File"%}</button>
+<div id="empty_form" style="display:none">
+  <table class='no_error'>
+    <div class="form-row col-md-12 p-20">
+      <div class="col-sm-4">
+        {{ files_formset.empty_form.name }}
+      </div>
+      <div class="col-sm-4">
+        {{ files_formset.empty_form.emp_file }}
+      </div>
 
+    </div>
+  </table>
+</div>

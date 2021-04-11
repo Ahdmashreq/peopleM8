@@ -434,7 +434,7 @@ def export_department_data(request):
 ########################################Job views###################################################################
 @login_required(login_url='home:user-login')
 def listJobView(request):
-    if request.method == 'GET': 
+    if request.method == 'GET':
         job_list = Job.objects.filter(enterprise=request.user.company).filter(
             Q(end_date__gt=date.today()) | Q(end_date__isnull=True))
 
@@ -1006,7 +1006,7 @@ def listWorkingPolicyView(request):
 
 @login_required(login_url='home:user-login')
 def correctWorkingPolicyView(request, pk):
-    required_policy = Working_Days_Policy.objects.get_policy(user=request.user, policy_id=pk)
+    required_policy = Working_Days_Policy.objects.get(id=pk)
     policy_form = WorkingDaysForm(instance=required_policy)
     user_lang = to_locale(get_language())
     if request.method == 'POST':
@@ -1204,7 +1204,7 @@ def create_working_hours_deductions_view(request):
             try:
                 formset_obj = working_deductions_formset.save(commit=False)
                 for form in formset_obj:
-                    
+
                     form.working_days_policy_id = company_working_policy.id
                     form.created_by = request.user
                     form.save()
@@ -1222,33 +1222,34 @@ def create_working_hours_deductions_view(request):
     return render(request, 'working-hrs-deductions-create.html', context=context)
 
 
-#
-# @login_required(login_url='home:user-login')
-# def update_working_hours_deductions_view(request, deduction_id):
-#     required_work_deduction = Working_Hours_Deductions_Policy.objects.get(id=deduction_id)
-#     working_deductions_form = WorkingHoursDeductionForm()
-#     if request.method == 'POST':
-#         company_working_policy = Working_Days_Policy.objects.get(enterprise=request.user.company)
-#         working_deductions_formset = Working_Hours_Deduction_Form_Inline(request.POST)
-#         if working_deductions_formset.is_valid():
-#             try:
-#                 formset_obj = working_deductions_formset.save(commit=False)
-#                 for form in formset_obj:
-#                     form.Working_Days_Policy_id = company_working_policy.id
-#                     form.created_by = request.user
-#                     form.save()
-#                 messages.success(request, _('Working Hours Deductions Created Successfully'))
-#             except IntegrityError as e:
-#                 messages.error(request, _('UNIQUE constraint failed'))
-#
-#         else:
-#             messages.error(request, working_deductions_formset.errors)
-#
-#     context = {
-#         "page_title": _("Work Hours Deduction Policy"),
-#         'working_deductions_formset': working_deductions_formset,
-#     }
-#     return render(request, 'working-hrs-deductions-create.html', context=context)
+
+@login_required(login_url='home:user-login')
+def update_working_hours_deductions_view(request, deduction_id):
+    #required_work_deduction = Working_Hours_Deductions_Policy.objects.get(id=deduction_id)
+    working_deductions_formset =Working_Hours_Deduction_Form_Inline(
+        queryset=Working_Hours_Deductions_Policy.objects.get(id=deduction_id))
+    if request.method == 'POST':
+        company_working_policy = Working_Days_Policy.objects.get(enterprise=request.user.company)
+        working_deductions_formset = Working_Hours_Deduction_Form(request.POST)
+        if working_deductions_formset.is_valid():
+            try:
+                formset_obj = working_deductions_formset.save(commit=False)
+                for form in formset_obj:
+                    form.Working_Days_Policy_id = company_working_policy.id
+                    form.created_by = request.user
+                    form.save()
+                messages.success(request, _('Working Hours Deductions Created Successfully'))
+            except IntegrityError as e:
+                messages.error(request, _('UNIQUE constraint failed'))
+
+        else:
+            messages.error(request, working_deductions_formset.errors)
+
+    context = {
+        "page_title": _("Work Hours Deduction Policy"),
+        'working_deductions_formset': working_deductions_formset,
+     }
+    return render(request, 'working-hrs-deductions-create.html', context=context)
 
 
 def load_lookups(user, company_id):

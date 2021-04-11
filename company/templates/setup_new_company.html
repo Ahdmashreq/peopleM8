@@ -6,11 +6,9 @@
 {% block body%}
 
 <div class="container-fluid">
-   <div class="row">
-      <div class="col-md-8">
-        <h4 class="c-grey-900">{{page_title|title}}</h4>
-      </div>
-
+  <div class="row">
+    <div class="col-md-8">
+      <h4 class="c-grey-900">{{page_title|title}}</h4>
     </div>
 
   <form method="post" id="myform">
@@ -18,20 +16,20 @@
     <div class="row">
       <div class="col-md-12">
 
-            <div class="mT-1 bgc-white p-20 bd">
-                <div class="form-row">
-                  <div class="form-group col-md-12">
-                      <label>Select one or more Modules to link with your company <span> <em>{{request.user.company}}</em></span></label>
-                       {{ company_form.modules}}
-                  </div>
-                </div>
-      </div>
-                <div class="gap-10 peers push-left">
+        <div class="mT-1 bgc-white p-20 bd">
+          <div class="form-row">
+            <div class="form-group col-md-12">
+              <label>Select one or more Modules to link with your company <span> <em>{{request.user.company}}</em></span></label>
+              {{ company_form.modules}}
+            </div>
+          </div>
+        </div>
+        <div class="gap-10 peers push-left">
           <div class="peer">
             <button type="submit" onclick="change_x()" class="btn cur-p btn-primary">{% trans "Save" %}</button>
           </div>
         </div>
-    </div>
+      </div>
     </div>
   </form>
 </div>
@@ -47,15 +45,15 @@
   x = false
   console.log(isDirty)
   document.getElementById("myform").onchange = function() {myFunction()};
- 
+
  function myFunction() {
    x= true
  }
-  
+
   function change_x()
   {isDirty = false
  console.log(isDirty)}
- 
+
   window.onbeforeunload = function () {
              if (isDirty && x ) {
                  return "There are unsaved data.";

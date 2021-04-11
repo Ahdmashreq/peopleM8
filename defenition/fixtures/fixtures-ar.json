@@ -6,9 +6,9 @@
       "lookup_type_name": "PAYMENT_TYPE_CATEGORY",
       "lookup_type_description": "طرق السداد",
       "start_date": "2000-01-01",
-      "created_by": 1,
+      "created_by": 39,
       "creation_date": "2000-01-01",
-      "last_update_by": 1,
+      "last_update_by": 39,
       "last_update_date": "2000-01-01"
     }
   },
@@ -20,9 +20,9 @@
       "lookup_type_name": "ELEMENT_TYPE",
       "lookup_type_description": "نوع البند",
       "start_date": "2000-01-01",
-      "created_by": 1,
+      "created_by": 39,
       "creation_date": "2000-01-01",
-      "last_update_by": 1,
+      "last_update_by": 39,
       "last_update_date": "2000-01-01"
     }
   },
@@ -34,9 +34,9 @@
       "lookup_type_name": "ELEMENT_CLASSIFICATION",
       "lookup_type_description": "طبيعة البند",
       "start_date": "2000-01-01",
-      "created_by": 1,
+      "created_by": 39,
       "creation_date": "2000-01-01",
-      "last_update_by": 1,
+      "last_update_by": 39,
       "last_update_date": "2000-01-01"
     }
   },
@@ -48,9 +48,9 @@
       "lookup_type_name": "EMPLOYEE_TYPE",
       "lookup_type_description": "نوعية العقد",
       "start_date": "2000-01-01",
-      "created_by": 1,
+      "created_by": 39,
       "creation_date": "2000-01-01",
-      "last_update_by": 1,
+      "last_update_by": 39,
       "last_update_date": "2000-01-01"
     }
   },
@@ -62,9 +62,9 @@
       "lookup_type_name": "PAYMENT_TYPE",
       "lookup_type_description": "PAYMENT_TYPE",
       "start_date": "2000-01-01",
-      "created_by": 1,
+      "created_by": 39,
       "creation_date": "2000-01-01",
-      "last_update_by": 1,
+      "last_update_by": 39,
       "last_update_date": "2000-01-01"
     }
   },
@@ -76,9 +76,9 @@
       "lookup_type_name": "ACCOUNT_TYPE",
       "lookup_type_description": "ACCOUNT_TYPE",
       "start_date": "2000-01-01",
-      "created_by": 1,
+      "created_by": 39,
       "creation_date": "2000-01-01",
-      "last_update_by": 1,
+      "last_update_by": 39,
       "last_update_date": "2000-01-01"
     }
   },
@@ -90,9 +90,9 @@
       "lookup_type_name": "PERIOD_TYPE",
       "lookup_type_description": "PERIOD_TYPE",
       "start_date": "2000-01-01",
-      "created_by": 1,
+      "created_by": 39,
       "creation_date": "2000-01-01",
-      "last_update_by": 1,
+      "last_update_by": 39,
       "last_update_date": "2000-01-01"
     }
   },
@@ -105,9 +105,9 @@
       "code": "Transfer",
       "description": "Transfer",
       "start_date": "2000-01-01",
-      "created_by": 1,
+      "created_by": 39,
       "creation_date": "2000-01-01",
-      "last_update_by": 1,
+      "last_update_by": 39,
       "last_update_date": "2000-01-01"
     }
   },
@@ -120,9 +120,9 @@
       "code": "Cash",
       "description": "Cash",
       "start_date": "2000-01-01",
-      "created_by": 1,
+      "created_by": 39,
       "creation_date": "2000-01-01",
-      "last_update_by": 1,
+      "last_update_by": 39,
       "last_update_date": "2000-01-01"
     }
   },
@@ -135,9 +135,9 @@
       "code": "Recurring",
       "description": "Recurring",
       "start_date": "2000-01-01",
-      "created_by": 1,
+      "created_by": 39,
       "creation_date": "2000-01-01",
-      "last_update_by": 1,
+      "last_update_by": 39,
       "last_update_date": "2000-01-01"
     }
   },
@@ -150,9 +150,9 @@
       "code": "Non-Recurring",
       "description": "Non-Recurring",
       "start_date": "2000-01-01",
-      "created_by": 1,
+      "created_by": 39,
       "creation_date": "2000-01-01",
-      "last_update_by": 1,
+      "last_update_by": 39,
       "last_update_date": "2000-01-01"
     }
   },
@@ -165,9 +165,9 @@
       "code": "earn",
       "description": "Earning",
       "start_date": "2000-01-01",
-      "created_by": 1,
+      "created_by": 39,
       "creation_date": "2000-01-01",
-      "last_update_by": 1,
+      "last_update_by": 39,
       "last_update_date": "2000-01-01"
     }
   },
@@ -180,9 +180,9 @@
       "code": "deduct",
       "description": "Deduction",
       "start_date": "2000-01-01",
-      "created_by": 1,
+      "created_by": 39,
       "creation_date": "2000-01-01",
-      "last_update_by": 1,
+      "last_update_by": 39,
       "last_update_date": "2000-01-01"
     }
   },
@@ -196,9 +196,9 @@
       "code": "info",
       "description": "Information",
       "start_date": "2000-01-01",
-      "created_by": 1,
+      "created_by": 39,
       "creation_date": "2000-01-01",
-      "last_update_by": 1,
+      "last_update_by": 39,
       "last_update_date": "2000-01-01"
     }
   },
@@ -211,9 +211,9 @@
       "code": "CONTRACT",
       "description": "Contract",
       "start_date": "2000-01-01",
-      "created_by": 1,
+      "created_by": 39,
       "creation_date": "2000-01-01",
-      "last_update_by": 1,
+      "last_update_by": 39,
       "last_update_date": "2000-01-01"
     }
   },
@@ -226,9 +226,9 @@
       "code": "PERMENANT",
       "description": "Permenant",
       "start_date": "2000-01-01",
-      "created_by": 1,
+      "created_by": 39,
       "creation_date": "2000-01-01",
-      "last_update_by": 1,
+      "last_update_by": 39,
       "last_update_date": "2000-01-01"
     }
   },
@@ -241,9 +241,9 @@
       "code": "CASH",
       "description": "Cash",
       "start_date": "2000-01-01",
-      "created_by": 1,
+      "created_by": 39,
       "creation_date": "2000-01-01",
-      "last_update_by": 1,
+      "last_update_by": 39,
       "last_update_date": "2000-01-01"
     }
   },
@@ -256,9 +256,9 @@
       "code": "CHECK",
       "description": "Check",
       "start_date": "2000-01-01",
-      "created_by": 1,
+      "created_by": 39,
       "creation_date": "2000-01-01",
-      "last_update_by": 1,
+      "last_update_by": 39,
       "last_update_date": "2000-01-01"
     }
   },
@@ -271,9 +271,9 @@
       "code": "TRANSFER",
       "description": "Bank transfer",
       "start_date": "2000-01-01",
-      "created_by": 1,
+      "created_by": 39,
       "creation_date": "2000-01-01",
-      "last_update_by": 1,
+      "last_update_by": 39,
       "last_update_date": "2000-01-01"
     }
   },
@@ -286,9 +286,9 @@
       "code": "COMPANY",
       "description": "Company account",
       "start_date": "2000-01-01",
-      "created_by": 1,
+      "created_by": 39,
       "creation_date": "2000-01-01",
-      "last_update_by": 1,
+      "last_update_by": 39,
       "last_update_date": "2000-01-01"
     }
   },
@@ -301,9 +301,9 @@
       "code": "EMPLOYEE",
       "description": "Employee account",
       "start_date": "2000-01-01",
-      "created_by": 1,
+      "created_by": 39,
       "creation_date": "2000-01-01",
-      "last_update_by": 1,
+      "last_update_by": 39,
       "last_update_date": "2000-01-01"
     }
   },
@@ -316,9 +316,9 @@
       "code": "month",
       "description": "Monthly",
       "start_date": "2000-01-01",
-      "created_by": 1,
+      "created_by": 39,
       "creation_date": "2000-01-01",
-      "last_update_by": 1,
+      "last_update_by": 39,
       "last_update_date": "2000-01-01"
     }
   },
@@ -331,9 +331,9 @@
       "code": "week",
       "description": "Weekly",
       "start_date": "2000-01-01",
-      "created_by": 1,
+      "created_by": 39,
       "creation_date": "2000-01-01",
-      "last_update_by": 1,
+      "last_update_by": 39,
       "last_update_date": "2000-01-01"
     }
   }

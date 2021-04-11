@@ -43,7 +43,7 @@ class FastFormula:
             for key in self.get_fast_formula():  # looping in fast formula dic to check if the user have this FF
                 custom_rule = "amount = " + key
                 for i in custom_rule.split():
-                    if i == x.element_id.db_name and x.element_id.basic_flag == False:
+                    if i == x.element_id.code and x.element_id.basic_flag == False:
                         element_value = x.element_value
                         custom_rule = custom_rule.replace(i, str(element_value))
                         ldict = locals()

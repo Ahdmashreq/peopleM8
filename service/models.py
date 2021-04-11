@@ -24,7 +24,7 @@ class Bussiness_Travel(models.Model):
     emp = models.ForeignKey(Employee, related_name='allowance_employee', on_delete=models.CASCADE, blank=True,
                             null=True, verbose_name='Employee Name')
     approval = models.ForeignKey(Employee, related_name='approval_user', on_delete=models.CASCADE, blank=True,
-                                null=True) 
+                                null=True)
     date_requested = models.DateField(auto_now_add=True, editable=False, verbose_name='Date Requested')
     department = models.ForeignKey(Department, related_name='allowance_department', on_delete=models.CASCADE,
                                    blank=True, null=True, verbose_name='Department')
@@ -65,7 +65,7 @@ class Bussiness_Travel(models.Model):
 
 class Purchase_Request(models.Model):
     approval = models.ForeignKey(Employee, related_name='approval_emp', on_delete=models.CASCADE, blank=True,
-                                null=True) 
+                                null=True)
     payment_method_list = (('C', 'Cash'), ('V', 'Visa'))
     # ##############################################################################################
     order_number = models.CharField(max_length=100, blank=True, null=True)
@@ -116,11 +116,9 @@ def business_request_handler(sender, instance, created, update_fields, **kwargs)
     """
     requestor_emp = instance.emp
     approval_emp = instance.approval
-    print(approval_emp)
     required_job_roll = JobRoll.objects.get(emp_id = instance.emp.id, end_date__isnull=True)
     if required_job_roll.manager:
-        manager_user = required_job_roll.manager.user
-        manager_emp = required_job_roll.manager
+        manager_emp = required_job_roll.manager.user
     else:
         hr_users = User.objects.filter(groups__name='HR')
         manager_emp = hr_users
@@ -143,11 +141,11 @@ def business_request_handler(sender, instance, created, update_fields, **kwargs)
                                                                                               status=instance.status),
                     level='info',
                     data=data)
-        print(manager_emp)            
+        print(manager_emp)
 
         #  update the old notification for the manager with the new status
         content_type = ContentType.objects.get_for_model(Bussiness_Travel)
-        old_notification = manager_user.notifications.filter(action_object_content_type=content_type,
+        old_notification = manager_emp.notifications.filter(action_object_content_type=content_type,
                                                                  action_object_object_id=instance.id)
         if len(old_notification) > 0:
             old_notification[0].data['data']['status'] = instance.status

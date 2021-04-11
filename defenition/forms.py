@@ -1,8 +1,9 @@
 from django import forms
 from crispy_forms.helper import FormHelper
-from defenition.models import LookupType, LookupDet, InsuranceRule, TaxRule, TaxSection, Tax_Sections
 from datetime import date
 from django.db.models import Q
+from defenition.models import LookupType, LookupDet, InsuranceRule, TaxRule, TaxSection, Tax_Sections
+from company.models import Enterprise
 
 common_items_to_execlude = (
                             'enterprise','created_by', 'creation_date',
@@ -88,7 +89,6 @@ class TaxRuleForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(TaxRuleForm, self).__init__(*args, **kwargs)
-        # self.fields['start_date'].widget.input_type = 'date'
         self.fields['end_date'].widget.input_type = 'date'
         self.helper = FormHelper()
         self.helper.form_show_labels = True
