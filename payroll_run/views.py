@@ -13,7 +13,8 @@ from payroll_run.models import Salary_elements
 from payroll_run.forms import SalaryElementForm, Salary_Element_Inline
 from element_definition.models import Element_Master, Element_Batch, Element_Batch_Master, Element , SalaryStructure
 from manage_payroll.models import Assignment_Batch, Assignment_Batch_Include, Assignment_Batch_Exclude
-from employee.models import Employee_Element, Employee, JobRoll, Payment, EmployeeStructureLink
+from employee.models import Employee_Element, Employee, JobRoll, Payment, EmployeeStructureLink 
+from leave.models import EmployeeAbsence
 from employee.forms import Employee_Element_Inline
 from django.utils.translation import ugettext_lazy as _
 # ############################################################
@@ -107,7 +108,7 @@ def createSalaryView(request):
     sal_form = SalaryElementForm(user=request.user)
     employees_dont_have_structurelink = []
     employees = 0
-    if request.method == 'POST':
+    if request.method == 'POST': 
         sal_form = SalaryElementForm(request.POST, user=request.user)
         if sal_form.is_valid():
             sal_obj = sal_form.save(commit=False)
@@ -140,7 +141,8 @@ def createSalaryView(request):
                     emp = EmployeeStructureLink.objects.get(employee=x)
                     structure = emp.salary_structure.structure_type
                     #print(structure)
-                except Exception as e: 
+                except Exception as e:
+                    print(x.id) 
                     employees_dont_have_structurelink.append(x.emp_name)
                     employees =  ', '.join(employees_dont_have_structurelink) + ': dont have structurelink, add structurelink to them and create again'
                 
@@ -148,7 +150,8 @@ def createSalaryView(request):
                 #print(absence_value)
                 # calculate all furmulas elements for 'x' employee
                 # Employee_Element.set_formula_amount(x)
-                
+                print(len(employees_dont_have_structurelink))
+                print("&&&&&&&&&&&&&&&&&&&&&&")
                 if len(employees_dont_have_structurelink) == 0:
                     absence_value_obj = EmployeeAbsence.objects.filter(employee_id=x.id).filter(end_date__year=sal_obj.salary_year).filter(end_date__month=sal_obj.salary_month)
                     total_absence_value = 0
@@ -194,23 +197,24 @@ def createSalaryView(request):
                         )
                                 
                     s.save()
-            if len(employees_dont_have_structurelink) == 0:
-                user_lang = to_locale(get_language())
-                if user_lang == 'ar':
-                    error_msg = '{}, لم يتم التسجيل'.format(emp_payment_obj)
-                    success_msg = 'تم تشغيل راتب شهر {} بنجاح'.format(
-                    calendar.month_name[sal_obj.salary_month])
-                    messages.success(request, success_msg)
-                else:
-                    error_msg = '{}, has somthig wrong'.format(emp_payment_obj)
-                    success_msg = 'Payroll for month {} done successfully'.format(
-                    calendar.month_name[sal_obj.salary_month] )
-                    messages.success(request, success_msg)
+                    user_lang = to_locale(get_language())
+                    if user_lang == 'ar':
+                        success_msg = 'تم تشغيل راتب شهر {} بنجاح'.format(
+                        calendar.month_name[sal_obj.salary_month])
+                        messages.success(request, success_msg)
+                    else:
+                        success_msg = 'Payroll for month {} done successfully'.format(
+                        calendar.month_name[sal_obj.salary_month] )
+
             else:
-                    error_msg = 'Payroll for month {} dosent work'.format(
+                if user_lang == 'ar':
+                    error_msg = '{}, لم يتم التسجيل'.format(
+                    calendar.month_name[sal_obj.salary_month])
+                    messages.error(request, error_msg)
+                else:
+                    error_msg = '{}, has somthig wrong'.format(
                     calendar.month_name[sal_obj.salary_month] )
                     messages.error(request, error_msg)
-
         else:  # Form was not valid
             messages.error(request, sal_form.errors)
     salContext = {
@@ -222,6 +226,7 @@ def createSalaryView(request):
 
 
 def month_name(month_number):
+    print(month_number)
     return calendar.month_name[month_number]
 
 

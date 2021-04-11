@@ -106,20 +106,26 @@ def create_new_element(request):
                 for obj in objs:
                     obj.element = elem_obj
                     obj.save()
+                print("formula")    
+                print (obj) 
+                
+                codes = ElementFormula.objects.filter(element=elem_obj)  
+                for code in codes :
+                    formula.append(code.formula_code())
+
+                element_formula = ' '.join(formula)
+                elem_obj.element_formula = element_formula
+                elem_obj.save()
+                print("obj") 
+                print(elem_obj.id)
+
+                success_msg = make_message(user_lang, True)
+                messages.success(request, success_msg)
+                return redirect('element_definition:list-element') 
+                
             else :
                 print(element_formula_formset.errors)  
 
-            codes = ElementFormula.objects.filter(element=elem_obj)  
-            for code in codes :
-                formula.append(code.formula_code())
-
-            element_formula = ' '.join(formula)
-            elem_obj.element_formula = element_formula
-            elem_obj.save()
-
-            success_msg = make_message(user_lang, True)
-            messages.success(request, success_msg)
-            return redirect('element_definition:list-element')
         else:
             failure_msg = make_message(user_lang, False)
             messages.error(request, failure_msg)
@@ -151,6 +157,7 @@ def update_element_view(request, pk):
     element = get_object_or_404(Element, pk=pk)
     element_master_form = ElementForm(instance=element, user=request.user)
     element_formula_formset = element_formula_model(queryset=ElementFormula.objects.filter(element=element))
+    formula =[]
     if request.method == 'POST':
         user_lang = to_locale(get_language())
         element_master_form = ElementForm(
@@ -162,20 +169,31 @@ def update_element_view(request, pk):
             element_obj = element_master_form.save(commit=False)
             element_obj.last_update_by = request.user
             element_obj.save()
-
             # add element_formula
             objs = element_formula_formset.save(commit=False)
             for obj in objs:
                 obj.element = elem_obj
                 obj.save()
+            print (obj) 
+
+            codes = ElementFormula.objects.filter(element=elem_obj)  
+            for code in codes :
+                formula.append(code.formula_code())
+
+            element_formula = ' '.join(formula)
+            elem_obj.element_formula = element_formula
+            elem_obj.save()
+            print(elem_obj.id)
 
             success_msg = make_message(user_lang, True)
             messages.success(request, success_msg)
             return redirect('element_definition:list-element')
-        else:
+
+        else :
             failure_msg = make_message(user_lang, False)
             messages.error(request, failure_msg)
             print(element_master_form.errors)
+            print(element_formula_formset.errors)  
 
     myContext = {
         "page_title": _("Update Element"),

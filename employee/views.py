@@ -168,7 +168,7 @@ def viewEmployeeView(request, pk):
     all_jobRoll = JobRoll.objects.filter(emp_id=pk).order_by('-id')
     all_payment = Payment.objects.filter(emp_id=pk, end_date__isnull=True).order_by('-id')
     all_elements = Employee_Element.objects.filter(
-        emp_id=pk, emp_end_date__isnull=True)
+        emp_id=pk, end_date__isnull=True)
     myContext = {
         "page_title": _("view employee"),
         "required_employee": required_employee,

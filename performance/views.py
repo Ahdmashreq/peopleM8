@@ -519,7 +519,7 @@ def employee_rates(request, per_name,emp_id):
     employee = Employee.objects.get(id=emp_id) 
     performance = Performance.objects.get(performance_name =per_name)
     segments = Segment.objects.filter(performance=performance)
-    comleted_segments = related_segments(emp_id,performance.id)
+    comleted_segments =  0 #related_segments(emp_id,performance.id)
     myContext = {
     "employee":employee,
     "performance":performance,
@@ -535,7 +535,7 @@ def employee_rates(request, per_name,emp_id):
 def create_employee_overview_rate(request, per_id,emp_id):
     employee = Employee.objects.get(id=emp_id)
     performance = Performance.objects.get(id=per_id)
-    comleted_segments = related_segments(emp_id,per_id)
+    comleted_segments =  0 #related_segments(emp_id,per_id)
     segments = Segment.objects.filter(performance=performance)
     employee_performance_form = EmployeePerformanceForm(performance)
     try:
@@ -591,7 +591,7 @@ def update_employee_overview_rate(request, per_id,emp_id):
     segments = Segment.objects.filter(performance=performance)
     employee_performance = EmployeePerformance.objects.get(employee = employee )
     employee_performance_form = EmployeePerformanceForm(performance, instance=employee_performance)
-    comleted_segments = related_segments(emp_id,per_id)
+    comleted_segments =  0 #related_segments(emp_id,per_id)
     if request.method == 'POST':
         employee_performance_form = EmployeePerformanceForm(performance, request.POST , instance=employee_performance)
         if employee_performance_form.is_valid():
@@ -638,7 +638,7 @@ def employee_segment_questions(request, pk, emp_id):
     performance = segment.performance
     employee = Employee.objects.get(id=emp_id) 
     segments = Segment.objects.filter(performance=performance)
-    comleted_segments = related_segments(emp_id,performance.id)
+    comleted_segments = 0 #related_segments(emp_id,performance.id)
     myContext = {
     "segment":segment,
     "employee":employee,
@@ -657,7 +657,7 @@ def create_employee_question_rate(request, pk,emp_id):
     segments = Segment.objects.filter(performance=performance)
     employee = Employee.objects.get(id=emp_id) 
     employee_rating_form = EmployeeRatingForm(segment)
-    comleted_segments= related_segments(emp_id,performance.id)
+    comleted_segments= related_segments(emp_id,question.id)
     try:
         employee_performance = EmployeeRating.objects.get(question = question )
         return redirect('performance:update-employee-question-rate', pk =pk  ,emp_id=employee.id )
@@ -711,7 +711,7 @@ def update_employee_question_rate(request, pk, emp_id):
     employee = Employee.objects.get(id=emp_id) 
     employee_performance = EmployeeRating.objects.get(question = question )
     employee_rating_form = EmployeeRatingForm(segment, instance=employee_performance)
-    comleted_segments = related_segments(emp_id,performance.id)
+    comleted_segments = related_segments(emp_id,question.id)
     if request.method == 'POST':
         employee_rating_form = EmployeeRatingForm(segment, request.POST, instance=employee_performance)
         if employee_rating_form.is_valid():
@@ -772,12 +772,18 @@ def employee_performances(request, pk):
     return render(request, 'employee-performances.html', myContext)  
 
 
-def related_segments(emp_id,per_id):
+def related_segments(emp_id,ques_id):
     segments = []
-    questions = []
+    question = Question.objects.get(id=ques_id)
+    employee_segments = EmployeeRating.objects.filter(employee_id= emp_id, question__title=question.title, question__title__performance=question.title.performance)
+    
+    """
+    segments = []
     performance = Performance.objects.get(id=per_id)
     employee_segments = EmployeeRating.objects.filter(employee_id= emp_id, question__title__performance=performance).distinct('question__title').count()
     """
+    """
+    questions = []
     emp_segments = EmployeeRating.objects.filter(employee_id= emp_id, question__title__performance=performance).distinct('question__title')
     for value in emp_segments.iterator():
         segment_title = (value.question.title)
@@ -788,5 +794,6 @@ def related_segments(emp_id,per_id):
             employee_segments = EmployeeRating.objects.filter(employee_id= emp_id, question__title__performance=performance).distinct('question__title').count()
             return employee_segments
         """
-    return employee_segments
+    print(employee_segments)    
+    #return employee_segments
     
