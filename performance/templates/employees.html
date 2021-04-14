@@ -73,6 +73,8 @@
   <div class="modal-content">
     <p id="per">{{employee.emp_id.emp_name}} Performances : </p>
    <div id="app"></div>
+   <br>
+   <br>
    
    <div class="row" >
     <div class="col-md-6" style="text-align: right;">
@@ -114,12 +116,12 @@
           // Loop through each wizard and create a list item
           wizards.forEach(function (wizard) {
             arr = wizard.split(" : ")
-            performancr_name = arr[1]
+            performancr_name = arr[2]
             // += adds an item to the existing value
             // It's the same as writing this:
             // html = html + '<li>' + wizard + '</li>';
             href = "/perf/performance/employee/"+performancr_name+"/"+emp_id
-            html += '<li>'+'<a href='+href+'>'+wizard+'</a>'+'</li>';
+            html += '<li>'+'<a href='+href+'>'+arr[0]+' : '+arr[1]+'</a>'+'</li>';
           });
 
           // Wrap items in an unordered list

@@ -18,7 +18,55 @@ from employee.models import Employee, JobRoll
 from django.http import JsonResponse
 import numpy as np
 from django.db.models import Count
+from django.utils.translation import ugettext_lazy as _
 
+
+
+
+################## Messages ##########################################
+def success(message_type, obj_type):
+    user_lang = to_locale(get_language())
+    if message_type == "create":
+        if user_lang == 'ar':
+            success_msg = '  تم التعديل' + _('obj_type')
+        else:
+            success_msg = obj_type + ' Created successfully'
+    else:
+        if user_lang == 'ar':
+            success_msg = '  تم الإنشاء' + _('obj_type')
+        else:
+            success_msg = obj_type +' Updated successfully'
+
+    return success_msg  
+
+
+def fail(message_type,obj_type):
+    user_lang = to_locale(get_language())
+    if message_type == "create":
+        if user_lang == 'ar':
+            error_msg = ' لم يتم إنشاء ' + _('obj_type')
+        else:
+            error_msg = obj_type + ' Cannot be created '
+    else:
+        if user_lang == 'ar':
+            error_msg = ' لم يتم تعديل '  + _('obj_type')
+        else:
+            error_msg = obj_type + ' Cannot be updated '
+    return error_msg      
+
+def deleted(message_type ,  obj_type):
+    user_lang = to_locale(get_language())
+    if message_type == "success":
+        if user_lang == 'ar':
+            msg = 'تم لحذف  ' + _('obj_type')
+        else:
+            msg = obj_type + ' Deleted successfully'
+    else:
+        if user_lang == 'ar':
+            msg = ' لم يتم حذف ' + _('obj_type')
+        else:
+            msg = obj_type + ' Cannot be deletd '
+    return msg     
 
 
 ################## Performance ##########################################
@@ -66,25 +114,18 @@ def createPerformance(request):
             performance_obj.company = company
             performance_obj.save() 
 
-            user_lang = to_locale(get_language())
-            if user_lang == 'ar':
-                success_msg = ' {},تم إنشاء التقييم'.format(performance_obj)
-            else:
-                success_msg = 'performance {}, has been updated successfully'.format(
-                    performance_obj)
-            messages.success(request, success_msg)        
+            success_msg = success('create', 'performance')
+            messages.success(request, success_msg) 
+
             if 'Save and exit' in request.POST:
                     return redirect('performance:performance-list')
             elif 'Save and add' in request.POST:
                     return redirect('performance:rating-create',
                         per_id = performance_obj.id)
         else:
-            user_lang = to_locale(get_language())
-            if user_lang == 'ar':
-                success_msg = '{} لم يتم الإنشاء '.format(performance_obj)
-            else:
-                success_msg = '{} cannot be created '.format(performance_obj)
-            messages.error(request, success_msg)
+            error_msg = fail('create','performance')
+            messages.error(request, error_msg)
+
             print(performance_form.errors) 
             return redirect('performance:performance-list')                 
     else:
@@ -105,25 +146,19 @@ def updatePerformance(request, pk):
         performance_form = PerformanceForm(company, request.POST, instance=performance)
         if performance_form.is_valid() :
             performance_form.save()
-            user_lang = to_locale(get_language())
-            if user_lang == 'ar':
-                success_msg = ' {},تم تعديل التقييم'.format(performance)
-            else:
-                success_msg = 'performance {}, has been updated successfully'.format(
-                    performance)
-            messages.success(request, success_msg)        
+
+            success_msg = success('update', 'performance')
+            messages.success(request, success_msg)
+
             if 'Save and exit' in request.POST:
                     return redirect('performance:performance-list')
             elif 'Save and add' in request.POST:
                     return redirect('performance:rating-update',
                         pk = pk)
         else:
-            user_lang = to_locale(get_language())
-            if user_lang == 'ar':
-                success_msg = '{} لم يتم التعديل '.format(performance)
-            else:
-                success_msg = '{} cannot be updated '.format(performance)
-            messages.error(request, success_msg)
+            error_msg = fail('update', 'performance')
+            messages.error(request, error_msg)
+
             return redirect('performance:performance-edit',pk=pk )
     else:
         myContext = {
@@ -138,20 +173,11 @@ def deletePerformance(request, pk):
     performance = Performance.objects.get(id=pk)
     try:
         performance.delete()
-        user_lang = to_locale(get_language())
-        if user_lang == 'ar':
-            success_msg = ' {},تم حذف التقييم'.format(performance)
-        else:
-            success_msg = 'Performance {} was deleted successfully'.format(
-                performance)
+        success_msg = deleted("success", 'performance')
         messages.success(request, success_msg)
     except Exception as e:
-        user_lang = to_locale(get_language())
-        if user_lang == 'ar':
-            success_msg = '{} لم يتم حذف '.format(performance)
-        else:
-            success_msg = '{} cannot be deleted '.format(performance)
-        messages.error(request, success_msg)
+        error_msg = deleted("failed", 'performance')
+        messages.error(request, error_msg)
         raise e
     return redirect('performance:performance-list')
 
@@ -172,13 +198,8 @@ def createPerformanceRating(request,per_id):
                 obj.performance = performance
                 obj.save()
                 
-            user_lang = to_locale(get_language())
-            if user_lang == 'ar':
-                success_msg = ' {},تم إنشاء التقييم'.format(obj)
-            else:
-                success_msg = 'rating {}, has been updated successfully'.format(
-                    obj)
-            messages.success(request, success_msg)        
+            success_msg = success('create', 'Rating')
+            messages.success(request, success_msg) 
             if 'Save and exit' in request.POST:
                 return redirect('performance:management',
                         pk = performance.id)
@@ -186,13 +207,8 @@ def createPerformanceRating(request,per_id):
                 return redirect('performance:rating-create',
                         per_id = per_id)
         else:
-            user_lang = to_locale(get_language())
-            if user_lang == 'ar':
-                success_msg = '{} لم يتم الإنشاء '.format(obj)
-            else:
-                success_msg = '{} cannot be updated '.format(obj)
-            messages.error(request, success_msg)
-
+            error_msg = fail('create', 'Rating')
+            messages.error(request, error_msg) 
             print(performance_rating_formset.errors) 
             return redirect('performance:rating-create',
                         per_id = per_id)
@@ -220,24 +236,15 @@ def updatePerformanceRating(request,pk):
                 obj.performance = performance
                 obj.save()
                 
-            user_lang = to_locale(get_language())
-            if user_lang == 'ar':
-                success_msg = ' {},تم تعديل التقييم'.format(obj)
-            else:
-                success_msg = 'rating {}, has been updated successfully'.format(
-                    obj)
+            success_msg = success('update', 'Rating')
             messages.success(request, success_msg)        
             if 'Save and exit' in request.POST:
                 return redirect('performance:management',
                         pk = pk)
 
         else:
-            user_lang = to_locale(get_language())
-            if user_lang == 'ar':
-                success_msg = '{} لم يتم الإنشاء '.format(obj)
-            else:
-                success_msg = '{} cannot be updated '.format(obj)
-            messages.error(request, success_msg)
+            error_msg = fail('update', 'Rating')
+            messages.error(request, error_msg)
 
             print(performance_rating_modelformset.errors) 
             return redirect('performance:rating-create',
@@ -335,24 +342,13 @@ def createSegment(request,per_id,ret_id):
                     obj = form.save(commit=False)
                     obj.title = segment_obj
                     obj.save()
+                success_msg = success('create','Segment')
+                messages.success(request, success_msg)                        
             else:
                 print(question_formset.errors)         
-                    
-            user_lang = to_locale(get_language())
-            if user_lang == 'ar':
-                success_msg = ' {},تم إنشاء الشريحة'.format(segment_obj)
-            else:
-                success_msg = 'segment {}, has been updated successfully'.format(
-                        segment_obj)
-            messages.success(request, success_msg)                  
-                 
         else:
-            user_lang = to_locale(get_language())
-            if user_lang == 'ar':
-                success_msg = '{} لم يتم الإنشاء '.format(segment_obj)
-            else:
-                success_msg = '{} cannot be updated '.format(segment_obj)
-            messages.error(request, success_msg)
+            error_msg = fail('create', 'Segment')
+            messages.error(request, error_msg)
             print(segment_form.errors)
 
         return redirect('performance:segments',
@@ -403,21 +399,11 @@ def updateSegment(request,pk,ret_id):
                 obj.title = segment_obj
                 obj.save()
 
-            user_lang = to_locale(get_language())
-            if user_lang == 'ar':
-                success_msg = ' {},تم تعديل الشريحة'.format(segment_obj)
-            else:
-                success_msg = 'segment {}, has been updated successfully'.format(
-                        segment_obj)
+            success_msg = success('update', 'Segment')
             messages.success(request, success_msg) 
-                
         else:
-            user_lang = to_locale(get_language())
-            if user_lang == 'ar':
-                success_msg = '{} لم يتم الإنشاء '.format(segment_obj)
-            else:
-                success_msg = '{} cannot be updated '.format(segment_obj)
-            messages.error(request, success_msg)
+            error_msg = fail('update', 'Segment')
+            messages.error(request, error_msg) 
             print(segment_form.errors) 
             print(question_formset.errors) 
             
@@ -444,20 +430,11 @@ def deleteSegment(request, pk, ret_id):
     performance = segment.performance
     try:
         segment.delete()
-        user_lang = to_locale(get_language())
-        if user_lang == 'ar':
-            success_msg = ' {},تم حذف الشريحة '.format(segment)
-        else:
-            success_msg = 'segment {} was deleted successfully'.format(
-                segment)
+        success_msg = deleted("success", 'Segment')
         messages.success(request, success_msg)
     except Exception as e:
-        user_lang = to_locale(get_language())
-        if user_lang == 'ar':
-            success_msg = '{} لم يتم حذف '.format(segment)
-        else:
-            success_msg = '{} cannot be deleted '.format(segment)
-        messages.error(request, success_msg)
+        error_msg = deleted("failed", 'Segment')
+        messages.error(request, error_msg)
         raise e
     return redirect('performance:segments',
                         pk = performance.id,ret_id=ret_id )
@@ -502,7 +479,7 @@ def employeePerformances(request):
                 category = "for Department"
             elif count==4 : 
                 category = "for Job"        
-            employee_performances.append(category+' : '+value.performance_name)
+            employee_performances.append(category+' : '+value.performance_name +' : '+ str(value.id))
             count +=1
 
     my_array = ','.join(employee_performances)
@@ -514,12 +491,14 @@ def employeePerformances(request):
 
 
 @login_required(login_url='home:user-login')
-def employee_rates(request, per_name,emp_id):
+def employee_rates(request, pk,emp_id):
     completed_segments = 0
-    employee = Employee.objects.get(id=emp_id) 
-    performance = Performance.objects.get(performance_name =per_name)
+    employee_jobroll = JobRoll.objects.get(id=emp_id) 
+    emp = employee_jobroll.emp_id.id
+    employee = Employee.objects.get(id=emp) 
+    performance = Performance.objects.get(id =pk)
     segments = Segment.objects.filter(performance=performance)
-    comleted_segments =  0 #related_segments(emp_id,performance.id)
+    comleted_segments = related_segments(emp_id,performance.id)
     myContext = {
     "employee":employee,
     "performance":performance,
@@ -535,7 +514,7 @@ def employee_rates(request, per_name,emp_id):
 def create_employee_overview_rate(request, per_id,emp_id):
     employee = Employee.objects.get(id=emp_id)
     performance = Performance.objects.get(id=per_id)
-    comleted_segments =  0 #related_segments(emp_id,per_id)
+    comleted_segments =  related_segments(emp_id,per_id)
     segments = Segment.objects.filter(performance=performance)
     employee_performance_form = EmployeePerformanceForm(performance)
     try:
@@ -553,23 +532,14 @@ def create_employee_overview_rate(request, per_id,emp_id):
                 performance_obj.last_update_by = request.user
                 performance_obj.save()
 
-                user_lang = to_locale(get_language())
-                if user_lang == 'ar':
-                    success_msg = ' {},تم بنجاح'.format(performance_obj)
-                else:
-                    success_msg = '{} created successfully'.format(
-                        performance_obj)
-                messages.success(request, success_msg)        
+                success_msg = success('create', 'employee overview')
+                messages.success(request, success_msg) 
                 return redirect('performance:update-employee-overview',
                             per_id = performance.id ,emp_id=employee.id )
                 
             else:
-                user_lang = to_locale(get_language())
-                if user_lang == 'ar':
-                    success_msg = '{} لم يتم الإنشاء '.format(performance_obj)
-                else:
-                    success_msg = '{} cannot be created '.format(performance_obj)
-                messages.error(request, success_msg)
+                error_msg = fail('create', 'employee overview')
+                messages.error(request, error_msg) 
                 print(employee_performance_form.errors) 
                 return redirect('performance:create-employee-overview',
                             per_id = performance.id ,emp_id=employee.id)
@@ -591,7 +561,7 @@ def update_employee_overview_rate(request, per_id,emp_id):
     segments = Segment.objects.filter(performance=performance)
     employee_performance = EmployeePerformance.objects.get(employee = employee )
     employee_performance_form = EmployeePerformanceForm(performance, instance=employee_performance)
-    comleted_segments =  0 #related_segments(emp_id,per_id)
+    comleted_segments =  related_segments(emp_id,per_id)
     if request.method == 'POST':
         employee_performance_form = EmployeePerformanceForm(performance, request.POST , instance=employee_performance)
         if employee_performance_form.is_valid():
@@ -602,22 +572,13 @@ def update_employee_overview_rate(request, per_id,emp_id):
             performance_obj.last_update_by = request.user
             performance_obj.save()
 
-            user_lang = to_locale(get_language())
-            if user_lang == 'ar':
-                success_msg = ' {},تم بنجاح'.format(performance_obj)
-            else:
-                success_msg = '{} Updated successfully'.format(
-                    performance_obj)
+            success_msg = success('update', 'empluee overview')
             messages.success(request, success_msg)        
             return redirect('performance:update-employee-overview',per_id = performance.id ,emp_id=employee.id )
 
         else:
-            user_lang = to_locale(get_language())
-            if user_lang == 'ar':
-                success_msg = '{} لم يتم الإنشاء '.format(performance_obj)
-            else:
-                success_msg = '{} cannot be Updated '.format(performance_obj)
-            messages.error(request, success_msg)
+            error_msg = fail('update', 'empluee overview')
+            messages.error(request, error_msg)
             print(employee_performance_form.errors) 
             return redirect('performance:update-employee-overview',per_id = performance.id ,emp_id=employee.id )
     else:
@@ -638,7 +599,7 @@ def employee_segment_questions(request, pk, emp_id):
     performance = segment.performance
     employee = Employee.objects.get(id=emp_id) 
     segments = Segment.objects.filter(performance=performance)
-    comleted_segments = 0 #related_segments(emp_id,performance.id)
+    comleted_segments = related_segments(emp_id,performance.id)
     myContext = {
     "segment":segment,
     "employee":employee,
@@ -657,7 +618,7 @@ def create_employee_question_rate(request, pk,emp_id):
     segments = Segment.objects.filter(performance=performance)
     employee = Employee.objects.get(id=emp_id) 
     employee_rating_form = EmployeeRatingForm(segment)
-    comleted_segments= related_segments(emp_id,question.id)
+    comleted_segments= related_segments(emp_id,performance.id)
     try:
         employee_performance = EmployeeRating.objects.get(question = question )
         return redirect('performance:update-employee-question-rate', pk =pk  ,emp_id=employee.id )
@@ -672,22 +633,13 @@ def create_employee_question_rate(request, pk,emp_id):
                 performance_rating_obj.last_update_by = request.user
                 performance_rating_obj.save()
 
-                user_lang = to_locale(get_language())
-                if user_lang == 'ar':
-                    success_msg = ' {},تم بنجاح'.format(performance_rating_obj)
-                else:
-                    success_msg = '{} created successfully'.format(
-                        performance_rating_obj)
-                messages.success(request, success_msg)
+                success_msg = success('create', 'employee rate')
+                messages.success(request, success_msg) 
                 return redirect('performance:update-employee-question-rate',
                                 pk =pk  ,emp_id=employee.id )  
             else:
-                user_lang = to_locale(get_language())
-                if user_lang == 'ar':
-                    success_msg = '{} لم يتم الإنشاء '.format(performance_rating_obj)
-                else:
-                    success_msg = '{} cannot be created '.format(performance_rating_obj)
-                messages.error(request, success_msg)
+                error_msg = fail('create', 'employee rate')
+                messages.error(request, error_msg)
                 print(employee_rating_form.errors)
                 return redirect('performance:update-employee-question-rate',
                                 pk =pk  ,emp_id=employee.id )
@@ -711,7 +663,7 @@ def update_employee_question_rate(request, pk, emp_id):
     employee = Employee.objects.get(id=emp_id) 
     employee_performance = EmployeeRating.objects.get(question = question )
     employee_rating_form = EmployeeRatingForm(segment, instance=employee_performance)
-    comleted_segments = related_segments(emp_id,question.id)
+    comleted_segments = related_segments(emp_id,performance.id)
     if request.method == 'POST':
         employee_rating_form = EmployeeRatingForm(segment, request.POST, instance=employee_performance)
         if employee_rating_form.is_valid():
@@ -723,21 +675,13 @@ def update_employee_question_rate(request, pk, emp_id):
             performance_rating_obj.save()
 
             user_lang = to_locale(get_language())
-            if user_lang == 'ar':
-                success_msg = ' {},تم بنجاح'.format(performance_rating_obj)
-            else:
-                success_msg = '{} Updated successfully'.format(
-                    performance_rating_obj)
+            success_msg = success('update', ' Employee Rating')
             messages.success(request, success_msg)
             return redirect('performance:update-employee-question-rate',
                             pk =pk  ,emp_id=employee.id )  
         else:
-            user_lang = to_locale(get_language())
-            if user_lang == 'ar':
-                success_msg = '{} لم يتم الإنشاء '.format(performance_rating_obj)
-            else:
-                success_msg = '{} cannot be updated '.format(performance_rating_obj)
-            messages.error(request, success_msg)
+            error_msg = fail('update', 'Employee Rating')
+            messages.error(request, error_msg)
             print(employee_rating_form.errors)
             return redirect('performance:update-employee-question-rate',
                                 pk =pk  ,emp_id=employee.id )
@@ -772,16 +716,16 @@ def employee_performances(request, pk):
     return render(request, 'employee-performances.html', myContext)  
 
 
-def related_segments(emp_id,ques_id):
+def related_segments(emp_id,per_id):
+    """
     segments = []
     question = Question.objects.get(id=ques_id)
-    employee_segments = EmployeeRating.objects.filter(employee_id= emp_id, question__title=question.title, question__title__performance=question.title.performance)
-    
+    employee_segments = EmployeeRating.objects.filter(employee_id= emp_id, question__title=question.title, question__title__performance=question.title.performance).count()
     """
+
     segments = []
     performance = Performance.objects.get(id=per_id)
     employee_segments = EmployeeRating.objects.filter(employee_id= emp_id, question__title__performance=performance).distinct('question__title').count()
-    """
     """
     questions = []
     emp_segments = EmployeeRating.objects.filter(employee_id= emp_id, question__title__performance=performance).distinct('question__title')
@@ -794,6 +738,5 @@ def related_segments(emp_id,ques_id):
             employee_segments = EmployeeRating.objects.filter(employee_id= emp_id, question__title__performance=performance).distinct('question__title').count()
             return employee_segments
         """
-    print(employee_segments)    
-    #return employee_segments
+    return employee_segments
     

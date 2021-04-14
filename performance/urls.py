@@ -26,7 +26,7 @@ urlpatterns =[
             #employeeRate
             path('employees/', views.employees, name='employees'),
             path('performances/', views.employeePerformances), #ajax
-            path('employee/<per_name>/<int:emp_id>/', views.employee_rates, name='employee-rate'),
+            path('employee/<int:pk>/<int:emp_id>/', views.employee_rates, name='employee-rate'),
             path('employee/overview/<int:per_id>/<int:emp_id>/create/', views.create_employee_overview_rate, name='create-employee-overview'),
             path('employee/overview/<int:per_id>/<int:emp_id>/update/', views.update_employee_overview_rate, name='update-employee-overview'),
             path('employee/segment/questions/<int:pk>/<int:emp_id>/', views.employee_segment_questions, name='employee-segment-questions'),
