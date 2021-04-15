@@ -1,0 +1,66 @@
+{% extends 'master.html'%}
+{% load staticfiles%}
+{% load l10n %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% block body%}
+<style>
+
+</style>
+  <div class="container-fluid">
+        <h4 class="c-grey-900">{{page_title|title}}</h4>
+
+        <div class="form-row col-md-12 p-20">
+          {% if overall_rating.count != 0 %}
+        <div class="col-sm-4">
+          <div class="card">
+            <div class="card-header">
+              {% trans "Segments"%}
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">   
+                {% trans "Overall"%}
+              </h5>
+              <p class="card-text">{% trans "All Overall Segments"%}</p>
+              <a href="{% url 'performance:segments' pk=pk ret_id=1 %}"  class="btn btn-primary">Segments</a>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+    {% if core_rating.count != 0 %}
+    <div class="col-sm-4">
+      <div class="card">
+        <div class="card-header">
+          {% trans "Segments"%}
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">
+            {% trans "Core"%}
+          </h5>
+          <p class="card-text">{% trans "All Core Segments"%}</p>
+          <a href="{% url 'performance:segments' pk=pk ret_id=2 %}"  class="btn btn-primary">Segments</a>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+  {% if job_rating.count != 0 %}
+  <div class="col-sm-4">
+      <div class="card">
+        <div class="card-header">
+          {% trans "Segments"%}
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">
+            {% trans "Job Role"%}
+          </h5>
+          <p class="card-text">{% trans "All Job Role Segments"%}</p>
+          <a href="{% url 'performance:segments' pk=pk ret_id=3 %}"  class="btn btn-primary">Segments</a>
+        </div>
+      </div>
+  </div>
+  {% endif %}
+
+     
+{% endblock body%}
