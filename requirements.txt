@@ -50,7 +50,7 @@ py-moneyed==0.8.0
 pycodestyle==2.5.0
 pycparser==2.19
 pylint==2.3.1
-PyPDF2==1.26.0
+PyPDF2==1.27.5
 Pyphen==0.9.5
 python-utils==2.3.0
 pytz==2019.3
